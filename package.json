@@ -1,0 +1,38 @@
+{
+  "name": "we-plugin-core",
+  "description": "We.js core plugin",
+  "version": "0.0.1",
+  "dependencies": {
+    "include-all": "^0.1.6",
+    "lodash": "^2.4.1",
+    "mkdirp": "^0.5.0",
+    "node-uuid": "^1.4.1",
+    "string": "^2.1.0",
+    "we-helpers": "0.0.5",
+    "we-theme-engine": "0.0.10"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "./node_modules/.bin/jshint .",
+    "checkStyle": "./node_modules/.bin/jscs .",
+    "pretest": "npm run-script lint && npm run-script checkStyle",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test",
+    "posttest": "./node_modules/.bin/istanbul check-coverage && rm -rf coverage",
+    "prepublish": "npm prune"
+  },
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org"
+  },
+  "author": "Alberto Souza <alberto.souza.dev@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^1.18.2",
+    "istanbul": "^0.2.7",
+    "jshint": "^2.5.0",
+    "jscs": "^1.4.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:wejs/we-plugin-core.git"
+  }
+}
