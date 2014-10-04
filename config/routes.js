@@ -338,6 +338,21 @@ module.exports.routes = {
     action        : 'findOneRecord'
   },
 
+  'get /api/v1/comment': {
+    controller    : 'comment',
+    action        : 'find'
+  },
+
+  'delete /api/v1/comment/:id': {
+    controller    : 'comment',
+    action        : 'destroyOneRecord'
+  },
+
+  'put /api/v1/comment/:id': {
+    controller    : 'comment',
+    action        : 'updateOneRecord'
+  },
+
   // -- ADMIN
   'get /admin/widgets': {
     controller    : 'main',
