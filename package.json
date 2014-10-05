@@ -7,8 +7,10 @@
     "lodash": "^2.4.1",
     "mkdirp": "^0.5.0",
     "node-uuid": "^1.4.1",
+    "sanitize-html": "^1.4.2",
     "string": "^2.1.0",
     "we-helpers": "0.0.5",
+    "we-send-email": "0.0.4",
     "we-theme-engine": "0.0.10"
   },
   "main": "lib/index.js",

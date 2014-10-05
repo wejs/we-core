@@ -4,10 +4,11 @@
  * @module		:: Controller
  * @description	:: Contains logic for handling requests.
  */
-
+var cwd = process.cwd();
 var util = require('util');
 var actionUtil = require('we-helpers').actionUtil;
 var _ = require('lodash');
+var WN = require(cwd + '/node_modules/we-plugin-notification');
 
 module.exports = {
 
@@ -126,7 +127,7 @@ module.exports = {
           }
         }
 
-        NotificationService.setPostNotifications('post', 'created', newInstance, req.user);
+        WN.notify('post', 'created', newInstance, req.user);
 
         // Send JSONP-friendly response if it's supported
         // (HTTP 201: Created)

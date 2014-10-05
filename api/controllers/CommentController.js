@@ -6,6 +6,8 @@
  */
 var util = require('util');
 var actionUtil = require('we-helpers').actionUtil;
+var WN = require( process.cwd() + '/node_modules/we-plugin-notification');
+
 
 module.exports = {
   createOneRecord : function (req, res) {
@@ -31,7 +33,7 @@ module.exports = {
 
       }
 
-      NotificationService.setCommentNotifications('comment', 'created', newInstance, req.user);
+      WN.notify('comment', 'created', newInstance, req.user);
 
       res.send({
         comment: newInstance

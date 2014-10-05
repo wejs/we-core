@@ -102,6 +102,11 @@
   "notification.text.contact.accepted": "<strong>{{displayName}}</strong> aceitou a sua solicitação de amizade",
   "notification.text.comment.created": "{{displayName}} comentou <strong>{{targetContentTeaser}}</strong> no conteúdo <strong>{{relatedContentTeaser}}</strong> {{group}}",
 
+  "notification.email.post.created": "{{displayName}} criou {{contentTypeText}} <strong>{{relatedContentTeaser }}</strong> {{group}}",
+  "notification.email.contact.requested": "Existe um pedido de contato de <strong>{{displayName}}</strong>",
+  "notification.email.contact.accepted": "<strong>{{displayName}}</strong> aceitou a sua solicitação de amizade",
+  "notification.email.comment.created": "{{displayName}} comentou <strong>{{targetContentTeaser}}</strong> no conteúdo <strong>{{relatedContentTeaser}}</strong> {{group}}",
+
   "post.contentType.image": "a imagem",
   "post.contentType.text": "o texto",
   "post.contentType.wembed": "o conteúdo",

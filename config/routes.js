@@ -59,21 +59,6 @@ module.exports.routes = {
     action: 'index'
   },
 
-  'get /templates/:id?.ejs' : {
-       controller: 'template',
-       action: 'ejs'
-  },
-  /*
-  'get /templates/:id?.html' : {
-       controller: 'template',
-       action: 'find'
-  },
-
-  'get /templates/:action/:id?.html' : {
-       controller: 'template',
-       action: 'find'
-  },
-  */
   // Standard RESTful routing
 
   //
@@ -270,24 +255,6 @@ module.exports.routes = {
   'delete /rooms/users/:id?': {
       controller    : 'rooms',
       action        : 'userRemove'
-  },
-
-  // - NOTIFICATION
-
-  // get current user notification count
-  'get /api/v1/current-user/notification-count': {
-    controller    : 'notification',
-    action        : 'getUnreadNotificationCount'
-  },
-
-  'post /api/v1/notify/mark-all-as-read': {
-    controller    : 'notification',
-    action        : 'markAllNotificationAsRead'
-  },
-
-  'post /api/v1/notify/:model/:modelId/mark-all-as-read': {
-    controller    : 'notification',
-    action        : 'markAllModelNotificationAsRead'
   },
 
   // -- POSTS

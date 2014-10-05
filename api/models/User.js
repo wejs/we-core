@@ -43,6 +43,12 @@ module.exports = {
       maxLength: 6
     },
 
+    // instant | daily | semanal
+    emailNotificationFrequency: {
+      type: 'string',
+      defaultsTo: 'instant'
+    },
+
     toJSON: function() {
       var obj = this.toObject();
       if(!obj.displayName){

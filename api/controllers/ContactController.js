@@ -4,6 +4,7 @@
  * @description ::
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
+var WN = require( process.cwd() + '/node_modules/we-plugin-notification');
 
 module.exports = {
   _config: {
@@ -97,7 +98,7 @@ module.exports = {
       });
 
       // notify
-      NotificationService.notifyContactRequest(contact, req.user);
+      WN.notify('contact', 'requested', contact, req.user);
       // send result
       res.send(201,{contact: contact});
     });
