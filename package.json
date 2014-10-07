@@ -1,7 +1,7 @@
 {
   "name": "we-plugin-core",
   "description": "We.js core plugin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "include-all": "^0.1.6",
     "lodash": "^2.4.1",
