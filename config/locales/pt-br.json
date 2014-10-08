@@ -37,6 +37,7 @@
   "Messenger": "Bate-papo",
   "Public room": "Sala pública",
   "Add comment": "Clique aqui para comentar",
+  "Comment": "Comentar",
   "Edit": "Editar",
   "Delete": "Deletar",
   "Save": "salvar",
@@ -113,6 +114,8 @@
   "post.contentType.text": "o texto",
   "post.contentType.wembed": "o conteúdo",
   "post.in.group": "no grupo",
+
+  "post.link.show": "Ver",
 
   "groups.title": "Comunidades",
   "groups.subtitle": "Participa das comunidades",
