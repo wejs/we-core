@@ -98,7 +98,7 @@ module.exports = {
       });
 
       // notify
-      WN.notify('contact', 'requested', contact, req.user);
+      sails.emit('we:model:contact:requested', contact, req.user);
       // send result
       res.send(201,{contact: contact});
     });
@@ -138,7 +138,7 @@ module.exports = {
         });
 
         // notify
-        NotificationService.notifyContactAccept(contact, req.user);
+        sails.emit('we:model:contact:accepted', contact, req.user);
         // send the response
         return res.send({contact: contact});
       });
