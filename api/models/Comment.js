@@ -21,13 +21,13 @@ module.exports = {
 
     // comment text
     body: {
-      type: 'string',
+      type: 'text',
       required: true
     },
 
     // comment text without tags
     bodyClean: {
-      type: 'string'
+      type: 'text'
     },
 
     // comment creator

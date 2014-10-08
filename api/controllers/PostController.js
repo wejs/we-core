@@ -14,21 +14,40 @@ module.exports = {
 
   findOneRecord: function findOneRecord (req, res) {
 
-    var Model = actionUtil.parseModel(req);
-    var pk = actionUtil.requirePk(req);
-    var modelName = req.options.model || req.options.controller;
+    var pk = req.param('id');
+    if (!pk) {
+      return res.badRequest('ID is required to get post');
+    }
 
-    var query = Model.findOne(pk);
-    //query = actionUtil.populateEach(query, req.options);
-    query.populate('comments')
+    Post.findOne(pk)
+    .populate('images')
+    .populate('wembed')
+    .populate('sharedIn')
     .exec(function found(err, matchingRecord) {
-      if (err) return res.serverError(err);
-      if(!matchingRecord) return res.notFound('No record found with the specified `id`.');
+      if (err) {
+        sails.log.error('Post:findOneRecord',err);
+        return res.negotiate(err);
+      }
 
-      var resultObject = {};
+      if ( !matchingRecord ) {
+        return res.notFound();
+      }
 
-      resultObject[modelName] = matchingRecord;
-      res.send(resultObject);
+      Comment.count()
+      .where({
+        post: matchingRecord.id
+      }).exec(function (err, commentCount) {
+        if (err) {
+          sails.log.error('findOneRecord:Comment:Error on get comment count', err);
+          return res.negotiate(err);
+        }
+
+        matchingRecord.commentCount = commentCount;
+
+        res.send({
+          post: matchingRecord
+        });
+      });
     });
 
   },
@@ -44,41 +63,46 @@ module.exports = {
     .populate('images')
     .populate('wembed')
     .populate('sharedIn')
-    // TODO params in populate comment dont are working well, fix it!
-    //.populate('comments', { limit: 2, sort: 'createdAt asc' })
-    .exec(function(err, posts) {
-      if (err) { return res.serverError(err); }
+    .exec(function (err, posts) {
+      if (err) {
+        sails.log.error('Error on find posts', err);
+        return res.serverError(err);
+      }
         var meta = {};
 
-        //fetch metadata and some comments for every post
-        async.each(posts, function(post, nextPost){
-          Comment.getCommentsAndCount(post.id, function(err, comments, commentCount){
-            if (err) { return res.serverError(err); }
+        //fetch post metadata every post
+        async.each(posts, function(post, nextPost) {
+          Comment.count()
+          .where({
+            post: post.id
+          }).exec(function (err, commentCount) {
+            if (err) { return nextPost(err); }
 
-            post.meta = {};
-            post.meta.commentCount = commentCount;
-            post._comments = [];
-
-            post._comments = comments.reverse();
+            post.commentCount = commentCount;
 
             nextPost();
           });
 
-        },function(){
-            // if are in a socket.io request
-            if (req._sails.hooks.pubsub && req.isSocket) {
-              // subscribe for updates
-              Post.subscribe(req, posts);
-              // Also subscribe to instances of all associated models
-              _.each(posts, function (record) {
-                actionUtil.subscribeDeep(req, record);
-              });
-            }
+        },function (err) {
+          if (err) {
+            sails.log.error('Erro on get post comment count:',err);
+            return res.serverError(err);
+          }
 
-            res.send({
-              post: posts,
-              meta: meta
+          // if are in a socket.io request
+          if (req._sails.hooks.pubsub && req.isSocket) {
+            // subscribe for updates
+            Post.subscribe(req, posts);
+            // Also subscribe to instances of all associated models
+            _.each(posts, function (record) {
+              actionUtil.subscribeDeep(req, record);
             });
+          }
+
+          res.send({
+            post: posts,
+            meta: meta
+          });
         });
     });
   },
