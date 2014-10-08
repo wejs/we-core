@@ -4,12 +4,15 @@ var sanitizeHtml = require('sanitize-html');
 var sanitizeConfig = {
   allowedTags: [
     // text blocks
-    'p', 'pre', 'blockquote', 'br',
+    'p',
+    //'pre',
+    //'blockquote',
+    'br',
     // text format
     'b', 'i', 'em', 'strong',  'u',
-    'h1', 'h2', 'h3', 'h4', 'h5','h5',
+    //'h1', 'h2', 'h3', 'h4', 'h5','h5',
     // list
-    'ul', 'ol', 'nl', 'li'
+    //'ul', 'ol', 'nl', 'li'
   ],
   selfClosing: [
     'br',
