@@ -34,6 +34,9 @@ module.exports = {
   },
 
   updateModelMentions: function(actor, attribute, mentions, modelName, modelId, cb) {
+
+    if( _.isEmpty(mentions) ) return cb();
+
     // first get users
     User.find({ username: mentions })
     .exec(function (err, mentionedUsers) {
@@ -56,7 +59,7 @@ module.exports = {
           for (var i = oldMentions.length - 1; i >= 0; i--) {
 
             for (var j = mentionedUsers.length - 1; j >= 0; j--) {
-              if (oldMentions[i].id === mentionedUsers[j].id) {
+              if (oldMentions[i].userMentioned === mentionedUsers[j].id) {
                 delete mentionedUsers[i];
                 break;
               }
