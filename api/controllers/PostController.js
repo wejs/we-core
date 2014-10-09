@@ -9,6 +9,7 @@ var util = require('util');
 var actionUtil = require('we-helpers').actionUtil;
 var _ = require('lodash');
 var WN = require(cwd + '/node_modules/we-plugin-notification');
+var twitter = require('twitter-text');
 
 module.exports = {
 
@@ -44,14 +45,22 @@ module.exports = {
 
         matchingRecord.commentCount = commentCount;
 
-        res.send({
-          post: matchingRecord
-        });
+        Mention.find({ modelName: 'post', modelId: matchingRecord.id})
+        .exec(function(err, mentions){
+          if (err) {
+            sails.log.error('findOneRecord:Comment:Error on get comment count', err);
+            return res.negotiate(err);
+          }
+
+          matchingRecord.mentions = mentions;
+
+          res.send({
+            post: matchingRecord
+          });
+        })
       });
     });
-
   },
-
 
   list: function list(req,res) {
 
@@ -131,33 +140,41 @@ module.exports = {
         if (err) return res.serverError(err);
         if (!newInstance) return res.notFound();
 
-        // If we have the pubsub hook, use the model class's publish method
-        // to notify all subscribers about the created item
-        if (req._sails.hooks.pubsub) {
-          if (req.isSocket) {
-            Model.subscribe(req, newInstance);
-            Model.introduce(newInstance);
+        var mentions = twitter.extractMentions(newInstance.body);
+        // update post mentions
+        Mention.updateModelMentions(req.user, 'body', mentions, 'post', newInstance.id, function(err, mentionedUsers) {
+          if (err) {
+            sails.log.error('post:create:Error on updateModelMentions', err);
+            return res.serverError();
           }
 
-          if ( newRecord.creator ) {
-            // send the change to others user connected devices
-            sails.io.sockets.in('user_' + newRecord.creator).emit(
-              'post', {
-                id: newInstance.id,
-                verb: 'created',
-                data: newInstance
-              }
-            );
+          newInstance.mentions = mentionedUsers;
+
+          // If we have the pubsub hook, use the model class's publish method
+          // to notify all subscribers about the created item
+          if (req._sails.hooks.pubsub) {
+            if (req.isSocket) {
+              Model.subscribe(req, newInstance);
+              Model.introduce(newInstance);
+            }
+
+            if ( newRecord.creator ) {
+              // send the change to others user connected devices
+              sails.io.sockets.in('user_' + newRecord.creator).emit(
+                'post', {
+                  id: newInstance.id,
+                  verb: 'created',
+                  data: newInstance
+                }
+              );
+            }
           }
-        }
 
-        WN.notify('post', 'created', newInstance, req.user);
+          WN.notify('post', 'created', newInstance, req.user);
 
-        // Send JSONP-friendly response if it's supported
-        // (HTTP 201: Created)
-
-        res.status(201);
-        res.ok({ post: newInstance});
+          res.status(201);
+          res.ok({ post: newInstance});
+        });
       });
 
     });
@@ -193,7 +210,7 @@ module.exports = {
       if (err) return res.serverError(err);
       if (!matchingRecord) return res.notFound();
 
-      Model.update(pk, values).exec(function updated(err, records) {
+      Model.update(pk, values).exec(function updated (err, records) {
 
         // Differentiate between waterline-originated validation errors
         // and serious underlying issues. Respond with badRequest if a
@@ -212,33 +229,48 @@ module.exports = {
 
         var updatedRecord = records[0];
 
-        // If we have the pubsub hook, use the Model's publish method
-        // to notify all subscribers about the update.
-        if (req._sails.hooks.pubsub) {
-          if ( updatedRecord.creator ) {
-            // send the change to others user connected devices
-            sails.io.sockets.in('follow_user_' + updatedRecord.creator).emit(
-              'post', {
-                id: updatedRecord.id,
-                verb: 'created',
-                data: updatedRecord
-              }
-            );
+        var mentions = twitter.extractMentions(values.body);
+        // update post mentions
+        Mention.updateModelMentions(req.user, 'body', mentions, 'post', pk, function(err, mentionedUsers) {
+          if (err) {
+            sails.log.error('Error on updateModelMentions', err);
+            return res.serverError();
           }
-        }
-        // Do a final query to populate the associations of the record.
-        //
-        Model.findOne(updatedRecord[Model.primaryKey])
-          .populate('images')
-          .populate('sharedIn')
-        .exec(function found(err, populatedRecord) {
-          if (err) return res.serverError(err);
-          if (!populatedRecord) return res.serverError('Could not find record after updating!');
 
-            res.ok({post: populatedRecord});
-        }); // </foundAgain>
+          updatedRecord.mentions = mentionedUsers;
+
+          // If we have the pubsub hook, use the Model's publish method
+          // to notify all subscribers about the update.
+          if (req._sails.hooks.pubsub) {
+            if ( updatedRecord.creator ) {
+              // send the change to others user connected devices
+              sails.io.sockets.in('follow_user_' + updatedRecord.creator).emit(
+                'post', {
+                  id: updatedRecord.id,
+                  verb: 'created',
+                  data: updatedRecord
+                }
+              );
+            }
+          }
+          // Do a final query to populate the associations of the record.
+          //
+          Model.findOne(updatedRecord[Model.primaryKey])
+            .populate('images')
+            .populate('sharedIn')
+          .exec(function found(err, populatedRecord) {
+            if (err) return res.serverError(err);
+            if (!populatedRecord) return res.serverError('Could not find record after updating!');
+
+              res.ok({post: populatedRecord});
+          }); // </foundAgain>
+
+        })
+
 
       });// </updated>
+
+
     }); // </found>
   }
 };
