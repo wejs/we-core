@@ -34,7 +34,7 @@ weSendEmail.setConfigs(sails.config.email);
 // };
 
 exports.sendAccontActivationEmail = function(user, siteBaseUrl, cb){
-  AuthToken.create( { 'user_id': user.id} ).exec(function(error, token) {
+  AccessToken.create({ 'userId': user.id }).exec(function(error, token) {
     if(error) return cb(error);
 
     var options = {};

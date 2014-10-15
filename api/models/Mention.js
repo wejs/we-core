@@ -1,3 +1,4 @@
+
 /**
  * Mention
  *
@@ -30,7 +31,14 @@ module.exports = {
     // model atribute where user is mentioned
     attribute: {
       type: 'string'
-    }
+    },
+    // // After register one create activity
+    // afterCreate: function(record, next) {
+    //   sails.log.warn('afterCreate', record);
+    //   // emit one event to plug others we.js features
+    //   sails.emit('we:model:mention:afterCreate', record);
+    //   next();
+    // }
   },
 
   updateModelMentions: function(actor, attribute, mentions, modelName, modelId, cb) {
@@ -89,7 +97,13 @@ module.exports = {
       });
     }
 
-    Mention.create(query).exec(cb);
+    Mention.create(query).exec(function(err, mentions){
+      if ( err ) return cb(err);
+
+      mentions.forEach(function(mention){
+        sails.emit('we:model:mention:afterCreate', mention);
+      })
+    });
   },
 
   clearModelMentions: function(modelName, modelId, cb) {
