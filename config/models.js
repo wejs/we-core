@@ -6,12 +6,12 @@
 //  * in each of your models.
 //  */
 
-// module.exports.models = {
+module.exports.models = {
 
-//   // Your app's default connection.
-//   // i.e. the name of one of your app's connections (see `config/connections.js`)
-//   //
-//   // (defaults to localDiskDb)
-//   migrate: 'safe',
-//   connection: 'localDiskDb'
-// };
+  // Your app's default connection.
+  // i.e. the name of one of your app's connections (see `config/connections.js`)
+  //
+  // (defaults to localDiskDb)
+  migrate: 'safe',
+  connection: 'default'
+};
