@@ -20,7 +20,7 @@
     "twitter-text": "^1.9.4",
     "we-helpers": "0.0.5",
     "we-send-email": "0.0.4",
-    "we-theme-engine": "0.0.10"
+    "we-theme-engine": "0.0.12"
   },
   "main": "lib/index.js",
   "scripts": {
