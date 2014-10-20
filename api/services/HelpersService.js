@@ -16,6 +16,8 @@ exports.getModelsAttributes = function(){
 /**
  * Get requireJs preload config like urlArgs used for files refresh
  * @return {string} urlArgs from config or a empty string
+ *
+ * DEPRECATED!
  */
 exports.getRequirejsPreloadConfig = function(){
   // if forceBrowserCacheRefresh is true force browser refresh with require.js urlArgs ...
@@ -25,8 +27,10 @@ exports.getRequirejsPreloadConfig = function(){
 /**
  * Get requireJs script tag
  * @return {string} script tag with requirejs configs
+ *
+ * DEPRECATED! use HelpersService.getJsScriptTag();
  */
-exports.getRequireJsScriptTag = function(){
+exports.getRequireJsScriptTag = function() {
   return HelpersService.getJsScriptTag();
 };
 
@@ -83,6 +87,58 @@ exports.getJsScriptTag = function(){
 };
 
 /**
+ * Get javascript assets tags to print in sails.js template for admin theme
+ *
+ * @todo  move this logic to we-theme-engine
+ * @return {string} string with <link> tags and project js files based on enviroment
+ */
+exports.getAdminJsScriptTag = function(){
+  var tags = '';
+  var refreshString;
+
+  // refresh string
+  if(sails.config.clientside.forceBrowserCacheRefresh) {
+    refreshString = Math.floor(Math.random() * 1000);
+    sails.log.info('config:clientside.forceBrowserCacheRefresh enabled '+
+      refreshString + ' will be added in all .js assets files.');
+  } else {
+    // by default get refresh string from package version
+    refreshString = require('../../package.json').version;
+  }
+
+  if(sails.config.environment === 'production'){
+    // client side production global variable
+    tags = '<script>window.PRODUCTION_ENV = true;</script>';
+    // production concatened and minified js files
+    tags += '<script src="/min/admin.production.js?v='+refreshString+'"></script>';
+    // user translations file
+    tags += '<script src="/api/v1/translations.js?v='+refreshString+'"></script>';
+
+    return tags;
+  }
+
+  var urls = themeEngine.getProjectAdminJsAssetsFiles();
+
+  urls.forEach(function(url){
+    tags += '<script src="/'+url+'?v='+refreshString+'"></script>';
+  });
+
+  tags += '<script src="/api/v1/translations.js"></script>';
+
+  tags += '<script src="/admin.tpls.hbs.js?v='+refreshString+'"></script>';
+
+  if(sails.themes.admin.javascript)
+      tags += '<script src="/theme/'+sails.themes.admin.javascript+'?v='+refreshString+'"></script>';
+
+  // load live reload script tag
+  if(sails.config.clientside.enableLiveReload){
+    tags += '<script src="'+sails.config.clientside.liveReloadUrl+'"></script>';
+  }
+
+  return tags;
+};
+
+/**
  * Get css assets tags to print in sails.js template
  *
  * @todo  move this logic to we-theme-engine
@@ -101,17 +157,49 @@ exports.getlinkCssTags = function() {
     refreshString = require('../../package.json').version;
   }
 
+  var urls = themeEngine.getProjectCSSAssetsFiles();
+
   if(sails.config.environment == 'production'){
     tags += '<link rel="stylesheet" href="/min/production.css?v='+refreshString+'">';
   } else {
-    sails.config.assets.css.forEach(function(src) {
+    urls.forEach(function(src) {
       tags += '<link rel="stylesheet" href="/'+src+ '?v=' + refreshString+'">';
     });
   }
 
-  if (themeEngine.stylesheet) {
-    tags += '<link rel="stylesheet" href="/theme/'+themeEngine.stylesheet+'?v='+refreshString+'">';
+  if (sails.themes.active.config.stylesheet) {
+    tags += '<link rel="stylesheet" href="/theme/' + sails.themes.active.config.stylesheet + '?v=' + refreshString + '">';
   }
 
   return tags;
 };
+
+exports.getAdminlinkCssTags = function() {
+ var tags = '';
+
+  // if forceBrowserCacheRefresh is true force browser refresh
+  var refreshString = '';
+  if (sails.config.forceBrowserCacheRefresh) {
+    // get a randon number for force browser refresh assets
+    refreshString = '?ar='+ Math.floor(Math.random() * 1000);
+  } else {
+    // by default get refresh string from package version
+    refreshString = require('../../package.json').version;
+  }
+
+  var urls = themeEngine.getProjectAdminCSSAssetsFiles();
+
+  if(sails.config.environment == 'production') {
+    tags += '<link rel="stylesheet" href="/min/admin.production.css?v=' + refreshString + '">';
+  } else {
+    urls.forEach(function(src) {
+      tags += '<link rel="stylesheet" href="/' + src + '?v=' + refreshString + '">';
+    });
+  }
+
+  if (sails.themes.admin.config.stylesheet) {
+    tags += '<link rel="stylesheet" href="/adminTheme/' + sails.themes.admin.config.stylesheet + '?v=' + refreshString + '">';
+  }
+
+  return tags;
+}
