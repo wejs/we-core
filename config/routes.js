@@ -295,30 +295,30 @@ module.exports.routes = {
 
   // -- COMMENT
 
-  'post /api/v1/comment': {
-    controller    : 'comment',
-    action        : 'createOneRecord'
-  },
+  // 'post /api/v1/comment': {
+  //   controller    : 'comment',
+  //   action        : 'createOneRecord'
+  // },
 
-  'get /api/v1/comment/:id': {
-    controller    : 'comment',
-    action        : 'findOneRecord'
-  },
+  // 'get /api/v1/comment/:id': {
+  //   controller    : 'comment',
+  //   action        : 'findOneRecord'
+  // },
 
-  'get /api/v1/comment': {
-    controller    : 'comment',
-    action        : 'find'
-  },
+  // 'get /api/v1/comment': {
+  //   controller    : 'comment',
+  //   action        : 'find'
+  // },
 
-  'delete /api/v1/comment/:id': {
-    controller    : 'comment',
-    action        : 'destroyOneRecord'
-  },
+  // 'delete /api/v1/comment/:id': {
+  //   controller    : 'comment',
+  //   action        : 'destroyOneRecord'
+  // },
 
-  'put /api/v1/comment/:id': {
-    controller    : 'comment',
-    action        : 'updateOneRecord'
-  },
+  // 'put /api/v1/comment/:id': {
+  //   controller    : 'comment',
+  //   action        : 'updateOneRecord'
+  // },
 
   // -- ADMIN
   'get /admin/widgets': {
