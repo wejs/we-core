@@ -47,33 +47,6 @@ module.exports.routes = {
 
   // Standard RESTful routing
 
-  //
-  // find contact relationship status
-  'get /api/v1/user/:contactId/contact': {
-    controller    : 'contact',
-    action        : 'findOneUserContact'
-  },
-  // request
-  'post /api/v1/user/:contactId/contact-request': {
-    controller    : 'contact',
-    action        : 'requestContact'
-  },
-  // accept
-  'post /api/v1/user/:contactId/contact-accept': {
-    controller    : 'contact',
-    action        : 'acceptContact'
-  },
-  // ignore
-  'post /api/v1/user/:contactId/contact-ignore': {
-    controller    : 'contact',
-    action        : 'ignoreContact'
-  },
-  // delete contact relation
-  'delete /api/v1/user/:contactId/contact/': {
-    controller    : 'contact',
-    action        : 'deleteContact'
-  },
-
   // -- USERS
 
   // User Auth
@@ -87,12 +60,6 @@ module.exports.routes = {
     controller    : 'auth',
     action        : 'logOut'
   },
-
-  'get /api/v1/contact': {
-      controller    : 'ContactController',
-      action        : 'getAllAuthenticatedUserContacts'
-  },
-
 
   // -- POSTS
   // @todo check ir this route set is need

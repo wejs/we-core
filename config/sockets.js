@@ -16,6 +16,7 @@ module.exports.sockets = {
   // mixes in socket.io events for your routes and blueprints automatically.
   onConnect: function(session, socket) {
     var userId;
+    var Contact;
 
     // we-oauth2 user id
     userId = session.userId;
@@ -28,6 +29,12 @@ module.exports.sockets = {
 
     if (!userId) return;
 
+    if (!sails.models.contact) {
+      sails.log.verbose('contact model not found for socket.io connect event');
+      return;
+    } else {
+      Contact = sails.models.contact;
+    }
 
     // follow won sockets
     socket.join('user_' + userId);
