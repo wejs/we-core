@@ -7,25 +7,6 @@
 var fs = require('fs');
 
 module.exports = {
-  // require js main file
-  requireJSmain: function (req, res) {
-    res.set('Content-Type', 'application/javascript');
-
-    var requireJsConfig = '';
-    var requireEnvDeps = '';
-
-    requireJsConfig += requireEnvDeps;
-
-    if(sails.config.requirejs){
-      requireJsConfig += 'require.config('+ JSON.stringify(sails.config.requirejs) +');';
-    }
-
-    if(sails.config.environment === 'production'){
-      requireJsConfig = 'require(["/concat/production.js"],function(){' + requireJsConfig + '});';
-    }
-
-    res.send(200,requireJsConfig );
-  },
   /**
    * Client side configs
    * @param  {object} req

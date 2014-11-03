@@ -66,8 +66,5 @@ module.exports = {
     if ( !req.isSocket ) {
       return res.badRequest('Only can unsubscribe in socket.io');
     }
-
-
-
   }
 }

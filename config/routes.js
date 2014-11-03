@@ -28,15 +28,6 @@
 
 module.exports.routes = {
 
-  // By default, your root route (aka home page) points to a view
-  // located at `views/home/index.ejs`
-  //
-  // (This would also work if you had a file at: `/views/home.ejs`)
-  '/main.js': {
-    controller: 'main',
-    action: 'requireJSmain'
-  },
-
   '/configs.js': {
     controller: 'main',
     action: 'getConfigsJS'
@@ -52,11 +43,6 @@ module.exports.routes = {
     controller: 'main',
     action: 'index'
     //view: 'home/index'
-  },
-
-  'get /links' : {
-    controller: 'links',
-    action: 'index'
   },
 
   // Standard RESTful routing
@@ -102,212 +88,34 @@ module.exports.routes = {
     action        : 'logOut'
   },
 
-  'get /api/v1/images': {
-    controller    : 'images',
-    action        : 'list'
-  },
-
-  'get /api/v1/images/:name?': {
-    controller    : 'images',
-    action        : 'findOne'
-  },
-
-  // Image style thumbnail | medium | large
-  'get /api/v1/images/:style(original|mini|thumbnail|medium|large)/:name': {
-    controller    : 'images',
-    action        : 'findOne'
-  },
-
-  'get /api/v1/images/:id/data': {
-    controller    : 'images',
-    action        : 'findOneReturnData'
-  },
-
-  'get /api/v1/images-crop/:id': {
-    controller    : 'images',
-    action        : 'cropImage'
-  },
-
-  'post /api/v1/images': {
-    controller    : 'images',
-    action        : 'createRecord'
-  },
-
-  //  -- MESSENGER
-
-  'get /messenger/start': {
-      controller    : 'message',
-      action        : 'start'
-  },
-
   'get /api/v1/contact': {
       controller    : 'ContactController',
       action        : 'getAllAuthenticatedUserContacts'
   },
 
 
-  // TODO use sails.js blueprint for set routes
-  'get /api/v1/message/:id?': {
-      controller    : 'message',
-      action        : 'list'
-  },
-
-  'post /api/v1/message': {
-      controller    : 'message',
-      action        : 'createRecord'
-  },
-
-  // Return a list of messages between authenticated user and :uid user
-  'get /messenger/messages/with-user/:uid?': {
-      controller    : 'message',
-      action        : 'messagesWithUser'
-  },
-
-  // Return messages without toIds and roomIds
-  'get /messenger/messages/public': {
-      controller    : 'message',
-      action        : 'getPublicMessages'
-  },
-
-  // Send a message to show writing status
-  'post /messenger/user/writing': {
-      controller    : 'message',
-      action        : 'emitIamWriting'
-  },
-
-  // -- ROOMS
-
-  // 'get /rooms/:id?': {
-  //     controller    : 'rooms',
-  //     action        : 'index'
-  // },
-  // 'post /rooms': {
-  //     controller    : 'rooms',
-  //     action        : 'create'
-  // },
-  // 'put /rooms/:id?': {
-  //     controller    : 'rooms',
-  //     action        : 'update'
-  // },
-  // 'delete /rooms/:id?': {
-  //     controller    : 'rooms',
-  //     action        : 'destroy'
-  // },
-
-  // // get users in one room
-  // 'get /rooms/users/': {
-  //     controller    : 'rooms',
-  //     action        : 'usersGet'
-  // },
-
-  // add user in room
-  'post /rooms/users/:id?': {
-      controller    : 'rooms',
-      action        : 'userAdd'
-  },
-
-  // remove user from room
-  'delete /rooms/users/:id?': {
-      controller    : 'rooms',
-      action        : 'userRemove'
-  },
-
   // -- POSTS
   // @todo check ir this route set is need
-  'get /api/v1/post': {
-    controller    : 'post',
-    action        : 'list'
-  },
+  // 'get /api/v1/post': {
+  //   controller    : 'post',
+  //   action        : 'list'
+  // },
 
-  'get /api/v1/post/:id': {
-      controller    : 'post',
-      action        : 'findOneRecord'
-  },
+  // 'get /api/v1/post/:id': {
+  //     controller    : 'post',
+  //     action        : 'findOneRecord'
+  // },
 
-  // @todo check ir this route set is need
-  'post /api/v1/post': {
-    controller    : 'post',
-    action        : 'createRecord'
-  },
+  // // @todo check ir this route set is need
+  // 'post /api/v1/post': {
+  //   controller    : 'post',
+  //   action        : 'createRecord'
+  // },
 
   // 'put /api/v1/post': {
   //   controller    : 'post',
   //   action        : 'updateRecord'
   // },
-
-
-  // -- FILES
-
-  'get /files': {
-      controller    : 'files',
-      action        : 'index'
-  },
-
-  'post /files': {
-      controller    : 'files',
-      action        : 'create'
-  },
-
-  // -- COMMENT
-
-  // 'post /api/v1/comment': {
-  //   controller    : 'comment',
-  //   action        : 'createOneRecord'
-  // },
-
-  // 'get /api/v1/comment/:id': {
-  //   controller    : 'comment',
-  //   action        : 'findOneRecord'
-  // },
-
-  // 'get /api/v1/comment': {
-  //   controller    : 'comment',
-  //   action        : 'find'
-  // },
-
-  // 'delete /api/v1/comment/:id': {
-  //   controller    : 'comment',
-  //   action        : 'destroyOneRecord'
-  // },
-
-  // 'put /api/v1/comment/:id': {
-  //   controller    : 'comment',
-  //   action        : 'updateOneRecord'
-  // },
-
-  // -- ADMIN
-  'get /admin/widgets': {
-    controller    : 'main',
-    action        : 'index'
-  },
-
-  'get /admin/roles': {
-      controller    : 'roles',
-      action        : 'index'
-  },
-
-  'post /admin/roles': {
-      controller    : 'roles',
-      action        : 'create'
-  },
-
-  'put /admin/roles/:id': {
-      controller    : 'roles',
-      action        : 'update'
-  },
-
-
-  'delete /admin/roles/:id': {
-      controller    : 'roles',
-      action        : 'delete'
-  },
-
-
-  // group routes
-  'get /api/v1/group': {
-      controller    : 'group',
-      action        : 'list'
-  },
 
   // -- Pub Sub
   //
