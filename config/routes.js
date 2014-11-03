@@ -38,28 +38,7 @@ module.exports.routes = {
     action: 'getTranslations'
   },
 
-
-  '/': {
-    controller: 'main',
-    action: 'index'
-    //view: 'home/index'
-  },
-
   // Standard RESTful routing
-
-  // -- USERS
-
-  // User Auth
-
-  'get /api/v1/auth/callback/:access_token': {
-    controller    : 'auth',
-    action        : 'oauth2Callback'
-  },
-
-  '/auth/logout': {
-    controller    : 'auth',
-    action        : 'logOut'
-  },
 
   // -- POSTS
   // @todo check ir this route set is need
