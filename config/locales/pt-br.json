@@ -57,6 +57,8 @@
   "Follow": "Seguir",
   "follow": "seguir",
 
+  "comments.notAuthenticated": "<a href='{{loginUrl}}'>Login</a> ou <a href='{{registerUrl}}'>registre-se</a> para postar comentários",
+  "comments.empty": "",
 
   "login.block.button.text": "Entrar",
   "Change password": "Mudar a senha",
