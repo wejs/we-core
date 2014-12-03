@@ -1,7 +1,7 @@
 {
   "name": "we-plugin-core",
   "description": "We.js core plugin",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "keywords": [
     "we.js",
     "wejs",
@@ -17,8 +17,7 @@
     "node-uuid": "^1.4.1",
     "sanitize-html": "^1.4.2",
     "string": "^2.1.0",
-    "we-helpers": "0.0.5",
-    "we-send-email": "0.0.4",
+    "we-helpers": "0.0.6",
     "we-theme-engine": "0.0.12"
   },
   "main": "lib/index.js",
