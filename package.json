@@ -17,7 +17,6 @@
     "node-uuid": "^1.4.1",
     "sanitize-html": "^1.4.2",
     "string": "^2.1.0",
-    "twitter-text": "^1.9.4",
     "we-helpers": "0.0.6",
     "we-theme-engine": "0.0.12"
   },
