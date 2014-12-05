@@ -5,6 +5,7 @@
  * @description	:: Contains logic for handling requests.
  */
 var fs = require('fs');
+var _ = require('lodash');
 
 module.exports = {
   /**
@@ -14,6 +15,7 @@ module.exports = {
    */
   getConfigsJS: function (req, res) {
     var configs = {};
+    var sails = req._sails;
 
     // set header to never cache this response
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -29,17 +31,6 @@ module.exports = {
 
     configs.server.providers = sails.config.wejs.providers;
 
-    // -- Plugin configs
-    configs.plugins = {};
-
-    if(sails.config.clientside.loadTypes){
-      configs.plugins.loadTypes = sails.config.clientside.loadTypes;
-    }
-
-    if(sails.config.clientside.pluginsDefaultEnabled){
-      configs.plugins.enabled = sails.config.clientside.pluginsDefaultEnabled;
-    }
-
     // get log config
     configs.client.log = sails.config.clientside.log;
 
@@ -50,6 +41,11 @@ module.exports = {
     }
 
     configs.client.language = sails.config.i18n.defaultLocale;
+
+    if (sails.config.auth) {
+       configs.client.isProvider = sails.config.auth.isProvider;
+       configs.client.isConsumer = sails.config.auth.isConsumer;
+    }
 
     if(!req.isAuthenticated()){
       // send not logged in configs
@@ -62,14 +58,7 @@ module.exports = {
       configs.client.publicVars.userId = req.session.userId;
     }
 
-    // get user logged in contacts
-    // TODO DEPRECATED remove this Contact.getUserContacts getter
-    Contact.getUserContacts(req.user.id, function(err, contacts){
-      if (err) return res.negotiate(err);
-      configs.authenticatedUser.contacts = contacts;
-      res.send(configs);
-    });
-
+    res.send(configs);
   },
 
   getTranslations: function (req, res) {
