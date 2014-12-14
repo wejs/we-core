@@ -12,6 +12,7 @@ var sanitizeConfig = {
     'a', 'img',
     'hr',
     'mention',
+    'iframe',
     // text format
     'b', 'i', 'em', 'strong',  'u',
     'h1', 'h2', 'h3', 
@@ -27,7 +28,8 @@ var sanitizeConfig = {
   allowedAttributes: {
     //'span': [ 'style' ],
     'a': ['href', 'alt', 'target', 'type'],
-    'img': ['src', 'alt'],
+    'img': ['src', 'alt', 'style', 'class'],
+    'iframe': ['src', 'width', 'height', 'frameborder'],
     'mention': ['data-user-id']
   }
 };
