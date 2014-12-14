@@ -5,15 +5,16 @@ var sanitizeConfig = {
   allowedTags: [
     // text blocks
     'p',
-    //'pre',
+    'pre',
+    'code',
     'blockquote',
     'br',
-    'img',
+    'a', 'img',
     'hr',
     'mention',
     // text format
     'b', 'i', 'em', 'strong',  'u',
-    //'h1', 'h2', 'h3', 
+    'h1', 'h2', 'h3', 
     'h4', 'h5','h6',
     // list
     'ul', 'ol', 'nl', 'li'
@@ -21,11 +22,14 @@ var sanitizeConfig = {
   selfClosing: [
     'br',
     'img',
-    // 'hr'
+    'hr'
   ],
-  // allowedAttributes: {
-  //   'span': [ 'style' ]
-  // }
+  allowedAttributes: {
+    //'span': [ 'style' ],
+    'a': ['href', 'alt', 'target', 'type'],
+    'img': ['src', 'alt'],
+    'mention': ['data-user-id']
+  }
 };
 
 exports.sanitize = function(dirty){
