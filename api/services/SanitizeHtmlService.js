@@ -6,17 +6,21 @@ var sanitizeConfig = {
     // text blocks
     'p',
     //'pre',
-    //'blockquote',
+    'blockquote',
     'br',
+    'img',
+    'hr',
+    'mention',
     // text format
     'b', 'i', 'em', 'strong',  'u',
-    //'h1', 'h2', 'h3', 'h4', 'h5','h5',
+    //'h1', 'h2', 'h3', 
+    'h4', 'h5','h6',
     // list
-    //'ul', 'ol', 'nl', 'li'
+    'ul', 'ol', 'nl', 'li'
   ],
   selfClosing: [
     'br',
-    // 'img',
+    'img',
     // 'hr'
   ],
   // allowedAttributes: {
