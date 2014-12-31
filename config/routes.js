@@ -38,6 +38,12 @@ module.exports.routes = {
     action: 'getTranslations'
   },
 
+  // ember.js models generated from sails.js models
+  'get /api/v1/models/emberjs': {
+    controller: 'main',
+    action: 'getAllModelsAsEmberModel'
+  },
+
   // -- Pub Sub
   //
   // subscribe from socket.io updates

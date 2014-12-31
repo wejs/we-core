@@ -6,6 +6,8 @@
  */
 var fs = require('fs');
 var _ = require('lodash');
+var converter = require('sails-emberjs-model-converter');
+var staticEmberModels;
 
 module.exports = {
   /**
@@ -118,6 +120,24 @@ module.exports = {
 
     });
 
+  },
+
+  /**
+   * Get all sails models converted to ember.js model
+   *
+   * TODO check if user is admin
+   */
+  getAllModelsAsEmberModel: function(req, res) {
+    var sails = req._sails;
+
+    // cache it in a static variable
+    if ( !staticEmberModels) {
+      staticEmberModels = converter.convertMultipleToEmberJSFile(sails.models)
+    }
+
+    res.set('Content-Type', 'application/javascript');
+
+    res.send(staticEmberModels);
   }
 };
 
