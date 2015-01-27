@@ -1,0 +1,15 @@
+{{!-- <div class="admin-page-actions">
+	Editar Blocos
+
+	{{#each view.blocks}}
+		<div class='sortable-item' {{bind-attr data-block-id=id }}>
+			{{render 'block-form' this}}
+		</div>
+	{{/each}}
+</div> --}}
+
+{{#each view.regions}}
+ {{!--  {{renderComponent view.widget.componentName widget=view.widget model=model}} --}}
+	{{view this}}
+{{!-- {{we-block block=this}} --}}
+{{/each}}

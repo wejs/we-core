@@ -55,7 +55,13 @@ module.exports.routes = {
   'post /api/v1/unsubscribe': {
       controller    : 'PubsubController',
       action        : 'unsubscribe'
+  },
+
+  'get /api/v1/fetchActionPermissions': {
+      controller    : 'PermissionController',
+      action        : 'fetchActionPermissions'
   }
+
 };
 
 

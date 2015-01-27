@@ -1,0 +1,35 @@
+<div class="actions">
+  {{#link-to 'roles.create' classNames="btn btn-default"}}
+    {{t 'admin.create.role'}}
+  {{/link-to}}
+
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Permission</th>
+
+      {{#each roles}}
+        <th>{{name}}</th>
+      {{/each}}
+
+      <th>administrator</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each permission in records}}
+      <tr>
+        <th scope="row">{{permission.name}}</th>
+
+      {{#each role in roles}}
+        {{we-role-permission-checkbox role=role permission=permission}}
+      {{/each}}
+
+      <td>
+        <input type="checkbox" disabled="true" checked="true">
+      </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

@@ -1,0 +1,23 @@
+{{#each menu.links}}
+  <li>
+    {{#if external}}
+      <a {{bind-attr href=href}}  {{bind-attr target=target}}>
+        {{text}}
+      </a>
+    {{else}}
+      {{#if modelId}}
+
+        {{#link-to model modelId}}
+          {{text}}
+        {{/link-to}}
+
+      {{else}}
+
+        {{#link-to model}}
+          {{text}}
+        {{/link-to}}
+
+      {{/if}}
+    {{/if}}
+  </li>
+{{/each}}

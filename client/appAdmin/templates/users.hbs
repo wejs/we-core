@@ -1,0 +1,54 @@
+{{we-title title='admin.users.title'}}
+
+<div class='row'>
+  <div class='col-md-12'>
+    {{#link-to 'user.create' classNames="btn btn-default"}}
+      <span class="text-primary glyphicon glyphicon-plus"></span> {{t "create"}}
+    {{/link-to}}
+  </div>
+</div>
+<br>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        {{#each attributes}}
+          <th>{{this}}</th>
+        {{/each}}
+      </tr>
+    </thead>
+
+    <tbody>
+       {{#each record in records}}
+        <tr>
+					{{#each attribute in attributes}}
+	          <td>{{sub-atribute ../record attribute}}</td>
+	        {{/each}}
+
+{{!--           <td>
+            {{#link-to 'user' record.id}}
+              {{record.id}}
+            {{/link-to}}
+          </td>
+          <td>
+            {{#link-to 'user' record.id}}
+              {{record.name}}
+            {{/link-to}}
+          </td>
+          <td>
+            {{record.description}}
+          </td>
+          <td>
+            {{date record.createdAt}}
+          </td>
+          <td>
+            {{date record.updatedAt}}
+          </td> --}}
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+

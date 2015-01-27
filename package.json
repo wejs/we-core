@@ -1,7 +1,7 @@
 {
   "name": "we-plugin-core",
   "description": "We.js core plugin",
-  "version": "0.0.20",
+  "version": "0.2.0",
   "keywords": [
     "we.js",
     "wejs",
@@ -15,11 +15,11 @@
     "lodash": "^2.4.1",
     "mkdirp": "^0.5.0",
     "node-uuid": "^1.4.1",
-    "sails-emberjs-model-converter": "0.0.2",
+    "sails-emberjs-model-converter": "0.1.0",
     "sanitize-html": "^1.4.2",
     "string": "^2.1.0",
     "we-helpers": "0.0.7",
-    "we-theme-engine": "0.0.12"
+    "we-theme-engine": "0.0.15"
   },
   "main": "lib/index.js",
   "scripts": {
@@ -40,6 +40,9 @@
     "istanbul": "^0.2.7",
     "jshint": "^2.5.0",
     "jscs": "^1.4.5"
+  },
+  "sails": {
+    "isHook": true
   },
   "repository": {
     "type": "git",

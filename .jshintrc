@@ -32,6 +32,9 @@
   , "beforeEach"
   , "after"
   , "afterEach"
+  , "Ember"
+  , "App"
+  , "DS"
   ]
 , "smarttabs": true
 , "strict": false
