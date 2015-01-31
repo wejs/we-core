@@ -17,6 +17,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
   beforeModel: function() {
     var self = this;
+    var store = this.get('store');
 
     App.configs.set('client',  window.we.configs.client);
 
@@ -39,34 +40,35 @@ App.ApplicationRoute = Ember.Route.extend({
           if(data.status === 400 && !data.responseJSON.isValid){
             App.auth.logOut();
           }
-        })
+        }),
+      loadPermissionsAndRoles: Permissions.loadAndRegisterAllPermissions(store)
     });
   },
   model: function() {
     var promisse = {};
     if (App.get('auth.isAuthenticated')) {
       if (App.Contact) {
-        // promisse.contacts = this.store.find('contact');
+        promisse.contacts = this.store.find('contact');
       }
     }
     return Ember.RSVP.hash(promisse);
   },
-  // afterModel: function(model) {
-  //   if (App.get('auth.isAuthenticated')) {
-  //     if (App.Contact) {
-  //       // set filter for mentionOptions
-  //       App.set('currentUser.mentionOptions', this.get('store').filter('contact', function (contact) {
-  //         if (contact.get('status') === 'accepted') {
-  //           return true;
-  //         }
-  //         return false;
-  //       }));
-  //     }
-  //     App.get('WeNotification').loadNotificationCount();
-  //   } else {
-  //     App.set('currentUser.mentionOptions', []);
-  //   }
-  // },
+  afterModel: function(model) {
+    if (App.get('auth.isAuthenticated')) {
+      if (App.Contact) {
+        // set filter for mentionOptions
+        App.set('currentUser.mentionOptions', this.get('store').filter('contact', function (contact) {
+          if (contact.get('status') === 'accepted') {
+            return true;
+          }
+          return false;
+        }));
+      }
+      App.get('WeNotification').loadNotificationCount();
+    } else {
+      App.set('currentUser.mentionOptions', []);
+    }
+  },
   actions: {
     willTransition: function () {
       NProgress.start();

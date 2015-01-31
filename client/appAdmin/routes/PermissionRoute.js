@@ -6,7 +6,6 @@ App.Router.map(function(match) {
     this.resource('roles',{path: '/roles'}, function() {
       this.route('create',{path: '/add'});
 
-
       this.resource('role',{path: '/role/:id'}, function(){
         this.route('edit',{path: '/edit'});
       });

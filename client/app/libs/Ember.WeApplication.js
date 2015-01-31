@@ -18,7 +18,9 @@ Ember.WeApplication = Ember.Application.extend({
     vocabularyId: 1,
     imageUploadUrl: '/api/v1/images',
     wembedApiUrl: '',
-    locale: 'pt-br'
+    locale: 'pt-br',
+
+    permissionHost: ''
   }),
 
   // ember application reary event

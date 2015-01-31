@@ -10,6 +10,10 @@ var converter = require('sails-emberjs-model-converter');
 var staticEmberModels;
 
 module.exports = {
+  _config: {
+    acl: false
+  },
+
   /**
    * Client side configs
    * @param  {object} req

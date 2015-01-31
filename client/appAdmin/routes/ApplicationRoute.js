@@ -2,6 +2,7 @@
 App.ApplicationRoute = Ember.Route.extend({
   beforeModel: function() {
     var self = this;
+    var store = this.get('store');
 
     return Ember.RSVP.hash({
       // get current user
@@ -10,7 +11,7 @@ App.ApplicationRoute = Ember.Route.extend({
           // if user is logged in
           if (data.user) {
             // TODO remove we.authenticatedUser requirement
-            we.authenticatedUser = data.user;
+            window.we.authenticatedUser = data.user;
             // ser App.currentUser and save it in store
             App.set('currentUser', self.store.push('user', data.user));
           }
@@ -22,15 +23,16 @@ App.ApplicationRoute = Ember.Route.extend({
           if(data.status === 400 && !data.responseJSON.isValid){
             App.auth.logOut();
           }
-        })
+        }),
+      loadPermissionsAndRoles: Permissions.loadAndRegisterAllPermissions(store),
     });
   },
   model: function() {
     var promisse = {};
     var user = App.currentUser;
     // only admin
-    // if(!user || ( !App.get('currentUser.isAdmin') && !App.get('currentUser.isModerator') ))
-    //   return location.href='/';
+    if(!user || ( !App.get('currentUser.isAdmin') && !App.get('currentUser.isModerator') ))
+      return location.href='/';
 
     // promisse.contacts = this.store.find('contact');
 

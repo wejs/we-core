@@ -24,6 +24,12 @@ module.exports = {
       collection: 'permission',
       via: 'roles',
       dominant: true
+    },
+
+    users: {
+      collection: 'user',
+      via: 'roles',
+      dominant: true
     }
   }
 
