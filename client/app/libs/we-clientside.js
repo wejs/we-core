@@ -648,25 +648,6 @@
 
   we.plugins.register(plugin);
 
-  we.hooks.on("we-bootstrap-configure",function(data, next){
-
-    var langUrl = '/langs/'+ we.config.language +'.json';
-    //  Load the JSON File
-    $.ajax(langUrl).success(function getLanguage(data){
-      //  Set the data
-      if(data){
-        plugin.language = data;
-      }else{
-        console.warn('No language file found');
-      }
-
-      next();
-
-    }).error(function(){
-      next();
-    });
-  });
-
   function getI18nLib(){
     var i18n = function(text, langNumOrFormatting, numOrFormattingOrContext, formattingOrContext, context) {
       var formatting, lang, num;
