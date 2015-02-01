@@ -6,15 +6,7 @@ Ember.WeApplication = Ember.Application.extend({
   // authenticated user
   currentUser: {},
 
-  appLogo: 'http://wejs.org/core/images/we-logo-branco-small.png',
-  appName: 'Blog TODO change',
-  appAbout: 'A Clean Blog Theme by Start Bootstrap TODO change',
-
   configs: Ember.Object.create({
-    appLogo: 'http://wejs.org/core/images/we-logo-branco-small.png',
-    appName: 'Blog TODO change',
-    appAbout: 'A Clean Blog Theme by Start Bootstrap TODO change',
-
     vocabularyId: 1,
     imageUploadUrl: '/api/v1/images',
     wembedApiUrl: '',

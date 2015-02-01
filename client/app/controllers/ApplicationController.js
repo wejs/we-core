@@ -1,13 +1,11 @@
 
 App.ApplicationController = Ember.Controller.extend({
-  App: App,
-
   title: function() {
-    return App.appName;
-  }.property('App.appName'),
+    return App.get('configs.client.publicVars.appName');
+  }.property('App.configs.client.publicVars.appName'),
   subTitle: function() {
-    return App.appAbout;
-  }.property('App.appAbout'),
+    return App.get('configs.client.publicVars.appAbout');
+  }.property('App.configs.client.publicVars.appAbout'),
 
   breadCrumb: 'Inicio',
   resetQuery: null,

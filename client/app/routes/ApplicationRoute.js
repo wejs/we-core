@@ -51,6 +51,9 @@ App.ApplicationRoute = Ember.Route.extend({
         promisse.contacts = this.store.find('contact');
       }
     }
+    // app configs
+    promisse.configs = App.configs;
+
     return Ember.RSVP.hash(promisse);
   },
   afterModel: function(model) {
