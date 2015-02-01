@@ -14,14 +14,26 @@ module.exports = {
   find: function findAll(req, res) {
     var Model = req._sails.models.permission;
 
-    var query = Model.find()
+    Model.find()
     .limit( 300 )
     .sort('name DESC')
-    // TODO: .populateEach(req.options);
-    query = actionUtil.populateEach(query, req);
-    query.exec(function found(err, matchingRecords) {
+    .populate('roles')
+    .exec(function found(err, matchingRecords) {
       if (err) return res.serverError(err);
       res.ok(matchingRecords);
+    });
+  },
+
+  findOne: function findOneRecord (req, res) {
+    var pk = actionUtil.requirePk(req);
+
+    req._sails.models.permission.findOne(pk)
+    .populate('roles')
+    .exec(function found(err, matchingRecord) {
+      if (err) return res.serverError(err);
+      if(!matchingRecord) return res.notFound('No record found with the specified `id`.');
+
+      res.ok(matchingRecord);
     });
   },
 

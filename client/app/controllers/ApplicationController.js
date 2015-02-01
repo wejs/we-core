@@ -18,6 +18,10 @@ App.ApplicationController = Ember.Controller.extend({
     return App.get('auth');
   }.property('App.auth'),
 
+  configs: function() {
+    return App.get('configs');
+  }.property('App.configs'),
+
   showOauthLogin: function() {
     if(App.get('auth.isConsumer') && !App.get('auth.devLogin')) {
       return true;
