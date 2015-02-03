@@ -27,20 +27,5 @@ Ember.WeApplication = Ember.Application.extend({
       this.set('LOG_TRANSITIONS_INTERNAL', true);
       this.set('LOG_VIEW_LOOKUPS', true);
     }
-  },
-
-  activate: function() {
-    var cssClass = this.toCssClass();
-    // you probably don't need the application class
-    // to be added to the body
-    if (cssClass !== 'application') {
-      Ember.$('body').addClass(cssClass);
-    }
-  },
-  deactivate: function() {
-    Ember.$('body').removeClass(this.toCssClass());
-  },
-  toCssClass: function() {
-    return this.routeName.replace(/\./g, '-').dasherize();
   }
 });

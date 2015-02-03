@@ -98,9 +98,6 @@
     }
   });
 
-
-
-
   // wait document ready ...
   $( document ).ready(function() {
     we.bootstrap(function() {
