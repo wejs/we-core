@@ -2,7 +2,7 @@
 App.WePaginationComponent = Ember.Component.extend({
   currentPage: null,
   totalPages: null,
-  maxPagesToDisplay: 11,
+  maxPagesToDisplay: 9,
 
   // default actions
   onPageClicked: 'pagerChangePage',
