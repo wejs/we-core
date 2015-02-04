@@ -1,7 +1,7 @@
 {
   "name": "we-plugin-core",
   "description": "We.js core plugin",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "keywords": [
     "we.js",
     "wejs",
