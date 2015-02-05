@@ -7,5 +7,9 @@ App.ApplicationController = Ember.Controller.extend({
     }else{
       return false;
     }
-  }.property('App.auth.isAuthenticated')
+  }.property('App.auth.isAuthenticated'),
+
+  currentUser: function () {
+    return App.get('currentUser');
+  }.property('App.currentUser')
 });
