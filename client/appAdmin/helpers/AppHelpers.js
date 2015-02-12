@@ -5,6 +5,12 @@
     return moment(date).fromNow();
   });
 
+  Ember.Handlebars.helper('date', function(date, options) {
+    var format = options.hash.format;
+    if(!format) format = 'DD/MM/YYYY, hh:mm:ss';
+    return moment(date).format(format);
+  });
+
   // Limit string length
   // usage: {{substr description max=20}}
   // or {{substr description start=5 max=20}}
