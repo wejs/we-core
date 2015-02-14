@@ -17,7 +17,7 @@
     "node-uuid": "^1.4.1",
     "sails-emberjs-model-converter": "0.1.0",
     "sanitize-html": "^1.5.2",
-    "string": "^2.1.0",
+    "string": "^2.2.0",
     "we-helpers": ">=0.0.7",
     "we-theme-engine": "0.0.15"
   },

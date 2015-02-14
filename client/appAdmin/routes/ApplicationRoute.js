@@ -1,8 +1,23 @@
+// Map app routers
+App.Router.map(function() {
+  this.resource('home',{path: '/'});
+
+  this.route('forbiden', { path: 'forbiden'});
+  // 404 page
+  this.route('404', { path: '404'});
+  // 500 page
+  this.route('500', { path: '500'});
+  // use unknown page to redirect to 404
+  this.route('unknown', { path: '*path'});
+});
+
 
 App.ApplicationRoute = Ember.Route.extend({
   beforeModel: function() {
     var self = this;
     var store = this.get('store');
+
+    App.configs.set('client',  window.we.configs.client);
 
     return Ember.RSVP.hash({
       // get current user
@@ -34,7 +49,8 @@ App.ApplicationRoute = Ember.Route.extend({
     if(!user || ( !App.get('currentUser.isAdmin') && !App.get('currentUser.isModerator') ))
       return location.href='/';
 
-    // promisse.contacts = this.store.find('contact');
+    // app configs
+    promisse.configs = App.configs;
 
     return Ember.RSVP.hash(promisse);
   },
@@ -63,6 +79,13 @@ App.ApplicationRoute = Ember.Route.extend({
       NProgress.done(true);
     },
 
+    logRegister: function () {
+      App.auth.registerUser();
+    },
+
+    logIn: function () {
+      App.auth.authenticate();
+    },
     /**
      * Log out current user
      */
