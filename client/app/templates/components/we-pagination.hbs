@@ -11,15 +11,22 @@
     {{/if}}
 
     {{#each item in pageItems}}
-      {{#if item.current}}
-        <li class="active page-number">
-          <button class="btn btn-primary active">{{item.page}}</button>
+      {{#if item.ellipses}}
+        <li class="page-number">
+          <button disabled='disabled' type="button" class="btn btn-default disabled">...</button>
         </li>
       {{else}}
-        <li class="page-number">
-          <button {{action "pageClicked" item.page}} class="btn btn-default">{{item.page}}</button>
-        </li>
+        {{#if item.current}}
+          <li class="active page-number">
+            <button class="btn btn-primary active">{{item.page}}</button>
+          </li>
+        {{else}}
+          <li class="page-number">
+            <button {{action "pageClicked" item.page}} class="btn btn-default">{{item.page}}</button>
+          </li>
+        {{/if}}
       {{/if}}
+
     {{/each}}
 
     {{#if canStepForward}}

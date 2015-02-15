@@ -76,7 +76,6 @@ App.WePaginationComponent = Ember.Component.extend({
       return this.sendAction('onPageClicked', number)
     },
     stepForward: function() {
-      console.warn('vai')
       return this.sendAction('onStepForward');
     },
     stepBackward: function() {
