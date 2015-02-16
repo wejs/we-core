@@ -85,20 +85,19 @@ Permissions = {
       roles = Permissions.currentUserRolesCache;
     } else {
       // if dont have cache
-
       // unAuthenticated
-      if ( !App.get('currentUser.id') )
-        return [
-          Permissions.defaultRoles.unAuthenticated
-        ]
+      if ( !App.get('currentUser.id') ) {
+        return [ Permissions.defaultRoles.unAuthenticated ];
+      }
 
-      var rolesObj = App.get('currentUser.roles.content');
+      var rolesObj = App.get('currentUser.roles').toArray();
 
       for (var i = rolesObj.length - 1; i >= 0; i--) {
         roles.push(Ember.get(rolesObj[i], 'id'));
       }
 
       roles.push(Permissions.defaultRoles.authenticated);
+
       Permissions.currentUserRolesCache = roles;
     }
     return roles;
@@ -179,7 +178,34 @@ Permissions = {
     return false;
   },
 
+  rolesIsLoaded: false,
+  loadAndRegisterAllRoles: function(store) {
+    if (Permissions.rolesIsLoaded) return;
+    var rolesUrl = '/role';
+    var host = Ember.get('App.configs.permissionHost');
+    if ( host ) {
+      rolesUrl = host + rolesUrl;
+    }
+
+    return $.getJSON( rolesUrl )
+    .done(function afterLoadData(data) {
+      if (data.role) {
+        store.pushMany('role', data.role);
+        data.role.forEach(function(role) {
+          Permissions.defaultRoles[role.name] = role.id;
+        })
+
+        Permissions.rolesIsLoaded = true;
+      }
+    })
+    .fail(function (data) {
+      Ember.Logger.error('Error on load roles' , data);
+    })
+  },
+
   loadAndRegisterAllPermissions: function(store) {
+    Permissions.loadAndRegisterAllRoles(store);
+
     var permissionsUrl = '/permission';
     var permissionsHost = Ember.get('App.configs.permissionHost');
     if ( permissionsHost ) {
@@ -191,14 +217,6 @@ Permissions = {
       if (data.permission) {
         // register all permissions
         Permissions.registerAll(data.permission);
-      }
-
-      if (data.role) {
-        store.pushMany('role', data.role);
-
-        data.role.forEach(function(role) {
-          Permissions.defaultRoles[role.name] = role.id;
-        })
       }
     })
     .fail(function (data) {
