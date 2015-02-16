@@ -19,6 +19,7 @@ window.Handlebars.registerHelper('can', function(permissionName, modelName, mode
   }
 
   var canAttName = Permissions.makeCanName(permissionName, modelName, model);
+
   // set can value
   this.set(canAttName, Permissions.can(permissionName, modelName, model));
   return Ember.Handlebars.helpers.unboundIf.call(this, canAttName, options);
