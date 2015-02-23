@@ -2,7 +2,7 @@
 
 App.DateFieldComponent = Ember.Component.extend({
   tagName: 'input',
-  attributeBindings: ['readonly'],
+  attributeBindings: ['readonly', 'placeholder'],
   format: 'DD/MM/YYYY',
   
   setupPikaday: function() {
@@ -16,7 +16,9 @@ App.DateFieldComponent = Ember.Component.extend({
         });
       },
       firstDay: 1,
-      format: this.get('format')
+      format: this.get('format'),
+      minDate: new Date('1900', '01', '01'),
+      yearRange: [1900,2015]
     };
 
     if (this.get('i18n')) {
