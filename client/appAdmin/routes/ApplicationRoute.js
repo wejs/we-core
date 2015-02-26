@@ -2,7 +2,7 @@
 App.Router.map(function() {
   this.resource('home',{path: '/'});
 
-  this.route('forbiden', { path: 'forbiden'});
+  this.route('forbidden', { path: 'forbidden'});
   // 404 page
   this.route('404', { path: '404'});
   // 500 page
