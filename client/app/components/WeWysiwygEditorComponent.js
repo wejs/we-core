@@ -23,16 +23,22 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
 
   // Expose component to delegate's controller
   init: function() {
-     this._super.apply(this, arguments);
+    this._super.apply(this, arguments);
 
-     if (this.get('delegate')) {
-        this.get('delegate').set(this.get('property') || 'WeEditor', this);
-     }
+    if (this.get('delegate')) {
+      this.get('delegate').set(this.get('property') || 'WeEditor', this);
+    }
+
+    if (this.get('limit')) {
+      this.addObserver('value', this, this.countCharacters);
+    }     
   },
 
-  didInsertElement: function() {
+  didInsertElement: function () {
     this._super();
-
+    
+    this.countCharacters();
+    
     var self = this;
     var value = self.get('value');
     if (!value) value = '';
@@ -54,7 +60,7 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
       lang: this.get('lang'),
       focus: this.get('focus'),
       styleWithSpan: false,
-      toolbar: toobar,
+      toolbar: toobar,     
       onblur: function() {
         self.set('value',editor.code());
       },
@@ -64,6 +70,20 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
         editor.insertImage(welEditable, url);
       }
     };
+
+    if (this.get('limit')) {
+      editorConfigs.onkeydown = function(e){
+        var num = self.get('editor').code().replace(/&nbsp;/g,' ').replace(/(<([^>]+)>)/ig,'').length;
+        var key = e.keyCode;;
+        var allowed_keys = [8, 37, 38, 39, 40, 46]
+        if($.inArray(key, allowed_keys) != -1)
+            return true
+        else if( num >= parseInt(self.get('limit')) ){
+            e.preventDefault();
+            e.stopPropagation()
+        }
+      } 
+    }    
 
     // make on change event optional
     if (this.get('onChangeText')) {
@@ -125,7 +145,19 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
 
   empty: function(){
     this.get('editor').code('');
-  }
+  },
+
+  countCharacters: function () {
+    // body...
+    if (!this.get('value')) {
+      return this.set('trackCount', parseInt(this.get('limit')));
+    }
+    var diff = parseInt(this.get('limit')) - this.get('value').replace(/&nbsp;/g,' ').replace(/(<([^>]+)>)/ig,'').length;
+    if (diff < 0) {
+      return this.set('trackCount', 0);
+    }
+    return this.set('trackCount', diff);
+  }    
 
 });
 
