@@ -2,30 +2,35 @@
  * We.js plugin config
  */
 
-module.exports = function(we) {
-  return {
-    configs: {
-      log: {
-        level: 'debug'
-      },
-
-      favicon: we.projectPath + '/files/public/favicon.ico',
-
-      routes: {
-        // homepage
-        'get /': {
-          controller: 'main',
-          action: 'index'
-        },
-
-        // 'get /emberjs/app.js': {
-        //   controller: 'main',
-        //   action: 'getEmberApp'
-        // }
+module.exports = function pluginConstructor(we) {
+  var plugin = new we.class.Plugin(__dirname);
+  // set plugin configs
+  plugin.setConfigs({
+    log: {
+      level: 'debug'
+    },
+    upload: {
+      dest: we.projectPath + '/files/tmp',
+      rename: function (fieldname, filename) {
+        return filename.replace(/\W+/g, '-').toLowerCase() + Date.now()
       }
     },
-    onLoad: function(we, cb) {
-      cb();
-    }
-  }   
-}
+    favicon: we.projectPath + '/files/public/favicon.ico'
+  });
+  // load models and controllers
+  plugin.loadFeatures();
+  // ser plugin routes
+  plugin.setRoutes({
+    // homepage
+    'get /': {
+      controller: 'main',
+      action: 'index'
+    },
+    // 'get /emberjs/app.js': {
+    //   controller: 'main',
+    //   action: 'getEmberApp'
+    // }    
+  });
+
+  return plugin;
+};
