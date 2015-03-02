@@ -1,15 +1,14 @@
 /**
- * Focus Input field
+ * Countable Input field
  *
  * This field set focus after inserted in DOM
  *
  * Usage:
- *   {{focus-input value=yourValue}}
+ *   {{countable-input value=yourValue limit="140" trackCount=count}}
  *
  */
 
-App.FocusInputComponent = Ember.TextField.extend({
-
+App.CountableInputComponent = Ember.TextField.extend({
 	init: function () {
 		// body...
 		this._super.apply(this, arguments);
@@ -21,14 +20,6 @@ App.FocusInputComponent = Ember.TextField.extend({
 
 	didInsertElement: function () {
 		this.countCharacters();
-
-    this.$().focus(function onFocusInput() {
-      // move the cursor to end of editing text
-      this.selectionStart = this.selectionEnd = this.value.length;
-    });
-    // trigger the focus
-
-    this.$().focus();		
 	},
 
 	countCharacters: function () {
@@ -42,6 +33,5 @@ App.FocusInputComponent = Ember.TextField.extend({
 			return this.set('trackCount', 0);
 		}
 		return this.set('trackCount', diff);
-	}  
-
+	}
 });
