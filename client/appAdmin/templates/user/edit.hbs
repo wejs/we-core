@@ -1,0 +1,40 @@
+<form class="form-horizontal">
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Username</label>
+    <div class="col-sm-10">
+			{{input type="text" name="username" value=record.username required="true" classNames="form-control"}}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Biography</label>
+    <div class="col-sm-10">
+    	{{input type="text" name="biography" value=record.biography required="true" classNames="form-control"}}      
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-10">
+    	{{input type="text" name="email" value=record.email required="true" classNames="form-control"}}      
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">DisplayName</label>
+    <div class="col-sm-10">
+    	{{input type="text" name="displayName" value=record.displayName required="true" classNames="form-control"}}      
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Active</label>
+    <div class="col-sm-10">
+      {{input type="checkbox" name="active" checked=record.active class="form-control"}}
+    </div>
+  </div>
+	<div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="button" class="btn btn-success save-success" {{action 'save'}}>Salvar</button>
+			{{#link-to 'user.view' record.id class="btn btn-default"}}
+      Cancelar
+    	{{/link-to}}
+    </div>
+  </div>  
+</form>

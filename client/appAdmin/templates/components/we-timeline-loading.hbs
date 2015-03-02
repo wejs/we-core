@@ -1,0 +1,11 @@
+<div class="loading-more-content text-center">
+  {{#if loadingMore}}
+    {{t 'Loading more'}}... <img src="/core/images/loading.gif">
+  {{else}}
+    {{#if haveMore}}
+      <a href='#' {{action 'getMore'}}>{{t 'Get More'}}</a>
+    {{else}}
+      {{t 'No more content'}}
+    {{/if}}
+  {{/if}}
+</div>

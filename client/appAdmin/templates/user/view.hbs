@@ -1,0 +1,19 @@
+{{partial "partials/toolbar"}}
+<br>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover table-striped">
+    <tbody>
+      {{#each attribute in attributes}}
+        <tr>
+          <th>{{attribute}}</th>
+          <td>{{sub-atribute record attribute}}</td>
+        </tr>        
+      {{/each}}    
+    </tbody>
+  </table>
+</div>
+
+{{partial "partials/toolbar"}}
+
+{{we-account-modal user=record}}

@@ -1,0 +1,84 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <h4 class="modal-title">Gerenciar Senha</h4>
+    </div>
+    <div class="modal-body">
+      <div class="btn-group btn-group-justified" role="group" aria-label="...">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default" {{action 'tabLink'}}>Gerar Link</button>
+        </div>
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default" {{action 'tabPassword'}}>Definir Nova Senha</button>
+        </div>
+      </div>
+      <div class="container-fluid">
+        {{#if toogle}}
+        <div class="create-link">
+          <div class="text-center">
+            <br>
+            <p>Gere um novo link para o usuário resetar a senha!</p>
+            <br>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="input-group">
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-primary generate-reset-link" {{action 'generateResetLink'}}>Gerar Link</button>
+{{!--                   <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a>Copiar Link</a></li>
+                  </ul> --}}
+                </div>
+                {{input type="text" value=linkToReset placeholder="Link para resetar senha..." class="form-control" disabled="disabled"}}                  
+              </div><!-- /input-group -->
+            </div><!-- /.col-lg-12 -->            
+          </div>
+        </div>
+        {{else}}
+        <div class="set-new-password">
+          <div class="text-center">
+            <br>
+            <p>Define uma nova senha para o usuário</p>
+            <br>
+          </div>
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label for="new-password" class="col-sm-5 control-label">Nova Senha</label>
+              <div class="col-sm-5">
+                {{input type="password" value=newPassword placeholder="Defina uma nova senha" id="new-password" class="form-control" }}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="confirm-new-password" class="col-sm-5 control-label">Repetir Senha</label>
+              <div class="col-sm-5">
+                {{input type="password" value=confirmNewPassword placeholder="Confirme a nova senha" id="confirm-new-password" class="form-control" }}              
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-5 col-sm-3">
+                <button type="button" class="btn btn-primary set-new-password-button" {{bind-attr disabled=invalidPassword}} {{action 'setNewPassword'}}>Definir Nova Senha</button>
+              </div>
+            </div>
+          </form>          
+        </div>
+        {{/if}}
+        {{#if success}}
+          <div class="alert alert-success" role="alert"><strong>Nova senha</strong> definida com sucesso!</div>
+        {{/if}}
+        {{#if error}}
+          <div class="alert alert-danger alert-dismissible we-account-modal-error" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>            
+          </div>
+        {{/if}}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

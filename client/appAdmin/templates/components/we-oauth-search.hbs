@@ -1,0 +1,74 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <h4 class="modal-title">Buscar usuários oAuth - Provider (CPF)</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <form class="cpf-search-form" {{action "search" on="submit"}}>
+          <div class="form-group">
+            {{input type="text" value=cpf class="form-control" placeholder="Cpf..." name="cpf" id="cpf"}}
+          </div>
+        </form>
+      </div>
+      <br>      
+      {{#if user}}
+      <div class="row">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped">
+            <thead>
+              <tr>
+                <th>idInProvider</th>
+                <th>username</th>
+                <th>email</th>
+                <th>active<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Usuário ativo no oAuth?"></span></th>
+                <th>wejs<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Usuário existente no WeJs?"></span></th> 
+                <th>ações<img class="activate-loading" src="/core/images/reconnecting.gif"></th>
+              </tr>
+              <style type="text/css" media="screen">
+                .activate-loading{
+                  display: none; 
+                  width: 14px; 
+                  margin-left: 10px;
+                }
+              </style>
+            </thead>
+            <tbody>
+                <tr>
+                  <td>
+                    {{user.id}}
+                  </td>
+                  <td>
+                    {{user.username}}
+                  </td>
+                  <td>
+                    <a {{action 'updateEmail'}}>{{user.email}}</a>
+                  </td>
+                  <td>
+                    {{user.active}}
+                  </td>
+                  <td>
+                    {{notInCdp}}
+                  </td>                
+                  <td>
+                  <button type="button" class="btn btn-success activate-account" {{bind-attr disabled=user.active}} {{action 'activateAccount'}}>Ativar </button>  
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {{/if}}
+      {{#if msgNotFound}}
+      <div class="row">
+        <p class="text-center">Usuário não encontrado!</p>
+      </div>
+      {{/if}}
+    </div> 
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+      <button type="button" {{bind-attr class=":btn :btn-primary :search isValid::disabled"}} {{action 'search'}}>Procurar</button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

@@ -1,0 +1,14 @@
+<div class='row'>
+  <div class='col-md-12'>
+    <div class="btn-group" role="group" aria-label="...">
+      {{#link-to 'user.edit' record.id class="btn btn-default"}}
+      Editar
+      {{/link-to}}
+      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#we-account-modal">Gerenciar Senha</button>
+    </div>  
+
+  	{{#link-to 'user.index' class="btn btn-default"}}
+      Voltar
+    {{/link-to}}    
+  </div>
+</div>

@@ -1,0 +1,10 @@
+{{#if this.id}}
+  {{we-title title=this.name}}
+
+  <p class="lead">{{this.description}}</p>
+
+{{else}}
+  {{we-title title="Termos sem vocabulário"}}
+{{/if}}
+
+{{outlet}}

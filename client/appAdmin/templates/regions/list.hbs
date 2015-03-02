@@ -1,0 +1,16 @@
+<div class="layout-regions row">
+	{{#each}}
+		<div {{bind-attr class=regionClass}}>
+      {{#each widgets}}
+        {{id}} -
+
+      {{else}}
+        no widgets
+
+      {{/each}}
+
+      <button class="btn btn-default" {{action "addWidget"}}>Add widget</button>
+
+		</div>
+	{{/each}}
+</div>

@@ -1,0 +1,9 @@
+{{msgText}}
+
+{{#if isReconecting}}
+  Reconectando em {{timeToReconnectInSeconds}} segundos - <a href="#socketIoConnect" {{action "connect"}} class="connect">tentar agora</a>
+{{else}}
+  {{#if isDisconnected}}
+    <a href="#socketIoConnect" {{action "connect"}} class="connect">{{ClickToConnectText}}</a>
+  {{/if}}
+{{/if}}

@@ -1,0 +1,51 @@
+<h2>{{record.name}}</h2>
+
+<div class="layout-actions row">
+	<div class="col-md-12">
+		<button class="btn btn-primary" {{action "showCreateRegionForm"}}>Add region</button>
+	</div>
+</div>
+
+{{#if isVisibleCreateRegionForm}}
+	<div class="add-region-form">
+		<form {{action "createAndAddRegion" on="submit"}}>
+		<h4>Create region</h4>
+
+			<div class="form-group">
+				<div class="input-group">
+				  <label class="input-group-addon">Name</label>
+				  {{input name="name" value=newRegion.name classNames="form-control"}}
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="input-group">
+				  <label class="input-group-addon">Columns</label>
+	        {{view 'select'
+	        	name="columns"
+	          classNames="form-control"
+	          value=newRegion.columns
+	          content=columns}}
+				</div>
+			</div>
+
+      <div class="form-group">
+        <div class="input-group">
+          <label class="input-group-addon">Order</label>
+          {{input name="order" type="number" value=newRegion.order classNames="form-control"}}
+        </div>
+      </div>
+
+			<div class="form-group">
+				<button class="btn btn-primary" type="submit" {{action "createAndAddRegion"}}>{{t 'create'}}</button>
+				<button class="btn btn-default" type="reset" {{action "cancelCreateRegion"}}>{{t 'Cancel'}}</button>
+			<div>
+		</form>
+	</div>
+{{/if}}
+
+<br>
+
+<h3>Regions in this layout</h3>
+
+{{render 'regions.list-edit' record.regions controller="regions.list"}}
