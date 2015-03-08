@@ -27,23 +27,14 @@ build/Release
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
 
+bower_components
+
 # Debug log from npm
 npm-debug.log
 
-# test database
-files/sqlite
-
-# upload files
-files/upload
-files/uploads
-files/tmp
-
-# private files
-files/private
-
+files
 
 npm-debug.log
 .sql
 .tmp
 
-node_modules
