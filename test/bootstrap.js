@@ -5,10 +5,7 @@ var deleteDir = require('rimraf');
 
 before(function(callback) {
   we.bootstrap({
-    port: 9800,
-    log: {
-      level: 'silly'
-    }
+    port: 9800
   } , function(err, we) {
     we.startServer(function(err, we) {
       if (err) return console.error(err);
