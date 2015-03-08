@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js"
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js"
   },
   "keywords": [
     "we.js",
@@ -48,6 +48,8 @@
     "passport-oauth": "^1.0.0",
     "rc": "^0.6.0",
     "require-all": "^1.0.0",
+    "rimraf": "^2.3.1",
+    "sanitize-html": "^1.6.1",
     "sequelize": "^2.0.3",
     "serve-favicon": "~2.2.0",
     "sqlite3": "^3.0.5",
