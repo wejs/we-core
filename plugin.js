@@ -4,6 +4,7 @@
 
 var uuid = require('node-uuid');
 var log = require('./lib/log')();
+var mkdirp = require('mkdirp');
 
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
@@ -112,39 +113,46 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'get /api/v1/image': {
       controller    : 'image',
       action        : 'find',
-      model         : 'image'
+      model         : 'image',
+      responseType  : 'JSON'
     },
-    'get /api/v1/image/:name?': {
+    'get /api/v1/image/:name': {
       controller    : 'image',
       action        : 'findOne',
-      model         : 'image'
+      model         : 'image',
+      responseType  : 'JSON'
     },
     // Image style thumbnail | medium | large
     'get /api/v1/image/:style(original|mini|thumbnail|medium|large)/:name': {
       controller    : 'image',
       action        : 'findOne',
-      model         : 'image'
+      model         : 'image',
+      responseType  : 'JSON'
     },
     'get /api/v1/image/:id/data': {
       controller    : 'image',
       action        : 'findOneReturnData',
-      model         : 'image'
+      model         : 'image',
+      responseType  : 'JSON'
     },
     'get /api/v1/image-crop/:id': {
       controller    : 'image',
       action        : 'cropImage',
-      model         : 'image'
+      model         : 'image',
+      responseType  : 'JSON'
     },
     'post /api/v1/image-crop/:id': {
       controller    : 'image',
       action        : 'cropImage',
-      model         : 'image'
+      model         : 'image',
+      responseType  : 'JSON'
     },
     // upload one image
     'post /api/v1/image': {
       controller    : 'image',
       action        : 'create',
       model         : 'image',
+      responseType  : 'JSON',
       upload: {
         dest: projectPath + '/files/uploads/images/original',
         rename: function (fieldname, filename) {
@@ -221,6 +229,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'auth',
       action        : 'logout'
     }    
+  });
+
+  plugin.events.on('we:create:default:folders', function(we) {
+    // create image upload path
+    mkdirp(we.config.upload.image.uploadPath, function(err) {
+      if (err) we.log.error('Error on create image upload path', err);
+    })
+
   });
 
   return plugin;
