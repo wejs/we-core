@@ -4,6 +4,7 @@
 
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
+
   // set plugin configs
   plugin.setConfigs({
     port: process.env.PORT || '3000',
@@ -38,8 +39,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         }
       }
     },
-
-    favicon: projectPath + '/files/public/favicon.ico'
+    // default favicon, change in your project config/local.js
+    favicon: __dirname + '/client/core-favicon.ico'
   });
   // ser plugin routes
   plugin.setRoutes({
