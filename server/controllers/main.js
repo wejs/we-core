@@ -6,8 +6,8 @@
  */
 var fs = require('fs');
 var _ = require('lodash');
-var converter = require('sails-emberjs-model-converter');
-var staticEmberModels;
+var converter = require('../../lib/database/converter');
+var staticModels;
 
 module.exports = {
   _config: {
@@ -132,16 +132,14 @@ module.exports = {
    * TODO check if user is admin
    */
   getAllModelsAsEmberModel: function(req, res) {
-    var sails = req._sails;
-
     // cache it in a static variable
-    if ( !staticEmberModels) {
-      staticEmberModels = converter.convertMultipleToEmberJSFile(sails.models)
+    if ( !staticModels) {
+      staticModels = converter.convertMultipleToEmberJSFile(req.we.db.modelsConfigs);
     }
 
     res.set('Content-Type', 'application/javascript');
 
-    res.send(staticEmberModels);
+    res.send(staticModels);
   }
 };
 

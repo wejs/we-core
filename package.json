@@ -1,16 +1,15 @@
 {
-<<<<<<< HEAD
   "name": "we-core",
   "version": "0.0.0",
   "main": "./lib/index.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "test": "./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js"
   },
   "keywords": [
     "we.js",
     "wejs",
-    "plugin",
-  ],  
+    "plugin"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:wejs/we-plugin-core.git"
@@ -20,7 +19,6 @@
   },
   "author": "Alberto Souza <alberto.souza.dev@gmail.com>",
   "license": "ISC",
-
   "dependencies": {
     "async": "^0.9.0",
     "bcrypt": "^0.8.1",
@@ -30,7 +28,9 @@
     "debug": "~2.1.1",
     "express": "~4.12.0",
     "express-session": "^1.10.3",
+    "grunt-cli": "^0.1.13",
     "handlebars": "^3.0.0",
+    "hbs": "^2.8.0",
     "less-middleware": "1.0.x",
     "lodash": "^3.3.1",
     "mkdirp": "^0.5.0",
@@ -47,6 +47,10 @@
     "sequelize": "^2.0.3",
     "serve-favicon": "~2.2.0",
     "sqlite3": "^3.0.5",
+    "we-class-theme": "0.0.4",
     "winston": "^0.9.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.1.0"
   }
 }

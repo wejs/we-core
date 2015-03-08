@@ -3,13 +3,13 @@
  *
  */
 
-
 // add getMetaData function on model
 DS.Model.reopen({
   getMetaData: function () {
     return this.get('_data.meta');
   }
 });
+
 
 App.ApplicationRESTAdapter = DS.SailsRESTAdapter.extend({
   defaultSerializer: '-default',

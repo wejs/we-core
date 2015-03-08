@@ -7,17 +7,17 @@
  */
 var bcrypt = require('bcrypt');
 
-module.exports = function UserModel(we) {
+module.exports = function UserModel(db) {
   return {
     definition: {
       // model atributes //
       idInProvider: {
-        type:  we.Sequelize.STRING,
+        type:  db.Sequelize.STRING,
         unique: true
       },
 
       username: {
-        type: we.Sequelize.STRING,
+        type: db.Sequelize.STRING,
         unique: true,
         allowNull: false,
         validate: {
@@ -25,31 +25,31 @@ module.exports = function UserModel(we) {
         }
       },
 
-      biography: { type: we.Sequelize.STRING },
-      gender: { type: we.Sequelize.TEXT },
+      biography: { type: db.Sequelize.STRING },
+      gender: { type: db.Sequelize.TEXT },
       email: {
         // Email type will get validated by the ORM
-        type: we.Sequelize.STRING,
+        type: db.Sequelize.STRING,
         allowNull: false,
         unique: true
       },
 
       // a hashed password
       password: {
-        type: we.Sequelize.TEXT
+        type: db.Sequelize.TEXT
       },
 
       displayName: {
-        type: we.Sequelize.STRING
+        type: db.Sequelize.STRING
       },
 
       status: {
-        type: we.Sequelize.BOOLEAN,
+        type: db.Sequelize.BOOLEAN,
         defaultValue: false
       },
 
       language: {
-        type: we.Sequelize.STRING,
+        type: db.Sequelize.STRING,
         defaultValue: 'pt-br',
         validations: {
           max: 6
@@ -57,10 +57,10 @@ module.exports = function UserModel(we) {
       },
       // estado UF
       locationState: {
-        type: we.Sequelize.STRING
+        type: db.Sequelize.STRING
       },
       city: {
-        type: we.Sequelize.STRING
+        type: db.Sequelize.STRING
       }
     }, 
     options: {

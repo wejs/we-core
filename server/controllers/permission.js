@@ -7,7 +7,6 @@
 
 var async = require('async');
 var _= require('lodash');
-var actionUtil = require('we-helpers').actionUtil;
 var util = require('util');
 
 module.exports = {

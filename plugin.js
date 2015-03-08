@@ -2,15 +2,15 @@
  * We.js plugin config
  */
 
-module.exports = function pluginConstructor(we) {
-  var plugin = new we.class.Plugin(__dirname);
+module.exports = function loadPlugin(projectPath, Plugin) {
+  var plugin = new Plugin(__dirname);
   // set plugin configs
   plugin.setConfigs({
     log: {
       level: 'debug'
     },
     upload: {
-      dest: we.projectPath + '/files/tmp',
+      dest: projectPath + '/files/tmp',
       rename: function (fieldname, filename) {
         return filename.replace(/\W+/g, '-').toLowerCase() + Date.now()
       }
@@ -37,10 +37,8 @@ module.exports = function pluginConstructor(we) {
       }
     },
 
-    favicon: we.projectPath + '/files/public/favicon.ico'
+    favicon: projectPath + '/files/public/favicon.ico'
   });
-  // load models and controllers
-  plugin.loadFeatures();
   // ser plugin routes
   plugin.setRoutes({
     // homepage | default home page
@@ -48,13 +46,31 @@ module.exports = function pluginConstructor(we) {
       controller: 'main',
       action: 'index'
     },
-    // 'get /emberjs/app.js': {
-    //   controller: 'main',
-    //   action: 'getEmberApp'
-    // }
-    // 
-    //     
 
+    // 
+    // -- config routes
+    // 
+    
+    '/configs.js': {
+      controller: 'main',
+      action: 'getConfigsJS'
+    },
+
+    '/api/v1/translations.js': {
+      controller: 'main',
+      action: 'getTranslations'
+    },
+
+    // ember.js models generated from sails.js models
+    'get /api/v1/models/emberjs': {
+      controller: 'main',
+      action: 'getAllModelsAsEmberModel'
+    },
+
+    //
+    // - Auth routes
+    // 
+    
     'get /signup': {
       controller: 'auth',
       action: 'signupPage'

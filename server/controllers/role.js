@@ -4,7 +4,6 @@
  * @module    :: Controller
  * @description :: Contains logic for handling requests.
  */
-var actionUtil = require('we-helpers').actionUtil;
 
 module.exports = {
 
