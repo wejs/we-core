@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "NODE_ENV=test ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js"
+    "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js"
   },
   "keywords": [
     "we.js",
