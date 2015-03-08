@@ -15,11 +15,25 @@ module.exports = {
   },
 
   /**
+   * Index page route /
+   */
+  index: function(req, res) {
+    var we = req.getWe();
+    var context = req.context;
+
+    we.log.info('rodou o main.index', context);
+
+    res.locals.template = 'home/index';
+
+    res.view({ title: 'Express' });
+  },
+
+  /**
    * Client side configs
    * @param  {object} req
    * @param  {object} res
    */
-  getConfigsJS: function (req, res) {
+  getConfigsJS: function(req, res) {
     var configs = {};
     var sails = req._sails;
 
@@ -41,7 +55,7 @@ module.exports = {
     configs.client.log = sails.config.clientside.log;
 
     // get public vars
-    if(sails.config.clientside.publicVars) {
+    if (sails.config.clientside.publicVars) {
       // clone it to dont change global variable
       configs.client.publicVars = _.clone(sails.config.clientside.publicVars);
     }
@@ -53,13 +67,13 @@ module.exports = {
        configs.client.isConsumer = sails.config.auth.isConsumer;
     }
 
-    if(!req.isAuthenticated()){
+    if (!req.isAuthenticated()) {
       // send not logged in configs
       return res.send(configs);
     }
 
     // set current session user auth token and userId
-    if( req.session.authToken ) {
+    if (req.session.authToken ) {
       configs.client.publicVars.authToken = req.session.authToken;
       configs.client.publicVars.userId = req.session.userId;
     }

@@ -13,26 +13,52 @@ var path = require('path');
 var mime = require('mime');
 var async = require('async');
 
-module.exports = function ImageModel(db, hooks, events) {
+module.exports = function ImageModel(db, hooks, events, sanitizer) {
+  // we.js will be set in one event
+  var we = null;
+
+  // set sequelize model define and options
   var model = {
     definition: {
+      // - user given data text
+      // 
+      label: {
+        type: db.Sequelize.STRING
+      },
+      description: {
+        type: db.Sequelize.TEXT
+      },
+
+      // - data get from file
+      // 
       name: {
         type: db.Sequelize.STRING,
+        allowNull: false,
+        unique: true        
       },
 
       size: {
         type: db.Sequelize.INTEGER,
       },
 
-      active: {
-        type: db.Sequelize.BOOLEAN,
+      encoding: {
+        type: db.Sequelize.STRING,
       },
 
-      originalFilename: {
+      active: {
+        type: db.Sequelize.BOOLEAN,
+        defaultValue: true        
+      },
+
+      originalname: {
         type: db.Sequelize.STRING
       },
 
       mime: {
+        type: db.Sequelize.STRING
+      },
+
+      extension: {
         type: db.Sequelize.STRING
       },
 
@@ -96,9 +122,8 @@ module.exports = function ImageModel(db, hooks, events) {
           });
         },
 
-
         getStyleUrlFromImage: function(image) {
-          var host = sails.config.hostname;
+          var host = we.config.hostname;
 
           return {
             original: host + '/api/v1/images/original/' + image.name,
@@ -142,8 +167,8 @@ module.exports = function ImageModel(db, hooks, events) {
 
       instanceMethods: {
         toJSON: function() {
-          var obj = this.toObject();
-          obj.urls = Images.getStyleUrlFromImage(obj);
+          var obj = this.values;
+          obj.urls = db.models.image.getStyleUrlFromImage(obj);
           // set default objectType
           obj.objectType = 'image';
           return obj;
@@ -152,20 +177,21 @@ module.exports = function ImageModel(db, hooks, events) {
       hooks: {
         beforeCreate: function(record, options, next) {
           // sanitize
-          record = SanitizeHtmlService.sanitizeAllAttr(record);
+          record = sanitizer.sanitizeAllAttr(record);
           next();
         },
 
         beforeUpdate: function(record, options, next) {
           // sanitize
-          record = SanitizeHtmlService.sanitizeAllAttr(record);
+          record = sanitizer.sanitizeAllAttr(record);
           next();
         }
       }
     }
   }
 
-  hooks.on('we:models:set:joins', function (we, done) {
+  hooks.on('we:models:set:joins', function (wejs, done) {
+    we = wejs;
 
     done();
   });

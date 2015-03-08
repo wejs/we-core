@@ -4,74 +4,84 @@
  * @module    :: Controller
  * @description :: Contains logic for handling requests.
  */
+var gm = require('gm');
+var fs = require('fs');
+var path = require('path');
+var _ = require('lodash');
 
 module.exports = {
+  _config: {
+    // disable shadownroute feature
+    shadownRoutes: false
+  },
 
-  // findOne : function (req, res, next) {
-  //   var sails = req._sails;
+  findOne : function (req, res, next) {
+    var we = req.getWe();
 
-  //   var fileName = req.param('name');
-  //   if(!fileName) {
-  //     return next();
-  //   }
+    var fileName = req.param('name');
+    if(!fileName) {
+      return next();
+    }
 
-  //   var Images = sails.models.images;
+    var avaibleImageStyles = we.config.upload.image.avaibleStyles;
 
-  //   var avaibleImageStyles = sails.config.upload.image.avaibleStyles;
+    var imageStyle = req.param('style');
+    if (!imageStyle) {
+      imageStyle = 'original';
+    } else if(
+      imageStyle !== 'original' &&
+      avaibleImageStyles.indexOf(imageStyle) === -1)
+    {
+      return res.badRequest('Image style invalid');
+    }
 
-  //   var imageStyle = req.param('style');
-  //   if(!imageStyle){
-  //     imageStyle = 'original';
-  //   }else if(
-  //     imageStyle !== 'original' &&
-  //     avaibleImageStyles.indexOf(imageStyle) === -1)
-  //   {
-  //     return res.badRequest('Image style invalid');
-  //   }
+    we.db.models.images.find({ where: {name: fileName} })
+    .exec(function(err, image) {
+      if (err) {
+        we.log.error('Error on find image by name:', fileName, err);
+        return res.serverError(err);
+      }
+      // image not found
+      if (!image) {
+        we.log.silly('image:findOne: image not found:', fileName);
+        return res.notFound(image);
+      }
+      
+      we.log.silly('image:findOne: image found:', image);
 
-  //   Images.findOne()
-  //   .where({name: fileName})
-  //   .exec(function(err, image) {
-  //     if (err) { return res.negotiate(err); }
+      getFileOrResize(fileName, imageStyle, we, function(err, contents) {
+        if (err) {
+          we.log.error('Error on getFileOrResize:', fileName, err);
+          return res.serverError(err);
+        }
 
-  //     if (!image) {
-  //       return res.notFound(image);
-  //     }
+        if (!contents) {
+          return res.status(404).send();
+        }     
 
-  //     FileImageService.getFileOrResize(image.name, imageStyle ,function(err, contents){
-  //       if(err){
-  //         sails.log.error('Image:findOne:Error on get image:',err);
-  //         return res.send(500);
-  //       }
-
-  //       if(!contents){
-  //         return res.send(404);
-  //       }
-
-  //       if(image.mime){
-  //         res.contentType(image.mime);
-  //       }else{
-  //         res.contentType('image/png');
-  //       }
-
-  //       return res.send(contents);
-  //     });
-  //   });
-  // },
+        if (image.mime) {
+          res.contentType(image.mime);
+        } else {
+          res.contentType('image/png');
+        }
+        return res.send(contents);
+      })
+    });
+  },
 
   /**
    * Find image by id and returm image model data
    */
-  findOneReturnData : function (req, res){
+  findOneReturnData : function (req, res) {
     var fileId = req.param('id');
-    if(!fileId){
+    if (!fileId) {
       return res.send(404);
     }
     Images.findOne()
     .where({id: fileId})
     .exec(function(err, image) {
       if (err) {
-        sails.log.error('Error on get image from BD: ',err, fileId);
+        we.log.error('Error on get image from BD: ',err, fileId);
         return res.send(404);
       }
       if(!image){
@@ -83,53 +93,46 @@ module.exports = {
     });
   },
 
+  /**
+   * Upload file to upload dir and save metadata on database
+   */
+  create: function createOneImage(req, res) {
+    // if (!req.isAuthenticated()) return res.forbidden('Logged in user not found');
+    var we = req.getWe();
 
-  // /**
-  //  * Upload file to upload dir and save metadata on database
-  //  */
-  // create: function createMultiplesRecords(req, res) {
-  //   if (!req.isAuthenticated()) {
-  //     return res.forbidden('Logged in user not found');
-  //   }
+    // images in upload
+    var files = req.files;
 
-  //   var sails = req._sails;
-  //   var Images = sails.models.images;
+    if (!files.image) return res.badRequest('File image not found');
+    if (!_.isObject(files.image)) return res.badRequest('File value is invalid');
 
-  //   var creatorId = req.user.id;
+    we.log.debug('image:create: files.image to save:', files.image);
 
-  //   req.file('images').upload({
-  //     maxBytes: 20000000
-  //   },function (err, files) {
-  //     if (err) {
-  //       sails.log.error('Error on receive uploaded images', err);
-  //       return res.serverError(err);
-  //     }
-  //     Images.uploadMultiple(files, creatorId, function(err, uploadedFiles) {
-  //       if (err) {
-  //         sails.log.error('Error on upload multiple images', err);
-  //         res.send(
-  //           {
-  //             'files':[],
-  //             'error': err
-  //           }
-  //         );
-  //       } else {
-  //         Images.create(uploadedFiles).exec(function(error, salvedFiles) {
-  //           if (err) {
-  //             sails.log.error('Error on create image', err);
-  //             return res.serverError(err);
-  //           }
+    // get image size
+    gm(files.image.path).size(function (err, size) {
+      if (err) {
+        we.log.error('image.create: Error on get image file size:', err, files.image);
+        return res.serverError(err);
+      }
 
-  //           sails.log.verbose('> salvedFiles',salvedFiles);
-  //           res.send({
-  //             images: salvedFiles
-  //           });
+      files.image.width = files.image.width;
+      files.image.height = files.image.height;
 
-  //         });
-  //       }
-  //     });
-  //   });
-  // },
+      req.context.Model.create(files.image)
+      .done(function(err, record) {
+        if (err) {
+          we.log.error('Error on create image record:', err);
+          return res.serverError(err);
+        }
+        var response = {};
+        response[req.context.model] = record;
+        
+        if (record) we.log.debug('New image record created:', record.dataValues);
+
+        return res.status(201).send(response);
+      });
+    });
+  },
 
   // /**
   //  * Crop one file by file id
@@ -153,7 +156,7 @@ module.exports = {
   //   }
 
   //   if(!req.user || !req.user.id) {
-  //     sails.log.warn('errr no user')
+  //     we.log.warn('errr no user')
   //     return res.send(404);
   //   }
 
@@ -163,18 +166,18 @@ module.exports = {
   //   .where({id: fileId})
   //   .exec(function(err, image) {
   //     if (err) {
-  //       sails.log.error('Error on get image from BD: ',err, fileId);
+  //       we.log.error('Error on get image from BD: ',err, fileId);
   //       return res.send(404);
   //     }
   //     if(!image || user_id !== image.creator){
-  //       sails.log.error('Image crop forbiden');
+  //       we.log.error('Image crop forbiden');
   //       return res.send(404);
   //     }
 
   //     var originalFile = FileImageService.getImagePath(image.name, 'original');
 
 
-  //     sails.log.verbose('Filename:', image.name);
+  //     we.log.verbose('Filename:', image.name);
 
   //     FileImageService.resizeImageAndReturnSize(originalFile, cords, function(err, size){
 
@@ -183,14 +186,14 @@ module.exports = {
   //       // save the new width and height on db
   //       image.save();
 
-  //       sails.log.verbose('resize image to:', cords);
+  //       we.log.verbose('resize image to:', cords);
 
-  //       sails.log.verbose('result:',size.width, size.width);
+  //       we.log.verbose('result:',size.width, size.width);
 
   //       // delete old auto generated image styles
   //       FileImageService.deleteImageStylesWithImageName(image.name, function(err){
   //         if (err){
-  //           sails.log.error('Error on delete old image styles:',image, err);
+  //           we.log.error('Error on delete old image styles:',image, err);
   //           return res.send(500);
   //         }
   //         res.send({
@@ -201,3 +204,35 @@ module.exports = {
   //   });
   // }
 };
+
+
+function getFileOrResize(fileName, imageStyle, we, callback) {
+  var path = we.config.upload.image.uploadPath + '/'+ imageStyle +'/' + fileName;
+
+  fs.readFile(path,function (err, contents) {
+    if (err) {
+      if (err.code != 'ENOENT' || imageStyle == 'original' ) {
+        return callback(err);
+      }
+
+      var originalFile = we.config.upload.image.uploadPath + '/original/' + fileName;
+
+      var width = we.config.upload.image.styles[imageStyle].width;
+      var heigth = we.config.upload.image.styles[imageStyle].heigth;
+
+      // resize and remove EXIF profile data
+      gm(originalFile)
+      .resize(width, heigth)
+      .noProfile()
+      .write(path, function (err) {
+        if (err) return callback(err);
+        fs.readFile(path,function (err, contents) {
+          callback(null, contents);
+        });
+      });
+
+    } else {
+      callback(null, contents);
+    }
+  });
+}
