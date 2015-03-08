@@ -40,6 +40,7 @@
     "multer": "^0.1.8",
     "mv": "^2.0.3",
     "mysql": "^2.5.5",
+    "node-uuid": "^1.4.3",
     "passport": "^0.2.1",
     "passport-facebook": "^1.0.3",
     "passport-google": "^0.3.0",
@@ -54,6 +55,7 @@
     "winston": "^0.9.0"
   },
   "devDependencies": {
+    "grunt-cli": "^0.1.13",
     "mocha": "^2.1.0",
     "supertest": "^0.15.0",
     "we-theme-admin-default": "^0.0.5",
