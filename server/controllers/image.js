@@ -18,14 +18,15 @@ module.exports = {
   findOne : function (req, res, next) {
     var we = req.getWe();
 
-    var fileName = req.param('name');
-    if(!fileName) {
-      return next();
+    var fileName = req.params.name;
+
+    if (!fileName) {
+      return res.badRequest('image:findOne: fileName is required');
     }
 
     var avaibleImageStyles = we.config.upload.image.avaibleStyles;
 
-    var imageStyle = req.param('style');
+    var imageStyle = req.param.style;
     if (!imageStyle) {
       imageStyle = 'original';
     } else if(
@@ -35,8 +36,8 @@ module.exports = {
       return res.badRequest('Image style invalid');
     }
 
-    we.db.models.images.find({ where: {name: fileName} })
-    .exec(function(err, image) {
+    we.db.models.image.find({ where: {name: fileName} })
+    .done(function(err, image) {
       if (err) {
         we.log.error('Error on find image by name:', fileName, err);
         return res.serverError(err);
@@ -115,8 +116,9 @@ module.exports = {
         return res.serverError(err);
       }
 
-      files.image.width = files.image.width;
-      files.image.height = files.image.height;
+      files.image.width = size.width;
+      files.image.height = size.height;
+      files.image.mime = files.image.mimetype;
 
       req.context.Model.create(files.image)
       .done(function(err, record) {
@@ -125,7 +127,9 @@ module.exports = {
           return res.serverError(err);
         }
         var response = {};
-        response[req.context.model] = record;
+        response[req.context.model] = [
+          record
+        ];
         
         if (record) we.log.debug('New image record created:', record.dataValues);
 
