@@ -26,10 +26,31 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       level: 'debug'
     },
     upload: { 
-      file: {
-        dest: projectPath + '/files/uploads/files',
-        rename: function (fieldname, filename) {
-          return Date.now() + '_' + uuid.v1();
+      image: {
+        uploadPath: projectPath + '/files/uploads/images',
+        avaibleStyles: [
+          'mini',
+          'thumbnail',
+          'medium',
+          'large'
+        ],
+        styles: {
+          mini: {
+            width: '24',
+            heigth: '24'
+          },
+          thumbnail: {
+            width: '75',
+            heigth: '75'
+          },
+          medium: {
+            width: '250',
+            heigth: '250'
+          },
+          large: {
+            width: '640',
+            heigth: '640'
+          }
         }
       }
     },
