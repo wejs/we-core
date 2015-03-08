@@ -7,8 +7,8 @@
  */
 var bcrypt = require('bcrypt');
 
-module.exports = function UserModel(db) {
-  return {
+module.exports = function UserModel(db, hooks, events) {
+  var model = {
     definition: {
       // model atributes //
       idInProvider: {
@@ -216,6 +216,17 @@ module.exports = function UserModel(db) {
     }
   };
 
+  hooks.on('we:models:set:joins', function (we, done) {
+
+    db.models.user.hasOne ( 
+      db.models.image, { 
+        as: 'avatar'
+      }
+    );
+
+    done();
+  });
+
   // // wejs provider id
 
 
@@ -274,4 +285,5 @@ module.exports = function UserModel(db) {
   //     User.create(data).exec(done);
   //   });
   // }
+  return model;
 };

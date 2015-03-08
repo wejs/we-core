@@ -6,6 +6,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
   // set plugin configs
   plugin.setConfigs({
+    port: process.env.PORT || '3000',
+
     log: {
       level: 'debug'
     },
