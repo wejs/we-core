@@ -35,36 +35,38 @@ module.exports = {
    */
   getConfigsJS: function(req, res) {
     var configs = {};
-    var sails = req._sails;
+    var we = req.getWe();
 
     // set header to never cache this response
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     res.header('Expires', '-1');
     res.header('Pragma', 'no-cache');
 
-    configs.version = '1';
+    configs.version = '2';
+
+    configs.env = we.env;
     configs.server = {};
     configs.client = {};
     configs.client.publicVars = {};
     configs.user = {};
     configs.authenticatedUser = {};
 
-    configs.server.providers = sails.config.wejs.providers;
+    // configs.server.providers = sails.config.wejs.providers;
 
     // get log config
-    configs.client.log = sails.config.clientside.log;
+    configs.client.log = we.config.clientside.log;
 
     // get public vars
-    if (sails.config.clientside.publicVars) {
+    if (we.config.clientside.publicVars) {
       // clone it to dont change global variable
-      configs.client.publicVars = _.clone(sails.config.clientside.publicVars);
+      configs.client.publicVars = _.clone(we.config.clientside.publicVars);
     }
 
-    configs.client.language = sails.config.i18n.defaultLocale;
+    configs.client.language = we.config.i18n.defaultLocale;
 
-    if (sails.config.auth) {
-       configs.client.isProvider = sails.config.auth.isProvider;
-       configs.client.isConsumer = sails.config.auth.isConsumer;
+    if (we.config.auth) {
+       configs.client.isProvider = we.config.auth.isProvider;
+       configs.client.isConsumer = we.config.auth.isConsumer;
     }
 
     if (!req.isAuthenticated()) {
@@ -82,25 +84,27 @@ module.exports = {
   },
 
   getTranslations: function (req, res) {
-    var localeParam = req.param('locale');
+    var we = req.getWe();
+    var localeParam = req.params.locale;
     var locale;
 
     if (localeParam) {
       // check if the locale are in avaible we.js locales
       // TODO add suport to search in subprojects
-      for (var i = sails.config.i18n.locales.length - 1; i >= 0; i--) {
-        if(sails.config.i18n.locales[i] === localeParam){
+      for (var i = we.config.i18n.locales.length - 1; i >= 0; i--) {
+        if ( we.config.i18n.locales[i] === localeParam ) {
           locale = localeParam;
         }
       }
     }
 
-    if(req.isAuthenticated()){
+    // TODO change to use req.context.locale
+    if ( req.isAuthenticated()) {
       locale = req.user.language;
     }
 
-    if(!locale){
-      locale = sails.config.i18n.defaultLocale;
+    if (!locale) {
+      locale = we.config.i18n.defaultLocale;
     }
 
     var translationResponse = '';
@@ -114,12 +118,11 @@ module.exports = {
       'Ember.I18n.translations = {};' +
     '}\n';
 
-
-    getTranslationFilePath(locale , function(path){
+    getTranslationFilePath(we, locale , function (path) {
       if (path) {
         fs.readFile(path, 'utf8', function (err, data) {
           if (err) {
-            sails.log.error('Error: ' + err);
+            we.log.error('Error: ' + err);
             return res.serverError();
           }
 
@@ -131,7 +134,7 @@ module.exports = {
           res.send(200, translationResponse );
         });
       } else {
-        sails.log.debug('getTranslations:Locale not found:', locale, localeParam);
+        we.log.debug('getTranslations:Locale not found:', locale, localeParam);
         res.contentType('application/javascript');
         res.send(200, translationResponse );
       }
@@ -159,22 +162,29 @@ module.exports = {
   }
 };
 
-function getTranslationFilePath (locale, callback) {
+/**
+ * Search for one locale file folder
+ * 
+ * @param  {Object}   we       we.js
+ * @param  {String}   locale   locale to search for
+ * @param  {Function} callback 
+ */
+function getTranslationFilePath (we, locale, callback) {
   var localePath = null;
   // check if exists in project
-  localePath = sails.config.appPath + '/config/locales/' + locale + '.json';
-  fs.exists(localePath, function (exists) {
-    if(exists){
+  localePath = we.config.appPath + '/config/locales/' + locale + '.json';
+  fs.exists (localePath, function (exists) {
+    if (exists) {
       return callback(localePath);
     }
 
     // if dont have in project use we.js default translations
-    localePath = sails.config.appPath + '/node_modules/we-plugin-core/config/locales/' + locale + '.json';
+    localePath = we.config.appPath + '/node_modules/we-plugin-core/config/locales/' + locale + '.json';
     fs.exists(localePath, function (exists) {
       if(exists){
         return callback(localePath);
       }
-      sails.log.info('Localization not found in project or sub-project for', locale);
+      we.log.info('Localization not found in project or sub-project for', locale);
       callback();
     });
   });

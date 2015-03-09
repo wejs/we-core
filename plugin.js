@@ -96,6 +96,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       prefix: '',
       // enable object notation
       objectNotation: false
+    },
+
+    clientside: {
+      // client side logs
+      log: {
+
+      },
+      // publivars
+      publicVars: {}
     }
   });
   // ser plugin routes
@@ -110,9 +119,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // -- config routes
     // 
     
-    '/configs.js': {
+    '/api/v1/configs.json': {
       controller: 'main',
-      action: 'getConfigsJS'
+      action: 'getConfigsJS',
+      responseType  : 'JSON'
     },
 
     '/api/v1/translations.js': {
