@@ -228,7 +228,29 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     '/auth/logout': {
       controller    : 'auth',
       action        : 'logout'
-    }    
+    },
+
+
+    //
+    // -- User routes
+    //
+    
+    'get /user/:username?': {
+      controller    : 'user',
+      action        : 'findOneByUsername',
+      model         : 'user'
+    },
+
+    // get logged in user avatar
+    'get /avatar/:id': {
+      controller    : 'avatar',
+      action        : 'getAvatar'
+    },
+
+    'post /api/v1/user/:id/avatar': {
+      controller    : 'avatar',
+      action        : 'changeAvatar'
+    }
   });
 
   plugin.events.on('we:create:default:folders', function(we) {
