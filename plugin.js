@@ -22,7 +22,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   // set plugin configs
   plugin.setConfigs({
     port: process.env.PORT || '3000',
-
+    // default favicon, change in your project config/local.js
+    favicon: __dirname + '/client/core-favicon.ico',
     log: {
       level: 'debug'
     },
@@ -76,8 +77,26 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         }
       }
     },
-    // default favicon, change in your project config/local.js
-    favicon: __dirname + '/client/core-favicon.ico'
+    i18n: {
+      // setup some locales - other locales default to en silently
+      locales:['en-us', 'pt-br'],
+      // you may alter a site wide default locale
+      defaultLocale: 'pt-br',
+      // sets a custom cookie name to parse locale settings from  - defaults to NULL
+      cookie: 'weLocale',
+      // where to store json files - defaults to './locales' relative to modules directory
+      directory: projectPath + '/config/locales',
+      // whether to write new locale information to disk - defaults to true
+      updateFiles: false,
+      // what to use as the indentation unit - defaults to "\t"
+      indent: "\t",
+      // setting extension of json files - defaults to '.json' (you might want to set this to '.js' according to webtranslateit)
+      extension: '.json',
+      // setting prefix of json files name - default to none '' (in case you use different locale files naming scheme (webapp-en.json), rather then just en.json)
+      prefix: '',
+      // enable object notation
+      objectNotation: false
+    }
   });
   // ser plugin routes
   plugin.setRoutes({
