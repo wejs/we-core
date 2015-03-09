@@ -53,6 +53,7 @@ describe('imageFeature', function () {
         done();
       });
     });
+    
   });  
 
   describe('findOne', function () {
