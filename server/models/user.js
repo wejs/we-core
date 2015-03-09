@@ -7,7 +7,7 @@
  */
 var bcrypt = require('bcrypt');
 
-module.exports = function UserModel(db, hooks, events) {
+module.exports = function UserModel(db, hooks, events, sanitizer) {
   var model = {
     definition: {
       // model atributes //
@@ -25,8 +25,9 @@ module.exports = function UserModel(db, hooks, events) {
         }
       },
 
-      biography: { type: db.Sequelize.STRING },
-      gender: { type: db.Sequelize.TEXT },
+      biography: { type: db.Sequelize.TEXT },
+
+      gender: { type: db.Sequelize.STRING },
       email: {
         // Email type will get validated by the ORM
         type: db.Sequelize.STRING,
@@ -35,13 +36,11 @@ module.exports = function UserModel(db, hooks, events) {
       },
 
       // a hashed password
-      password: {
-        type: db.Sequelize.TEXT
-      },
+      password: { type: db.Sequelize.TEXT },
 
-      displayName: {
-        type: db.Sequelize.STRING
-      },
+      displayName: { type: db.Sequelize.STRING },
+      
+      fullname: { type: db.Sequelize.TEXT },
 
       status: {
         type: db.Sequelize.BOOLEAN,
@@ -66,12 +65,8 @@ module.exports = function UserModel(db, hooks, events) {
     options: {
       // table comment
       comment: "We.js users table",
-      // table configs
-      timestamps: true,
-      createdAt:  'createdAt',
-      updatedAt:  'updatedAt',
-      deletedAt:  'deletedAt',
-      paranoid:   true,
+
+      SALT_WORK_FACTOR: 10,
 
       classMethods: {
         /**
@@ -81,7 +76,7 @@ module.exports = function UserModel(db, hooks, events) {
          * @param  {Function} next     callback
          */
         generatePassword: function(password, next) {
-          var SALT_WORK_FACTOR = sails.config.user.SALT_WORK_FACTOR;
+          var SALT_WORK_FACTOR = this.options.SALT_WORK_FACTOR;
 
           return bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
             return bcrypt.hash(password, salt, next);
@@ -126,16 +121,17 @@ module.exports = function UserModel(db, hooks, events) {
       },
       instanceMethods: {
         toJSON: function() {
-          var req = this.req;
-          delete this.req;
+          var req;
+          if (this.getReq) req = this.getReq();
+
+          var obj = this.values;
 
           // delete and hide user email
           delete obj.email;
           // remove password hash from view
           delete obj.password;
-     
-          var obj = this.toObject();
-
+      
+          // TODO set user can here
           if (req && req.isAuthenticated()) {
             if (req.user.id == obj.id || req.user.isAdmin) {
               // campos privados
@@ -143,14 +139,9 @@ module.exports = function UserModel(db, hooks, events) {
             }
           }
 
-          if (!obj.displayName) {
-            obj.displayName = obj.username;
-          }
+          if (!obj.displayName) obj.displayName = obj.username;
             
-          // ember data type
-          obj.type = 'user';
-
-         // delete context cache
+          // delete context cache
           delete obj._context;
 
           return obj;
@@ -179,7 +170,7 @@ module.exports = function UserModel(db, hooks, events) {
           delete user.isAdmin;
           delete user.isModerator;
           // sanitize
-          user = SanitizeHtmlService.sanitizeAllAttr(user);
+          sanitizer.sanitizeAllAttr(user);
 
           // optional password
           if (user.password) {
@@ -197,7 +188,7 @@ module.exports = function UserModel(db, hooks, events) {
         },
         beforeUpdate: function(user, options, next) {
           // sanitize
-          user = SanitizeHtmlService.sanitizeAllAttr(user);
+          user = sanitizer.sanitizeAllAttr(user);
           // if has user.newPassword generate the new password
           if (user.newPassword) {
             return this.generatePassword(user.newPassword, function(err, hash) {

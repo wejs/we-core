@@ -57,22 +57,23 @@ module.exports = {
   },
 
   findOne: function findOneRecord (req, res) {
-    var sails = req._sails;
+    var we = req.getWe();
     // Look up the model
-    var Model = sails.models.user;
-    var pk = req.param('id');
+    var pk = req.params.id;
+    if (!pk || !Number(pk)) {
+      // id is invalid
+      return res.badRequest();
+    }
 
-    return Model.findOneById(pk)
-    .exec(function found(err, user) {
+    req.context.Model.find(pk)
+    .done(function(err, user) {
       if (err) {
-        sails.log.error('UserController: Error on find user', err);
+        we.log.error('UserController: Error on find user', err);
         return res.serverError(err);
       }
 
-      // save request in user var for toJSON
-      user.req = req;
-
       if (!user) {
+        we.log.silly('User not found:', pk);
         return res.notFound();
       }
 
@@ -80,36 +81,22 @@ module.exports = {
     });
   },
 
-  // find: function findRecords (req, res) {
-  //   // Look up the model
-  //   var Model = we.models.user;
+  /**
+   * Create user route
+   *
+   * Protect this route with acl!
+   */
+  create: function createRecord (req, res) {
+    var we = req.getWe();
 
-  //   // Lookup for records that match the specified criteria
-  //   var query = Model.find()
-  //   .where( actionUtil.parseCriteria(req) )
-  //   .limit( actionUtil.parseLimit(req) )
-  //   .skip( actionUtil.parseSkip(req) )
-  //   .sort( actionUtil.parseSort(req) );
-  //   // TODO: .populateEach(req.options);
-  //   //query = actionUtil.populateEach(query, req.options);
-  //   query.exec(function found(err, matchingRecords) {
-  //     if (err) {
-  //       sails.log.error('find:Error on find users', err);
-  //       return res.serverError(err);
-  //     }
+    req.context.Model.create(req.body)
+    .done(function(err, record) {
+      if (err) {
+        return res.serverError(err);
+      }
 
-  //     _.each(matchingRecords, function (record) {
-  //       // save request in user var for toJSON
-  //       record.req = req;
-  //     });
-
-  //     return res.ok(matchingRecords);
-  //   });
-  // },
-
-  create: function createRecord (req, res, next) {
-    req._sails.log.warn('only create user with auth plugin')
-    return next();
+      return res.created(record);
+    });
   },
 
   update: function updateUserProfile(req, res) {
