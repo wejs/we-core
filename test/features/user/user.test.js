@@ -93,10 +93,72 @@ describe('userFeature', function () {
         done();
       });
     });
+
+    it('get /user/:username should find one user by username', function(done) {
+      request(http)
+      .get('/user/' + salvedUser.username)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .end(function (err, res) {
+        if (err) console.error(err);
+      
+        assert.equal(200, res.status);
+        assert(res.body.user);
+
+        assert( _.isArray(res.body.user) , 'res.body.user not is array');        
+        var user = res.body.user[0];
+        // check user attrs
+        assert.equal(user.username, salvedUser.username);
+        assert.equal(user.displayName, salvedUser.displayName);
+        //assert.equal(user.fullName, userStub.fullName);        
+        assert.equal(user.biography, salvedUser.biography);
+        assert.equal(user.language, salvedUser.language);
+        assert.equal(user.gender, salvedUser.gender);
+
+        done();
+      });
+    });    
   });
 
   describe('update', function () {
-    it('put /user/:id should update one user');
+    it('put /user/:id should update one user displayName and bio', function(done) {
+      var userStub = stubs.userStub();
+    
+      request(http)
+      .put('/user/' + salvedUser.id)
+      .set('Accept', 'application/json')
+      .send({
+        displayName: userStub.displayName,
+        biography: userStub.biography
+      })
+      .expect('Content-Type', /json/)
+      .end(function (err, res) {
+        if (err) throw err;
+       
+        assert.equal(200, res.status);
+        assert(res.body.user);
+
+        assert( _.isArray(res.body.user) , 'res.body.user not is array');        
+        var user = res.body.user[0];
+
+        // new values
+        assert.equal(user.displayName, userStub.displayName);
+        assert.equal(user.biography, userStub.biography);
+
+        // old values
+        //assert.equal(user.fullName, userStub.fullName);        
+        assert.equal(user.username, salvedUser.username);
+        assert.equal(user.language, salvedUser.language);
+        assert.equal(user.gender, salvedUser.gender);
+
+        // update salved user cache
+        salvedUser.displayName = userStub.displayName;
+        salvedUser.biography = userStub.biography;
+
+        done();
+      });
+
+    });
   });
 
   describe('updateAttribute', function () {
