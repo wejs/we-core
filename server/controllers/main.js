@@ -146,9 +146,11 @@ module.exports = {
    * TODO check if user is admin
    */
   getAllModelsAsEmberModel: function(req, res) {
+    var we = req.getWe();
+
     // cache it in a static variable
     if ( !staticModels) {
-      staticModels = converter.convertMultipleToEmberJSFile(req.we.db.modelsConfigs);
+      staticModels = converter.convertMultipleToEmberJSFile( we.db.modelsConfigs );
     }
 
     res.set('Content-Type', 'application/javascript');
