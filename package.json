@@ -53,7 +53,8 @@
     "serve-favicon": "~2.2.0",
     "sqlite3": "^3.0.5",
     "we-class-theme": "0.0.4",
-    "winston": "^0.9.0"
+    "winston": "^0.9.0",
+    "we-core": "wejs/we-core"
   },
   "devDependencies": {
     "chance": "^0.7.3",
