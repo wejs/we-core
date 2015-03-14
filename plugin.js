@@ -10,11 +10,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
 
   var imageMimeTypes = [
-    'image/png', 
-    'image/jpg', 
-    'image/jpeg', 
-    'image/gif', 
-    'image/bmp', 
+    'image/png',
+    'image/jpg',
+    'image/jpeg',
+    'image/gif',
+    'image/bmp',
     'image/x-icon',
     'image/tiff'
   ];
@@ -22,12 +22,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   // set plugin configs
   plugin.setConfigs({
     port: process.env.PORT || '3000',
+    hostname: 'http://localhost',
     // default favicon, change in your project config/local.js
     favicon: __dirname + '/client/core-favicon.ico',
     log: {
       level: 'debug'
     },
-    upload: { 
+    upload: {
       image: {
         uploadPath: projectPath + '/files/uploads/images',
         avaibleStyles: [
@@ -62,12 +63,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       saveUninitialized: true,
       name: 'wejs.sid',
       rolling: false,
-      cookie: { 
-        path: '/', 
-        httpOnly: true, 
-        secure: false, 
-        maxAge: null 
+      cookie: {
+        path: '/',
+        httpOnly: true,
+        secure: false,
+        maxAge: null
       }
+    },
+    auth : {
+      requireAccountActivation: true
     },
     passport: {
       strategies: {
@@ -77,6 +81,36 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         }
       }
     },
+
+    // see https://github.com/andris9/nodemailer-smtp-transport for config options
+    email: {
+      // default mail options
+      mailOptions: {
+        from: 'We.js project emails <contato@wejs.org>', // sender address
+        subject: 'A We.js project email', // Subject line
+      },
+      // connection configs
+      port: 25,
+      auth: {
+        user: '',
+        pass: ''
+      },
+      debug: true,
+      ignoreTLS: false,
+      name: null,
+      // optional params
+      // host: 'localhost',
+      // secure: 'true',
+      // localAddress: '',
+      // connectionTimeout: '',
+      // greetingTimeout: '',
+      // socketTimeout: '',
+
+      // authMethod: '',
+      // tls: ''
+    },
+
+    // node-i18n configs
     i18n: {
       // setup some locales - other locales default to en silently
       locales:['en-us', 'pt-br'],
@@ -87,7 +121,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // where to store json files - defaults to './locales' relative to modules directory
       directory: projectPath + '/config/locales',
       // whether to write new locale information to disk - defaults to true
-      updateFiles: false,
+      updateFiles: true,
       // what to use as the indentation unit - defaults to "\t"
       indent: "\t",
       // setting extension of json files - defaults to '.json' (you might want to set this to '.js' according to webtranslateit)
@@ -115,10 +149,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action: 'index'
     },
 
-    // 
+    //
     // -- config routes
-    // 
-    
+    //
+
     '/api/v1/configs.json': {
       controller: 'main',
       action: 'getConfigsJS',
@@ -192,15 +226,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           files: 1,
           fileSize: 10*1000000, // 10MB
           fieldSize: 20*1000000 // 20MB
-        },        
+        },
         onFileUploadStart: function(file) {
           // check if file is valir on upload start
           if (imageMimeTypes.indexOf(file.mimetype) < 0) {
             log.debug('Image:onFileUploadStart: Invalid file type for file:', file);
             // cancel upload on invalid type
-            return false;    
+            return false;
           }
-        }        
+        }
       }
     },
 
@@ -218,8 +252,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     //
     // - Auth routes
-    // 
-    
+    //
+
     'get /signup': {
       controller: 'auth',
       action: 'signupPage'
@@ -263,7 +297,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //
     // -- User routes
     //
-    
+
     'get /user/:username?': {
       controller    : 'user',
       action        : 'findOneByUsername',
