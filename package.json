@@ -64,6 +64,7 @@
     "chance": "^0.7.3",
     "grunt-cli": "^0.1.13",
     "mocha": "^2.1.0",
+    "sinon": "^1.14.0",
     "supertest": "^0.15.0",
     "we-theme-admin-default": "^0.0.5",
     "we-theme-site-wejs": "^0.0.4"

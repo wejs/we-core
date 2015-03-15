@@ -172,18 +172,20 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     '/api/v1/configs.json': {
       controller: 'main',
       action: 'getConfigsJS',
-      responseType  : 'JSON'
+      responseType  : 'json'
     },
 
     '/api/v1/translations.js': {
       controller: 'main',
-      action: 'getTranslations'
+      action: 'getTranslations',
+      responseType  : 'json'
     },
 
     // ember.js models generated from sails.js models
     'get /api/v1/models/emberjs': {
       controller: 'main',
-      action: 'getAllModelsAsEmberModel'
+      action: 'getAllModelsAsEmberModel',
+      responseType  : 'json'
     },
 
     //
@@ -193,45 +195,45 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'image',
       action        : 'find',
       model         : 'image',
-      responseType  : 'JSON'
+      responseType  : 'json'
     },
     'get /api/v1/image/:name': {
       controller    : 'image',
       action        : 'findOne',
       model         : 'image',
-      responseType  : 'JSON'
+      responseType  : 'json'
     },
     // Image style thumbnail | medium | large
     'get /api/v1/image/:style(original|mini|thumbnail|medium|large)/:name': {
       controller    : 'image',
       action        : 'findOne',
       model         : 'image',
-      responseType  : 'JSON'
+      responseType  : 'json'
     },
     'get /api/v1/image/:id/data': {
       controller    : 'image',
       action        : 'findOneReturnData',
       model         : 'image',
-      responseType  : 'JSON'
+      responseType  : 'json'
     },
     'get /api/v1/image-crop/:id': {
       controller    : 'image',
       action        : 'cropImage',
       model         : 'image',
-      responseType  : 'JSON'
+      responseType  : 'json'
     },
     'post /api/v1/image-crop/:id': {
       controller    : 'image',
       action        : 'cropImage',
       model         : 'image',
-      responseType  : 'JSON'
+      responseType  : 'json'
     },
     // upload one image
     'post /api/v1/image': {
       controller    : 'image',
       action        : 'create',
       model         : 'image',
-      responseType  : 'JSON',
+      responseType  : 'json',
       upload: {
         dest: projectPath + '/files/uploads/images/original',
         rename: function (fieldname, filename) {
@@ -314,6 +316,65 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'logout'
     },
 
+    // form to get one time login email
+    'get /auth/forgot-password': {
+      controller    : 'auth',
+      action        : 'forgotPasswordPage'
+    },
+
+    // post for get new password link
+    'post /auth/forgot-password': {
+      controller    : 'auth',
+      action        : 'forgotPassword'
+    },
+
+    'get /auth/:id/reset-password/:token': {
+      controller: 'auth',
+      action: 'consumeForgotPasswordToken'
+    },
+
+    'get /api/v1/auth/check-if-can-reset-password': {
+      controller: 'auth',
+      action: 'checkIfCanResetPassword',
+      responseType  : 'json'
+    },
+
+    // change password
+    'post /change-password':{
+      controller    : 'auth',
+      action        : 'changePassword'
+    },
+    'get /change-password':{
+      controller    : 'auth',
+      action        : 'changePasswordPage'
+    },
+
+    // activate
+
+    // 'get /api/v1/auth/callback/:access_token?':{
+    //   controller    : 'auth',
+    //   action        : 'oauth2Callback'
+    // },
+
+    'get /user/:id/activate/:token':{
+      controller    : 'auth',
+      action        : 'activate'
+    },
+
+    'post /auth/auth-token':{
+      controller    : 'auth',
+      action        : 'authToken'
+    },
+
+    // new password
+    'post /auth/new-password':{
+      controller    : 'auth',
+      action        : 'newPassword'
+    },
+    'get /auth/:id/new-password':{
+      controller    : 'auth',
+      action        : 'newPasswordPage'
+    },
 
     //
     // -- User routes

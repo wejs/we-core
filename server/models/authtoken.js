@@ -65,40 +65,32 @@ module.exports = function Model(we) {
         validAuthToken: function (userId, token, cb) {
           // then get user token form db
           we.db.models.authtoken.find({ where: {
-            token: token
-          }}).done(function(err, authToken) {
+            token: token,
+            userId: userId
+          }}).done(function (err, authToken) {
             if (err) {
               return cb('Error on get token', null);
             }
 
             // auth token found then check if is valid
-            if(authToken){
-
-              // user id how wons the auth token is invalid then return false
-              if(authToken.userId !== userId || !authToken.isValid){
-                return cb(null, false,{
-                  result: 'invalid',
-                  message: 'Invalid token'
-                });
-              }
-
-              // TODO implement expiration time
-
-
-              // set this auth token as used
-              authToken.isValid = false;
-              authToken.save(function(err){
-                if (err) {
-                  return cb(res.i18n("DB Error"), false);
-                }
-                // authToken is valid
-                return cb(null, true, authToken);
-              });
-
-            } else {
+            if (!authToken) {
               // auth token not fount
-              return cb('Auth token not found', false, null);
+              return cb(null, false, null);
             }
+
+            // user id how wons the auth token is invalid then return false
+            if(authToken.userId !== userId || !authToken.isValid){
+              return cb(null, false,{
+                result: 'invalid',
+                message: 'Invalid token'
+              });
+            }
+
+            authToken.destroy().done(function (err) {
+              if (err) return cb(err, false);
+              // authToken is valid
+              return cb(null, true, authToken);
+            });
 
           });
         }

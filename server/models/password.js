@@ -45,7 +45,7 @@ module.exports = function Model(we) {
          */
         verifyPassword: function (password, hash, cb) {
           // if user dont have a password
-          if(!hash){
+          if (!hash) {
             if(!cb) return false;
             return cb(null, false);
           }
@@ -67,8 +67,21 @@ module.exports = function Model(we) {
         }
       },
       hooks: {
-
-
+        // Lifecycle Callbacks
+        beforeCreate: function(record, options, next) {
+          this.generatePassword(record.password, function(err, hash) {
+            if (err) return next(err);
+            record.password = hash;
+            return next(null, record);
+          });
+        },
+        beforeUpdate: function(record, options, next) {
+          this.generatePassword(record.password, function(err, hash) {
+            if (err) return next(err);
+            record.password = hash;
+            return next(null, record);
+          });
+        },
       }
     }
   }

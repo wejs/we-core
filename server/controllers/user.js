@@ -5,9 +5,6 @@
  * @description :: Contains logic for handling requests.
  */
 
-// sails controller utils
-//var actionUtil = require('we-helpers').actionUtil;
-var util = require('util');
 var _ = require('lodash');
 var async = require('async');
 

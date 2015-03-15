@@ -1,4 +1,19 @@
 {
 	"auth.register.require.email.activation": "auth.register.require.email.activation",
-	"we.email.AccontActivationEmail.subject": "we.email.AccontActivationEmail.subject"
+	"we.email.AccontActivationEmail.subject": "we.email.AccontActivationEmail.subject",
+	"auth.login.user.not-found": "auth.login.user.not-found",
+	"auth.login.user.dont.have.password": "auth.login.user.dont.have.password",
+	"auth.login.user.incorrect.password.or.email": "auth.login.user.incorrect.password.or.email",
+	"unknow.error": "unknow.error",
+	"auth.login.user.not.active": "auth.login.user.not.active",
+	"Forbiden": "Forbiden",
+	"auth.access.invalid.token": "auth.access.invalid.token",
+	"auth.forgot-password.field.email.required": "auth.forgot-password.field.email.required",
+	"auth.forgot-password.reset-password": "auth.forgot-password.reset-password",
+	"auth.forgot-password.email.send": "auth.forgot-password.email.send",
+	"auth.reset-password.success.can": "auth.reset-password.success.can",
+	"New password set successfully": "New password set successfully",
+	"field.password.invalid": "field.password.invalid",
+	"auth.change-password.reset-password": "auth.change-password.reset-password",
+	"auth.change-password.success": "auth.change-password.success"
 }

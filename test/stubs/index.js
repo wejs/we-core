@@ -19,7 +19,7 @@ stubs.userStub = function userStub() {
     email:  chancejs.email(),
     password: '123',
     language: 'pt-br',
-    active: false,
+    active: true,
     gender: 'M',
     cpf: chancejs.cpf()
   }

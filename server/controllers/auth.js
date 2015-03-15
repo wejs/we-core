@@ -26,11 +26,14 @@ module.exports = {
     we.auth.logOut(req, res, function(err) {
       if(err) we.log.error(err);
       setDefaultRegisterLocals(req, res);
-      res.view('auth/register');
+
+      res.locals.template = 'auth/register'
+      res.view();
     });
   },
 
   // Signup method POST function
+  // TODO make this action simple
   signup: function Register(req, res) {
     var we = req.getWe();
 
@@ -51,9 +54,7 @@ module.exports = {
       var user = req.body;
 
       // if dont need a account activation email then create a active user
-      if (!requireAccountActivation) {
-        user.active = true;
-      }
+      if (!requireAccountActivation) user.active = true;
 
       var email = req.body.email;
 
@@ -65,7 +66,7 @@ module.exports = {
 
       if ( ! _.isEmpty(errors) ) {
         // error on data or confirm password
-        return res.send('400',{
+        return res.badRequest({
           messages: errors
         });
       }
@@ -86,27 +87,23 @@ module.exports = {
           return res.badRequest();
         }
 
+        // user is valid then save the record and password
+
         we.db.models.user.create(user).done(function (error, newUser) {
           if (error) {
             we.log.error('signup:User.create:Error on create user', error);
             return res.serverError();
           }
 
-          we.db.models.password.create({
-            userId: newUser.id,
-            password: user.password
-          }).done(function (error, password) {
+          newUser.updatePassword(user.password, function(error) {
             if (error) {
               we.log.error('auth:signup: Error on generate user passport');
               return res.serverError(error);
             }
 
-            newUser.setPassword(password);
-
             we.log.info('Auth plugin:New user:', user.email , 'username:' , user.username , 'ID:' , newUser.id);
 
             if (requireAccountActivation) {
-
               return we.db.models.authtoken.create({ userId: newUser.id })
               .done(function (error, token) {
                 if(error) return res.serverError(error);
@@ -154,7 +151,6 @@ module.exports = {
               }
 
               res.created({ token: passport.token, user: newUser });
-
             });
           });
         });
@@ -166,7 +162,7 @@ module.exports = {
    * Log out current user
    * Beware! this dont run socket.io disconect
    */
-  logout: function (req, res) {
+  logout: function logout(req, res) {
     var we = req.getWe();
 
     we.auth.logOut(req, res, function (err) {
@@ -176,21 +172,34 @@ module.exports = {
     })
   },
 
+  // get login page
+  loginPage: function loginPage(req, res) {
+    if (req.isAuthenticated()) return res.redirect('/');
+
+    res.locals.messages = [];
+    res.locals.user = {};
+
+
+    res.locals.template = 'auth/login';
+
+    res.view();
+  },
+
   /**
    * Login API
    *
    * This action receives the static and JSON request
    */
   login: function (req, res, next) {
-    var we = getWe();
+    var we = req.getWe();
 
     var email = req.body.email;
 
-    // TODO change this passport .authenticate to sails.auth.authenticate
-    we.passport.authenticate('local', function(err, user, info) {
+    // TODO change this passport .authenticate to we.auth.authenticate
+    return we.passport.authenticate('local', function(err, user, info) {
       if (err) {
         we.log.error('AuthController:login:Error on get user ', err, email);
-        return  res.send(500, {
+        return  res.serverError({
           messages: [{
             status: 'danger',
             message: req.__('unknow.error')
@@ -200,17 +209,17 @@ module.exports = {
 
       if (!user) {
         we.log.debug('AuthController:login:User not found', email);
-        return res.send(401,{
+        return res.badRequest({
           messages: [{
             status: 'warning',
-            message: req.__('auth.login.user.not-found', { email: email })
+            message: req.__(info.message, { email: email })
           }]
         });
       }
 
       if (!user.active) {
         we.log.debug('AuthController:login:User not active', email);
-        return res.send(401,{
+        return res.badRequest({
           messages: [{
             status: 'warning',
             message: req.__('auth.login.user.not.active', {email: email})
@@ -218,10 +227,13 @@ module.exports = {
         });
       }
 
-      we.auth.logIn(req, res, user, function (err) {
+      we.auth.logIn(req, res, user, function (err, authToken) {
         if(err) return res.serverError(err);
         we.log.info('AuthController:login: user autheticated:', user.id, user.username);
-        res.send(user);
+        res.send({
+          user: user,
+          token: authToken.token
+        });
       });
 
     })(req, res, next);
@@ -230,113 +242,108 @@ module.exports = {
   /**
    * Activate a user account with activation code
    */
-  activate: function(req, res) {
+  activate: function activate(req, res) {
     var we = req.getWe();
 
     var user = {};
-    user.id = req.body.id;
-    var token = req.body.token;
+    user.id = req.params.id;
+    var token = req.params.token;
 
-    var responseForbiden = function (){
-      return res.send(403, {
-        responseMessage: {
-          errors: [
-            {
-              type: 'authentication',
-              message: req.__('Forbiden')
-            }
-          ]
-        }
+    var responseForbiden = function responseForbiden() {
+      return res.badRequest({
+        messages: [{
+          status: 'warning',
+          message: req.__('auth.access.invalid.token')
+        }]
       });
     };
 
-    var validAuthTokenRespose = function (err, result, authToken){
+    we.db.models.authtoken.validAuthToken(user.id, token, function (err, result, authToken) {
       if (err) {
-        return res.send(500, { error: req.__('Error') });
+        we.log.error('auth:activate: Error on validate token: ', err, token, user.id);
+        return responseForbiden();
       }
 
       // token is invalid
-      if(!result){
+      if (!result) {
+        we.log.info('auth:activate: invalid token: ', token, user.id);
         return responseForbiden();
       }
 
       // token is valid then get user form db
-      User.findOneById(user.id).exec(function(err, usr) {
+      we.db.models.user.find(user.id).done(function (err, usr) {
         if (err) {
-          return res.send(500, { error: req.__('DB Error') });
+          we.log.error('auth:activate: error on find user: ', err);
+          return res.serverError();
         }
+
         // user found
-        if ( !usr ) {
+        if (!usr) {
+          we.log.error('auth:activate: user not found: ', user.id);
           // user not found
-          return responseForbiden();
+          return res.badRequest();
         }
 
         // activate user and login
         usr.active = true;
-        usr.save(function(err){
+        usr.save().done(function (err) {
           if (err) {
-            return res.send(500, { error: req.__('DB Error') });
+            we.log.error('auth:activate: error on update user');
+            return res.serverError();
           }
 
           // destroy auth token after use
-          authToken.destroy(function (err) {
+          authToken.destroy().done(function (err) {
             if (err) we.log.error('Error on delete token', err);
           });
 
-          // login and respond the user
-          we.auth.logIn(req, res, usr, function(err){
-            if(err){
+          // login and redirect the user
+          we.auth.logIn(req, res, usr, function(err) {
+
+            if (err) {
               we.log.error('logIn error:', err);
               return res.negotiate(err);
             }
-            return res.format({
-             'text/html': function() {
-                res.redirect('/');
-             },
+            return res.redirect('/');
 
-             'application/json': function(){
-                console.log('send login result here ....');
-                res.send(200, usr);
-             }
-            });
           });
         });
       });
-    };
-    AuthToken.validAuthToken(user.id, token, validAuthTokenRespose);
-  },
-
-  SendPasswordResetToken: function(req, res){
-    console.log('TODO GetloginResetToken');
-
+    });
   },
 
   forgotPasswordPage: function(req, res) {
     res.locals.emailSend = false;
 
     res.locals.messages = [];
-    res.locals.user = req.param('user');
+    res.locals.user = req.params.user;
     if (!res.locals.user) res.locals.user = {};
     res.locals.formAction = '/auth/forgot-password';
 
+    res.locals.template = 'auth/forgot-password';
+
     // return home page and let emeberJs mount the page
-    res.view('auth/forgot-password');
+    res.view();
   },
 
   /**
    * Forgot password API endpoint
+   * Generate one reset token and send to user email
    */
-  forgotPassword: function(req, res) {
-    var email = req.param('email');
+  forgotPassword: function forgotPassword(req, res) {
+    var we = req.getWe();
+
+    var email = req.body.email;
 
     res.locals.emailSend = false;
     res.locals.messages = [];
-    res.locals.user = req.param('user');
+    res.locals.user = req.body.user;
+
     if (!res.locals.user) res.locals.user = {};
     res.locals.formAction = '/auth/forgot-password';
 
     if (!email) {
-      return res.status(401).send({
+      return res.badRequest({
         messages: [{
           status: 'warning',
           message: req.__('auth.forgot-password.field.email.required')
@@ -344,21 +351,16 @@ module.exports = {
       });
     }
 
-    User.findOneByEmail(email)
-    .exec(function(error, user){
+    we.db.models.user.find({ where: {email: email }})
+    .done(function (error, user) {
       if (error) {
-        req._we.log.error('AuthController:forgotPassword: Error on find user by email', error);
-        return res.status(500).send({
-          messages: [{
-            status: 'danger',
-            message: req.__('unknow.error')
-          }]
-        });
+        we.log.error('AuthController:forgotPassword: Error on find user by email', error);
+        return res.serverError();
       }
 
       if (!user) {
-        req._we.log.warn('AuthController:forgotPassword: User not found', email);
-        return res.status(401).send({
+        we.log.warn('AuthController:forgotPassword: User not found', email);
+        return res.badRequest({
           messages: [{
             status: 'danger',
             type: 'not_found',
@@ -367,18 +369,13 @@ module.exports = {
         });
       }
 
-      AuthToken.create({
-        'userId': user.id,
+      we.db.models.authtoken.create({
+        userId: user.id,
         tokenType: 'resetPassword'
-      }).exec(function(error, token) {
-        if (error || !token) {
-          req._we.log.error('AuthController:forgotPassword: Error on create authtoken', error);
-          return res.status(500).send({
-            messages: [{
-              status: 'danger',
-              message: req.__('unknow.error')
-            }]
-          });
+      }).done(function(error, token) {
+        if (error) {
+          we.log.error('AuthController:forgotPassword: Error on create authtoken', error);
+          return res.serverError();
         }
 
         var appName = we.config.appName;
@@ -403,19 +400,20 @@ module.exports = {
           site: {
             name: appName,
             slogan: 'MIMI one slogan here',
-            url: sails.config.hostname
+            url: we.config.hostname
           },
           resetPasswordUrl: token.getResetUrl()
         };
 
-        sails.email.sendEmail(options, 'AuthResetPasswordEmail', templateVariables, function(err , emailResp){
+        we.email.sendEmail('AuthResetPasswordEmail', options, templateVariables, function(err , emailResp){
           if (err) {
             we.log.error('Error on send email AuthResetPasswordEmail', err, emailResp);
+            return res.serverError();
           }
 
           we.log.info('AuthResetPasswordEmail: Email resp:', emailResp);
 
-          if (req.wantsJSON) {
+          if (req.context.responseType == 'json') {
             return res.send({
               success: [{
                 type: 'email_send',
@@ -441,17 +439,23 @@ module.exports = {
     });
   },
 
-  authToken: function (req, res){
+  /**
+   * Generate and return one auth token
+   * Only allow admin users in permissions
+   */
+  authToken: function authToken(req, res) {
     if (!req.isAuthenticated()) return res.forbiden();
 
-    var email = req.param('email');
+    var we = req.getWe();
 
-    if(!email){
+    var email = req.params.email;
+
+    if (!email) {
       return res.badRequest('Email is required to request a password reset token.');
     }
 
-    User.findOneByEmail(email)
-    .exec(function(error, user){
+    we.db.models.user.find({ where: {email: email}})
+    .done(function (error, user) {
       if (error) {
         we.log.error(error);
         return res.serverError(error);
@@ -459,17 +463,19 @@ module.exports = {
 
       if (!user) return res.badRequest('unknow error trying to find a user');
 
-      AuthToken.create({
+      we.db.models.authtoken.create({
         'userId': user.id,
         tokenType: 'resetPassword'
-      }).exec(function(error, token) {
+      }).done(function (error, token) {
         if(error){
           we.log.error(error);
           return res.serverError(error);
         }
+
         if (!token) {
           return res.serverError('unknow error on create auth token');
         }
+
         return res.json(token.getResetUrl());
       });
     });
@@ -479,40 +485,41 @@ module.exports = {
    * Api endpoint to check if current user can change the password without old password
    */
   checkIfCanResetPassword: function(req, res) {
-    if(!req.isAuthenticated()) return res.forbiden();
+    if(!req.isAuthenticated()) return res.forbidden();
 
     if (req.session && req.session.resetPassword) {
-      res.status(200).send({
+      return res.ok({
         messages: [{
           status: 'success',
           message: req.__('auth.reset-password.success.can')
         }]
       })
-    } else {
-      res.status(403).send({
-        messages: [{
-          status: 'danger',
-          message: req.__('auth.reset-password.error.forbidden')
-        }]
-      })
     }
+
+    return res.forbidden({
+      messages: [{
+        status: 'danger',
+        message: req.__('auth.reset-password.error.forbidden')
+      }]
+    });
   },
 
 
-  consumeForgotPasswordToken: function (req, res) {
-    var uid = req.param('uid');
-    var token = req.param('token');
-    var sails = we;
+  consumeForgotPasswordToken: function (req, res, next) {
+    var we = req.getWe();
 
-    if(!uid || !token){
+    var uid = req.params.id;
+    var token = req.params.token;
+
+    if (!uid || !token){
       we.log.info('consumeForgotPasswordToken: Uid of token not found', uid, token);
-      return res.badRequest();
+      return next();
     }
 
-    loadUserAndAuthToken(uid, token, function(error, user, authToken){
+    loadUserAndAuthToken(we, uid, token, function(error, user, authToken){
       if (error) {
         we.log.error('AuthController:consumeForgotPasswordToken: Error on loadUserAndAuthToken', error);
-        return res.serverError(error);
+        return res.serverError();
       }
 
       if (!user || !authToken) {
@@ -531,7 +538,7 @@ module.exports = {
       } else {
         // If user dont are active, change and salve the active status
         user.active = true;
-        user.save(function (err) {
+        user.save().done(function (err) {
           if (err) {
             we.log.error('Error on change user active status', err, user);
             return res.serverError(err);
@@ -548,25 +555,29 @@ module.exports = {
           }
           // consumes the token
           authToken.isValid = false;
-          authToken.save();
-          // set session variable req.session.resetPassword to indicate that there is a new password to be defined
-          req.session.resetPassword = true;
+          authToken.destroy().done(function (err) {
+            if (err) we.log.error('auth:consumeForgotPasswordToken: Error on dstroy token:', err);
+            // set session variable req.session.resetPassword to indicate that there is a new password to be defined
+            req.session.resetPassword = true;
 
-          if (req.wantsJSON) {
-            res.send('200', authToken);
-          } else {
-            // res.redirect( '/auth/' + user.id + '/reset-password/' + authToken.id);
-            res.redirect( '/auth/' + user.id + '/new-password/');
-          }
+            if (req.context.responseType == 'json') {
+              res.send('200');
+            } else {
+              // res.redirect( '/auth/' + user.id + '/reset-password/' + authToken.id);
+              res.redirect( '/auth/' + user.id + '/new-password/');
+            }
+
+          });
+
         });
       }
     });
   },
 
-  newPasswordPage: function(req, res, next) {
+  newPasswordPage: function newPasswordPage(req, res, next) {
     if(!req.isAuthenticated()) return res.redirect('/');
 
-    var userId = req.param('id');
+    var userId = req.params.id;
 
     if (!userId) return next();
 
@@ -577,33 +588,31 @@ module.exports = {
     // res.locals.rNewPassword = req.param('rNewPassword');
     res.locals.formAction = '/auth/' + req.user.id + '/new-password';
     res.locals.user = req.user;
-    res.view('auth/new-password');
+    res.locals.template = 'auth/new-password';
+
+    res.view();
   },
 
-  newPassword: function (req, res, next) {
+  newPassword: function newPasswordAction(req, res, next) {
     if(!req.isAuthenticated()) return res.redirect('/');
     if (!req.user.isAdmin && !req.session.resetPassword) return res.forbidden();
 
-    var sails = we;
-    var User = sails.models.user;
+    var we = req.getWe();
 
-    var newPassword = req.param('newPassword');
-    var rNewPassword = req.param('rNewPassword');
+    var newPassword = req.body.newPassword;
+    var rNewPassword = req.body.rNewPassword;
     // var userId = req.param('id');
     var userId = req.user.id;
 
     // TODO move this access check to one policy
     if(!req.isAuthenticated() || req.user.id != userId) {
-      if (req.wantsJSON) {
-        return res.send(403, {
-          responseMessage: {
-            errors: [
-              {
-                type: 'authentication',
-                message: req.__('Forbiden')
-              }
-            ]
-          }
+      if (req.context.responseType == 'json') {
+        return res.badRequest({
+          messages: [{
+            status: 'danger',
+            type: 'forbiden',
+            message: req.__('auth.fochange-password.forbiden')
+          }]
         });
       } else {
         res.locals.messages = [{
@@ -611,9 +620,8 @@ module.exports = {
           type: 'forbiden',
           message: req.__('auth.fochange-password.forbiden')
         }];
-        return sails.controllers.auth.newPasswordPage(req, res, next);
+        return we.controllers.auth.newPasswordPage(req, res, next);
       }
-
     }
 
     var errors = [];
@@ -630,7 +638,7 @@ module.exports = {
       });
     }
 
-    if(newPassword !== rNewPassword){
+    if(newPassword !== rNewPassword) {
       errors.push({
         type: 'validation',
         field: 'newPassword',
@@ -640,10 +648,10 @@ module.exports = {
       });
     }
 
-    if( ! _.isEmpty(errors) ) {
-      if (req.wantsJSON) {
+    if( !_.isEmpty(errors) ) {
+      if (req.context.responseType == 'json') {
         // erro,r on data or confirm password
-        return res.send('400',{
+        return res.badRequest({
           messages: errors
         });
       } else {
@@ -652,26 +660,27 @@ module.exports = {
           errors.password[i].status = 'danger';
           res.locals.messages.push(errors.password[i]);
         }
-        return sails.controllers.auth.newPasswordPage(req, res, next);
+        return we.controllers.auth.newPasswordPage(req, res, next);
       }
     }
 
-    User.findOneById(userId)
-    .exec(function(error, user){
-      if(error){
+    we.db.models.user.find(userId)
+    .done(function (error, user) {
+      if (error) {
         we.log.error('newPassword: Error on get user', user);
-        return res.negotiate(error);
+        return res.serverError();
       }
 
-      if(!user){
+      if (!user) {
         we.log.info('newPassword: User not found', user);
-        return res.negotiate(error);
+        return res.serverError();
       }
 
-      // set newPassword and save it for generate the password hash on update
-      user.newPassword = newPassword;
-      user.save(function(err) {
-        if(err) we.log.error('Error on save user to update password',err);
+      user.updatePassword(newPassword, function(err) {
+        if (err) {
+          we.log.error('newPassword: Error on update user password', err);
+          return res.serverError();
+        }
 
         req.flash('messages',[{
           status: 'success',
@@ -682,43 +691,45 @@ module.exports = {
         // Reset req.session.resetPassword to indicate that the operation has been completed
         delete req.session.resetPassword;
 
-        if (req.wantsJSON) {
-          return res.send('200',{messages: res.locals.messages});
+        if (req.context.responseType == 'json') {
+          return res.status(200).send({messages: res.locals.messages});
         }
         return res.redirect('/account');
+
       });
+
     });
   },
 
-  changePasswordPage: function(req, res, next) {
+  changePasswordPage: function(req, res) {
     if(!req.isAuthenticated()) return res.redirect('/');
 
-    // var userId = req.param('id');
-
-    // if (!userId) return next();
-
-    // if (userId != req.user.id) return res.redirect('/auth/' + req.user.id + '/change-password');
-
-    res.locals.oldPassword = req.param('password');
-    res.locals.newPassword = req.param('newPassword');
-    res.locals.rNewPassword = req.param('rNewPassword');
+    res.locals.oldPassword = req.body.password;
+    res.locals.newPassword = req.body.newPassword;
+    res.locals.rNewPassword = req.body.rNewPassword;
     res.locals.formAction = '/change-password';
 
     res.locals.user = req.user;
 
-    res.view('auth/change-password');
+    res.locals.template = 'auth/change-password';
+
+    res.view();
   },
 
+  /**
+   * Change authenticated user password
+   */
   changePassword: function (req, res, next) {
     if(!req.isAuthenticated()) return res.redirect('/');
-    var sails = we;
-    var User = sails.models.user;
+    var we = req.getWe();
 
-    var oldPassword = req.param('password');
-    var newPassword = req.param('newPassword');
-    var rNewPassword = req.param('rNewPassword');
-    // var userId = req.param('id');
+    var oldPassword = req.body.password;
+    var newPassword = req.body.newPassword;
+    var rNewPassword = req.body.rNewPassword;
+
     var userId = req.user.id;
+
+    res.locals.template = 'auth/change-password';
 
     // TODO move this access check to one policy
     // if(!req.isAuthenticated() || req.user.id != userId) {
@@ -728,10 +739,10 @@ module.exports = {
         type: 'forbiden',
         message: req.__('auth.change-password.forbiden')
       }];
-      if (req.wantsJSON) {
+      if (req.context.responseType == 'json') {
         return res.send(403, { messages: res.locals.messages });
       } else {
-        return sails.controllers.auth.changePasswordPage(req, res, next);
+        return we.controllers.auth.changePasswordPage(req, res, next);
       }
     }
 
@@ -772,26 +783,27 @@ module.exports = {
 
     if( ! _.isEmpty(errors) ) {
       res.locals.messages = errors;
-      if (req.wantsJSON) {
+      if (req.context.responseType == 'json') {
+        res.status(400);
         // erro,r on data or confirm password
-        return res.send('400',{
+        return res.send({
           messages: res.locals.messages
         });
       } else {
-        return sails.controllers.auth.changePasswordPage(req, res, next);
+        return we.controllers.auth.changePasswordPage(req, res, next);
       }
     }
 
-    User.findOneById(userId)
-    .exec(function(error, user){
+    we.db.models.user.find(userId)
+    .done(function (error, user) {
       if (error) {
         we.log.error('resetPassword: Error on get user', user);
-        return res.negotiate(error);
+        return res.serverError(error);
       }
 
       if (!user) {
         we.log.info('resetPassword: User not found', user);
-        return res.negotiate(error);
+        return res.badRequest();
       }
 
       // skip password check if have resetPassord flag actives
@@ -807,14 +819,15 @@ module.exports = {
               status: 'danger',
               message: req.__('field.password.invalid')
             }];
-            if (req.wantsJSON) {
+            if (req.context.responseType == 'json') {
+              res.status(400);
               // erro,r on data or confirm password
-              return res.send('400',{
+              return res.send({
                 messages: errors
               });
             } else {
               res.locals.messages = errors;
-              return sails.controllers.auth.changePasswordPage(req, res, next);
+              return we.controllers.auth.changePasswordPage(req, res, next);
             }
           }
 
@@ -824,9 +837,11 @@ module.exports = {
 
       function changePassword() {
         // set newPassword and save it for generate the password hash on update
-        user.newPassword = newPassword;
-        user.save(function(err) {
-          if(err) we.log.error('Error on save user to update password',err);
+        user.updatePassword(newPassword, function(err) {
+          if(err) {
+            we.log.error('Error on save user to update password: ', err);
+            return res.serverError(err);
+          }
 
           // Reset req.session.resetPassword to indicate that the operation has been completed
           delete req.session.resetPassword;
@@ -852,12 +867,12 @@ module.exports = {
             },
             site: {
               name: appName,
-              slogan: 'MIMI one slogan here',
-              url: sails.config.hostname
+              slogan: we.config.slogan,
+              url: we.config.hostname
             }
           };
 
-          sails.email.sendEmail(options, 'AuthChangePasswordEmail', templateVariables, function(err , emailResp){
+          we.email.sendEmail(options, 'AuthChangePasswordEmail', templateVariables, function (err , emailResp) {
             if (err) {
               we.log.error('Error on send email AuthChangePasswordEmail', err, emailResp);
             }
@@ -870,13 +885,15 @@ module.exports = {
 
             we.log.info('AuthChangePasswordEmail: Email resp:', emailResp);
 
-            if (req.wantsJSON) {
-              return res.send('200',{ messages: res.locals.messages });
+            if (req.context.responseType == 'json') {
+              return res.ok({ messages: res.locals.messages });
             }
-            return sails.controllers.auth.changePasswordPage(req, res, next);
+            return we.controllers.auth.changePasswordPage(req, res, next);
 
           });
-        });
+
+
+        })
       }
 
     });
@@ -891,13 +908,13 @@ module.exports = {
  */
 function setDefaultRegisterLocals(req, res){
 
-  var user = actionUtil.parseValues(req);
+  var user = req.body;
 
   res.locals.messages = [];
   res.locals.user = user;
   res.locals.formAction = '/signup';
-  res.locals.service = req.param('service');
-  res.locals.consumerId = req.param('consumerId');
+  res.locals.service = req.params.service;
+  res.locals.consumerId = req.params.consumerId;
   res.locals.interests = [];
 }
 
@@ -907,8 +924,9 @@ function setDefaultRegisterLocals(req, res){
  * @param  {string}   token    user token
  * @param  {Function} callback    callback(error, user, authToken)
  */
-var loadUserAndAuthToken = function(uid, token, callback){
-  User.findOneById(uid).exec(function (error, user) {
+function loadUserAndAuthToken(we, uid, token, callback){
+  we.db.models.user.find(uid)
+  .done(function (error, user) {
     if (error) {
       we.log.error('consumeForgotPasswordToken: Error on get user', user, token);
       return callback(error, null, null);
@@ -919,13 +937,13 @@ var loadUserAndAuthToken = function(uid, token, callback){
       return callback(null, null, null);
     }
 
-    AuthToken.findOneByToken(token)
-    .where({
+    we.db.models.authtoken.find({ where: {
       userId: user.id,
       token: token,
       isValid: true
-    })
-    .exec(function(error, authToken){
+    }})
+
+    .done(function(error, authToken){
       if (error) {
         we.log.error('consumeForgotPasswordToken: Error on get token', user, token);
         return callback(error, null, null);
@@ -938,7 +956,7 @@ var loadUserAndAuthToken = function(uid, token, callback){
       }
     });
   });
-};
+}
 
 function validSignup(user, confirmPassword, confirmEmail, req, res){
   var errors = [];

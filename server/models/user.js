@@ -5,7 +5,6 @@
  * @description :: System User model
  *
  */
-var bcrypt = require('bcrypt');
 
 module.exports = function UserModel(we) {
   var model = {
@@ -42,7 +41,7 @@ module.exports = function UserModel(we) {
 
       fullname: { type: we.db.Sequelize.TEXT },
 
-      status: {
+      active: {
         type: we.db.Sequelize.BOOLEAN,
         defaultValue: false
       },
@@ -110,7 +109,37 @@ module.exports = function UserModel(we) {
         }
       },
       instanceMethods: {
-        toJSON: function() {
+        verifyPassword: function(password, cb) {
+          this.getPassword().done( function(err, passwordObj){
+            if (err) return cb(err);
+            if (!passwordObj) return cb(null, false);
+            passwordObj.validatePassword(password, cb);
+          });
+        },
+        updatePassword: function updatePassword(newPassword, cb) {
+          var user = this;
+          this.getPassword().done( function(err, password){
+            if (err) return cb(err);
+
+            if (!password) {
+              // create one password if this user dont have one
+              return we.db.models.password.create({
+                userId: user.id,
+                password: newPassword
+              }).done(function (err, password) {
+                if (err) return cb(err);
+                user.setPassword(password).done(function () {
+                  user.passwordId = password.id;
+                  return cb(null, password);
+                })
+              })
+            }
+            // update
+            password.password = newPassword;
+            password.save().done(cb);
+          });
+        },
+        toJSON: function toJSON() {
           var req;
           if (this.getReq) req = this.getReq();
 
@@ -162,36 +191,12 @@ module.exports = function UserModel(we) {
           // sanitize
           we.sanitizer.sanitizeAllAttr(user);
 
-          // optional password
-          if (user.password) {
-            this.generatePassword(user.password, function(err, hash) {
-              if (err) return next(err);
-
-              user.password = hash;
-              return next(null, user);
-            });
-          } else {
-            // ensures that user password are undefined
-            delete user.password;
-            next(null, user);
-          }
+          next(null, user);
         },
         beforeUpdate: function(user, options, next) {
-          // sanitize
-          user = we.sanitizer.sanitizeAllAttr(user);
-          // if has user.newPassword generate the new password
-          if (user.newPassword) {
-            return this.generatePassword(user.newPassword, function(err, hash) {
-              if (err) return next(err);
-              // delete newPassword variable
-              delete user.newPassword;
-              // set new password
-              user.password = hash;
-              return next(null, user);
-            });
-          } else {
-            return next(null, user);
-          }
+          // sanitize attrs
+          we.sanitizer.sanitizeAllAttr(user);
+          return next(null, user);
         }
       }
     }

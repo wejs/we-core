@@ -136,7 +136,7 @@ module.exports = {
       } else {
         we.log.debug('getTranslations:Locale not found:', locale, localeParam);
         res.contentType('application/javascript');
-        res.send(200, translationResponse );
+        res.ok( translationResponse );
       }
 
     });
@@ -164,10 +164,10 @@ module.exports = {
 
 /**
  * Search for one locale file folder
- * 
+ *
  * @param  {Object}   we       we.js
  * @param  {String}   locale   locale to search for
- * @param  {Function} callback 
+ * @param  {Function} callback
  */
 function getTranslationFilePath (we, locale, callback) {
   var localePath = null;
