@@ -47,7 +47,7 @@ module.exports = {
         we.log.silly('image:findOne: image not found:', fileName);
         return res.notFound(image);
       }
-      
+
       we.log.silly('image:findOne: image found:', image);
 
       getFileOrResize(fileName, imageStyle, we, function(err, contents) {
@@ -58,7 +58,7 @@ module.exports = {
 
         if (!contents) {
           return res.status(404).send();
-        }     
+        }
 
         if (image.mime) {
           res.contentType(image.mime);
@@ -74,7 +74,7 @@ module.exports = {
    * Find image by id and returm image model data
    */
   findOneReturnData : function (req, res) {
-    var fileId = req.param('id');
+    var fileId = req.params.id;
     if (!fileId) {
       return res.send(404);
     }
@@ -120,6 +120,9 @@ module.exports = {
       files.image.height = size.height;
       files.image.mime = files.image.mimetype;
 
+      if (req.isAuthenticated()) files.image.creatorId = req.user.id;
+
+
       req.context.Model.create(files.image)
       .done(function(err, record) {
         if (err) {
@@ -130,7 +133,7 @@ module.exports = {
         response[req.context.model] = [
           record
         ];
-        
+
         if (record) we.log.debug('New image record created:', record.dataValues);
 
         return res.status(201).send(response);
@@ -141,72 +144,72 @@ module.exports = {
   // /**
   //  * Crop one file by file id
   //  */
-  // cropImage : function (req, res) {
+  cropImage : function (req, res) {
 
-  //   var sails = req._sails;
-  //   var Images = sails.models.images;
+    var sails = req._sails;
+    var Images = sails.models.images;
 
-  //   var fileId = req.param('id');
-  //   var cords = {};
-  //   cords.width = req.param('w');
-  //   cords.height = req.param('h');
-  //   cords.x = req.param('x');
-  //   cords.y = req.param('y');
+    var fileId = req.param('id');
+    var cords = {};
+    cords.width = req.param('w');
+    cords.height = req.param('h');
+    cords.x = req.param('x');
+    cords.y = req.param('y');
 
-  //   if(!fileId ) { return res.send(400,'File id param is required'); }
+    if(!fileId ) { return res.send(400,'File id param is required'); }
 
-  //   if(!cords.width || !cords.height || cords.x === null || cords.y === null){
-  //     return res.send(400,'Width, height, x and y params is required');
-  //   }
+    if(!cords.width || !cords.height || cords.x === null || cords.y === null){
+      return res.send(400,'Width, height, x and y params is required');
+    }
 
-  //   if(!req.user || !req.user.id) {
-  //     we.log.warn('errr no user')
-  //     return res.send(404);
-  //   }
+    if(!req.user || !req.user.id) {
+      we.log.warn('errr no user')
+      return res.send(404);
+    }
 
-  //   var user_id = req.user.id;
+    var user_id = req.user.id;
 
-  //   Images.findOne()
-  //   .where({id: fileId})
-  //   .exec(function(err, image) {
-  //     if (err) {
-  //       we.log.error('Error on get image from BD: ',err, fileId);
-  //       return res.send(404);
-  //     }
-  //     if(!image || user_id !== image.creator){
-  //       we.log.error('Image crop forbiden');
-  //       return res.send(404);
-  //     }
+    Images.findOne()
+    .where({id: fileId})
+    .exec(function(err, image) {
+      if (err) {
+        we.log.error('Error on get image from BD: ',err, fileId);
+        return res.send(404);
+      }
+      if(!image || user_id !== image.creator){
+        we.log.error('Image crop forbiden');
+        return res.send(404);
+      }
 
-  //     var originalFile = FileImageService.getImagePath(image.name, 'original');
+      var originalFile = FileImageService.getImagePath(image.name, 'original');
 
 
-  //     we.log.verbose('Filename:', image.name);
+      we.log.verbose('Filename:', image.name);
 
-  //     FileImageService.resizeImageAndReturnSize(originalFile, cords, function(err, size){
+      FileImageService.resizeImageAndReturnSize(originalFile, cords, function(err, size){
 
-  //       image.width = size.width;
-  //       image.height = size.height;
-  //       // save the new width and height on db
-  //       image.save();
+        image.width = size.width;
+        image.height = size.height;
+        // save the new width and height on db
+        image.save();
 
-  //       we.log.verbose('resize image to:', cords);
+        we.log.verbose('resize image to:', cords);
 
-  //       we.log.verbose('result:',size.width, size.width);
+        we.log.verbose('result:',size.width, size.width);
 
-  //       // delete old auto generated image styles
-  //       FileImageService.deleteImageStylesWithImageName(image.name, function(err){
-  //         if (err){
-  //           we.log.error('Error on delete old image styles:',image, err);
-  //           return res.send(500);
-  //         }
-  //         res.send({
-  //           image: image
-  //         });
-  //       });
-  //     });
-  //   });
-  // }
+        // delete old auto generated image styles
+        FileImageService.deleteImageStylesWithImageName(image.name, function(err){
+          if (err){
+            we.log.error('Error on delete old image styles:',image, err);
+            return res.send(500);
+          }
+          res.send({
+            image: image
+          });
+        });
+      });
+    });
+  }
 };
 
 

@@ -5,84 +5,83 @@
  * @description :: A short summary of how this model works and what it represents.
  *
  */
-var mv = require('mv');
-var uuid = require('node-uuid');
-// image converter
-var gm = require('gm');
-var path = require('path');
-var mime = require('mime');
-var async = require('async');
 
-module.exports = function ImageModel(db, hooks, events, sanitizer) {
-  // we.js will be set in one event
-  var we = null;
+module.exports = function ImageModel(we) {
 
   // set sequelize model define and options
   var model = {
     definition: {
       // - user given data text
-      // 
+      //
       label: {
-        type: db.Sequelize.STRING
+        type: we.db.Sequelize.STRING
       },
       description: {
-        type: db.Sequelize.TEXT
+        type: we.db.Sequelize.TEXT
       },
 
       // - data get from file
-      // 
+      //
       name: {
-        type: db.Sequelize.STRING,
+        type: we.db.Sequelize.STRING,
         allowNull: false,
-        unique: true        
+        unique: true
       },
 
       size: {
-        type: db.Sequelize.INTEGER,
+        type: we.db.Sequelize.INTEGER,
       },
 
       encoding: {
-        type: db.Sequelize.STRING,
+        type: we.db.Sequelize.STRING,
       },
 
       active: {
-        type: db.Sequelize.BOOLEAN,
-        defaultValue: true        
+        type: we.db.Sequelize.BOOLEAN,
+        defaultValue: true
       },
 
       originalname: {
-        type: db.Sequelize.STRING
+        type: we.db.Sequelize.STRING
       },
 
       mime: {
-        type: db.Sequelize.STRING
+        type: we.db.Sequelize.STRING
       },
 
       extension: {
-        type: db.Sequelize.STRING
+        type: we.db.Sequelize.STRING
       },
 
-      // creator: {
-      //   model: 'user',
-      //   required: true
-      // },
-
       width: {
-        type: db.Sequelize.STRING
+        type: we.db.Sequelize.STRING
       },
 
       height: {
-        type: db.Sequelize.STRING
+        type: we.db.Sequelize.STRING
       }
+    },
+
+    associations: {
+      creator:  {
+        type: 'belongsTo',
+        model: 'user',
+        inverse: 'images'
+      },
+      // avatarOf: {
+      //   type: 'belongsTo',
+      //   model: 'user',
+      //   inverse: 'avatar'
+      // }
     },
 
     options: {
       // table comment
-      comment: "We.js we-core image table",
+      comment: 'We.js we-core image table',
 
       classMethods: {
         getStyleUrlFromImage: function(image) {
-          var host = we.config.hostname;
+          var host = 'TODO';
 
           return {
             original: host + '/api/v1/images/original/' + image.name,
@@ -96,34 +95,26 @@ module.exports = function ImageModel(db, hooks, events, sanitizer) {
 
       instanceMethods: {
         toJSON: function() {
-          var obj = this.values;
-          obj.urls = db.models.image.getStyleUrlFromImage(obj);
-          // set default objectType
-          obj.objectType = 'image';
+          var obj = this.get();
+          obj.urls = we.db.models.image.getStyleUrlFromImage(obj);
           return obj;
         }
       },
       hooks: {
         beforeCreate: function(record, options, next) {
           // sanitize
-          record = sanitizer.sanitizeAllAttr(record);
+          record = we.sanitizer.sanitizeAllAttr(record);
           next();
         },
 
         beforeUpdate: function(record, options, next) {
           // sanitize
-          record = sanitizer.sanitizeAllAttr(record);
+          record = we.sanitizer.sanitizeAllAttr(record);
           next();
         }
       }
     }
   }
-
-  hooks.on('we:models:set:joins', function (wejs, done) {
-    we = wejs;
-
-    done();
-  });
 
   return model;
 }

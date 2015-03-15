@@ -22,7 +22,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   // set plugin configs
   plugin.setConfigs({
     port: process.env.PORT || '3000',
-    hostname: 'http://localhost',
+    hostname: 'http://localhost:' + ( process.env.PORT || '3000' ),
     // default favicon, change in your project config/local.js
     favicon: __dirname + '/client/core-favicon.ico',
     log: {
@@ -75,6 +75,22 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     passport: {
       strategies: {
+        // token
+        weOauth2: {
+          isProvider: true,
+
+          providerHost: '',
+
+          accessTokenTime: 300000000,
+          cookieDomain: 'localhost:' + ( process.env.PORT || '3000' ),
+          cookieName: 'weoauth',
+          cookieSecure: false,
+
+          services: {
+
+          }
+        },
+        // session
         local: {
           usernameField: 'email',
           passwordField: 'password'
@@ -86,7 +102,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     email: {
       // default mail options
       mailOptions: {
-        from: 'We.js project emails <contato@wejs.org>', // sender address
+        from: 'We.js project <contato@wejs.org>', // sender address
         subject: 'A We.js project email', // Subject line
       },
       // connection configs
@@ -253,6 +269,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //
     // - Auth routes
     //
+    'get /account': {
+      controller: 'auth',
+      action: 'current',
+      model: 'user'
+    },
 
     'get /signup': {
       controller: 'auth',

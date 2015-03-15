@@ -13,24 +13,23 @@ describe('userFeature', function () {
     // after all create one user
     request(http)
     .post('/user')
-    .set('Accept', 'application/json')    
+    .set('Accept', 'application/json')
     .send( stubs.userStub() )
     .end(function (err, res) {
       salvedUser = res.body.user[0];
       done();
     });
-  }); 
+  });
 
   describe('find', function () {
-    it('get /user route should return one user list', function (done) {
+    it('get /user route should return user list', function (done) {
       request(http)
       .get('/user')
-      .set('Accept', 'application/json')      
+      .set('Accept', 'application/json')
       .end(function (err, res) {
         assert.equal(200, res.status);
         assert(res.body.user);
         assert( _.isArray(res.body.user) , 'user not is array');
-        assert.equal(res.body.user[0].id, salvedUser.id, 'first image returned from find dont are the salved user');
         assert(res.body.meta);
         done();
       });
@@ -45,7 +44,7 @@ describe('userFeature', function () {
 
       request(http)
       .post('/user')
-      .set('Accept', 'application/json')      
+      .set('Accept', 'application/json')
       .send(userStub)
       .end(function (err, res) {
         if (err) console.error(err);
@@ -56,7 +55,7 @@ describe('userFeature', function () {
         // check user attrs
         assert.equal(user.username, userStub.username);
         assert.equal(user.displayName, userStub.displayName);
-        //assert.equal(user.fullName, userStub.fullName);        
+        //assert.equal(user.fullName, userStub.fullName);
         assert.equal(user.biography, userStub.biography);
         assert.equal(user.language, userStub.language);
         assert.equal(user.gender, userStub.gender);
@@ -64,8 +63,8 @@ describe('userFeature', function () {
         done();
       });
     });
-    
-  });  
+
+  });
 
   describe('findOne', function () {
     it('get /user/:id should return one user', function(done) {
@@ -78,14 +77,16 @@ describe('userFeature', function () {
         assert.equal(200, res.status);
         assert(res.body.user);
 
-        assert( _.isArray(res.body.user) , 'res.body.user not is array');        
+        assert( _.isArray(res.body.user) , 'res.body.user not is array');
+        assert.equal(1, res.body.user.length);
 
         var user = res.body.user[0];
 
         // check user attrs
+        assert.equal(user.id, salvedUser.id);
         assert.equal(user.username, salvedUser.username);
         assert.equal(user.displayName, salvedUser.displayName);
-        //assert.equal(user.fullName, userStub.fullName);        
+        //assert.equal(user.fullName, userStub.fullName);
         assert.equal(user.biography, salvedUser.biography);
         assert.equal(user.language, salvedUser.language);
         assert.equal(user.gender, salvedUser.gender);
@@ -101,29 +102,29 @@ describe('userFeature', function () {
       .expect('Content-Type', /json/)
       .end(function (err, res) {
         if (err) console.error(err);
-      
+
         assert.equal(200, res.status);
         assert(res.body.user);
 
-        assert( _.isArray(res.body.user) , 'res.body.user not is array');        
+        assert( _.isArray(res.body.user) , 'res.body.user not is array');
         var user = res.body.user[0];
         // check user attrs
         assert.equal(user.username, salvedUser.username);
         assert.equal(user.displayName, salvedUser.displayName);
-        //assert.equal(user.fullName, userStub.fullName);        
+        //assert.equal(user.fullName, userStub.fullName);
         assert.equal(user.biography, salvedUser.biography);
         assert.equal(user.language, salvedUser.language);
         assert.equal(user.gender, salvedUser.gender);
 
         done();
       });
-    });    
+    });
   });
 
   describe('update', function () {
     it('put /user/:id should update one user displayName and bio', function(done) {
       var userStub = stubs.userStub();
-    
+
       request(http)
       .put('/user/' + salvedUser.id)
       .set('Accept', 'application/json')
@@ -134,11 +135,11 @@ describe('userFeature', function () {
       .expect('Content-Type', /json/)
       .end(function (err, res) {
         if (err) throw err;
-       
+
         assert.equal(200, res.status);
         assert(res.body.user);
 
-        assert( _.isArray(res.body.user) , 'res.body.user not is array');        
+        assert( _.isArray(res.body.user) , 'res.body.user not is array');
         var user = res.body.user[0];
 
         // new values
@@ -146,7 +147,7 @@ describe('userFeature', function () {
         assert.equal(user.biography, userStub.biography);
 
         // old values
-        //assert.equal(user.fullName, userStub.fullName);        
+        //assert.equal(user.fullName, userStub.fullName);
         assert.equal(user.username, salvedUser.username);
         assert.equal(user.language, salvedUser.language);
         assert.equal(user.gender, salvedUser.gender);
@@ -163,9 +164,9 @@ describe('userFeature', function () {
 
   describe('updateAttribute', function () {
     it('put /user/:id/:attributeName should update one user attribute');
-  });  
+  });
 
   describe('remove', function () {
-    it('delete /api/v1/image/:name should delete one image file');
+    it('delete /api/v1/user/:name should delete one user file');
   });
 });

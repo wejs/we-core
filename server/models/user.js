@@ -7,17 +7,17 @@
  */
 var bcrypt = require('bcrypt');
 
-module.exports = function UserModel(db, hooks, events, sanitizer) {
+module.exports = function UserModel(we) {
   var model = {
     definition: {
       // model atributes //
       idInProvider: {
-        type:  db.Sequelize.STRING,
+        type:  we.db.Sequelize.STRING,
         unique: true
       },
 
       username: {
-        type: db.Sequelize.STRING,
+        type: we.db.Sequelize.STRING,
         unique: true,
         allowNull: false,
         validate: {
@@ -25,30 +25,30 @@ module.exports = function UserModel(db, hooks, events, sanitizer) {
         }
       },
 
-      biography: { type: db.Sequelize.TEXT },
+      biography: { type: we.db.Sequelize.TEXT },
 
-      gender: { type: db.Sequelize.STRING },
+      gender: { type: we.db.Sequelize.STRING },
       email: {
         // Email type will get validated by the ORM
-        type: db.Sequelize.STRING,
+        type: we.db.Sequelize.STRING,
         allowNull: false,
         unique: true
       },
 
-      // a hashed password
-      password: { type: db.Sequelize.TEXT },
+      // // a hashed password
+      // password: { type: db.Sequelize.TEXT },
 
-      displayName: { type: db.Sequelize.STRING },
-      
-      fullname: { type: db.Sequelize.TEXT },
+      displayName: { type: we.db.Sequelize.STRING },
+
+      fullname: { type: we.db.Sequelize.TEXT },
 
       status: {
-        type: db.Sequelize.BOOLEAN,
+        type: we.db.Sequelize.BOOLEAN,
         defaultValue: false
       },
 
       language: {
-        type: db.Sequelize.STRING,
+        type: we.db.Sequelize.STRING,
         defaultValue: 'pt-br',
         validations: {
           max: 6
@@ -56,52 +56,42 @@ module.exports = function UserModel(db, hooks, events, sanitizer) {
       },
       // estado UF
       locationState: {
-        type: db.Sequelize.STRING
+        type: we.db.Sequelize.STRING
       },
       city: {
-        type: db.Sequelize.STRING
+        type: we.db.Sequelize.STRING
       }
-    }, 
+    },
+
+    associations: {
+      images:  {
+        type: 'hasMany',
+        model: 'image',
+        inverse: 'creator'
+      },
+      avatar: {
+        type: 'belongsTo',
+        model : 'image',
+        inverse: 'avatarOf'
+      },
+      passports:  {
+        type: 'hasMany',
+        model: 'passport',
+        inverse: 'user'
+      },
+      password:  {
+        type: 'belongsTo',
+        model: 'password',
+        inverse: 'user'
+      }
+    },
+
     options: {
       // table comment
-      comment: "We.js users table",
-
-      SALT_WORK_FACTOR: 10,
+      comment: 'We.js users table',
 
       classMethods: {
-        /**
-         * async password generation
-         *
-         * @param  {string}   password
-         * @param  {Function} next     callback
-         */
-        generatePassword: function(password, next) {
-          var SALT_WORK_FACTOR = this.options.SALT_WORK_FACTOR;
 
-          return bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-            return bcrypt.hash(password, salt, next);
-          });
-        },
-        /**
-         * Verify user password
-         *
-         * @param  {string}   password user password string to test
-         * @param  {string}   hash     DB user hased password
-         * @param  {Function} cb       Optional callback
-         * @return {boolean}           return true or false if no callback is passed
-         */
-        verifyPassword: function (password, hash, cb) {
-          // if user dont have a password
-          if(!hash){
-            if(!cb) return false;
-            return cb(null, false);
-          }
-
-          // if dont has a callback do a sync check
-          if (!cb) return bcrypt.compareSync(password, hash);
-          // else compare async
-          bcrypt.compare(password, hash, cb);
-        },
         validUsername: function(username){
           var restrictedUsernames = [
             'logout',
@@ -117,20 +107,20 @@ module.exports = function UserModel(db, hooks, events, sanitizer) {
             return false;
           }
           return true
-        }        
+        }
       },
       instanceMethods: {
         toJSON: function() {
           var req;
           if (this.getReq) req = this.getReq();
 
-          var obj = this.values;
+          var obj = this.get();
 
           // delete and hide user email
           delete obj.email;
           // remove password hash from view
           delete obj.password;
-      
+
           // TODO set user can here
           if (req && req.isAuthenticated()) {
             if (req.user.id == obj.id || req.user.isAdmin) {
@@ -140,26 +130,26 @@ module.exports = function UserModel(db, hooks, events, sanitizer) {
           }
 
           if (!obj.displayName) obj.displayName = obj.username;
-            
+
           // delete context cache
           delete obj._context;
 
           return obj;
         },
 
-        verifyPassword: function (password, cb) {
-          return User.verifyPassword(password, this.password, cb);
-        },
+        // verifyPassword: function (password, cb) {
+        //   return we.db.models.user.verifyPassword(password, this.password, cb);
+        // },
 
-        changePassword: function(user, oldPassword, newPassword, next){
-          user.updateAttribute( 'password', newPassword , function (err) {
-            if (!err) {
-                next();
-            } else {
-                next(err);
-            }
-          });
-        }
+        // changePassword: function(user, oldPassword, newPassword, next){
+        //   user.updateAttribute( 'password', newPassword , function (err) {
+        //     if (!err) {
+        //         next();
+        //     } else {
+        //         next(err);
+        //     }
+        //   });
+        // }
       },
       hooks: {
         // Lifecycle Callbacks
@@ -170,7 +160,7 @@ module.exports = function UserModel(db, hooks, events, sanitizer) {
           delete user.isAdmin;
           delete user.isModerator;
           // sanitize
-          sanitizer.sanitizeAllAttr(user);
+          we.sanitizer.sanitizeAllAttr(user);
 
           // optional password
           if (user.password) {
@@ -188,7 +178,7 @@ module.exports = function UserModel(db, hooks, events, sanitizer) {
         },
         beforeUpdate: function(user, options, next) {
           // sanitize
-          user = sanitizer.sanitizeAllAttr(user);
+          user = we.sanitizer.sanitizeAllAttr(user);
           // if has user.newPassword generate the new password
           if (user.newPassword) {
             return this.generatePassword(user.newPassword, function(err, hash) {
@@ -206,17 +196,6 @@ module.exports = function UserModel(db, hooks, events, sanitizer) {
       }
     }
   };
-
-  hooks.on('we:models:set:joins', function (we, done) {
-
-    db.models.user.hasOne ( 
-      db.models.image, { 
-        as: 'avatar'
-      }
-    );
-
-    done();
-  });
 
   // // wejs provider id
 
@@ -260,21 +239,5 @@ module.exports = function UserModel(db, hooks, events, sanitizer) {
   // },
 
 
-
-
-
-
-
-
-
-
-  // // custom find or create for oauth
-  // customFindORCreate: function(criteria, data, done) {
-  //   User.findOne(criteria).exec(function(err, user) {
-  //     if (err) return done(err);
-  //     if (user) return done(null, user);
-  //     User.create(data).exec(done);
-  //   });
-  // }
   return model;
 };

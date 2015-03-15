@@ -1,0 +1,12 @@
+Oi <%= user.displayName %>
+
+Email de notificação
+
+Notificações:
+
+<% notifications.forEach(function(notification, index) { %>
+  - <%= notification.emailNoHTML %>... link <%= notification.emailLink %>
+<% }); %>
+
+Cheers,
+<%= site.name %> team
