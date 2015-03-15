@@ -17,7 +17,7 @@ module.exports = {
 
     if(!username) return next();
 
-    req.context.Model.find({
+    res.locals.Model.find({
       where: { username: username }
     })
     .done(function found(err, user) {
@@ -41,7 +41,7 @@ module.exports = {
       return next();
     }
 
-    req.context.Model.find(pk)
+    res.locals.Model.find(pk)
     .done(function(err, user) {
       if (err) {
         we.log.error('UserController: Error on find user', err);
@@ -65,7 +65,7 @@ module.exports = {
   create: function createRecord (req, res) {
     var we = req.getWe();
 
-    req.context.Model.create(req.body)
+    res.locals.Model.create(req.body)
     .done(function(err, record) {
       if (err) {
         return res.serverError(err);
@@ -80,7 +80,7 @@ module.exports = {
 
     var pk = req.params.id;
 
-    req.context.Model.find(pk)
+    res.locals.Model.find(pk)
     .done(function (err, user){
       if (err) {
         we.log.error('Error on find user by id.', pk, err);

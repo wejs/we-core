@@ -11,30 +11,37 @@ module.exports = {
     rest: false
   },
 
+  /**
+   * Get user avatar with user id
+   *
+   */
   getAvatar: function getAvatar(req, res) {
-    var id = req.param('id');
-    var style = req.param('style');
-    if(style === 'responsive'){
+    var we = req.getWe();
+
+    var id = req.params.id;
+    var style = req.params.style;
+
+    if (style === 'responsive') {
       style = 'large';
-    }else if(!style){
+    } else if (!style) {
       style = 'thumbnail';
     }
 
-    var defaultAvatarPath = sails.config.defaultUserAvatar;
+    var defaultAvatarPath = we.config.defaultUserAvatar;
 
     if(!id) return res.forbidden();
 
-    User.findOneById(id).exec(function(err, user){
-      if (err) return res.negotiate(err);
+    we.db.models.find(id).done(function (err, user) {
+      if (err) return res.serverError(err);
 
-      if(user && user.avatar){
-        Images.findOneById(user.avatar).exec(function(err, image) {
-          if (err) return res.negotiate(err);
+      if (user && user.avatar) {
+        we.db.models.image.find(user.avatar).done(function (err, image) {
+          if (err) return res.serverError(err);
 
           FileImageService.getFileOrResize(image.name,style ,function(err, contents){
             if(err){
-              sails.log.debug('Error on get avatar',err);
-              return res.send(404);
+              we.log.debug('Error on get avatar: ', err);
+              return res.notFound();
             }
 
             if(image.mime){
@@ -47,12 +54,9 @@ module.exports = {
           });
 
         });
-      }else{
+      } else {
         fs.readFile(defaultAvatarPath,function (err, contents) {
-          if(err){
-            sails.log.error('Error on get avatar',err);
-            return res.send(404);
-          }
+          if (err) return res.serverError(err);
 
           res.contentType('image/png');
           res.send(contents);
@@ -62,38 +66,38 @@ module.exports = {
 
   },
 
-  changeAvatar: function (req, res) {
-    // TODO validate req.files.files
-    var imageId = req.param('image');
+  // changeAvatar: function (req, res) {
+  //   // TODO validate req.files.files
+  //   var imageId = req.param('image');
 
-    if(!req.isAuthenticated()){
-      return res.forbidden();
-    }
+  //   if(!req.isAuthenticated()){
+  //     return res.forbidden();
+  //   }
 
-    Images.findOneById(imageId)
-    .exec(function(err, image){
-      if (err) return res.negotiate(err);
+  //   Images.findOneById(imageId)
+  //   .exec(function(err, image){
+  //     if (err) return res.negotiate(err);
 
-      if(!image || req.user.id !== image.creator){
-        sails.log.debug('User:avatarChange:User dont are image woner or image not found',req.user, image);
-        return res.forbidden();
-      }
+  //     if(!image || req.user.id !== image.creator){
+  //       sails.log.debug('User:avatarChange:User dont are image woner or image not found',req.user, image);
+  //       return res.forbidden();
+  //     }
 
-      // set current user vars
-      req.user.avatar = image.id;
+  //     // set current user vars
+  //     req.user.avatar = image.id;
 
-      // update db user
-      User.update(
-        {id: req.user.id},
-        {avatar: image.id}
-      ).exec(function afterwards(err){
-        if (err) return res.negotiate(err);
-        res.send({
-          'user': req.user,
-          'avatar': image
-        });
-      });
-    });
-  }
+  //     // update db user
+  //     User.update(
+  //       {id: req.user.id},
+  //       {avatar: image.id}
+  //     ).exec(function afterwards(err){
+  //       if (err) return res.negotiate(err);
+  //       res.send({
+  //         'user': req.user,
+  //         'avatar': image
+  //       });
+  //     });
+  //   });
+  // }
 
 };

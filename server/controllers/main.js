@@ -19,7 +19,7 @@ module.exports = {
    */
   index: function(req, res) {
     var we = req.getWe();
-    var context = req.context;
+    var context = res.locals;
 
     we.log.info('rodou o main.index', context);
 
@@ -98,7 +98,7 @@ module.exports = {
       }
     }
 
-    // TODO change to use req.context.locale
+    // TODO change to use res.locals.locale
     if ( req.isAuthenticated()) {
       locale = req.user.language;
     }

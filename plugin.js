@@ -25,6 +25,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     hostname: 'http://localhost:' + ( process.env.PORT || '3000' ),
     // default favicon, change in your project config/local.js
     favicon: __dirname + '/client/core-favicon.ico',
+    defaultUserAvatar: '111111',
     log: {
       level: 'debug'
     },
@@ -37,6 +38,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           'medium',
           'large'
         ],
+
         styles: {
           mini: {
             width: '24',
@@ -72,6 +74,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     auth : {
       requireAccountActivation: true
+    },
+    acl : {
+      disabled: true
     },
     passport: {
       strategies: {

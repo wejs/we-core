@@ -14,7 +14,6 @@ module.exports = {
   // getter for current logged in user
   current: function (req, res) {
     if (!req.isAuthenticated() ) return res.forbidden();
-
     return res.ok(req.user);
   },
 
@@ -413,7 +412,7 @@ module.exports = {
 
           we.log.info('AuthResetPasswordEmail: Email resp:', emailResp);
 
-          if (req.context.responseType == 'json') {
+          if (res.locals.responseType == 'json') {
             return res.send({
               success: [{
                 type: 'email_send',
@@ -560,7 +559,7 @@ module.exports = {
             // set session variable req.session.resetPassword to indicate that there is a new password to be defined
             req.session.resetPassword = true;
 
-            if (req.context.responseType == 'json') {
+            if (res.locals.responseType == 'json') {
               res.send('200');
             } else {
               // res.redirect( '/auth/' + user.id + '/reset-password/' + authToken.id);
@@ -606,7 +605,7 @@ module.exports = {
 
     // TODO move this access check to one policy
     if(!req.isAuthenticated() || req.user.id != userId) {
-      if (req.context.responseType == 'json') {
+      if (res.locals.responseType == 'json') {
         return res.badRequest({
           messages: [{
             status: 'danger',
@@ -649,7 +648,7 @@ module.exports = {
     }
 
     if( !_.isEmpty(errors) ) {
-      if (req.context.responseType == 'json') {
+      if (res.locals.responseType == 'json') {
         // erro,r on data or confirm password
         return res.badRequest({
           messages: errors
@@ -691,7 +690,7 @@ module.exports = {
         // Reset req.session.resetPassword to indicate that the operation has been completed
         delete req.session.resetPassword;
 
-        if (req.context.responseType == 'json') {
+        if (res.locals.responseType == 'json') {
           return res.status(200).send({messages: res.locals.messages});
         }
         return res.redirect('/account');
@@ -739,7 +738,7 @@ module.exports = {
         type: 'forbiden',
         message: req.__('auth.change-password.forbiden')
       }];
-      if (req.context.responseType == 'json') {
+      if (res.locals.responseType == 'json') {
         return res.send(403, { messages: res.locals.messages });
       } else {
         return we.controllers.auth.changePasswordPage(req, res, next);
@@ -783,7 +782,7 @@ module.exports = {
 
     if( ! _.isEmpty(errors) ) {
       res.locals.messages = errors;
-      if (req.context.responseType == 'json') {
+      if (res.locals.responseType == 'json') {
         res.status(400);
         // erro,r on data or confirm password
         return res.send({
@@ -819,7 +818,7 @@ module.exports = {
               status: 'danger',
               message: req.__('field.password.invalid')
             }];
-            if (req.context.responseType == 'json') {
+            if (res.locals.responseType == 'json') {
               res.status(400);
               // erro,r on data or confirm password
               return res.send({
@@ -885,7 +884,7 @@ module.exports = {
 
             we.log.info('AuthChangePasswordEmail: Email resp:', emailResp);
 
-            if (req.context.responseType == 'json') {
+            if (res.locals.responseType == 'json') {
               return res.ok({ messages: res.locals.messages });
             }
             return we.controllers.auth.changePasswordPage(req, res, next);

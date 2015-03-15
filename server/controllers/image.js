@@ -123,14 +123,14 @@ module.exports = {
       if (req.isAuthenticated()) files.image.creatorId = req.user.id;
 
 
-      req.context.Model.create(files.image)
+      res.locals.Model.create(files.image)
       .done(function(err, record) {
         if (err) {
           we.log.error('Error on create image record:', err);
           return res.serverError(err);
         }
         var response = {};
-        response[req.context.model] = [
+        response[res.locals.model] = [
           record
         ];
 
