@@ -64,15 +64,17 @@ module.exports = function ImageModel(we) {
 
     associations: {
       creator:  {
-        type: 'belongsTo',
+        type: 'hasOne',
         model: 'user',
-        inverse: 'images'
+        inverse: 'images',
+        foreignKey : 'creatorId'
       },
-      // avatarOf: {
-      //   type: 'belongsTo',
-      //   model: 'user',
-      //   inverse: 'avatar'
-      // }
+      avatarOf: {
+        type: 'hasOne',
+        model: 'user',
+        inverse: 'avatar',
+        foreignKey : 'avatarId'
+      }
     },
 
     options: {
@@ -81,14 +83,12 @@ module.exports = function ImageModel(we) {
 
       classMethods: {
         getStyleUrlFromImage: function(image) {
-          var host = 'TODO';
-
           return {
-            original: host + '/api/v1/images/original/' + image.name,
-            thumbnail: host + '/api/v1/images/thumbnail/' + image.name,
-            mini: host + '/api/v1/images/mini/' + image.name,
-            medium: host + '/api/v1/images/medium/' + image.name,
-            large: host + '/api/v1/images/large/' + image.name
+            original: we.config.hostname + '/api/v1/images/original/' + image.name,
+            thumbnail: we.config.hostname + '/api/v1/images/thumbnail/' + image.name,
+            mini: we.config.hostname + '/api/v1/images/mini/' + image.name,
+            medium: we.config.hostname + '/api/v1/images/medium/' + image.name,
+            large: we.config.hostname + '/api/v1/images/large/' + image.name
           };
         }
       },

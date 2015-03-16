@@ -25,17 +25,14 @@ module.exports = function UserModel(we) {
       },
 
       biography: { type: we.db.Sequelize.TEXT },
-
       gender: { type: we.db.Sequelize.STRING },
+
       email: {
         // Email type will get validated by the ORM
         type: we.db.Sequelize.STRING,
         allowNull: false,
         unique: true
       },
-
-      // // a hashed password
-      // password: { type: db.Sequelize.TEXT },
 
       displayName: { type: we.db.Sequelize.STRING },
 
@@ -63,15 +60,16 @@ module.exports = function UserModel(we) {
     },
 
     associations: {
-      images:  {
-        type: 'hasMany',
-        model: 'image',
-        inverse: 'creator'
-      },
+      // images:  {
+      //   type: 'hasMany',
+      //   model: 'image',
+      //   inverse: 'creator'
+      // },
       avatar: {
         type: 'belongsTo',
         model : 'image',
-        inverse: 'avatarOf'
+        inverse: 'avatarOf',
+        foreignKey : 'avatarId'
       },
       passports:  {
         type: 'hasMany',
@@ -82,6 +80,13 @@ module.exports = function UserModel(we) {
         type: 'belongsTo',
         model: 'password',
         inverse: 'user'
+      },
+
+      roles: {
+        type: 'belongsToMany',
+        model: 'role',
+        inverse: 'users',
+        through: 'user_roles'
       }
     },
 
