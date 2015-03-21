@@ -79,22 +79,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       disabled: true
     },
     passport: {
+      accessTokenTime: 300000000,
+      cookieDomain: 'localhost:' + ( process.env.PORT || '3000' ),
+      cookieName: 'weoauth',
+      cookieSecure: false,
+
       strategies: {
-        // token
-        weOauth2: {
-          isProvider: true,
-
-          providerHost: '',
-
-          accessTokenTime: 300000000,
-          cookieDomain: 'localhost:' + ( process.env.PORT || '3000' ),
-          cookieName: 'weoauth',
-          cookieSecure: false,
-
-          services: {
-
-          }
-        },
+        bearer: true,
         // session
         local: {
           usernameField: 'email',

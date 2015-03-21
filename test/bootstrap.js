@@ -13,23 +13,10 @@ before(function(callback) {
       updateFiles: true
     },
     passport: {
-      strategies: {
-        // token
-        weOauth2: {
-          isProvider: true,
-
-          providerHost: 'http://localhost:9800',
-
-          accessTokenTime: 300000000,
-          cookieDomain: null,
-          cookieName: 'weoauth',
-          cookieSecure: false,
-
-          services: {
-
-          }
-        }
-      }
+      accessTokenTime: 300000000,
+      cookieDomain: null,
+      cookieName: 'weoauth',
+      cookieSecure: false
     }
   } , function(err, we) {
     we.startServer(function(err) {
