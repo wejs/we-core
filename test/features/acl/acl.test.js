@@ -118,6 +118,8 @@ describe('ACLFeature', function() {
       .send({ roleName: salvedRole.name})
       .set('Accept', 'application/json')
       .end(function (err, res) {
+        if (err) return done(err);
+
         assert.equal(200, res.status);
         assert.ok(res.body.messages)
         assert.equal( res.body.messages[0].message, 'role.addRoleToUser.success');
@@ -128,7 +130,23 @@ describe('ACLFeature', function() {
 
           assert.equal(result, true);
           done();
-        })
+        });
+      });
+    });
+
+    it('get /user/:id should return 403 for unauthorized user', function (done) {
+      we.config.acl.disabled = false;
+
+      authenticatedRequest
+      .get('/user/'+ salvedUser.id)
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) return done(err);
+        assert.equal(res.status, 403);
+        assert( _.isEmpty( res.body.user ));
+
+        we.config.acl.disabled = true;
+        done();
       });
     });
 

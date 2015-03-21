@@ -12,7 +12,6 @@ module.exports = {
     next();
   },
 
-
   addRoleToUser: function(req, res) {
     var we = req.getWe();
 
