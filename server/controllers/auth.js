@@ -1,10 +1,8 @@
 // api/controllers/AuthController.js
 
 var _ = require('lodash'),
-  //sendAccontActivationEmail = require('../../lib/email/accontActivationEmail.js'),
   async = require('async'),
   util = require('util');
-  //wejsErrs = require('we-lib-error-parser');
 
 module.exports = {
   _config: {
@@ -59,30 +57,25 @@ module.exports = {
 
       var confirmPassword = req.body.confirmPassword;
       var confirmEmail = req.body.confirmEmail;
-      var errors;
 
-      errors = validSignup(user, confirmPassword, confirmEmail, req, res);
+      var isValid = we.auth.validSignup(user, confirmPassword, confirmEmail, req, res);
 
-      if ( ! _.isEmpty(errors) ) {
+      if (!isValid) {
         // error on data or confirm password
-        return res.badRequest({
-          messages: errors
-        });
+        return res.badRequest();
       }
 
       we.db.models.user.find({ where: { email: email }}).done(function (err, usr) {
         if (err) {
           we.log.error('Error on find user by email.',err);
-          return res.send(500, { error: req.__('Error') });
+          return res.serverError();
         }
 
         if (usr) {
-          res.locals.messages = [{
-            status: 'danger',
+          res.addMessage('error', 'auth.register.email.exists', {
             field: 'email',
-            rule: 'email',
-            message: req.__('auth.register.email.exists')
-          }];
+            rule: 'email'
+          });
           return res.badRequest();
         }
 
@@ -123,22 +116,19 @@ module.exports = {
                 return we.email.sendEmail('AccontActivationEmail',
                   options, templateVariables,
                 function (err) {
-                  if(err) {
-                    we.log.error('Action:Login sendAccontActivationEmail:',err);
-                    return res.serverError('Error on send activation email for new user', newUser);
+                  if (err) {
+                    we.log.error('Action:Login sendAccontActivationEmail:', err);
+                    return res.serverError();
                   }
 
-                  res.status(201).send({
-                    messages: [
-                      {
-                        status: 'warning',
-                        message: req.__('auth.register.require.email.activation', {
-                          email: newUser.email
-                        })
-                      }
-                    ]
+                  res.addMessage('warning', {
+                    text: 'auth.register.require.email.activation',
+                    vars: {
+                      email: newUser.email
+                    }
                   });
 
+                  return res.created();
                 });
               });
             }
@@ -166,7 +156,7 @@ module.exports = {
 
     we.auth.logOut(req, res, function (err) {
       if (err)
-        we.log.error('Error on logout user', req.id, req.cookie);
+      we.log.error('Error on logout user', req.id, req.cookie);
       res.redirect('/');
     })
   },
@@ -177,7 +167,6 @@ module.exports = {
 
     res.locals.messages = [];
     res.locals.user = {};
-
 
     res.locals.template = 'auth/login';
 
@@ -198,32 +187,25 @@ module.exports = {
     return we.passport.authenticate('local', function(err, user, info) {
       if (err) {
         we.log.error('AuthController:login:Error on get user ', err, email);
-        return  res.serverError({
-          messages: [{
-            status: 'danger',
-            message: req.__('unknow.error')
-          }]
-        });
+        return res.serverError();
       }
 
       if (!user) {
         we.log.debug('AuthController:login:User not found', email);
-        return res.badRequest({
-          messages: [{
-            status: 'warning',
-            message: req.__(info.message, { email: email })
-          }]
+        res.addMessage('warning', {
+          text: info.message,
+          vars: { email: email }
         });
+        return res.badRequest();
       }
 
       if (!user.active) {
         we.log.debug('AuthController:login:User not active', email);
-        return res.badRequest({
-          messages: [{
-            status: 'warning',
-            message: req.__('auth.login.user.not.active', {email: email})
-          }]
+        res.addMessage('warning', {
+          text: 'auth.login.user.not.active',
+          vars: { email: email }
         });
+        return res.badRequest();
       }
 
       we.auth.logIn(req, res, user, function (err, authToken) {
@@ -249,12 +231,8 @@ module.exports = {
     var token = req.params.token;
 
     var responseForbiden = function responseForbiden() {
-      return res.badRequest({
-        messages: [{
-          status: 'warning',
-          message: req.__('auth.access.invalid.token')
-        }]
-      });
+      res.addMessage('warning', 'auth.access.invalid.token');
+      return res.badRequest();
     };
 
     we.db.models.authtoken.validAuthToken(user.id, token, function (err, result, authToken) {
@@ -342,12 +320,8 @@ module.exports = {
     res.locals.formAction = '/auth/forgot-password';
 
     if (!email) {
-      return res.badRequest({
-        messages: [{
-          status: 'warning',
-          message: req.__('auth.forgot-password.field.email.required')
-        }]
-      });
+      res.addMessage('warning', 'auth.forgot-password.field.email.required');
+      return res.badRequest();
     }
 
     we.db.models.user.find({ where: {email: email }})
@@ -359,13 +333,8 @@ module.exports = {
 
       if (!user) {
         we.log.warn('AuthController:forgotPassword: User not found', email);
-        return res.badRequest({
-          messages: [{
-            status: 'danger',
-            type: 'not_found',
-            message: req.__('auth.forgot-password.user.not-found')
-          }]
-        });
+        res.addMessage('error', 'auth.forgot-password.user.not-found');
+        return res.badRequest();
       }
 
       we.db.models.authtoken.create({
@@ -413,13 +382,8 @@ module.exports = {
           we.log.info('AuthResetPasswordEmail: Email resp:', emailResp);
 
           if (res.locals.responseType == 'json') {
-            return res.send({
-              success: [{
-                type: 'email_send',
-                status: 'success',
-                message: req.__('auth.forgot-password.email.send')
-              }]
-            });
+            res.addMessage('success', 'auth.forgot-password.email.send');
+            return res.ok();
           }
 
           res.locals.emailSend = true;
@@ -487,22 +451,13 @@ module.exports = {
     if(!req.isAuthenticated()) return res.forbidden();
 
     if (req.session && req.session.resetPassword) {
-      return res.ok({
-        messages: [{
-          status: 'success',
-          message: req.__('auth.reset-password.success.can')
-        }]
-      })
+      res.addMessage('success', 'auth.reset-password.success.can');
+      return res.ok();
     }
 
-    return res.forbidden({
-      messages: [{
-        status: 'danger',
-        message: req.__('auth.reset-password.error.forbidden')
-      }]
-    });
+    res.addMessage('error', 'auth.reset-password.error.forbidden');
+    return res.forbidden();
   },
-
 
   consumeForgotPasswordToken: function (req, res, next) {
     var we = req.getWe();
@@ -560,12 +515,10 @@ module.exports = {
             req.session.resetPassword = true;
 
             if (res.locals.responseType == 'json') {
-              res.send('200');
-            } else {
-              // res.redirect( '/auth/' + user.id + '/reset-password/' + authToken.id);
-              res.redirect( '/auth/' + user.id + '/new-password/');
+              return res.status(200).send();
             }
 
+            res.redirect( '/auth/' + user.id + '/new-password/');
           });
 
         });
@@ -605,62 +558,27 @@ module.exports = {
 
     // TODO move this access check to one policy
     if(!req.isAuthenticated() || req.user.id != userId) {
-      if (res.locals.responseType == 'json') {
-        return res.badRequest({
-          messages: [{
-            status: 'danger',
-            type: 'forbiden',
-            message: req.__('auth.fochange-password.forbiden')
-          }]
-        });
-      } else {
-        res.locals.messages = [{
-          status: 'danger',
-          type: 'forbiden',
-          message: req.__('auth.fochange-password.forbiden')
-        }];
-        return we.controllers.auth.newPasswordPage(req, res, next);
-      }
+      res.addMessage('error', 'auth.fochange-password.forbiden');
+      return res.badRequest();
     }
 
-    var errors = [];
+    var hasError = false;
 
     //we.log.info('newPassword:' , newPassword , '| rNewPassword:' , rNewPassword);
 
     if( _.isEmpty(newPassword) || _.isEmpty(rNewPassword) ){
-      errors.push({
-        type: 'validation',
-        field: 'rNewPassword',
-        rule: 'required',
-        status: 'danger',
-        message: req.__('Field <strong>Confirm new password</strong> and <strong>New Password</strong> is required')
-      });
+      res.addMessage('error', 'auth.confirmPassword.and.password.required');
+      hasError = true;
     }
 
     if(newPassword !== rNewPassword) {
-      errors.push({
-        type: 'validation',
-        field: 'newPassword',
-        rule: 'required',
-        status: 'danger',
-        message: req.__('<strong>New password</strong> and <strong>Confirm new password</strong> are different')
-      });
+      res.addMessage('error', 'auth.newPassword.and.password.diferent');
+      hasError = true;
     }
 
-    if( !_.isEmpty(errors) ) {
-      if (res.locals.responseType == 'json') {
-        // erro,r on data or confirm password
-        return res.badRequest({
-          messages: errors
-        });
-      } else {
-        res.locals.messages = [];
-        for (var i = 0; i < errors.password.length; i++) {
-          errors.password[i].status = 'danger';
-          res.locals.messages.push(errors.password[i]);
-        }
-        return we.controllers.auth.newPasswordPage(req, res, next);
-      }
+    if( hasError ) {
+      // error on data or confirm password
+      return res.badRequest();
     }
 
     we.db.models.user.find(userId)
@@ -681,18 +599,19 @@ module.exports = {
           return res.serverError();
         }
 
-        req.flash('messages',[{
-          status: 'success',
-          type: 'updated',
-          message: req.__('New password set successfully')
-        }]);
-
         // Reset req.session.resetPassword to indicate that the operation has been completed
         delete req.session.resetPassword;
 
         if (res.locals.responseType == 'json') {
           return res.status(200).send({messages: res.locals.messages});
         }
+
+        req.flash('messages',[{
+          status: 'success',
+          type: 'updated',
+          message: req.__('New password set successfully')
+        }]);
+
         return res.redirect('/account');
 
       });
@@ -730,67 +649,27 @@ module.exports = {
 
     res.locals.template = 'auth/change-password';
 
-    // TODO move this access check to one policy
-    // if(!req.isAuthenticated() || req.user.id != userId) {
     if(!req.isAuthenticated()) {
-      res.locals.messages = [{
-        status: 'danger',
-        type: 'forbiden',
-        message: req.__('auth.change-password.forbiden')
-      }];
-      if (res.locals.responseType == 'json') {
-        return res.send(403, { messages: res.locals.messages });
-      } else {
-        return we.controllers.auth.changePasswordPage(req, res, next);
-      }
+      res.addMessage('error', 'auth.change-password.forbiden');
+      return res.badRequest();
     }
-
-    var errors = [];
 
     // skip old password if have resetPassword flag in session
     if (!req.session.resetPassword) {
       if (!oldPassword) {
-        errors.push({
-          type: 'validation',
-          field: 'oldPassword',
-          status: 'danger',
-          rule: 'required',
-          message: req.__("field.password.required")
-        });
+        res.addMessage('error', 'field.password.required');
+        return res.badRequest();
       }
     }
 
-    if( _.isEmpty(newPassword) || _.isEmpty(rNewPassword) ){
-      errors.push({
-        type: 'validation',
-        field: 'rNewPassword',
-        rule: 'required',
-        status: 'danger',
-        message: req.__('field.confirm-password.password.required')
-      });
+    if ( _.isEmpty(newPassword) || _.isEmpty(rNewPassword) ) {
+      res.addMessage('error', 'field.confirm-password.password.required');
+      return res.badRequest();
     }
 
-    if(newPassword !== rNewPassword){
-      errors.push({
-        type: 'validation',
-        field: 'newPassword',
-        rule: 'required',
-        status: 'danger',
-        message: req.__('field.password.confirm-password.diferent')
-      });
-    }
-
-    if( ! _.isEmpty(errors) ) {
-      res.locals.messages = errors;
-      if (res.locals.responseType == 'json') {
-        res.status(400);
-        // erro,r on data or confirm password
-        return res.send({
-          messages: res.locals.messages
-        });
-      } else {
-        return we.controllers.auth.changePasswordPage(req, res, next);
-      }
+    if (newPassword !== rNewPassword){
+      res.addMessage('error', 'field.password.confirm-password.diferent');
+      return res.badRequest();
     }
 
     we.db.models.user.find(userId)
@@ -811,23 +690,8 @@ module.exports = {
       } else {
         user.verifyPassword(oldPassword, function(err, passwordOk) {
           if (!passwordOk) {
-            var errors = [{
-              type: 'validation',
-              field: 'password',
-              rule: 'wrong',
-              status: 'danger',
-              message: req.__('field.password.invalid')
-            }];
-            if (res.locals.responseType == 'json') {
-              res.status(400);
-              // erro,r on data or confirm password
-              return res.send({
-                messages: errors
-              });
-            } else {
-              res.locals.messages = errors;
-              return we.controllers.auth.changePasswordPage(req, res, next);
-            }
+            res.addMessage('error', 'field.password.invalid');
+            return res.badRequest();
           }
 
           return changePassword();
@@ -876,22 +740,12 @@ module.exports = {
               we.log.error('Error on send email AuthChangePasswordEmail', err, emailResp);
             }
 
-            res.locals.messages = [{
-              status: 'success',
-              type: 'updated',
-              message: req.__('auth.change-password.success')
-            }];
+            res.addMessage('success', 'auth.change-password.success');
 
             we.log.info('AuthChangePasswordEmail: Email resp:', emailResp);
 
-            if (res.locals.responseType == 'json') {
-              return res.ok({ messages: res.locals.messages });
-            }
-            return we.controllers.auth.changePasswordPage(req, res, next);
-
+            return res.ok();
           });
-
-
         })
       }
 
@@ -956,70 +810,3 @@ function loadUserAndAuthToken(we, uid, token, callback){
     });
   });
 }
-
-function validSignup(user, confirmPassword, confirmEmail, req, res){
-  var errors = [];
-
-  if(!user.email){
-    errors.push({
-      type: 'validation',
-      status: 'danger',
-      field: 'email',
-      rule: 'required',
-      message: req.__('Field <strong>email</strong> is required')
-    });
-  }
-
-  if(!confirmEmail){
-    errors.push({
-      type: 'validation',
-      status: 'danger',
-      field: 'confirmEmail',
-      rule: 'required',
-      message: req.__('Field <strong>Confirm email</strong> is required')
-    });
-  }
-
-  // check if password exist
-  if(!user.password){
-    errors.push({
-      type: 'validation',
-      status: 'danger',
-      field: 'password',
-      rule: 'required',
-      message: req.__('Field <strong>password</strong> is required')
-    });
-  }
-
-  if(!confirmPassword){
-    errors.push({
-      type: 'validation',
-      status: 'danger',
-      field: 'confirmPassword',
-      rule: 'required',
-      message: req.__('Field <strong>Confirm new password</strong> is required')
-    });
-  }
-
-  if(confirmPassword !== user.password){
-    errors.push({
-      type: 'validation',
-      status: 'danger',
-      field: 'password',
-      rule: 'required',
-      message: req.__('<strong>New password</strong> and <strong>Confirm new password</strong> are different')
-    });
-  }
-
-  if(confirmEmail !== user.email){
-    errors.push({
-      type: 'validation',
-      status: 'danger',
-      field: 'email',
-      rule: 'required',
-      message: req.__('<strong>Email</strong> and <strong>Confirm email</strong> are different')
-    });
-  }
-
-  return errors;
-};
