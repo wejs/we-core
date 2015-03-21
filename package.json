@@ -45,7 +45,7 @@
     "passport": "^0.2.1",
     "passport-facebook": "^1.0.3",
     "passport-google": "^0.3.0",
-    "passport-http-bearer": "^1.0.1",
+    "we-passport-http-bearer": "wejs/we-passport-http-bearer",
     "passport-local": "^1.0.0",
     "passport-oauth": "^1.0.0",
     "rc": "^0.6.0",
