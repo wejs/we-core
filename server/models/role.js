@@ -16,14 +16,14 @@ module.exports = function Model(we) {
 
     associations: {
       permissions:  {
-        type: 'hasMany',
+        type: 'belongsToMany',
         model: 'role',
         inverse: 'roles',
         through: 'roles_permissions'
       },
 
       users:  {
-        type: 'hasMany',
+        type: 'belongsToMany',
         model: 'user',
         inverse: 'roles',
         through: 'users_roles'

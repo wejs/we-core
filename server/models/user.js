@@ -72,7 +72,7 @@ module.exports = function UserModel(we) {
         foreignKey : 'avatarId'
       },
       passports:  {
-        type: 'hasMany',
+        type: 'belongsToMany',
         model: 'passport',
         inverse: 'user',
         through: 'users_passports'
@@ -87,7 +87,7 @@ module.exports = function UserModel(we) {
         type: 'belongsToMany',
         model: 'role',
         inverse: 'users',
-        through: 'user_roles'
+        through: 'users_roles'
       }
     },
 
