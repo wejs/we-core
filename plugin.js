@@ -400,6 +400,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'post /api/v1/user/:id/avatar': {
       controller    : 'avatar',
       action        : 'changeAvatar'
+    },
+
+
+    //
+    // -- ROLES
+    //
+
+    // add role in user
+    'post /user/:id/role': {
+      controller    : 'role',
+      action        : 'addRoleToUser',
+      model         : 'user'
     }
   });
 

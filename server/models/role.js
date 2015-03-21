@@ -26,7 +26,7 @@ module.exports = function Model(we) {
         type: 'hasMany',
         model: 'user',
         inverse: 'roles',
-        through: 'user_roles'
+        through: 'users_roles'
       }
     },
 

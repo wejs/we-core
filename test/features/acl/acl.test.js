@@ -46,7 +46,6 @@ describe('ACLFeature', function() {
 
   describe('API', function() {
     it('we.acl.init should create default roles on init', function(done) {
-
       we.db.models.role.findAll().done(function(err, roles) {
         if(err) return done(err);
 
@@ -72,28 +71,75 @@ describe('ACLFeature', function() {
       we.acl.fetchAllActionPermissions(we, function(err, permissions) {
         if(err) return done(err);
         assert(permissions);
-        console.log(JSON.stringify(permissions, null, '\t') )
+        //console.log(JSON.stringify(permissions, null, '\t') )
 
         we.log.info('Total of: '+ permissions.length + ' permissions');
         done();
       })
+    });
 
+    it('we.acl.createRole create role and set it in we.acl.roles'  ,function(done) {
+      var roleNameStrig = 'hero'
+      we.acl.createRole(we, { name: roleNameStrig }, function(err, role) {
+        if(err) return done(err);
+        assert(role);
+        assert(role.id);
+        assert.equal(role.name, roleNameStrig);
+        assert.equal( we.acl.roles[roleNameStrig].id,  role.id);
+        assert.equal( we.acl.roles[roleNameStrig].name,  role.name);
+
+        done();
+      });
     });
   })
 
-  describe('anonymous', function (){
+  describe('anonymous', function () {
 
   });
 
-  describe('authenticated/creator', function (){
+  describe('authenticated/creator', function () {
+    var salvedRole ;
+
+    before(function (done) {
+      var roleName = 'player';
+      // after create a stub role
+      we.acl.createRole(we, { name: roleName }, function(err, role) {
+        if (err) return done(err);
+        if (!role) throw new Error('Role not created');
+
+        salvedRole = role;
+        done();
+      });
+    });
+
+    it('post /user/:id/role should add one role to user', function (done) {
+      authenticatedRequest
+      .post('/user/'+ salvedUser.id +'/role')
+      .send({ roleName: salvedRole.name})
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        assert.equal(200, res.status);
+        assert.ok(res.body.messages)
+        assert.equal( res.body.messages[0].message, 'role.addRoleToUser.success');
+        assert.equal( res.body.messages[0].status, 'success' );
+
+        salvedUser.hasRole(salvedRole).done(function(err, result){
+          if(err) return done(err);
+
+          assert.equal(result, true);
+          done();
+        })
+      });
+    });
 
   });
 
-  describe('admin', function (){
+  describe('admin', function () {
+
 
   });
 
-  // after clear DB
+  // after all tests
   after(function(done) {
     we.config.acl.disabled = true;
 

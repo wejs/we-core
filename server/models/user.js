@@ -74,7 +74,8 @@ module.exports = function UserModel(we) {
       passports:  {
         type: 'hasMany',
         model: 'passport',
-        inverse: 'user'
+        inverse: 'user',
+        through: 'users_passports'
       },
       password:  {
         type: 'belongsTo',

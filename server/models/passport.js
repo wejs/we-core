@@ -24,7 +24,8 @@ module.exports = function Model(we) {
       user:  {
         type: 'belongsTo',
         model: 'user',
-        inverse: 'passports'
+        inverse: 'passports',
+        through: 'users_passports'
       }
     },
 
