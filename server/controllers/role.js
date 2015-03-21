@@ -7,9 +7,23 @@
 
 module.exports = {
 
-  create: function (req, res) {
-    console.log('@todo role create');
-    next();
+  create: function(req, res) {
+    var we = req.getWe();
+
+    var name = req.body.name;
+    var description = req.body.description;
+
+    we.acl.createRole(we, {
+      name: name,
+      description: description
+    }, function(err, role) {
+      if (err) {
+        we.log.error('role:create: error on create role', err);
+        return res.serverError();
+      }
+
+      return res.created(role);
+    });
   },
 
   addRoleToUser: function(req, res) {
@@ -61,26 +75,74 @@ module.exports = {
     });
   },
 
-  // update: function (req, res, next) {
-  //   console.log('@todo role update');
-  //   next();
-  // },
+  removeRoleFromUser: function(req, res) {
+    var we = req.getWe();
 
-  delete: function (req, res, next) {
-    console.log('@todo role delete');
-    next();
+    var roleName = req.body.roleName;
+
+    if (!roleName) {
+      res.addMessage('warn', 'role.removeRoleFromUser.param.roleName.required');
+      return res.badRequest();
+    }
+
+    res.locals.Model.find({
+      where: { id: req.params.id },
+      include: [ { model: we.db.models.role, as: 'roles'} ]
+    }).done(function (err, user) {
+      if (err) {
+        we.log.error('role:removeRoleFromUser: Error on find user', err);
+        return res.serverError(err);
+      }
+
+      if (!user) {
+        res.addMessage('warn', 'role.removeRoleFromUser.user.not.found');
+        return res.notFound();
+      }
+
+      var roleToDelete = null;
+
+      for (var i = user.roles.length - 1; i >= 0; i--) {
+        if (user.roles[i].name == roleName ) {
+          roleToDelete = user.roles[i];
+          break;
+        }
+      }
+
+      if (!roleToDelete) {
+        // this user dont have the role with name roleName
+        res.addMessage('success', 'role.removeRoleFromUser.success');
+        return res.ok();
+      }
+
+      user.removeRole(roleToDelete).done(function(err) {
+        if (err) {
+          we.log.error('role:removeRoleFromUser: Error on remove role from user', err);
+          return res.serverError();
+        }
+
+        res.addMessage('success', 'role.removeRoleFromUser.success');
+        return res.ok();
+      });
+    });
   },
 
-  add: function (req, res, next) {
-    console.log('@todo role add');
-    next();
+  destroy: function (req, res) {
+    var we = req.getWe();
+
+    var id = req.params.id;
+
+    we.acl.deleteRole(we, id, function(err, role) {
+      if (err) {
+        we.log.error('role:delete: error on delete role', err);
+        return res.serverError();
+      }
+
+      return res.status(200).send(role);
+    });
   },
 
-  remove: function (req, res, next) {
-    console.log('@todo role remove');
-    next();
-  },
-
+  add: function (req, res) { return res.notFound(); },
+  remove: function (req, res) { return res.notFound(); },
 
   /**
    * Find Records

@@ -112,6 +112,7 @@ describe('ACLFeature', function() {
       });
     });
 
+
     it('post /user/:id/role should add one role to user', function (done) {
       we.config.acl.disabled = true;
 
@@ -131,6 +132,33 @@ describe('ACLFeature', function() {
           if(err) return done(err);
 
           assert.equal(result, true);
+
+          we.config.acl.disabled = false;
+
+          done();
+        });
+      });
+    });
+
+    it('delete /user/:id/role should remove one role to user', function (done) {
+      we.config.acl.disabled = true;
+
+      authenticatedRequest
+      .delete('/user/'+ salvedUser.id +'/role')
+      .send({ roleName: salvedRole.name})
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) return done(err);
+
+        assert.equal(200, res.status);
+        assert.ok(res.body.messages)
+        assert.equal( res.body.messages[0].message, 'role.removeRoleFromUser.success');
+        assert.equal( res.body.messages[0].status, 'success' );
+
+        salvedUser.hasRole(salvedRole).done(function(err, result){
+          if(err) return done(err);
+
+          assert.equal(result, false);
 
           we.config.acl.disabled = false;
 
@@ -159,7 +187,73 @@ describe('ACLFeature', function() {
 
   describe('admin', function () {
 
+    before(function (done) {
+      salvedUser.addRole(we.acl.roles.administrator)
+      .done(function (err) {
+        if (err) return done(err);
+        done();
+      });
+    });
 
+    it('get /user/:id should return user for admin', function (done) {
+      we.config.acl.disabled = false;
+
+      authenticatedRequest
+      .get('/user/'+ salvedUser.id)
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) return done(err);
+        assert.equal(res.status, 200);
+
+        assert(res.body.user);
+        assert.equal(res.body.user[0].id, salvedUser.id);
+
+        we.config.acl.disabled = true;
+        done();
+      });
+
+    });
+
+    it('post /role should create one role', function (done) {
+      authenticatedRequest
+      .post('/role')
+      .send({
+        name: 'coder',
+        description: 'a description for this role'
+      })
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) return done(err);
+
+        assert.equal(201, res.status);
+        assert.ok(res.body.role);
+        assert.equal(res.body.role[0].name, 'coder');
+
+        assert.equal(we.acl.roles.coder.name, 'coder');
+
+        done();
+      });
+    });
+
+    it('delete /role/:id should delete one role', function (done) {
+     var roleName = 'tempRole';
+      // after create a stub role
+      we.acl.createRole(we, { name: roleName }, function(err, role) {
+        if (err) return done(err);
+        if (!role) throw new Error('Role not created');
+
+        authenticatedRequest
+        .delete('/role/' + role.id)
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          if (err) return done(err);
+          assert.equal(200, res.status);
+          done();
+        });
+
+      });
+
+    });
   });
 
   // after all tests

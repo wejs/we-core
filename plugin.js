@@ -403,7 +403,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'role',
       action        : 'addRoleToUser',
       model         : 'user'
+    },
+
+    // remove role in user
+    'delete /user/:id/role': {
+      controller    : 'role',
+      action        : 'removeRoleFromUser',
+      model         : 'user'
     }
+
   });
 
   plugin.events.on('we:create:default:folders', function(we) {

@@ -17,5 +17,6 @@
 	"auth.change-password.reset-password": "auth.change-password.reset-password",
 	"auth.change-password.success": "auth.change-password.success",
 	"role.addRoleToUser.role.not.found": "role.addRoleToUser.role.not.found",
-	"role.addRoleToUser.success": "role.addRoleToUser.success"
+	"role.addRoleToUser.success": "role.addRoleToUser.success",
+	"role.removeRoleFromUser.success": "role.removeRoleFromUser.success"
 }

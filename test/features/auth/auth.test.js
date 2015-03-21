@@ -103,6 +103,8 @@ describe('authFeature', function () {
           .expect(200)
           .end(function (err, res) {
 
+            console.log('err', err, res.text)
+
             assert(res.body.user[0].id);
             assert.equal(res.body.user[0].displayName, userStub.displayName);
             assert.equal(res.body.user[0].gender, userStub.gender);
