@@ -113,6 +113,8 @@ describe('ACLFeature', function() {
     });
 
     it('post /user/:id/role should add one role to user', function (done) {
+      we.config.acl.disabled = true;
+
       authenticatedRequest
       .post('/user/'+ salvedUser.id +'/role')
       .send({ roleName: salvedRole.name})
@@ -129,6 +131,9 @@ describe('ACLFeature', function() {
           if(err) return done(err);
 
           assert.equal(result, true);
+
+          we.config.acl.disabled = false;
+
           done();
         });
       });
