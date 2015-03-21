@@ -103,8 +103,6 @@ describe('authFeature', function () {
           .expect(200)
           .end(function (err, res) {
 
-            console.log('err', err, res.text)
-
             assert(res.body.user[0].id);
             assert.equal(res.body.user[0].displayName, userStub.displayName);
             assert.equal(res.body.user[0].gender, userStub.gender);
@@ -186,7 +184,6 @@ describe('authFeature', function () {
       .expect(400)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        console.log(res.text)
         if (err) throw new Error(err);
 
         assert(res.body.messages)
@@ -239,7 +236,6 @@ describe('authFeature', function () {
       .get('/user/'+ salvedUser.id +'/activate/aninvalidtoken')
       .expect(400)
       .end(function (err, res) {
-        console.log(res.text)
         if (err) throw new Error(err);
 
         done();
@@ -463,7 +459,6 @@ describe('authFeature', function () {
        .get('/api/v1/auth/check-if-can-reset-password')
         .expect(403)
         .end(function (err, res) {
-          console.log(res.text)
           if(err) throw new Error(err);
 
           done();
@@ -493,7 +488,6 @@ describe('authFeature', function () {
             localAgent.get('/api/v1/auth/check-if-can-reset-password')
             .expect(200)
             .end(function (err, res) {
-              console.log(res.text)
               if(err) throw new Error(err);
 
               assert.equal(res.body.messages[0].message, 'auth.reset-password.success.can');
