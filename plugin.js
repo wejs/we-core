@@ -410,8 +410,24 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'role',
       action        : 'removeRoleFromUser',
       model         : 'user'
-    }
+    },
 
+    //
+    // -- Permissions
+    //
+
+    'post /permission/:id/roles': {
+      controller    : 'permission',
+      action        : 'addRoleToPermission',
+      model         : 'permission'
+    },
+
+    'get /api/v1/fetchActionPermissions': {
+      controller    : 'permission',
+      action        : 'fetchActionPermissions',
+      model         : 'permission',
+      responseType  : 'json'
+    }
   });
 
   plugin.events.on('we:create:default:folders', function(we) {

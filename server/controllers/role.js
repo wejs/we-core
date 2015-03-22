@@ -142,38 +142,5 @@ module.exports = {
   },
 
   add: function (req, res) { return res.notFound(); },
-  remove: function (req, res) { return res.notFound(); },
-
-  /**
-   * Find Records
-   *
-   *  get   /:modelIdentity
-   *   *    /:modelIdentity/find
-   *
-   * An API call to find and return model instances from the data adapter
-   * using the specified criteria.  If an id was specified, just the instance
-   * with that unique id will be returned.
-   *
-   * Optional:
-   * @param {Object} where       - the find criteria (passed directly to the ORM)
-   * @param {Integer} limit      - the maximum number of records to send back (useful for pagination)
-   * @param {Integer} skip       - the number of records to skip (useful for pagination)
-   * @param {String} sort        - the order of returned records, e.g. `name ASC` or `age DESC`
-   * @param {String} callback - default jsonp callback param (i.e. the name of the js function returned)
-   */
-  find: function findRecords (req, res) {
-    // Look up the model
-    var Model = req._sails.models.role;
-    // Lookup for records that match the specified criteria
-    var query = Model.find()
-    .where( actionUtil.parseCriteria(req) )
-    .limit( 2000 )
-    .skip( actionUtil.parseSkip(req) )
-    .sort( actionUtil.parseSort(req) );
-    query.exec(function found(err, matchingRecords) {
-      if (err) return res.serverError(err);
-
-      res.ok(matchingRecords);
-    });
-  }
+  remove: function (req, res) { return res.notFound(); }
 };

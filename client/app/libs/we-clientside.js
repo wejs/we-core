@@ -28,7 +28,7 @@
   // by default we.js try to get server configs
   we.configs.getConfigsFromServer = true;
   // default configs url
-  we.configs.serverConfigUrl = '/configs.js';
+  we.configs.serverConfigUrl = '/api/v1/configs.json';
   // default log config
   we.configs.client.log = {};
   we.configs.client.log.events = false;

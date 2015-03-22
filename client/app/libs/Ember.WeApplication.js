@@ -17,7 +17,9 @@ Ember.WeApplication = Ember.Application.extend({
 
   // ember application reary event
   ready: function () {
-    this.set('WeNotification', window.WeNotification.create());
+    if (window.WeNotification) {
+      this.set('WeNotification', window.WeNotification.create());
+    }
 
     // dev configs
     if ( !window.PRODUCTION_ENV ) {

@@ -13,12 +13,12 @@ App.UserAdapter = App.ApplicationRESTAdapter.extend();
 
 $(function() {
   App.User.reopen({
-    avatar:  DS.belongsTo( 'images', {
+    avatar:  DS.belongsTo( 'image', {
       async: true,
       inverse: 'avatarOf'
     }),
 
-    images:  DS.belongsTo( 'images', {
+    images:  DS.belongsTo( 'image', {
       async: true,
       inverse: 'creator'
     }),
@@ -31,7 +31,7 @@ $(function() {
 
   });
 
-  App.Images.reopen({
+  App.Image.reopen({
     avatarOf:  DS.hasMany( 'user', {
       async: true,
       inverse: 'avatar'
