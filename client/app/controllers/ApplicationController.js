@@ -32,7 +32,7 @@ App.ApplicationController = Ember.Controller.extend({
   }.property('App.currentUser'),
 
   isAuthenticated: function(){
-    if(App.auth.get('isAuthenticated') ) {
+    if(App.get('auth.isAuthenticated') ) {
       return true;
     }else{
       return false;
@@ -41,7 +41,9 @@ App.ApplicationController = Ember.Controller.extend({
 
   init: function() {
     this._super();
-    this.setConnectionStatus();
+    if (window.io && window.io.socket) {
+      this.setConnectionStatus();
+    }
   },
 
   setConnectionStatus: function() {

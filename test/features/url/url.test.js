@@ -15,7 +15,7 @@ describe('urlFeature', function() {
     we = helpers.getWe();
 
     var userStub = stubs.userStub();
-    helpers.createUser(userStub, function(err, user, password) {
+    helpers.createUser(userStub, function(err, user) {
       if (err) throw new Error(err);
 
       salvedUser = user;

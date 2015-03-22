@@ -21,28 +21,33 @@ App.ApplicationRoute = Ember.Route.extend({
 
     App.configs.set('client',  window.we.configs.client);
 
-    return Ember.RSVP.hash({
+    var promisses = {};
+    if (App.auth) {
       // get current user
-      currentUser: $.getJSON('/account')
-        .done(function afterLoadCurrentUser(data) {
-          // if user is logged in
-          if (data.user) {
-            // TODO remove we.authenticatedUser requirement
-            we.authenticatedUser = data.user;
-            // ser App.currentUser and save it in store
-            App.set('currentUser', self.store.push('user', data.user));
-          }
-        })
-        .fail(function(data) {
-          Ember.Logger.error('Error on get current user data' , data);
-          // auth token is invalid
-          // TODO refresh auth token
-          if(data.status === 400 && !data.responseJSON.isValid){
-            App.auth.logOut();
-          }
-        }),
-      loadPermissionsAndRoles: Permissions.loadAndRegisterAllPermissions(store)
-    });
+      promisses.currentUser = $.getJSON('/account')
+      .done(function afterLoadCurrentUser(data) {
+        // if user is logged in
+        if (data.user) {
+          // ser App.currentUser and save it in store
+          App.set('currentUser', self.store.push('user', data.user));
+        }
+      })
+      .fail(function(data) {
+        // forbbiden or user is offline
+        if(data.status === 403) return App.auth.logOut();
+
+        Ember.Logger.error('Error on get current user data' , data);
+        // auth token is invalid
+        // TODO refresh auth token
+        if(data.status === 400 && !data.responseJSON.isValid){
+          App.auth.logOut();
+        }
+      })
+    }
+
+    promisses.loadPermissionsAndRoles = Permissions.loadAndRegisterAllPermissions(store);
+
+    return Ember.RSVP.hash(promisses);
   },
   model: function() {
     var promisse = {};

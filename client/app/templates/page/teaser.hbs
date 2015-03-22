@@ -1,0 +1,17 @@
+<div class="post-preview">
+  {{#link-to 'page' id}}
+    <h2 class="post-title">
+        {{title}}
+    </h2>
+    <h3 class="post-subtitle">
+        {{html about}}
+    </h3>
+  {{/link-to}}
+  <p class="post-meta">{{t 'page.created.by'}}
+    {{#link-to 'user' creator.id}}
+      {{creator.displayName}}</a>
+    {{/link-to}}
+    - {{date createdAt}}
+  </p>
+</div>
+<hr>

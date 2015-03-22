@@ -35,7 +35,8 @@ module.exports = {
   findOne: function findOneRecord (req, res, next) {
     var we = req.getWe();
     // Look up the model
-    var pk = req.params.id;
+    var pk = res.locals.id;
+
     if (!pk || !Number(pk)) {
       // id is invalid
       return next();
@@ -47,7 +48,6 @@ module.exports = {
         we.log.error('UserController: Error on find user', err);
         return res.serverError(err);
       }
-
       if (!user) {
         we.log.silly('User not found:', pk);
         return res.notFound();

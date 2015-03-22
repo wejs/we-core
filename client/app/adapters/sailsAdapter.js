@@ -10,7 +10,17 @@ DS.Model.reopen({
   }
 });
 
-
+/**
+ * Add Accept in all request
+ *
+ */
+$.ajaxPrefilter(function( options ) {
+  if ( !options.beforeSend) {
+    options.beforeSend = function (xhr) {
+      xhr.setRequestHeader('Accept', 'application/json');
+    }
+  }
+});
 App.ApplicationRESTAdapter = DS.SailsRESTAdapter.extend({
   defaultSerializer: '-default',
   pathForType: function(type) {
