@@ -15,6 +15,10 @@ module.exports = function Model(we) {
         type: we.db.Sequelize.TEXT
       },
 
+      about: {
+        type: we.db.Sequelize.TEXT
+      },
+
       active: {
         type: we.db.Sequelize.BOOLEAN,
         defaultValue: true
@@ -58,8 +62,7 @@ module.exports = function Model(we) {
       creator:  {
         type: 'belongsTo',
         model: 'user',
-        inverse: 'pages',
-        through: 'page_creator'
+        inverse: 'pages'
       }
     },
 

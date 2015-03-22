@@ -25,7 +25,6 @@ stubs.userStub = function userStub() {
   }
 }
 
-
 stubs.imageDataStub = function imageDataStub() {
   return {
      label: null,
@@ -40,6 +39,23 @@ stubs.imageDataStub = function imageDataStub() {
      width: '289',
      height: '264'
    }
+}
+
+stubs.pageStub = function pageStub(userId) {
+  return {
+    creatorId : userId,
+    title: chancejs.sentence({words: 4}),
+    about: chancejs.paragraph({sentences: 3}),
+    body: chancejs.paragraph({sentences: 5})
+  }
+}
+stubs.commentStub = function commentStub(userId, modelName, recortToComment) {
+  return {
+    creatorId : userId,
+    modelId: recortToComment.id,
+    modelName: modelName,
+    body: chancejs.paragraph({sentences: 5})
+  }
 }
 
 module.exports = stubs;

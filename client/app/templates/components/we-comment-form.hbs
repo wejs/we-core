@@ -1,0 +1,30 @@
+{{#can 'comment_create'}}
+  <div class="comment-form">
+    <div class="user-avatar-area pull-left">
+      <span class="creator-avatar avatar-small">
+        {{user-avatar user=currentUser size="thumbnail"}}
+      </span>
+    </div>
+    <div class="comment-right">
+     <div class="comment-body">
+      {{#if isOpenComentTextarea}}
+        <div class="comment-textarea form-group">
+          {{we-wysiwyg-editor name="body" value=body
+            onChangeText="onChangeBodyText"
+            onPasteText="onPasteBodyText" focus='true'}}
+        </div>
+        <div class="actions">
+          <div class="btn-group btn-group-xs">
+            <button type="button" {{action 'sendComment'}} class="btn btn-primary">{{t 'Send'}}</button>
+            <button type="button" {{action 'closeComentTextarea'}} class="btn btn-default">{{t 'Cancel'}}</button>
+          </div>
+        </div>
+      {{else}}
+        <div {{action "openComentTextarea"}} class="comment-placeholder">{{t 'Add comment'}}</div>
+      {{/if}}
+     </div>
+    </div>
+  </div>
+{{else}}
+  <div>{{t 'comments.notAuthenticated' loginUrlBinding=auth.loginUrl registerUrlBinding=auth.register}}</div>
+{{/can}}
