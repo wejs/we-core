@@ -1,8 +1,8 @@
 var projectPath = process.cwd();
 var we = require('../lib');
-var pluginManager = require('../lib/pluginManager');
 var deleteDir = require('rimraf');
 var path = require('path');
+var async = require('async');
 
 before(function(callback) {
   we.bootstrap({
@@ -28,12 +28,27 @@ before(function(callback) {
 
 // after all tests
 after(function (callback) {
-
   we.db.defaultConnection.close();
 
-  // delete temp dir
-  deleteDir( projectPath + '/files' , function(err) {
-    if (err) console.error('Error on delete temp dir: ', err);
+  var tempFolders = [
+    projectPath + '/files/tmp',
+    projectPath + '/files/uploads',
+    projectPath + '/files/config',
+    projectPath + '/files/sqlite',
+
+    projectPath + '/files/public/min',
+
+    projectPath + '/files/public/tpls.hbs.js',
+    projectPath + '/files/public/admin.tpls.hbs.js',
+    projectPath + '/files/public/project.css',
+    projectPath + '/files/public/project.js'
+  ];
+
+  async.each(tempFolders, function(folder, next){
+    deleteDir( folder, next);
+  }, function(err) {
+    if (err) throw new Error(err);
     callback();
-  });
+  })
+
 })
