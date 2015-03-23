@@ -34,7 +34,6 @@ module.exports = {
    * @param  {object} res
    */
   getConfigsJS: function(req, res) {
-    var configs = {};
     var we = req.getWe();
 
     // set header to never cache this response
@@ -42,14 +41,19 @@ module.exports = {
     res.header('Expires', '-1');
     res.header('Pragma', 'no-cache');
 
+    var configs = {};
+
     configs.version = '2';
 
     configs.env = we.env;
-    configs.server = {};
+
     configs.client = {};
+    configs.appName = we.config.appName;
+    configs.appLogo = we.config.appLogo;
+    configs.defaultUserAvatar = we.config.defaultUserAvatar;
+
     configs.client.publicVars = {};
     configs.user = {};
-    configs.authenticatedUser = {};
 
     // configs.server.providers = sails.config.wejs.providers;
 
@@ -69,10 +73,10 @@ module.exports = {
        configs.client.isConsumer = we.config.auth.isConsumer;
     }
 
-    if (!req.isAuthenticated()) {
-      // send not logged in configs
-      return res.send(configs);
-    }
+    if (!req.isAuthenticated()) return res.send(configs);
+
+    // set authenticated configs ...
+    configs.user = req.user;
 
     // set current session user auth token and userId
     if (req.session.authToken ) {
@@ -80,7 +84,7 @@ module.exports = {
       configs.client.publicVars.userId = req.session.userId;
     }
 
-    res.send(configs);
+    return res.send(configs);
   },
 
   getTranslations: function (req, res) {
@@ -172,21 +176,15 @@ module.exports = {
 function getTranslationFilePath (we, locale, callback) {
   var localePath = null;
   // check if exists in project
-  localePath = we.config.appPath + '/config/locales/' + locale + '.json';
+  localePath = we.projectPath + '/config/locales/' + locale + '.json';
   fs.exists (localePath, function (exists) {
     if (exists) {
       return callback(localePath);
     }
 
-    // if dont have in project use we.js default translations
-    localePath = we.config.appPath + '/node_modules/we-plugin-core/config/locales/' + locale + '.json';
-    fs.exists(localePath, function (exists) {
-      if(exists){
-        return callback(localePath);
-      }
-      we.log.info('Localization not found in project or sub-project for', locale);
-      callback();
-    });
+    we.log.info('Localization file not found in project', locale);
+
+    callback();
   });
 }
 

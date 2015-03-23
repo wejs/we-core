@@ -47,7 +47,7 @@ App.AuthChangePasswordController = Ember.ObjectController.extend({
               status: 'danger',
               field: fieldName,
               rule: invalidAttributes[fieldName][0].rule,
-              message: we.i18n(invalidAttributes[fieldName][0].message)
+              message: Ember.I18n.t(invalidAttributes[fieldName][0].message)
             });
           }
           self.set('messages', messages);

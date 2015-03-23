@@ -4,12 +4,12 @@
     tagName: 'span',
     isConnected: false,
     elementClassName: 'weConnectionStatusArea',
-    status: we.i18n('disconected'),
+    status: Ember.I18n.t('disconected'),
     statusImageUrl: function(){
       var status = this.get('status');
-      if(status === we.i18n('connected') ){
+      if(status === Ember.I18n.t('connected') ){
         return '/core/images/connected.png';
-      }else if(status === we.i18n('reconnecting') ){
+      }else if(status === Ember.I18n.t('reconnecting') ){
         return '/core/images/reconnecting.gif';
       }else{
         return '/core/images/disconnected.png';
@@ -17,9 +17,9 @@
     }.property('status'),
     statusLegend: function(){
        var status = this.get('status');
-      if(status === we.i18n('connected') ){
+      if(status === Ember.I18n.t('connected') ){
         return 'Connected - click to disconnect';
-      }else if(status === we.i18n('reconnecting') ){
+      }else if(status === Ember.I18n.t('reconnecting') ){
         return 'Reconnecting ...';
       }else{
         return 'Disconnected - click to connect';
@@ -31,35 +31,35 @@
       if(window.io.socket.socket && window.io.socket.socket.connected){
         _this.setProperties({
           isConnected: true,
-          status: we.i18n('connected')
+          status: Ember.I18n.t('connected')
         });
       }
 
       we.events.on('socketIoConnect',function(){
         _this.setProperties({
           isConnected: true,
-          status: we.i18n('connected')
+          status: Ember.I18n.t('connected')
         });
       });
 
       we.events.on('socketIoDisconnect',function(){
         _this.setProperties({
           isConnected: false,
-          status: we.i18n('disconnected')
+          status: Ember.I18n.t('disconnected')
         });
       });
 
       we.events.on('socketIoReconnect',function(){
         _this.setProperties({
           isConnected: true,
-          status: we.i18n('connected')
+          status: Ember.I18n.t('connected')
         });
       });
 
       we.events.on('socketIoReconnecting',function(){
         _this.setProperties({
           isConnected: false,
-          status: we.i18n('reconnecting')
+          status: Ember.I18n.t('reconnecting')
         });
       });
 

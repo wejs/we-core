@@ -24,10 +24,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     port: process.env.PORT || '3000',
     hostname: 'http://localhost:' + ( process.env.PORT || '3000' ),
     // default favicon, change in your project config/local.js
-    favicon: __dirname + '/client/core-favicon.ico',
+    favicon: __dirname + '/files/public/core-favicon.ico',
 
     appName: 'We.js app',
-    appLogo: '',
+    appLogo: '/public/plugin/we-core/images/logo.png',
 
     defaultUserAvatar: '111111',
 
