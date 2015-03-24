@@ -18,8 +18,8 @@ App.WeLoadingComponent = Ember.Component.extend({
     }
   }.property('isLoading'),
 
-  srcDone: '/core/images/done.png',
-  srcLoading: '/core/images/loading.gif',
+  srcDone: '/public/plugin/we-core/images/done.png',
+  srcLoading: '/public/plugin/we-core/images/loading.gif',
 
   textDone: 'Salved',
   textLoading: 'loading ...'
