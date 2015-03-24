@@ -111,6 +111,7 @@ Permissions = {
    * @return {boolean} true for allow and false for block
    */
   can: function(name, modelName, model) {
+    if (App.configs.acl.disabled) return true;
     // admin users has all permissions
     if ( App.get('currentUser.isAdmin')) return true;
 
@@ -137,6 +138,9 @@ Permissions = {
 
     if (Permissions.isOwner(modelName, model))
       roles.push(Permissions.defaultRoles.owner);
+
+    if ( roles.indexOf('administrator') > -1 ) return true;
+
 
     for (var i = permissionRoles.length - 1; i >= 0; i--) {
       if ( roles.indexOf(permissionRoles[i]) > -1 ) {
@@ -190,6 +194,7 @@ Permissions = {
     return $.getJSON( rolesUrl )
     .done(function afterLoadData(data) {
       if (data.role) {
+        console.log('role>', data.role)
         store.pushMany('role', data.role);
         data.role.forEach(function(role) {
           Permissions.defaultRoles[role.name] = role.id;

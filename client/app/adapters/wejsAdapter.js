@@ -18,6 +18,10 @@ $.ajaxPrefilter(function( options ) {
   if ( !options.beforeSend) {
     options.beforeSend = function (xhr) {
       xhr.setRequestHeader('Accept', 'application/json');
+
+      // set auth token
+      if (App.auth.token)
+        xhr.setRequestHeader('Authorization','Bearer ' + App.auth.token);
     }
   }
 });

@@ -41,48 +41,7 @@ module.exports = {
     res.header('Expires', '-1');
     res.header('Pragma', 'no-cache');
 
-    var configs = {};
-
-    configs.version = '2';
-
-    configs.env = we.env;
-
-    configs.client = {};
-    configs.appName = we.config.appName;
-    configs.appLogo = we.config.appLogo;
-    configs.defaultUserAvatar = we.config.defaultUserAvatar;
-
-    configs.client.publicVars = {};
-    configs.user = {};
-
-    // configs.server.providers = sails.config.wejs.providers;
-
-    // get log config
-    configs.client.log = we.config.clientside.log;
-
-    // get public vars
-    if (we.config.clientside.publicVars) {
-      // clone it to dont change global variable
-      configs.client.publicVars = _.clone(we.config.clientside.publicVars);
-    }
-
-    configs.client.language = we.config.i18n.defaultLocale;
-
-    if (we.config.auth) {
-       configs.client.isProvider = we.config.auth.isProvider;
-       configs.client.isConsumer = we.config.auth.isConsumer;
-    }
-
-    if (!req.isAuthenticated()) return res.send(configs);
-
-    // set authenticated configs ...
-    configs.user = req.user;
-
-    // set current session user auth token and userId
-    if (req.session.authToken ) {
-      configs.client.publicVars.authToken = req.session.authToken;
-      configs.client.publicVars.userId = req.session.userId;
-    }
+    var configs = we.getAppBootstrapConfig(we);
 
     return res.send(configs);
   },

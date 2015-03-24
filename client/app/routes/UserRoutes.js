@@ -69,51 +69,51 @@
       var self = this;
       var store = this.get('store');
 
-      // socket.io events added here to work with store
-      io.socket.on('contact:requested',function(data) {
-        if(data.to === App.currentUser.id){
-          data.status = 'requestsToYou';
-        }
-        // save in store
-        var contact = store.push('contact',data);
-        //if is the current model in this route set the contact
-        if(
-          self.currentModel.user.id == data.to ||
-          self.currentModel.user.id == data.from
-        ){
-          self.set('currentModel.contact',contact);
-        }
-      });
+      // // socket.io events added here to work with store
+      // io.socket.on('contact:requested',function(data) {
+      //   if(data.to === App.currentUser.id){
+      //     data.status = 'requestsToYou';
+      //   }
+      //   // save in store
+      //   var contact = store.push('contact',data);
+      //   //if is the current model in this route set the contact
+      //   if(
+      //     self.currentModel.user.id == data.to ||
+      //     self.currentModel.user.id == data.from
+      //   ){
+      //     self.set('currentModel.contact',contact);
+      //   }
+      // });
 
-      io.socket.on('contact:accepted',function(data) {
-        // update in store
-        var contact = store.push('contact',data);
-        // if are in from or to page update the contact data
-        if(
-          self.currentModel.user.id == data.to ||
-          self.currentModel.user.id == data.from
-        ){
-          self.set('currentModel.contact',contact);
-        }
-      });
+      // io.socket.on('contact:accepted',function(data) {
+      //   // update in store
+      //   var contact = store.push('contact',data);
+      //   // if are in from or to page update the contact data
+      //   if(
+      //     self.currentModel.user.id == data.to ||
+      //     self.currentModel.user.id == data.from
+      //   ){
+      //     self.set('currentModel.contact',contact);
+      //   }
+      // });
 
-      // TODO!
-      io.socket.on('contact:ignored',function(data) {
-        console.warn('TODO! contact:ignored',data);
-        store.push('contact',data);
-      });
+      // // TODO!
+      // io.socket.on('contact:ignored',function(data) {
+      //   console.warn('TODO! contact:ignored',data);
+      //   store.push('contact',data);
+      // });
 
-      io.socket.on('contact:deleted',function(data) {
-        //if is the current user in model set the contact
-        if(self.currentModel.user.id == data.to ||
-          self.currentModel.user.id == data.from
-        ){
-          self.set('currentModel.contact',{});
-        }
-        // remove record from store
-        var contact = store.getById('contact', data.id);
-        contact.unloadRecord();
-      });
+      // io.socket.on('contact:deleted',function(data) {
+      //   //if is the current user in model set the contact
+      //   if(self.currentModel.user.id == data.to ||
+      //     self.currentModel.user.id == data.from
+      //   ){
+      //     self.set('currentModel.contact',{});
+      //   }
+      //   // remove record from store
+      //   var contact = store.getById('contact', data.id);
+      //   contact.unloadRecord();
+      // });
     },
 
     actions: {

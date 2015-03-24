@@ -9,13 +9,14 @@ App.AuthForgotPasswordController = Ember.ObjectController.extend({
       NProgress.start();
       NProgress.set(0.5);
 
-      var email = this.get("email");
+      var email = this.get('email');
       jQuery.post('/auth/forgot-password',{
         email: email
       })
       .done(function(data) {
-        if(data.success){
-          self.set('messages', data.success);
+        console.log(data);
+        if (data.messages) {
+          self.set('messages', data.messages);
           self.set('requestSend', true);
         } else {
           console.warn('requestPasswordChange: Unknow success message');
@@ -25,11 +26,11 @@ App.AuthForgotPasswordController = Ember.ObjectController.extend({
         if (data.responseJSON.messages) {
           self.set('messages', data.responseJSON.messages);
         } else {
-          Ember.Logger.error( "Unknow error on request password: ", data.responseJSON);
+          Ember.Logger.error( 'Unknow error on request password: ', data.responseJSON);
         }
       }).always(function() {
         NProgress.done(true);
-        $("html, body").animate({ scrollTop: 0 });
+        $('html, body').animate({ scrollTop: 0 });
       });
     }
   }

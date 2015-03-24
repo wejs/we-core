@@ -13,41 +13,32 @@ App.Router.map(function() {
 
 
 App.ApplicationRoute = Ember.Route.extend({
+
   beforeModel: function() {
-    var self = this;
     var store = this.get('store');
 
-    App.configs.set('client',  window.we.configs.client);
+    var promisses = {};
 
-    return Ember.RSVP.hash({
+    App.auth.init();
+    if (App.auth) {
       // get current user
-      currentUser: $.getJSON('/account')
-        .done(function afterLoadCurrentUser(data) {
-          // if user is logged in
-          if (data.user) {
-            // TODO remove we.authenticatedUser requirement
-            window.we.authenticatedUser = data.user;
-            // ser App.currentUser and save it in store
-            App.set('currentUser', self.store.push('user', data.user));
-          }
-        })
-        .fail(function(data) {
-          Ember.Logger.error('Error on get current user data' , data);
-          // auth token is invalid
-          // TODO refresh auth token
-          if(data.status === 400 && !data.responseJSON.isValid){
-            App.auth.logOut();
-          }
-        }),
-      loadPermissionsAndRoles: Permissions.loadAndRegisterAllPermissions(store),
-    });
+      promisses.currentUser = App.auth.loadCurrentUser(store);
+    }
+
+    promisses.loadPermissionsAndRoles = Permissions.loadAndRegisterAllPermissions(store);
+
+    return Ember.RSVP.hash(promisses);
   },
+
   model: function() {
     var promisse = {};
     var user = App.currentUser;
+
+    if (!user) return location.href='/';
+
+
     // only admin
-    if(!user || ( !App.get('currentUser.isAdmin') && !App.get('currentUser.isModerator') ))
-      return location.href='/';
+    if(!Permissions.can('', 'user', user)) return location.href='/';
 
     // app configs
     promisse.configs = App.configs;

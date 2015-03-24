@@ -17,7 +17,7 @@ module.exports = function Model(we) {
     associations: {
       permissions:  {
         type: 'belongsToMany',
-        model: 'role',
+        model: 'permission',
         inverse: 'roles',
         through: 'roles_permissions'
       },

@@ -47,7 +47,7 @@ App.VocabularyIndexRoute = Ember.Route.extend({
     var vocabulary = this.modelFor('vocabulary');
 
     var vid;
-    if (vocabulary.id) {
+    if (vocabulary && vocabulary.id) {
       vid = vocabulary.id;
     } else {
       vid = null;

@@ -1,0 +1,10 @@
+{{#if isEditing}}
+  <form {{action "saveEditing" on="submit"}} {{action "cancelEditing" on="reset"}}>
+    {{yield}}
+    <button type="submit" class="btn btn-sm btn-primary">salvar</button>
+    <button {{action 'cancelEditing'}} class="btn btn-sm btn-default">Cancelar</button>
+  </form>
+{{else}}
+  {{we-terms terms=value}}
+  <button {{action "openEditing"}} class="btn btn-xs btn-primary">editar</button>
+{{/if}}
