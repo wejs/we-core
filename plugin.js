@@ -78,7 +78,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       }
     },
     auth : {
-      requireAccountActivation: true
+      requireAccountActivation: true,
+      allowUserSignup: true
     },
     acl : {
       disabled: true

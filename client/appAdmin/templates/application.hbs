@@ -1,15 +1,18 @@
 <div class="wrapper" id="main">
-  {{partial "partials/navbar" }}
+  {{#if auth.isAuthenticated}}
+    {{partial "partials/navbar" }}
+    <div id="page-wrapper">
+      <br>
+      {{bread-crumbs}}
 
-  <div id="page-wrapper">
-    <br>
-    {{bread-crumbs}}
+      {{outlet}}
 
+      <br><br><br><br><br>
+
+      {{partial 'partials/footer' }}
+    </div>
+    <hr>
+  {{else}}
     {{outlet}}
-
-    <br><br><br><br><br>
-
-    {{partial 'partials/footer' }}
-  </div>
-  <hr>
+  {{/if}}
 </div>

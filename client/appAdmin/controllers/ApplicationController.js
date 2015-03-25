@@ -1,5 +1,5 @@
 
-App.ApplicationController = Ember.Controller.extend({
+App.ApplicationController = Ember.ObjectController.extend({
   breadCrumb: 'Inicio',
   isAuthenticated: function(){
     if(App.auth.get('isAuthenticated') ) {

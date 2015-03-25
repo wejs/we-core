@@ -11,7 +11,7 @@ module.exports = {
 
   // getter for current logged in user
   current: function (req, res) {
-    if (!req.isAuthenticated() ) return res.forbidden();
+    if (!req.isAuthenticated() ) return res.send({});
     return res.ok(req.user);
   },
 
@@ -33,6 +33,8 @@ module.exports = {
   // TODO make this action simple
   signup: function Register(req, res) {
     var we = req.getWe();
+
+    if (!we.config.auth.allowUserSignup) return res.forbidden();
 
     // anti spam field
     if (req.params.mel) {

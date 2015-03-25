@@ -43,10 +43,12 @@ Ember.WeApplication = Ember.Application.extend({
      * Check if user is authenticated
      * @return {Boolean}
      */
-    isAuthenticated: function(){
-      if( App.get('currentUser.id') ) return true;
-      return false;
-    }.property('App.currentUser.id'),
+    isAuthenticated: false,
+
+    // (function(){
+    //   if( App.get('currentUser.id') ) return true;
+    //   return false;
+    // }.property('App.currentUser.id')),
 
     init: function() {
       var token = this.token;
@@ -58,10 +60,13 @@ Ember.WeApplication = Ember.Application.extend({
 
     },
 
-    login: function login() {
+    login: function login(user) {
       if (!this.token) {
         this.token = this.getToken();
       }
+
+      App.set('currentUser', user);
+      App.set('auth.isAuthenticated', true);
     },
 
     logOut: function logOut() {
@@ -72,6 +77,7 @@ Ember.WeApplication = Ember.Application.extend({
       });
 
       App.set('currentUser', null);
+      App.set('auth.isAuthenticated', false);
     },
 
     saveToken: function saveToken (token) {
@@ -101,6 +107,8 @@ Ember.WeApplication = Ember.Application.extend({
           } else {
             App.set('currentUser', store.push('user', data.user[0]));
           }
+
+          App.set('auth.isAuthenticated', true);
         }
       })
       .fail(function(data) {
