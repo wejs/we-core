@@ -183,49 +183,80 @@ Permissions = {
   },
 
   rolesIsLoaded: false,
+
+  /**
+   * Load and register all roles, use in app bootstrap
+   *
+   * @param  {Object} store Ember data store
+   * @return {Object}       Promisse Ember.RSVP
+   */
   loadAndRegisterAllRoles: function(store) {
-    if (Permissions.rolesIsLoaded) return;
-    var rolesUrl = '/role';
-    var host = Ember.get('App.configs.permissionHost');
-    if ( host ) {
-      rolesUrl = host + rolesUrl;
-    }
+    if (Permissions.rolesIsLoaded) return Ember.RSVP.resolve();
 
-    return $.getJSON( rolesUrl )
-    .done(function afterLoadData(data) {
-      if (data.role) {
-        console.log('role>', data.role)
-        store.pushMany('role', data.role);
-        data.role.forEach(function(role) {
-          Permissions.defaultRoles[role.name] = role.id;
-        })
-
-        Permissions.rolesIsLoaded = true;
+    return new Ember.RSVP.Promise(function(resolve, reject) {
+      var rolesUrl = '/role';
+      var host = Ember.get('App.configs.permissionHost');
+      if ( host ) {
+        rolesUrl = host + rolesUrl;
       }
-    })
-    .fail(function (data) {
-      Ember.Logger.error('Error on load roles' , data);
-    })
+
+      return $.getJSON( rolesUrl )
+      .done(function afterLoadData(data) {
+        if (data.role) {
+          store.pushMany('role', data.role);
+          data.role.forEach(function(role) {
+            Permissions.defaultRoles[role.name] = role.id;
+          })
+
+          Permissions.rolesIsLoaded = true;
+
+        }
+
+        resolve();
+      })
+      .fail(function (result) {
+        if (result.status == '403') return resolve();
+        Ember.Logger.error('Error on load roles' , result);
+
+        return reject(result);
+      })
+    });
   },
 
+  /**
+   * Load and register all permissions and roles, use in app bootstrap
+   *
+   * @param  {Object} store Ember data store
+   * @return {Object}       Promisse Ember.RSVP
+   */
   loadAndRegisterAllPermissions: function(store) {
     Permissions.loadAndRegisterAllRoles(store);
 
-    var permissionsUrl = '/permission';
-    var permissionsHost = Ember.get('App.configs.permissionHost');
-    if ( permissionsHost ) {
-      permissionsUrl = permissionsHost + permissionsUrl;
-    }
-
-    return $.getJSON( permissionsUrl )
-    .done(function afterLoadData(data) {
-      if (data.permission) {
-        // register all permissions
-        Permissions.registerAll(data.permission);
+    return new Ember.RSVP.Promise(function(resolve, reject) {
+      var permissionsUrl = '/permission';
+      var permissionsHost = Ember.get('App.configs.permissionHost');
+      if ( permissionsHost ) {
+        permissionsUrl = permissionsHost + permissionsUrl;
       }
-    })
-    .fail(function (data) {
-      Ember.Logger.error('Error on load permissions' , data);
-    })
+
+      return $.getJSON( permissionsUrl )
+      .done(function afterLoadData(data) {
+        if (data.permission) {
+          // register all permissions
+          Permissions.registerAll(data.permission);
+        }
+
+        // on success
+        resolve(Permissions._perms);
+      })
+
+      .fail(function (result) {
+        if (result.status == '403') return resolve(Permissions._perms);
+
+        Ember.Logger.error('Error on load permissions' , result);
+        // on failure
+        return reject(result);
+      })
+    });
   }
 };
