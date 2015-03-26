@@ -94,7 +94,7 @@ module.exports = {
           translationResponse += ';';
 
           res.contentType('application/javascript');
-          res.send(200, translationResponse );
+          res.ok( translationResponse );
         });
       } else {
         we.log.debug('getTranslations:Locale not found:', locale, localeParam);
