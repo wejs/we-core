@@ -26,6 +26,7 @@
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.3.4",
     "debug": "~2.1.1",
+    "email-templates": "^1.2.1",
     "express": "~4.12.0",
     "express-session": "^1.10.3",
     "gm": "^1.17.0",
@@ -56,7 +57,7 @@
     "serve-favicon": "~2.2.0",
     "sqlite3": "^3.0.5",
     "string": "^3.1.0",
-    "we-passport-http-bearer": "wejs/we-passport-http-bearer",
+    "we-passport-http-bearer": "0.3.0",
     "winston": "^0.9.0"
   },
   "devDependencies": {
@@ -65,7 +66,7 @@
     "mocha": "^2.1.0",
     "sinon": "^1.14.0",
     "supertest": "^0.15.0",
-    "we-theme-admin-default": "^0.0.5",
-    "we-theme-site-wejs": "^0.0.4"
+    "we-theme-admin-default": "0.3.0",
+    "we-theme-site-wejs": "0.3.0"
   }
 }
