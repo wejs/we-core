@@ -34,9 +34,8 @@ App.ApplicationRoute = Ember.Route.extend(WeApplicationRoutesMixin, {
     var promisse = {};
     var user = App.currentUser;
     // // check acess
-    if (!user || !Permissions.can('can_administer')) {
-      this.transitionTo('authLogin');
-    }
+    if (!user) return this.transitionTo('authLogin');
+    if(!Permissions.can('can_administer')) return this.transitionTo('403');
 
     // app configs
     promisse.configs = App.configs;
