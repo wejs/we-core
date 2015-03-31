@@ -10,6 +10,21 @@ Site: wejs.org
 
 #### In this project folder
 
+##### Install it for develop we.js core:
+
+> after install npm and node.js
+
+```js
+// clone this project
+git clone https://github.com/wejs/we-core.git
+// enter in cloned folder
+cd we-core
+// install all dependencies
+npm install
+// test
+npm test
+```
+
 ##### For run all tests use:
 
 ```sh
