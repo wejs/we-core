@@ -88,6 +88,13 @@ module.exports = function UserModel(we) {
         model: 'role',
         inverse: 'users',
         through: 'users_roles'
+      },
+
+      pages:  {
+        emberOnly: true,
+        type: 'belongsTo',
+        model: 'page',
+        inverse: 'creator'
       }
     },
 
