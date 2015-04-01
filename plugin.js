@@ -27,7 +27,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     favicon: __dirname + '/files/public/core-favicon.ico',
 
     appName: 'We.js app',
-    appLogo: '/public/plugin/we-core/images/logo.png',
+    appLogo: '/public/plugin/we-core/files/images/logo.png',
+
+    coreCssApp: '/public/plugin/we-core/files/css/app.css',
 
     defaultUserAvatar: '111111',
 
@@ -104,6 +106,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     email: {
       // default mail options
       mailOptions: {
+        // by default log emails in console
+        sendToConsole: true,
+        // default from and to
         from: 'We.js project <contato@wejs.org>', // sender address
         subject: 'A We.js project email', // Subject line
       },
