@@ -16,24 +16,16 @@ module.exports = function Model(we) {
       },
       description: {
         type: we.db.Sequelize.TEXT
-      },
-      order: {
-        type: we.db.Sequelize.BOOLEAN,
-        defaultValue: 0
-      },
+      }
     },
 
     associations: {
       vocabulary: {
         type: 'belongsTo',
-        model: 'term',
-        via: 'term_vocabulary'
+        model: 'vocabulary',
+        inverse: 'terms',
+        // through: 'term_vocabulary'
       },
-      creator:  {
-        type: 'belongsTo',
-        model: 'user',
-        inverse: 'terms'
-      }
     },
 
     options: {
@@ -42,6 +34,5 @@ module.exports = function Model(we) {
       hooks: {}
     }
   }
-
   return model;
 }

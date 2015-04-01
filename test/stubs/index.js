@@ -46,7 +46,16 @@ stubs.pageStub = function pageStub(userId) {
     creatorId : userId,
     title: chancejs.sentence({words: 4}),
     about: chancejs.paragraph({sentences: 3}),
-    body: chancejs.paragraph({sentences: 5})
+    body: chancejs.paragraph({sentences: 5}),
+    tags: [
+      'Futebol',
+      'Jogo',
+      'Jogador'
+    ],
+    categories: [
+      'Saúde',
+      'Entreterimento'
+    ]
   }
 }
 stubs.commentStub = function commentStub(userId, modelName, recortToComment) {
@@ -56,6 +65,34 @@ stubs.commentStub = function commentStub(userId, modelName, recortToComment) {
     modelName: modelName,
     body: chancejs.paragraph({sentences: 5})
   }
+}
+
+stubs.vocabularyStub = function vocabularyStub(userId) {
+  return {
+    creatorId : userId,
+    name: chancejs.word(),
+    description: chancejs.paragraph({sentences: 5})
+  }
+}
+
+stubs.termsStub = function termsStub(userId, vocabularyId) {
+  return [
+    {
+      text: 'Saúde',
+      description: chancejs.paragraph({sentences: 5}),
+      vocabularyId: vocabularyId
+    },
+    {
+      text: chancejs.word(),
+      description: chancejs.paragraph({sentences: 5}),
+      vocabularyId: vocabularyId
+    },
+    {
+      text: 'Universe',
+      description: chancejs.paragraph({sentences: 5}),
+      vocabularyId: vocabularyId
+    }
+  ]
 }
 
 module.exports = stubs;

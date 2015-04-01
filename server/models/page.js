@@ -67,6 +67,17 @@ module.exports = function Model(we) {
     },
 
     options: {
+      termFields: {
+        tags: {
+          vocabularyId: null,
+          canCreate: true
+        },
+        categories: {
+          vocabularyId: 1,
+          canCreate: false
+        }
+      },
+
       classMethods: {},
       instanceMethods: {},
       hooks: {}

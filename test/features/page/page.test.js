@@ -115,7 +115,6 @@ describe('pageFeature', function () {
       we.db.models.page.create(pageStub)
       .done(function (err, p) {
         if (err) return done(err);
-
         request(http)
         .delete('/page/' + p.id)
         .set('Accept', 'application/json')
@@ -127,12 +126,9 @@ describe('pageFeature', function () {
             if (err) return done(err);
 
             assert.equal(page, null);
-
             done();
           })
-
         });
-
       })
     });
   });

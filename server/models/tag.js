@@ -16,19 +16,9 @@ module.exports = function Model(we) {
       },
       description: {
         type: we.db.Sequelize.TEXT
-      },
-      order: {
-        type: we.db.Sequelize.BOOLEAN,
-        defaultValue: 0
-      },
-    },
-    associations: {
-      creator:  {
-        type: 'belongsTo',
-        model: 'user',
-        inverse: 'terms'
       }
     },
+    associations: {},
 
     options: {
       classMethods: {},
