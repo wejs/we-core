@@ -438,6 +438,31 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'fetchActionPermissions',
       model         : 'permission',
       responseType  : 'json'
+    },
+
+    // -- FOLLOW
+    // get
+    // example: /api/v1/follow/post/1/2?flagType=follow
+    'get /api/v1/follow/:model/:modelId?': {
+      controller    : 'follow',
+      action        : 'isFollowing',
+      responseType  : 'json'
+    },
+
+    // create
+    // example: /api/v1/flag/post/1/2?flagType=follow
+    'post /api/v1/follow/:model/:modelId': {
+      controller    : 'follow',
+      action        : 'follow',
+      responseType  : 'json'
+    },
+
+    // delete
+    // example: /api/v1/flag/post/1/2?flagType=follow
+    'delete /api/v1/follow/:model/:modelId': {
+      controller    : 'follow',
+      action        : 'unFollow',
+      responseType  : 'json'
     }
   });
 
