@@ -4,6 +4,9 @@ node_js:
 services:
   - mysql
 
+before_script:
+  - sudo apt-get install graphicsmagick
+
 notifications:
   email:
     - alberto@wejs.org
