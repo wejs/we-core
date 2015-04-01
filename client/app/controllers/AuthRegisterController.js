@@ -27,14 +27,24 @@ App.AuthRegisterController = Ember.ObjectController.extend({
     });
   },
   actions: {
+    showRequireActivationMessage: function() {
+      this.set('model.showRequireActivation', true);
+    },
     submit: function() {
       var self = this;
       var user = this.get('user');
       self.set('messages',[]);
       $.post(registerUrl,user)
       .done(function(data) {
-        if (data.responseJSON && data.responseJSON.messages) {
-          self.set('messages', data.responseJSON.messages);
+        if (data && data.messages) {
+          if (
+            data.messages[0].extraData &&
+            data.messages[0].extraData.requireActivation
+          ) {
+            self.send('showRequireActivationMessage');
+          }
+
+          self.set('messages', data.messages);
         } else if (data.user || (data.active && data.id) ) {
           location.href = '/';
         } else if (data.success) {

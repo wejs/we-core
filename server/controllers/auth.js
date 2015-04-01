@@ -128,6 +128,9 @@ module.exports = {
                     vars: {
                       email: newUser.email
                     }
+                  }, {
+                    requireActivation: true,
+                    email: newUser.email
                   });
 
                   return res.created();
