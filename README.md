@@ -5,15 +5,11 @@
 
 ### Main repository: https://github.com/wejs/we
 
-Site: wejs.org
+Site: [http://wejs.org](wejs.org)
 
-###In research and developement dont use this repository
+***In active developement***
 
-### How to test
-
-#### In this project folder
-
-##### Install it for develop we.js core:
+## Install for develop we.js core:
 
 > after install npm and node.js
 
@@ -28,7 +24,9 @@ npm install
 npm test
 ```
 
-##### For run all tests use:
+### How to test
+
+after clone and install npm packages:
 
 ```sh
 npm test
