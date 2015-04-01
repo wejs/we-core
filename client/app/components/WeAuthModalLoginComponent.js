@@ -47,15 +47,7 @@
           password: this.get('password')
         })
         .done(function(data) {
-          if(data.id){
-            // TODO add logged in and logged out withouth reload
-            // we.authenticatedUser = data;
-            // we.hooks.trigger("user-authenticated", {
-            //   'user':  data
-            // });
-            location.reload();
-            //jQuery('#AuthLoginModal').modal('hide');
-          }
+          location.reload();
         })
         .fail(function(data) {
           if(data.responseText){
