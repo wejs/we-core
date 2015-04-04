@@ -74,6 +74,17 @@ module.exports = function Model(we) {
           })
         },
 
+        unFollow: function(modelName, modelId, userId,  cb) {
+          // check if is following
+          we.db.models.follow.isFollowing(
+            userId, modelName, modelId)
+          .done(function (err, follow) {
+            if (err) return cb(err);
+            if (!follow) return cb(null, null);
+            follow.destroy().done(cb);
+          });
+        },
+
         /**
          * Check if one record or model type exists and returns it on callback
          */

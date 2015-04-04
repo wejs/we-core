@@ -58,6 +58,24 @@ stubs.pageStub = function pageStub(userId) {
     ]
   }
 }
+
+stubs.groupStub = function pageStub(userId) {
+  return {
+    creatorId : userId,
+    name: chancejs.sentence({words: 4}),
+    description: chancejs.paragraph({sentences: 5}),
+    tags: [
+      'Futebol',
+      'Jogo',
+      'Jogador'
+    ],
+    categories: [
+      'Saúde',
+      'Entreterimento'
+    ]
+  }
+}
+
 stubs.commentStub = function commentStub(userId, modelName, recortToComment) {
   return {
     creatorId : userId,

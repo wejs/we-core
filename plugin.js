@@ -463,7 +463,46 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'follow',
       action        : 'unFollow',
       responseType  : 'json'
+    },
+
+    // GROUPS
+    //
+
+    'post /api/v1/group/:groupId/addContent/:contentModelName/:contentId': {
+      controller    : 'group',
+      action        : 'addContent',
+      model         : 'group',
+      responseType  : 'json'
+    },
+
+    'delete /api/v1/group/:groupId/addContent/:contentModelName/:contentId': {
+      controller    : 'group',
+      action        : 'removeContent',
+      model         : 'group',
+      responseType  : 'json'
+    },
+
+    'get /api/v1/group/:groupId/content': {
+      controller    : 'group',
+      action        : 'findAllContent',
+      model         : 'group',
+      responseType  : 'json'
+    },
+
+    'post /api/v1/group/:groupId/join': {
+      controller    : 'group',
+      action        : 'join',
+      model         : 'group',
+      responseType  : 'json'
+    },
+
+    'post /api/v1/group/:groupId/leave': {
+      controller    : 'group',
+      action        : 'leave',
+      model         : 'group',
+      responseType  : 'json'
     }
+
   });
 
   plugin.events.on('we:create:default:folders', function(we) {

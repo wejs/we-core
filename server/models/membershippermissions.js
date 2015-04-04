@@ -1,8 +1,8 @@
 /**
- * Permission
+ * membershippermissions
  *
  * @module      :: Model
- * @description :: Permission model
+ * @description :: membershippermissions model
  *
  */
 
@@ -16,18 +16,16 @@ module.exports = function Model(we) {
     },
 
     associations: {
-      roles:  {
-        type: 'hasMany',
-        model: 'role',
-        inverse: 'permissions'
+      membershiproles:  {
+        type: 'belongsToMany',
+        model: 'membershiprole',
+        inverse: 'permissions',
+        through: 'membershippermissions_membershippermissions'
       }
     },
 
     options: {
-      classMethods: {
-
-      },
-
+      classMethods: {},
       instanceMethods: {
         toJSON: function() {
           var obj = this.get();
@@ -38,8 +36,7 @@ module.exports = function Model(we) {
           return obj;
         }
       },
-      hooks: {
-      }
+      hooks: {}
     }
   }
 
