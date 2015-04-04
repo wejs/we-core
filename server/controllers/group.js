@@ -7,7 +7,7 @@ module.exports = {
     res.locals.group.userJoin(req.user.id, function(err, membership) {
       if (err) return res.serverError(err);
 
-      we.db.models.follow.follow(req.params.model, req.params.modelId, req.user.id, function (err, follow) {
+      we.db.models.follow.follow('group', res.locals.group.id, req.user.id, function (err, follow) {
         if (err) return res.serverError(err);
         if (!follow) return res.forbidden();
 
@@ -24,6 +24,7 @@ module.exports = {
 
     res.locals.group.userLeave(req.user.id, function(err) {
       if (err) return res.serverError(err);
+
       res.status(204).send();
     });
   },
