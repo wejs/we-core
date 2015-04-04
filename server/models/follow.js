@@ -50,6 +50,30 @@ module.exports = function Model(we) {
           });
         },
 
+        follow: function(modelName, modelId, userId,  cb) {
+          // check if record exists
+          we.db.models.follow.recordExists(modelName, modelId, function (err, record) {
+            if (err) return cb(err);
+            if (!record) return cb('record to follow not exists');
+
+            // check if is following
+            we.db.models.follow.isFollowing(userId, modelName, modelId)
+            .done(function (err, follow) {
+              if (err) return cb(err);
+              if (follow) return cb(null, follow);
+
+              we.db.models.follow.create({
+                userId: userId,
+                model: modelName,
+                modelId: modelId
+              }).done(function (err, salvedFollow) {
+                if (err) return cb(err);
+                return cb(null, salvedFollow);
+              })
+            })
+          })
+        },
+
         /**
          * Check if one record or model type exists and returns it on callback
          */

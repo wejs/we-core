@@ -54,45 +54,18 @@ module.exports = {
     }
 
     // check if record exists
-    we.db.models.follow.recordExists(req.params.model, req.params.modelId, function (err, record) {
-      if (err || !record) {
-        we.log.error('unFollow:Model type id record dont exist.', req.params.model, req.params.modelId);
-        return res.forbidden();
-      }
+    we.db.models.follow.follow(req.params.model, req.params.modelId, req.user.id, function (err, follow) {
+      if (err) return res.serverError(err);
+      if (!follow) return res.forbidden();
 
-      // check if is following
-      we.db.models.follow.isFollowing(req.user.id, req.params.model, req.params.modelId)
-      .done(function (err, follow) {
-        if (err) return res.serverError(err);
+      // // send the change to others user connected devices
+      // var socketRoomName = 'user_' + userId;
+      // sails.io.sockets.in(socketRoomName).emit(
+      //   'follow:follow', salvedFollow
+      // );
 
-        // is following
-        if (follow) {
-          return res.send({follow: follow})
-        }
-
-        we.db.models.follow.create({
-          userId: req.user.id,
-          model: req.params.model,
-          modelId: req.params.modelId
-        }).done(function (err, salvedFollow) {
-          if (err) {
-            we.log.error(
-              'follow:Follow.create:Error on check if user is following',
-              req.params.model, req.params.modelId, err
-            );
-            return res.serverError(err);
-          }
-
-          // // send the change to others user connected devices
-          // var socketRoomName = 'user_' + userId;
-          // sails.io.sockets.in(socketRoomName).emit(
-          //   'follow:follow', salvedFollow
-          // );
-
-          return res.send({follow: salvedFollow})
-        })
-      })
-    })
+      return res.send({follow: follow})
+    });
   },
 
   unFollow: function deleteFollow(req, res) {
