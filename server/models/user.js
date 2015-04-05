@@ -95,6 +95,13 @@ module.exports = function UserModel(we) {
         type: 'belongsTo',
         model: 'page',
         inverse: 'creator'
+      },
+
+      vocabularies:  {
+        emberOnly: true,
+        type: 'hasMany',
+        model: 'vocabulary',
+        inverse: 'creator'
       }
     },
 
@@ -194,6 +201,15 @@ module.exports = function UserModel(we) {
         // }
       },
       hooks: {
+        beforeValidate: function(user, options, next) {
+          if (user.isNewRecord) {
+            // dont set password on create
+            user.dataValues.password = null;
+            user.dataValues.passwordId = null;
+          }
+
+          next(null, user);
+        },
         // Lifecycle Callbacks
         beforeCreate: function(user, options, next) {
           // never save consumers on create

@@ -6,12 +6,14 @@ App.WeContentEditableComponent = Ember.Component.extend({
 
   editButtonClass: 'btn btn-xs btn-primary',
 
+  formClassNames: null,
+
   // value to show
   value: '',
   // backup value to alow a cancel mecanism
   backupValue: null,
 
-  onSave: 'save',
+  onSave: null,
 
   didInsertElement: function() {
     this._super();
@@ -24,7 +26,13 @@ App.WeContentEditableComponent = Ember.Component.extend({
     },
     saveEditing: function () {
       this.set('isEditing', false);
-      this.sendAction('onSave', this.get('attribute'), this.get('value'));
+      if (this.get('onSave')){
+        this.sendAction('onSave', this.get('attribute'), this.get('value'));
+      } else {
+        this.get('record').set(this.get('attribute'), this.get('value'))
+        .save();
+      }
+
     },
 
     cancelEditing: function () {

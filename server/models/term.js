@@ -23,8 +23,7 @@ module.exports = function Model(we) {
       vocabulary: {
         type: 'belongsTo',
         model: 'vocabulary',
-        inverse: 'terms',
-        // through: 'term_vocabulary'
+        inverse: 'terms'
       },
     },
 

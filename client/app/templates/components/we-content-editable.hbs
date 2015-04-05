@@ -1,5 +1,5 @@
 {{#if isEditing}}
-  <form {{action "saveEditing" on="submit"}} {{action "cancelEditing" on="reset"}}>
+  <form {{action "saveEditing" on="submit"}} {{action "cancelEditing" on="reset"}} {{bind-attr class=formClassNames}}>
     {{yield}}
     <button type="submit" class="btn btn-sm btn-primary">salvar</button>
     <button {{action 'cancelEditing'}} class="btn btn-sm btn-default">Cancelar</button>

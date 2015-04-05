@@ -1,5 +1,7 @@
 App.PagesController = Ember.ObjectController.extend({
-  breadCrumb: 'pages'
+  breadCrumb: function(){
+    return Ember.I18n.t('pages');
+  }.property('records'),
 });
 
 

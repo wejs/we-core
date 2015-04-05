@@ -27,7 +27,6 @@ helpers.createUser = function(user, done) {
       password: user.password
     }).done(function (error, password) {
       if (error) return done(error);
-
       newUser.setPassword(password).then(function () {
         done(null, newUser, password);
       });

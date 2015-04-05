@@ -20,12 +20,13 @@ module.exports = function Model(we) {
     },
 
     associations: {
-      // terms: {
-      //   type: 'belongsToMany',
-      //   model: 'term',
-      //   inverse: 'vocabulary',
-      //   through: 'term_vocabulary'
-      // },
+      terms: {
+        emberOnly: true,
+        type: 'hasMany',
+        model: 'term',
+        inverse: 'vocabulary',
+        through: 'term_vocabulary'
+      },
 
       creator:  {
         type: 'belongsTo',

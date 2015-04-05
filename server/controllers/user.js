@@ -63,8 +63,6 @@ module.exports = {
    * Protect this route with acl!
    */
   create: function createRecord (req, res) {
-    var we = req.getWe();
-
     res.locals.Model.create(req.body)
     .done(function(err, record) {
       if (err) {

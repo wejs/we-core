@@ -4,6 +4,7 @@ var helpers = require('../../helpers');
 var stubs = require('../../stubs');
 var _ = require('lodash');
 var async = require('async');
+var querystring = require('querystring');
 var http;
 var we;
 
@@ -89,6 +90,50 @@ describe('termFeature', function () {
           }
         });
         assert(hasPageTags, 'Dont has page tags!');
+
+        done();
+      });
+    });
+
+    it('get /term?where should find terms with where param', function(done){
+      var where = 'where=' + querystring.escape( JSON.stringify({
+        text: { like: '%Saúde%' }
+      }));
+
+      request(http)
+      .get('/term?' + where)
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        assert.equal(200, res.status);
+        assert(res.body.term);
+        assert( _.isArray(res.body.term) , 'term not is array');
+        assert(res.body.meta);
+
+        assert(res.body.meta.count);
+
+        done();
+      });
+    });
+
+    it('get /term?where should find terms without field and isNull where', function(done){
+      var where = 'where=' + querystring.escape( JSON.stringify({
+        vocabularyId: null
+      }));
+
+      request(http)
+      .get('/term?' + where)
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        assert.equal(200, res.status);
+        assert(res.body.term);
+        assert( _.isArray(res.body.term) , 'term not is array');
+        assert(res.body.meta);
+
+        assert(res.body.meta.count);
+
+        res.body.term.forEach(function(term) {
+          assert.equal(term.vocabulary, null);
+        });
 
         done();
       });

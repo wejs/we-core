@@ -14,7 +14,7 @@ App.WeTagFieldComponent = Ember.Component.extend({
   maximumInputLength: 100,
   maximumSelectionSize: 15,
   multiple: true,
-  
+
   placeholder: 'Selecione um ou mais termos ...',
   formatSearching: function() {
     return 'Buscando ...';
@@ -28,9 +28,9 @@ App.WeTagFieldComponent = Ember.Component.extend({
   formatLoadMore: function() {
     return 'Carregando mais resultados ...' ;
   },
-  formatInputTooShort: function (input, min) { 
-    var n = min - input.length; 
-    return "Por favor digite " + n + " ou mais letras"; 
+  formatInputTooShort: function (input, min) {
+    var n = min - input.length;
+    return "Por favor digite " + n + " ou mais letras";
   },
   formatNoMatches: function () { return "Nenhum termo encontrado"; },
 
@@ -56,7 +56,7 @@ App.WeTagFieldComponent = Ember.Component.extend({
       tags: true,
       tokenSeparators: [',', ';'],
       placeholder: this.get('placeholder'),
-      
+
       formatSearching: this.get('formatSearching'),
       formatInputTooShort: this.get('formatInputTooShort'),
       formatInputTooLong: this.get('formatInputTooLong'),
@@ -101,13 +101,13 @@ App.WeTagFieldComponent = Ember.Component.extend({
     };
 
     configs.ajax = { // instead of writing the function to execute the request we use Select2's convenient helper
-      url: '/tag',
+      url: '/term',
       dataType: 'json',
       data: function (tag, page) {
         var query = {
           where: JSON.stringify({
             text: {
-              contains: tag
+              like: '%'+tag+'%'
             }
           }),
           limit: 50
@@ -115,27 +115,15 @@ App.WeTagFieldComponent = Ember.Component.extend({
 
         return query;
       },
-      results: function (data, page) { // parse the results into the format expected by Select2.
+      results: function (data) { // parse the results into the format expected by Select2.
         // since we are using custom formatting functions we do not need to alter remote JSON data
         return {
-          results: data.tag
+          results: data.term
         };
       }
 
-    },
-    configs.initSelection = function(element, callback) {
-      // the input tag has a value attribute preloaded that points to a preselected movie's id
-      // this function resolves that id attribute to an object that select2 can render
-      // using its formatResult renderer - that way the movie name is shown preselected
-      var id= $(element).val();
-      // if (id!=='') {
-      //   $.ajax('http://api.rottentomatoes.com/api/public/v1.0/movies/'+id+'.json', {
-      //       data: {
-      //           apikey: 'ju6z9mjyajq2djue3gbvv26t'
-      //       },
-      //       dataType: 'jsonp'
-      //   }).done(function(data) { callback(data); });
-      // }
+    };
+    configs.initSelection = function initSelection(element, callback) {
       callback();
     };
 
@@ -145,9 +133,9 @@ App.WeTagFieldComponent = Ember.Component.extend({
       if(!self.get('value')) self.set('value', []);
       var value = self.get('value');
       if (e.added) {
-        value.pushObject( store.push('tag', e.added) );
+        value.pushObject( store.push('term', e.added) );
       } else if(e.removed) {
-        value.removeObject( store.getById('tag', e.removed.id));
+        value.removeObject( store.getById('term', e.removed.id));
       }
     });
 

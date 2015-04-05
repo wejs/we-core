@@ -55,7 +55,6 @@ describe('groupFeature', function () {
             password: salvedUserPassword
           })
           .expect(200)
-          .set('Accept', 'application/json')
           .end(done);
         });
       })

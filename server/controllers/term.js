@@ -10,7 +10,7 @@ var _ = require('lodash');
 
 module.exports = {
   updateModelTerms: function updateModelTerms (req, res, next) {
-
+    // TODO migrate to we.js 0.3.x
     var sails = req._sails;
     var Term = sails.models.term;
 

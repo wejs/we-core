@@ -11,6 +11,8 @@ App.WeCategoryFieldComponent = Ember.Component.extend({
   maximumSelectionSize: 7,
   multiple: true,
 
+  vocabulary: null,
+
   placeholder: 'Selecione uma ou mais categorias ...',
 
   formatSearching: function() { return 'Buscando ...'; },
@@ -101,25 +103,31 @@ App.WeCategoryFieldComponent = Ember.Component.extend({
     configs.ajax = { // instead of writing the function to execute the request we use Select2's convenient helper
       url: '/term',
       dataType: 'json',
-      data: function (term, page) {
+      data: function (term) {
+        var where = {};
+
+        if (term) {
+          where.text = { like: '%'+term+'%' };
+        }
+
+        if (self.get('vocabulary')) {
+          where.vocabularyId = self.get('vocabulary');
+        } else {
+          where.vocabularyId = null;
+        }
+
         var query = {
-          where: JSON.stringify({
-            text: {
-              contains: term
-            },
-            vocabulary: vocabulary
-          }),
+          where: JSON.stringify(where),
           limit: 50
         };
         return query;
       },
-      results: function (data, page) { // parse the results into the format expected by Select2.
-        // since we are using custom formatting functions we do not need to alter remote JSON data
+      results: function (data) {
         return {
           results: data.term
         };
       }
-    },
+    };
 
     element.select2(configs);
 

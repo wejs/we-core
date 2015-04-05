@@ -1,10 +1,72 @@
-{{#if this.id}}
-  {{we-title title=this.name}}
+{{#if vocabulary.id}}
+  {{we-title title=vocabulary.name}}
+  <p class="lead">{{vocabulary.description}}</p>
 
-  <p class="lead">{{this.description}}</p>
+  <hr/>
 
+  <h2>Termos no vocabulário</h2>
 {{else}}
   {{we-title title="Termos sem vocabulário"}}
 {{/if}}
 
-{{outlet}}
+
+<div class='row'>
+  <div class='col-md-12'>
+    {{#link-to 'vocabulary.createTerm' classNames="btn btn-default"}}
+      <span class="text-primary glyphicon glyphicon-plus"></span> {{t 'term.create'}}
+    {{/link-to}}
+  </div>
+
+  <hr>
+  <div class='col-md-12'>
+    {{outlet}}
+  </div>
+
+  <hr>
+</div>
+<br>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>{{t 'text'}}</th>
+        <th>{{t 'description'}}</th>
+        <th>{{t 'Actions'}}</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {{#each record in terms}}
+        <tr>
+          <td>
+            {{record.id}}
+          </td>
+          <td>
+            {{#we-content-editable record=record value=record.text attribute='text'}}
+              {{focus-input value=record.text classNames="form-control" type="text"}}
+            {{/we-content-editable}}
+          </td>
+          <td>
+            {{record.description}}
+          </td>
+          <td>
+            {{#we-btn-record-delete record=record confirmTextTranslation="term.delete.confirm" classNames="btn btn-sm btn-default"}}
+              <span class="text-danger glyphicon glyphicon-remove"></span> {{t 'Delete'}}
+            {{/we-btn-record-delete}}
+          </td>
+        </tr>
+      {{else}}
+        <tr>
+          <td colspan="6">
+            <div class="jumbotron">
+              <p class="text-center">{{t 'vocabulary.terms.empty'}}</p>
+            </div>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
