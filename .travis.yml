@@ -1,11 +1,28 @@
+sudo: false
+
 language: node_js
+
 node_js:
-  - 0.11
+  - 'iojs'
+  - '0.12'
+  - '0.10'
+
 services:
   - mysql
 
+env:
+  CODECLIMATE_REPO_TOKEN: '8d07bda4536211d4af2ef9dce3edda45dff1f892a2abdb062ab1c2ffd0a637f2'
+  NODE_ENV: 'test'
+
 before_script:
   - sudo apt-get install graphicsmagick
+  - npm install -g istanbul
+  - npm install -g mocha
+  - npm install -g codeclimate-test-reporter
+
+after_success:
+  - istanbul cover _mocha -- -R spec ./test/bootstrap.js ./test/**/*.js
+  - codeclimate < ./coverage/lcov.info
 
 notifications:
   email:
