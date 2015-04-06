@@ -5,8 +5,6 @@
  * @description :: Contains logic for handling requests.
  */
 var gm = require('gm');
-var fs = require('fs');
-var path = require('path');
 var _ = require('lodash');
 
 module.exports = {
@@ -15,7 +13,7 @@ module.exports = {
     shadownRoutes: false
   },
 
-  findOne : function (req, res, next) {
+  findOne : function (req, res) {
     var we = req.getWe();
 
     var fileName = req.params.name;
@@ -42,10 +40,11 @@ module.exports = {
         we.log.error('Error on find image by name:', fileName, err);
         return res.serverError(err);
       }
+
       // image not found
       if (!image) {
         we.log.silly('image:findOne: image not found:', fileName);
-        return res.notFound(image);
+        return res.notFound();
       }
 
       we.log.silly('image:findOne: image found:', image);
@@ -128,14 +127,10 @@ module.exports = {
           we.log.error('Error on create image record:', err);
           return res.serverError(err);
         }
-        var response = {};
-        response[res.locals.model] = [
-          record
-        ];
 
-        if (record) we.log.debug('New image record created:', record.dataValues);
+        if (record) we.log.debug('New image record created:', record.get());
 
-        return res.created(response);
+        return res.created(record);
       });
     });
   },

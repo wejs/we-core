@@ -26,13 +26,12 @@ before(function(callback) {
   })
 })
 
-// after all tests
+//after all tests
 after(function (callback) {
   we.db.defaultConnection.close();
 
   var tempFolders = [
     projectPath + '/files/tmp',
-    projectPath + '/files/uploads',
     projectPath + '/files/config',
     projectPath + '/files/sqlite',
 
@@ -41,7 +40,8 @@ after(function (callback) {
     projectPath + '/files/public/tpls.hbs.js',
     projectPath + '/files/public/admin.tpls.hbs.js',
     projectPath + '/files/public/project.css',
-    projectPath + '/files/public/project.js'
+    projectPath + '/files/public/project.js',
+    projectPath + '/files/uploads',
   ];
 
   async.each(tempFolders, function(folder, next){

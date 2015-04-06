@@ -4,6 +4,7 @@ var helpers = require('../../helpers');
 var stubs = require('../../stubs');
 var _ = require('lodash');
 var http;
+var we;
 var db;
 
 describe('imageFeature', function () {
@@ -11,6 +12,7 @@ describe('imageFeature', function () {
 
   before(function (done) {
     http = helpers.getHttp();
+    we = helpers.getWe();
     // upload one stub image:
     request(http)
     .post('/api/v1/image')

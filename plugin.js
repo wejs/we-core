@@ -399,10 +399,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'getAvatar'
     },
 
-    'post /api/v1/user/:id/avatar': {
-      controller    : 'avatar',
-      action        : 'changeAvatar'
-    },
+    // 'post /api/v1/user/:id/avatar': {
+    //   controller    : 'avatar',
+    //   action        : 'changeAvatar'
+    // },
 
 
     //
