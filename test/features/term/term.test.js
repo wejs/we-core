@@ -37,6 +37,7 @@ describe('termFeature', function () {
               if (err) return done(err);
               p.dataValues.tags = tags;
               salvedPage = p;
+
               return done();
             });
           })
@@ -138,6 +139,28 @@ describe('termFeature', function () {
         done();
       });
     });
+
+    it('get /term-texts?where should find term texts', function(done){
+
+      request(http)
+      .get('/api/v1/term-texts')
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        assert.equal(200, res.status);
+        assert(res.body.term);
+        assert( _.isArray(res.body.term) , 'term not is array');
+        assert(res.body.meta);
+
+        assert(res.body.meta.count);
+
+        res.body.term.forEach(function(term) {
+          assert( typeof term === 'string' );
+        });
+
+        done();
+      });
+    });
+
   });
 
   describe('create', function () {
@@ -193,7 +216,8 @@ describe('termFeature', function () {
       ];
 
       var newCategories = [
-        'Universe'
+        'Universe',
+        'Saúde'
       ];
 
       request(http)

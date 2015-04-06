@@ -1,6 +1,6 @@
 App.ImageSelectorMixin = Ember.Mixin.create({
 
-  imageUploadUrl: '/api/v1/images',
+  imageUploadUrl: '/api/v1/image',
 
   selectedImage: null,
   imageToSave: null,
@@ -52,15 +52,15 @@ App.ImageSelectorMixin = Ember.Mixin.create({
         var uploader = Ember.Uploader.create({
           url: this.get('imageUploadUrl'),
           type: 'POST',
-          paramName: 'images'
+          paramName: 'image'
         });
 
         var promisseUpload = uploader.upload(file);
         promisseUpload.then(function uploadFilesSuccess(data) {
           // Handle success
-          if (data.images && data.images[0]) {
+          if (data.image && data.image[0]) {
             // sabe image in store
-            var image = self.get('store').push('images', data.images[0]);
+            var image = self.get('store').push('image', data.image[0]);
             if (callback) return callback(null, image);
           } else {
             if (callback) return callback(null, null);

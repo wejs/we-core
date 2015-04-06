@@ -1,8 +1,9 @@
 
 App.HomeController = Ember.ObjectController.extend({
   title: function() {
-    return App.get('configs.client.publicVars.appName');
-  }.property('App.configs.client.publicVars.appName'),
+    document.title = App.get('configs.appName');
+    return App.get('configs.appName');
+  }.property('App.configs.appName'),
   subTitle: function() {
     return App.get('configs.client.publicVars.appAbout');
   }.property('App.configs.client.publicVars.appAbout'),

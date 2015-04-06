@@ -1,62 +1,38 @@
 App.inject( 'component:we-category-field', 'store', 'store:main' );
 
-App.WeCategoryFieldComponent = Ember.Component.extend({
-  tagName: 'input',
-  type: 'text',
-  classNames: ['select2-element','form-control','input-md','tm-input','tm-input-success'],
+App.WeCategoryFieldComponent = Ember.Component.extend(App.WeTermFieldMixin, {
 
   // select 2 configs
   minimumInputLength: 0,
-  maximumInputLength: 100,
   maximumSelectionSize: 7,
-  multiple: true,
-
-  vocabulary: null,
 
   placeholder: 'Selecione uma ou mais categorias ...',
 
-  formatSearching: function() { return 'Buscando ...'; },
-
-  formatInputTooLong: function(term, maxLength){
-    return 'O termo '+term+ ' é muito grande, o máximo de palavras é: ' + maxLength;
-  },
-  formatSelectionTooBig: function(maxSize){
-    return 'Você só pode selecionar ' + maxSize + ' termos';
-  },
-  formatLoadMore: function() {
-    return 'Carregando mais resultados ...' ;
-  },
-  formatInputTooShort: function (input, min) {
-    var n = min - input.length;
-    return "Por favor digite " + n + " ou mais letras";
-  },
-
-  formatNoMatches: function () { return "Nenhum termo encontrado"; },
-
   // Expose component to delegate's controller
   init: function() {
-    this._super.apply(this, arguments);
-
-    if (this.get('delegate')) {
-      this.get('delegate').set(this.get('property') || 'WeCategoryField', this);
-    }
+    this._super();
 
     if ( !this.get('vocabulary') ) {
-      if ( App.get('configs.vocabularyId') ) {
+
+      if (this.get('modelName') && this.get('field')) {
+
+        this.set('vocabulary',
+          Ember.get('App.'+ this.get('modelName') + '.attributes')
+          .get(this.get('field')).options.vocabularyId
+        );
+
+      } else if ( App.get('configs.vocabularyId') ) {
         this.set('vocabulary', App.get('config.vocabularyId'));
       } else {
         return console.error('vocabulary is required for category term');
       }
     }
-
   },
 
   // component events
   didInsertElement: function () {
     var element = this.$();
     var self = this;
-    var store = self.get('store');
-    var vocabulary = this.get('vocabulary');
 
     if ( !element.select2 ) {
       return console.error('jquery.select2 Not found on element', element);
@@ -78,15 +54,9 @@ App.WeCategoryFieldComponent = Ember.Component.extend({
       formatLoadMore: this.get('formatLoadMore'),
 
       formatResult: function(item) {
-        return item.text;
+        return item;
       },
-      formatSelection: function(item) {
-        if ( item.text ) {
-          return item.text;
-        } else {
-          return item.get('text');
-        }
-      },
+      formatSelection: this.get('formatSelection'),
       formatSelectionCssClass: function (item) {
         switch ( item.model ) {
           case 'user':
@@ -97,11 +67,14 @@ App.WeCategoryFieldComponent = Ember.Component.extend({
         return '';
       },
       dropdownCssClass: 'sharebox-dropdown',
+      id: function(item) {
+        return item;
+      }
       //escapeMarkup: function (m) { return m; }
     };
 
-    configs.ajax = { // instead of writing the function to execute the request we use Select2's convenient helper
-      url: '/term',
+    configs.ajax = {
+      url: '/api/v1/term-texts',
       dataType: 'json',
       data: function (term) {
         var where = {};
@@ -122,22 +95,17 @@ App.WeCategoryFieldComponent = Ember.Component.extend({
         };
         return query;
       },
-      results: function (data) {
-        return {
-          results: data.term
-        };
-      }
+      results: self.get('ajaxResults')
     };
 
     element.select2(configs);
-
     element.on('change', function(e) {
       if(!self.get('value')) self.set('value', []);
       var value = self.get('value');
       if (e.added) {
-        value.pushObject( store.push('term', e.added) );
+        value.pushObject( e.added );
       } else if(e.removed) {
-        value.removeObject( store.getById('term', e.removed.id));
+        value.removeObject( e.removed );
       }
     });
 
@@ -154,16 +122,5 @@ App.WeCategoryFieldComponent = Ember.Component.extend({
     } else {
       this.set('value', []);
     }
-  },
-  willDestroyElement: function(){
-    this.$().select2('destroy');
-  },
-
-  // TODO how to call this functions from outside?
-  getSelectedItems: function(){
-    return this.$().select2('data');
-  },
-  empty: function(){
-    this.$().select2('val', '');
   }
 });

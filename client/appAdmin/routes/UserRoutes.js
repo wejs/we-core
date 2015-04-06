@@ -15,9 +15,7 @@ App.UserIndexRoute = Ember.Route.extend({
       user: null,
       content: model
     });
-  },
-
-
+  }
 });
 
 App.UserViewRoute = Ember.Route.extend({

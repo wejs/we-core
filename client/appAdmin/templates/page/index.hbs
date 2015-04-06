@@ -4,49 +4,43 @@
 </h2>
 
 <div>
-  url: {{record.url}}
-</div>
-
-{{#if isVisibleCreateRegionForm}}
-  <div class="add-region-form">
-    <form {{action "createAndAddRegion" on="submit"}}>
-    <h4>Create region</h4>
-
-      <div class="form-group">
-        <div class="input-group">
-          <label class="input-group-addon">Name</label>
-          {{input name="name" value=newRegion.name classNames="form-control"}}
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="input-group">
-          <label class="input-group-addon">Columns</label>
-          {{view 'select'
-            name="columns"
-            classNames="form-control"
-            value=newRegion.columns
-            content=columns}}
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="input-group">
-          <label class="input-group-addon">Order</label>
-          {{input name="order" type="number" value=newRegion.order classNames="form-control"}}
-        </div>
-      </div>
-
-      <div class="form-group">
-        <button class="btn btn-primary" type="submit" {{action "createAndAddRegion"}}>{{t 'create'}}</button>
-        <button class="btn btn-default" type="reset" {{action "cancelCreateRegion"}}>{{t 'Cancel'}}</button>
-      <div>
-    </form>
+  {{#if record.id}}
+    {{#can 'page_update' 'page' 'record'}}
+      {{#link-to 'page.edit' record.id classNames="btn btn-primary"}}
+        Edit
+      {{/link-to}}
+    {{/can}}
+    {{#can 'page_delete' 'page' 'record'}}
+      <button {{action 'deleteRecord' record.id}} class="btn btn-default">
+        Delete
+      </button>
+    {{/can}}
+  {{/if}}
+  <div class="page-body">
+    {{html record.body}}
   </div>
-{{/if}}
+  <br>
 
-<br>
+  <div class="record-terms">
+    {{#if record.categories}}
+      <div class="record-category">
+        <label>{{t 'page.form.category.label'}}</label>
+        {{we-terms terms=record.categories}}
+      </div>
+    {{/if}}
+    {{#if record.tags}}
+      <div class="record-tag">
+        <label>{{t 'page.form.tag.label'}}</label>
+        {{we-terms terms=record.tags}}
+      </div>
+    {{/if}}
+  </div>
 
-<h3>Regions in this layout</h3>
-
-{{render 'page.regions' record.layout.regions}}
+  <hr>
+  <div class="comment-area">
+    <a data-link-area="comments" id="anchor-comments"></a>
+    <h3 class="comment-title">{{t 'comments.title'}}</h3>
+    {{we-comments commentedModelName="page" commentedModelId=record.id}}
+    {{we-comment-form commentedModelName="page" commentedModelId=record.id}}
+  </div>
+</div>

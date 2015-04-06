@@ -21,7 +21,7 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
 
   defaultHeaderImage: function() {
     if (App.get('configs.client.publicVars.showDefaultArticleImage')) {
-      var url = App.get('configs.client.publicVars.blogArticlesBg');
+      url = App.get('configs.client.publicVars.blogArticlesBg');
     } else {
       return '';
     }
@@ -30,15 +30,7 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
   actions: {
     saveRecord: function() {
       var self = this;
-      var data = this.get('record');
-      var record;
-
-      if (!data.id) {
-        record = this.get('store').createRecord('page', data);
-      } else {
-        record = data;
-      }
-
+      var record = this.get('record');
       var featuredImage = this.get('imageToSave');
 
       this.set('isSaving', true);
@@ -55,8 +47,23 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
       });
     },
 
-    saveAndPublishRecord: function() {
+    createRecord: function(){
+      var self = this;
+      var record = this.get('record');
+      var featuredImage = this.get('imageToSave');
 
+      this.set('isSaving', true);
+
+      this.send('saveImage', featuredImage, function(err, salvedImage) {
+        if (featuredImage && salvedImage) {
+          record.set('featuredImage', salvedImage);
+        }
+
+        record.save().then(function(r) {
+          self.set('isSaving', false);
+          self.transitionToRoute('page', r.id);
+        })
+      });
     },
 
     cancel: function() {
@@ -68,6 +75,15 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
       } else {
         this.transitionToRoute('pages');
       }
+    },
+    deleteRecord: function () {
+      var self = this;
+      this.set('isSaving', true);
+
+      var record = this.get('record');
+      record.destroy().then(function(){
+        self.transitionToRoute('pages');
+      })
     }
   }
 });

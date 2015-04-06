@@ -5,6 +5,8 @@
  * @description :: A short summary of how this model works and what it represents.
  *
  */
+var  fs = require('fs');
+var gm = require('gm');
 
 module.exports = function ImageModel(we) {
 
@@ -84,12 +86,43 @@ module.exports = function ImageModel(we) {
       classMethods: {
         getStyleUrlFromImage: function(image) {
           return {
-            original: we.config.hostname + '/api/v1/images/original/' + image.name,
-            thumbnail: we.config.hostname + '/api/v1/images/thumbnail/' + image.name,
-            mini: we.config.hostname + '/api/v1/images/mini/' + image.name,
-            medium: we.config.hostname + '/api/v1/images/medium/' + image.name,
-            large: we.config.hostname + '/api/v1/images/large/' + image.name
+            original: we.config.hostname + '/api/v1/image/original/' + image.name,
+            thumbnail: we.config.hostname + '/api/v1/image/thumbnail/' + image.name,
+            mini: we.config.hostname + '/api/v1/image/mini/' + image.name,
+            medium: we.config.hostname + '/api/v1/image/medium/' + image.name,
+            large: we.config.hostname + '/api/v1/image/large/' + image.name
           };
+        },
+
+        getFileOrResize: function getFileOrResize(fileName, imageStyle, callback) {
+          var path = we.config.upload.image.uploadPath + '/'+ imageStyle +'/' + fileName;
+
+          fs.readFile(path,function (err, contents) {
+            if (err) {
+              if (err.code != 'ENOENT' || imageStyle == 'original' ) {
+                return callback(err);
+              }
+
+              var originalFile = we.config.upload.image.uploadPath + '/original/' + fileName;
+
+              var width = we.config.upload.image.styles[imageStyle].width;
+              var heigth = we.config.upload.image.styles[imageStyle].heigth;
+
+              // resize and remove EXIF profile data
+              gm(originalFile)
+              .resize(width, heigth)
+              .noProfile()
+              .write(path, function (err) {
+                if (err) return callback(err);
+                fs.readFile(path,function (err, contents) {
+                  callback(null, contents);
+                });
+              });
+
+            } else {
+              callback(null, contents);
+            }
+          });
         }
       },
 

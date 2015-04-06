@@ -13,10 +13,10 @@ App.Router.map(function() {
 
 App.PagesIndexRoute = Ember.Route.extend({
   model: function () {
-    return {
+    return Ember.RSVP.hash({
       attributes: Ember.get('App.Page.attributes').keys.list,
       records: this.get('store').find('page')
-    };
+    });
   }
 });
 
@@ -30,18 +30,27 @@ App.PagesCreateRoute = Ember.Route.extend({
 
 App.PageRoute = Ember.Route.extend({
   model: function (params) {
-    return {
+    return Ember.RSVP.hash({
       attributes: Ember.get('App.Page.attributes').keys.list,
       record: this.get('store').find('page', params.id)
-    };
+    });
   }
 });
 
 App.PageIndexRoute = Ember.Route.extend({
   model: function (params) {
-    return {
+    return Ember.RSVP.hash({
       attributes: Ember.get('App.Page.attributes').keys.list,
       record: this.modelFor('page').record
-    };
+    });
+  }
+});
+
+App.PageEditRoute = Ember.Route.extend({
+  model: function (params) {
+    return Ember.RSVP.hash({
+      attributes: Ember.get('App.Page.attributes').keys.list,
+      record: this.modelFor('page').record
+    });
   }
 });

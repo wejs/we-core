@@ -9,6 +9,25 @@
 var _ = require('lodash');
 
 module.exports = {
+  findTermTexts: function(req, res) {
+    res.locals.query.attributes = ['text'];
+
+    res.locals.Model.findAndCountAll(res.locals.query)
+    .done(function(err, record) {
+      if (err) return res.serverError(err);
+
+      return res.status(200).send({
+        term: record.rows.map(function (record) {
+          return record.text;
+        }),
+        meta: {
+          count: record.count
+        }
+      });
+    });
+  },
+
+
   updateModelTerms: function updateModelTerms (req, res, next) {
     // TODO migrate to we.js 0.3.x
     var sails = req._sails;

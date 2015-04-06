@@ -1,53 +1,30 @@
 
 App.inject( 'component:we-tag-field', 'store', 'store:main' );
 
-App.WeTagFieldComponent = Ember.Component.extend({
-  tagName: 'input',
-  type: 'text',
-  classNames: ['select2-element','form-control','input-md','tm-input','tm-input-success'],
-
-  // value array
-  value: null,
+App.WeTagFieldComponent = Ember.Component.extend(App.WeTermFieldMixin, {
 
   // select 2 configs
   minimumInputLength: 3,
-  maximumInputLength: 100,
   maximumSelectionSize: 15,
-  multiple: true,
 
   placeholder: 'Selecione um ou mais termos ...',
-  formatSearching: function() {
-    return 'Buscando ...';
-  },
-  formatInputTooLong: function(term, maxLength){
-    return 'O termo '+term+ ' é muito grande, o máximo de palavras é: ' + maxLength;
-  },
-  formatSelectionTooBig: function(maxSize){
-    return 'Você só pode selecionar ' + maxSize + ' termos';
-  },
-  formatLoadMore: function() {
-    return 'Carregando mais resultados ...' ;
-  },
-  formatInputTooShort: function (input, min) {
-    var n = min - input.length;
-    return "Por favor digite " + n + " ou mais letras";
-  },
-  formatNoMatches: function () { return "Nenhum termo encontrado"; },
 
-  // Expose component to delegate's controller
   init: function() {
-     this._super.apply(this, arguments);
+    this._super();
 
-     if (this.get('delegate')) {
-        this.get('delegate').set(this.get('property') || 'WeTagField', this);
-     }
+    if (this.get('modelName') && this.get('field')) {
+      this.set('vocabulary',
+        Ember.get('App.'+ this.get('modelName') + '.attributes')
+        .get(this.get('field')).options.vocabularyId
+      );
+    }
   },
 
   // component events
   didInsertElement:function(){
     var element = this.$();
     var self = this;
-    var store = self.get('store');
+
     if(!element.select2){
       return console.error('jquery.select2 Not found on element', element);
     }
@@ -70,23 +47,13 @@ App.WeTagFieldComponent = Ember.Component.extend({
       maximumSelectionSize: this.get('maximumSelectionSize'),
 
       createSearchChoice: function (term) {
-        return {
-          id: $.trim(term).toLowerCase(),
-          text: $.trim(term).toLowerCase(),
-          isNew: true
-        };
+        return term;
       },
       //data: this.get('shareWithOptions'),
-      formatResult: function(item){
-        return item.text;
+      formatResult: function(item) {
+        return item;
       },
-      formatSelection: function(item) {
-        if (item.text) {
-          return item.text;
-        } else {
-          return item.get('text');
-        }
-      },
+      formatSelection: this.get('formatSelection'),
       formatSelectionCssClass: function (item) {
         switch(item.model) {
           case 'user':
@@ -97,32 +64,37 @@ App.WeTagFieldComponent = Ember.Component.extend({
         return '';
       },
       dropdownCssClass: 'sharebox-dropdown',
+      id: function(item) {
+        return item;
+      }
       //escapeMarkup: function (m) { return m; }
     };
 
-    configs.ajax = { // instead of writing the function to execute the request we use Select2's convenient helper
-      url: '/term',
+    configs.ajax = {
+      url: '/api/v1/term-texts',
       dataType: 'json',
-      data: function (tag, page) {
+      data: function (term) {
+        var where = {};
+
+        if (term) {
+          where.text = { like: '%'+term+'%' };
+        }
+
+        if (self.get('vocabulary')) {
+          where.vocabularyId = self.get('vocabulary');
+        } else {
+          where.vocabularyId = null;
+        }
+
         var query = {
-          where: JSON.stringify({
-            text: {
-              like: '%'+tag+'%'
-            }
-          }),
+          where: JSON.stringify(where),
           limit: 50
         };
-
         return query;
       },
-      results: function (data) { // parse the results into the format expected by Select2.
-        // since we are using custom formatting functions we do not need to alter remote JSON data
-        return {
-          results: data.term
-        };
-      }
-
+      results: self.get('ajaxResults')
     };
+
     configs.initSelection = function initSelection(element, callback) {
       callback();
     };
@@ -133,9 +105,9 @@ App.WeTagFieldComponent = Ember.Component.extend({
       if(!self.get('value')) self.set('value', []);
       var value = self.get('value');
       if (e.added) {
-        value.pushObject( store.push('term', e.added) );
+        value.pushObject( e.added );
       } else if(e.removed) {
-        value.removeObject( store.getById('term', e.removed.id));
+        value.removeObject( e.removed );
       }
     });
 
@@ -152,16 +124,5 @@ App.WeTagFieldComponent = Ember.Component.extend({
     } else {
       this.set('value', []);
     }
-  },
-  willDestroyElement: function(){
-    this.$().select2('destroy');
-  },
-
-  // TODO how to call this functions from outside?
-  getSelectedItems: function(){
-    return this.$().select2('data');
-  },
-  empty: function(){
-    this.$().select2('val', '');
   }
 });

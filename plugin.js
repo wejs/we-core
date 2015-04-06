@@ -31,7 +31,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     coreCssApp: '/public/plugin/we-core/files/css/app.css',
 
-    defaultUserAvatar: '111111',
+    defaultUserAvatar: projectPath + '/node_modules/we-core/files/public/images/avatars/user-avatar.png',
 
     log: {
       level: 'debug'
@@ -501,8 +501,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'leave',
       model         : 'group',
       responseType  : 'json'
-    }
+    },
 
+    // - vocabularies and terms
+    'get /api/v1/term-texts': {
+      controller    : 'term',
+      action        : 'findTermTexts',
+      model         : 'term',
+      responseType  : 'json'
+    }
   });
 
   plugin.events.on('we:create:default:folders', function(we) {

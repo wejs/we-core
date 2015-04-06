@@ -50,15 +50,13 @@ module.exports = {
 
       we.log.silly('image:findOne: image found:', image);
 
-      getFileOrResize(fileName, imageStyle, we, function(err, contents) {
+      we.db.models.image.getFileOrResize(fileName, imageStyle, function(err, contents) {
         if (err) {
           we.log.error('Error on getFileOrResize:', fileName, err);
           return res.serverError(err);
         }
 
-        if (!contents) {
-          return res.status(404).send();
-        }
+        if (!contents) return res.notFound();
 
         if (image.mime) {
           res.contentType(image.mime);
@@ -74,23 +72,24 @@ module.exports = {
    * Find image by id and returm image model data
    */
   findOneReturnData : function (req, res) {
+    var we = req.getWe();
+
     var fileId = req.params.id;
     if (!fileId) {
       return res.send(404);
     }
-    Images.findOne()
-    .where({id: fileId})
-    .exec(function(err, image) {
-      if (err) {
-        we.log.error('Error on get image from BD: ',err, fileId);
-        return res.send(404);
-      }
+    we.db.models.image.find({
+     where: {id: fileId}
+    }).then(function (image) {
       if(!image){
         return res.send(404);
       }
       res.send({
-        images: image
+        image: image
       });
+    }).catch(function(err){
+      we.log.error('Error on get image from BD: ',err, fileId);
+      return res.send(404);
     });
   },
 
@@ -136,7 +135,7 @@ module.exports = {
 
         if (record) we.log.debug('New image record created:', record.dataValues);
 
-        return res.status(201).send(response);
+        return res.created(response);
       });
     });
   },
@@ -145,16 +144,14 @@ module.exports = {
   //  * Crop one file by file id
   //  */
   cropImage : function (req, res) {
+    var we = req.getWe();
 
-    var sails = req._sails;
-    var Images = sails.models.images;
-
-    var fileId = req.param('id');
+    var fileId = req.params.id;
     var cords = {};
-    cords.width = req.param('w');
-    cords.height = req.param('h');
-    cords.x = req.param('x');
-    cords.y = req.param('y');
+    cords.width = req.body.w;
+    cords.height = req.body.h;
+    cords.x = req.body.x;
+    cords.y = req.body.y;
 
     if(!fileId ) { return res.send(400,'File id param is required'); }
 
@@ -169,9 +166,9 @@ module.exports = {
 
     var user_id = req.user.id;
 
-    Images.findOne()
-    .where({id: fileId})
-    .exec(function(err, image) {
+    we.db.models.image.find({
+      where: {id: fileId}
+    }).done(function(err, image) {
       if (err) {
         we.log.error('Error on get image from BD: ',err, fileId);
         return res.send(404);
@@ -211,35 +208,3 @@ module.exports = {
     });
   }
 };
-
-
-function getFileOrResize(fileName, imageStyle, we, callback) {
-  var path = we.config.upload.image.uploadPath + '/'+ imageStyle +'/' + fileName;
-
-  fs.readFile(path,function (err, contents) {
-    if (err) {
-      if (err.code != 'ENOENT' || imageStyle == 'original' ) {
-        return callback(err);
-      }
-
-      var originalFile = we.config.upload.image.uploadPath + '/original/' + fileName;
-
-      var width = we.config.upload.image.styles[imageStyle].width;
-      var heigth = we.config.upload.image.styles[imageStyle].heigth;
-
-      // resize and remove EXIF profile data
-      gm(originalFile)
-      .resize(width, heigth)
-      .noProfile()
-      .write(path, function (err) {
-        if (err) return callback(err);
-        fs.readFile(path,function (err, contents) {
-          callback(null, contents);
-        });
-      });
-
-    } else {
-      callback(null, contents);
-    }
-  });
-}

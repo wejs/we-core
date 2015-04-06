@@ -125,3 +125,18 @@ Ember.WeApplication = Ember.Application.extend({
     }
   }
 });
+
+// -- set title
+Ember.ObjectController.reopen({
+  updateTitle: function() {
+    var title = App.get('configs.appName');
+
+    if (this.get('model.record.title')) {
+      title =  this.get('model.record.title') + ' | ' + title
+    } else if (this.get('model.record.displayName')) {
+      title =  this.get('model.record.displayName') + ' | ' + title;
+    }
+
+    document.title = title;
+  }.observes('model.record.title', 'model.record.displayName')
+})

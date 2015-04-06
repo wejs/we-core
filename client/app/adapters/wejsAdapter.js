@@ -25,7 +25,8 @@ $.ajaxPrefilter(function( options ) {
     }
   }
 });
-App.ApplicationRESTAdapter = DS.SailsRESTAdapter.extend({
+
+App.ApplicationRESTAdapter = DS.RESTAdapter.extend({
   defaultSerializer: '-default',
   pathForType: function(type) {
     var camelized = Ember.String.camelize(type);

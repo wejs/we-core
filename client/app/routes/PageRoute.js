@@ -23,10 +23,10 @@ App.PagesIndexRoute = Ember.Route.extend(App.ResetScrollMixin, {
   model: function (params) {
     var query = this.buildQuery(params);
 
-    return {
+    return Ember.RSVP.hash({
       attributes: Ember.get('App.Page.attributes').keys.list,
       records: this.store.find('page', query)
-    };
+    });
   },
 
   buildQuery: function(params) {
@@ -72,7 +72,7 @@ App.PageRoute = Ember.Route.extend(App.ResetScrollMixin, {
   }
 });
 
-App.PageEditRoute = Ember.Route.extend(App.ResetScrollMixin, App.AuthenticatedRouteMixin, {
+App.PageEditRoute = Ember.Route.extend(App.ResetScrollMixin,{
   model: function (params) {
     return Ember.RSVP.hash({
       record: this.modelFor('page').record

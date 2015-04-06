@@ -19,7 +19,7 @@ App.UserAvatarComponent = Ember.Component.extend({
   // medium | thumbnail | original | large
   size: 'medium',
   classNames: ['thumbnail'],
-  defaultSrc: '/core/images/avatars/user-avatar.png',
+  defaultSrc: '/public/plugin/we-core/files/images/avatars/user-avatar.png',
   src: null,
   url: null,
 

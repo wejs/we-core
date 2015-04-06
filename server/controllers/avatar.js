@@ -31,22 +31,25 @@ module.exports = {
 
     if(!id) return res.forbidden();
 
-    we.db.models.find(id).done(function (err, user) {
+    we.db.models.user.find(id).done(function (err, user) {
       if (err) return res.serverError(err);
 
       if (user && user.avatar) {
         we.db.models.image.find(user.avatar).done(function (err, image) {
           if (err) return res.serverError(err);
 
-          FileImageService.getFileOrResize(image.name,style ,function(err, contents){
+          we.db.models.image.getFileOrResize
+          .getFileOrResize(image.name, style,function (err, contents) {
             if(err){
               we.log.debug('Error on get avatar: ', err);
               return res.notFound();
             }
 
-            if(image.mime){
+            if (!contents) return res.notFound();
+
+            if (image.mime) {
               res.contentType(image.mime);
-            }else{
+            } else {
               res.contentType('image/png');
             }
 
@@ -55,7 +58,7 @@ module.exports = {
 
         });
       } else {
-        fs.readFile(defaultAvatarPath,function (err, contents) {
+        fs.readFile(defaultAvatarPath, function (err, contents) {
           if (err) return res.serverError(err);
 
           res.contentType('image/png');

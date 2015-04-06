@@ -34,7 +34,6 @@ App.VocabulariesRoute = Ember.Route.extend(App.ResetScrollMixin,{
   }
 });
 
-
 App.VocabularyRoute = Ember.Route.extend(App.ResetScrollMixin, {
 
   model: function (params) {
