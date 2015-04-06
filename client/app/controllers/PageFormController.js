@@ -3,30 +3,6 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
 
   breadCrumb: 'create',
 
-  headerImage: function() {
-    if (this.get('selectedPreviewImage')) {
-      return this.bgStyle(this.get('selectedPreviewImage'));
-    }
-    var image = this.get('record.featuredImage');
-    if(image && image.get('urls')) {
-      return this.bgStyle( image.get('urls').original )
-    }
-    return this.bgStyle();
-  }.property('record.featuredImage.urls', 'selectedPreviewImage'),
-
-  bgStyle: function(url) {
-    if(!url) url = this.get('defaultHeaderImage');
-    return 'background-image: url("'+ url +'");';
-  },
-
-  defaultHeaderImage: function() {
-    if (App.get('configs.client.publicVars.showDefaultArticleImage')) {
-      var url = App.get('configs.client.publicVars.blogArticlesBg');
-    } else {
-      return '';
-    }
-  }.property('App.configs.client.publicVars.blogArticlesBg'),
-
   actions: {
     saveRecord: function() {
       var self = this;
@@ -71,3 +47,4 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
     }
   }
 });
+

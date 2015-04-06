@@ -30,7 +30,15 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
   actions: {
     saveRecord: function() {
       var self = this;
-      var record = this.get('record');
+      var data = this.get('record');
+      var record;
+
+      if (!data.id) {
+        record = this.get('store').createRecord('page', data);
+      } else {
+        record = data;
+      }
+
       var featuredImage = this.get('imageToSave');
 
       this.set('isSaving', true);
@@ -48,22 +56,7 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
     },
 
     createRecord: function(){
-      var self = this;
-      var record = this.get('record');
-      var featuredImage = this.get('imageToSave');
-
-      this.set('isSaving', true);
-
-      this.send('saveImage', featuredImage, function(err, salvedImage) {
-        if (featuredImage && salvedImage) {
-          record.set('featuredImage', salvedImage);
-        }
-
-        record.save().then(function(r) {
-          self.set('isSaving', false);
-          self.transitionToRoute('page', r.id);
-        })
-      });
+      this.send('saveRecord');
     },
 
     cancel: function() {
