@@ -217,19 +217,19 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'image',
       responseType  : 'json'
     },
-    'get /api/v1/image/:id/data': {
+    'get /api/v1/image/:id([0-9]+)/data': {
       controller    : 'image',
       action        : 'findOneReturnData',
       model         : 'image',
       responseType  : 'json'
     },
-    'get /api/v1/image-crop/:id': {
+    'get /api/v1/image-crop/:id([0-9]+)': {
       controller    : 'image',
       action        : 'cropImage',
       model         : 'image',
       responseType  : 'json'
     },
-    'post /api/v1/image-crop/:id': {
+    'post /api/v1/image-crop/:id([0-9]+)': {
       controller    : 'image',
       action        : 'cropImage',
       model         : 'image',
@@ -335,7 +335,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'forgotPassword'
     },
 
-    'get /auth/:id/reset-password/:token': {
+    'get /auth/:id([0-9]+)/reset-password/:token': {
       controller: 'auth',
       action: 'consumeForgotPasswordToken'
     },
@@ -363,7 +363,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //   action        : 'oauth2Callback'
     // },
 
-    'get /user/:id/activate/:token':{
+    'get /user/:id([0-9]+)/activate/:token':{
       controller    : 'auth',
       action        : 'activate'
     },
@@ -378,7 +378,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'auth',
       action        : 'newPassword'
     },
-    'get /auth/:id/new-password':{
+    'get /auth/:id([0-9]+)/new-password':{
       controller    : 'auth',
       action        : 'newPasswordPage'
     },
@@ -394,30 +394,29 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
 
     // get logged in user avatar
-    'get /avatar/:id': {
+    'get /avatar/:id([0-9]+)': {
       controller    : 'avatar',
       action        : 'getAvatar'
     },
 
-    // 'post /api/v1/user/:id/avatar': {
+    // 'post /api/v1/user/:id([0-9]+)/avatar': {
     //   controller    : 'avatar',
     //   action        : 'changeAvatar'
     // },
-
 
     //
     // -- ROLES
     //
 
     // add role in user
-    'post /user/:id/role': {
+    'post /user/:id([0-9]+)/role': {
       controller    : 'role',
       action        : 'addRoleToUser',
       model         : 'user'
     },
 
     // remove role in user
-    'delete /user/:id/role': {
+    'delete /user/:id([0-9]+)/role': {
       controller    : 'role',
       action        : 'removeRoleFromUser',
       model         : 'user'
@@ -427,7 +426,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // -- Permissions
     //
 
-    'post /permission/:id/roles': {
+    'post /permission/:id([0-9]+)/roles': {
       controller    : 'permission',
       action        : 'addRoleToPermission',
       model         : 'permission'
@@ -443,7 +442,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // -- FOLLOW
     // get
     // example: /api/v1/follow/post/1/2?flagType=follow
-    'get /api/v1/follow/:model/:modelId?': {
+    'get /api/v1/follow/:model/:modelId([0-9]+)?': {
       controller    : 'follow',
       action        : 'isFollowing',
       responseType  : 'json'
@@ -451,7 +450,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     // create
     // example: /api/v1/flag/post/1/2?flagType=follow
-    'post /api/v1/follow/:model/:modelId': {
+    'post /api/v1/follow/:model/:modelId([0-9]+)': {
       controller    : 'follow',
       action        : 'follow',
       responseType  : 'json'
@@ -459,7 +458,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     // delete
     // example: /api/v1/flag/post/1/2?flagType=follow
-    'delete /api/v1/follow/:model/:modelId': {
+    'delete /api/v1/follow/:model/:modelId([0-9]+)': {
       controller    : 'follow',
       action        : 'unFollow',
       responseType  : 'json'
@@ -468,35 +467,35 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // GROUPS
     //
 
-    'post /api/v1/group/:groupId/addContent/:contentModelName/:contentId': {
+    'post /api/v1/group/:groupId([0-9]+)/addContent/:contentModelName/:contentId': {
       controller    : 'group',
       action        : 'addContent',
       model         : 'group',
       responseType  : 'json'
     },
 
-    'delete /api/v1/group/:groupId/addContent/:contentModelName/:contentId': {
+    'delete /api/v1/group/:groupId([0-9]+)/addContent/:contentModelName/:contentId': {
       controller    : 'group',
       action        : 'removeContent',
       model         : 'group',
       responseType  : 'json'
     },
 
-    'get /api/v1/group/:groupId/content': {
+    'get /api/v1/group/:groupId([0-9]+)/content': {
       controller    : 'group',
       action        : 'findAllContent',
       model         : 'group',
       responseType  : 'json'
     },
 
-    'post /api/v1/group/:groupId/join': {
+    'post /api/v1/group/:groupId([0-9]+)/join': {
       controller    : 'group',
       action        : 'join',
       model         : 'group',
       responseType  : 'json'
     },
 
-    'post /api/v1/group/:groupId/leave': {
+    'post /api/v1/group/:groupId([0-9]+)/leave': {
       controller    : 'group',
       action        : 'leave',
       model         : 'group',
