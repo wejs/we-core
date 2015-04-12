@@ -1,28 +1,27 @@
 var projectPath = process.cwd();
 var we = require('../lib');
 var deleteDir = require('rimraf');
+var fs = require('fs-extra');
 var path = require('path');
 var async = require('async');
 
 before(function(callback) {
-  we.bootstrap({
-    port: 9800,
-    hostname: 'http://localhost:9800',
-    i18n: {
-      directory: path.join(__dirname, 'locales'),
-      updateFiles: true
-    },
-    passport: {
-      accessTokenTime: 300000000,
-      cookieDomain: null,
-      cookieName: 'weoauth',
-      cookieSecure: false
-    }
-  } , function(err, we) {
-    we.startServer(function(err) {
-      if (err) return console.error(err);
-      callback();
+  this.slow(100);
+
+  copyLocalConfigIfNotExitst(function() {
+
+    we.bootstrap({
+      i18n: {
+        directory: path.join(__dirname, 'locales'),
+        updateFiles: true
+      }
+    } , function(err, we) {
+      we.startServer(function(err) {
+        if (err) return console.error(err);
+        callback();
+      })
     })
+
   })
 })
 
@@ -52,3 +51,25 @@ after(function (callback) {
   })
 
 })
+
+function copyLocalConfigIfNotExitst (cb) {
+  var dest = path.resolve(projectPath, 'config', 'local.js');
+
+
+  fs.lstat(dest, function(err) {
+    if (err) {
+      fs.ensureDir(path.resolve(projectPath, 'config'), function (err) {
+        if (err) throw new Error(err);
+
+        var source = path.resolve(projectPath ,'test/stubs', 'local.js');
+        return fs.copy(source, dest, function(err) {
+          if (err) throw new Error(err);
+
+          cb();
+        });
+
+      });
+    }
+    cb();
+  });
+}
