@@ -6,6 +6,7 @@ services:
 
 before_script:
   - sudo apt-get install graphicsmagick
+  - mysql -e 'create database test;'
 
 notifications:
   email:
