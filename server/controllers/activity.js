@@ -16,11 +16,11 @@ module.exports = {
 
     res.locals.query.group = ['modelName', 'modelId'];
 
-    we.db.models.activity.findAll(res.locals.query)
+    we.db.models.activity.findAndCountAll(res.locals.query)
     .then(function(activities) {
 
       res.locals.metadata.count = activities.count;
-      res.locals.record = activities;
+      res.locals.record = activities.rows;
 
       res.ok();
     }).catch(res.serverError);

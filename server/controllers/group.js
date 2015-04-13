@@ -48,7 +48,7 @@ module.exports = {
       }, function() {
         // return 200 for added
         res.status(200).send({
-          meta: req.locals.metadata
+          meta: res.locals.metadata
         });
       })
     });

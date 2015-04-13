@@ -67,7 +67,7 @@ module.exports = function Model(we) {
       groupId = data.res.locals.group.id;
     } else {
       if (data.res.locals.model == 'group') {
-        groupId = data.res.params.id;
+        groupId = data.req.params.id;
       }
     }
 
@@ -98,7 +98,7 @@ module.exports = function Model(we) {
       groupId = data.res.locals.group.id;
     } else {
       if (data.res.locals.model == 'group') {
-        groupId = data.res.params.id;
+        groupId = data.req.params.id;
       }
     }
 
@@ -139,6 +139,7 @@ module.exports = function Model(we) {
     var groupId = data.req.params.groupId;
 
     if (!data.res.locals.metadata.activity) data.res.locals.metadata.activity = [];
+    if (!data.req.isAuthenticated()) return done();
 
     we.db.models.activity.create({
       modelName: data.req.params.contentModelName,
