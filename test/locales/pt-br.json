@@ -18,5 +18,7 @@
 	"auth.change-password.success": "auth.change-password.success",
 	"role.addRoleToUser.role.not.found": "role.addRoleToUser.role.not.found",
 	"role.addRoleToUser.success": "role.addRoleToUser.success",
-	"role.removeRoleFromUser.success": "role.removeRoleFromUser.success"
+	"role.removeRoleFromUser.success": "role.removeRoleFromUser.success",
+	"role.addRoleToUser.param.roleName.required": "role.addRoleToUser.param.roleName.required",
+	"role.removeRoleFromUser.param.roleName.required": "role.removeRoleFromUser.param.roleName.required"
 }
