@@ -59,7 +59,7 @@ stubs.pageStub = function pageStub(userId) {
   }
 }
 
-stubs.groupStub = function pageStub(userId) {
+stubs.groupStub = function groupStub(userId) {
   return {
     creatorId : userId,
     name: chancejs.sentence({words: 4}),

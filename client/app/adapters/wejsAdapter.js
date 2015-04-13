@@ -26,6 +26,19 @@ $.ajaxPrefilter(function( options ) {
   }
 });
 
+
+
+Ember.$(document).ajaxSuccess(function(event, jqXHR, object) {
+
+  try {
+    if (jqXHR.responseJSON.meta.activity)  {
+
+      Ember.get(App.Activity, 'store').pushMany(jqXHR.responseJSON.meta.activity);
+    }
+  } catch(e) {}
+
+});
+
 App.ApplicationRESTAdapter = DS.RESTAdapter.extend({
   defaultSerializer: '-default',
   pathForType: function(type) {

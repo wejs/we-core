@@ -1,0 +1,90 @@
+<div class="container bs-docs-container">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="group-name">
+        {{#link-to 'group' group.id}}
+          <h4>{{group.name}}</h4>
+        {{/link-to}}
+      </div>
+
+      <div class="group-logo">
+        {{#link-to 'group' group.id}}
+          {{#if group.logo}}
+            <img width="100%" {{bind-attr src="group.logo.urls.large"}} />
+          {{else}}
+            <img width="100%" src="/public/plugin/we-core/files/images/logos/group.jpg">
+          {{/if}}
+        {{/link-to}}
+      </div>
+
+      <div id="group-icons">
+        <ul>
+          <li class="group-icon-like"><i class="cdp cdp-love"></i></li>
+          <li class="group-icon-access"><i class="icons-outline icons-outline-padlock-open"></i></li>
+          <li class="group-icon-follow"><i class="icons-outline icons-outline-eye"></i></li>
+        </ul>
+      </div>
+
+      <aside id="administer-widget" class="panel panel-gray">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <a class="widget-trigger-collapse" data-toggle="collapse" data-parent="#accordion" href="#collapse-administer-widget">
+              <span class="fa-stack">
+                <i class="cdp cdp-settings cdp-lg cdp-fw cdp-stack-1x pull-left"></i>
+              </span>
+              <span class="icon-title">Administrar</span>
+            </a>
+          </h3>
+        </div>
+        <div id="collapse-administer-widget" class="panel-collapse list-group in" style="height: auto;">
+          <a href="#" class="list-group-item">
+            Editar
+          </a>
+          {{#link-to 'group.addMember' group.id classNames="list-group-item" }}
+            Convidar Pessoa
+          {{/link-to}}
+          <a href="#" class="list-group-item">
+            Mensagens do Grupo
+          </a>
+          <a href="#" class="list-group-item">
+            Recursos
+          </a>
+        </div>
+      </aside>
+
+      <aside id="group-members" class="group-members-list group-widget">
+        <h3>Quem Faz Parte?</h3>
+        <p>Membros da Comunidade</p>
+        <div class="content members-list">
+          {{#each members}}
+            {{#link-to 'user' id classNames="facilitador"}}
+              {{we-avatar userId=id size="thumbnail" classNames="img-circle"}}
+            {{/link-to}}
+          {{/each}}
+        </div>
+        <div class="group-widget-more">
+          <a href="#" class="pull-right btn">Ver Todos</a>
+        </div>
+      </aside>
+
+      <aside id="group-facilitadores" class="group-facilitadores-list group-widget">
+        <h3>Facilitadores</h3>
+
+        <div class="content facilitadores-list">
+          {{#each members}}
+            {{#link-to 'user' id classNames="facilitador"}}
+              {{we-avatar userId=id size="medium" classNames="img-circle"}}
+              <h4 class="nome">{{displayName}}</h4>
+            {{/link-to}}
+          {{/each}}
+        </div>
+      </aside>
+
+
+    </div>
+    <div class="col-md-9">
+      {{outlet}}
+    </div>
+
+  </div>
+</div>

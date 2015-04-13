@@ -8,6 +8,7 @@ var we;
 
 describe('pageFeature', function () {
   var salvedPage, salvedUser, salvedUserPassword;
+  var authenticatedRequest;
 
   before(function (done) {
     http = helpers.getHttp();
@@ -20,15 +21,30 @@ describe('pageFeature', function () {
       salvedUser = user;
       salvedUserPassword = userStub.password;
 
-      var pageStub = stubs.pageStub(user.id);
-      we.db.models.page.create(pageStub)
-      .done(function (err, p) {
-        if (err) return done(err);
-
-        salvedPage = p;
-
-        done();
+      // login user and save the browser
+      authenticatedRequest = request.agent(http);
+      authenticatedRequest.post('/login')
+      .set('Accept', 'application/json')
+      .send({
+        email: salvedUser.email,
+        password: salvedUserPassword
       })
+      .expect(200)
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+
+        var pageStub = stubs.pageStub(user.id);
+        we.db.models.page.create(pageStub)
+        .done(function (err, p) {
+          if (err) return done(err);
+
+          salvedPage = p;
+
+          done();
+        })
+
+      });
+
     });
   });
 
@@ -53,7 +69,7 @@ describe('pageFeature', function () {
     it('post /page create one page record', function(done) {
       var pageStub = stubs.pageStub(salvedUser.id);
 
-      request(http)
+      authenticatedRequest
       .post('/page')
       .send(pageStub)
       .set('Accept', 'application/json')
@@ -91,7 +107,7 @@ describe('pageFeature', function () {
     it('put /page/:id should upate and return page', function(done){
       var newTitle = 'my new title';
 
-      request(http)
+      authenticatedRequest
       .put('/page/' + salvedPage.id)
       .send({
         title: newTitle
@@ -115,7 +131,7 @@ describe('pageFeature', function () {
       we.db.models.page.create(pageStub)
       .done(function (err, p) {
         if (err) return done(err);
-        request(http)
+        authenticatedRequest
         .delete('/page/' + p.id)
         .set('Accept', 'application/json')
         .end(function (err, res) {

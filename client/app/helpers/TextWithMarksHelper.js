@@ -3,6 +3,7 @@
 
 
  Ember.Handlebars.helper('marked-text', function(value, options) {
+  if (!value) return '';
   var newText = value.replace(markedTextReged, '<mention data-username="$1" class="user-mention">$1</mention>');
   return new Ember.Handlebars.SafeString(newText);
 });

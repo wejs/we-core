@@ -1,0 +1,18 @@
+{{#if isStarting}}
+  {{we-loading isLoading=isStarting}}
+{{else}}
+  {{#if isEditing}}
+    <form>
+      {{baseUrl}}{{input value=url.url type="text" required="true"}}
+      <button {{action 'save'}} class="btn btn-success btn-sm">Save</button>
+      <button {{action 'cancel'}} class="btn btn-default btn-sm">Cancel</button>
+    </form>
+  {{else}}
+    {{#if url.url}}
+      url: {{baseUrl}}{{url.url}}
+    {{else}}
+      url: {{baseUrl}}{{modelName}}/{{modelId}}
+    {{/if}}
+    <button {{action 'edit'}} class="btn btn-default btn-sm">Edit</button>
+  {{/if}}
+{{/if}}

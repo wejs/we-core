@@ -1,0 +1,11 @@
+{{#if showSharebox}}
+  {{we-sharebox group=group}}
+{{/if}}
+
+{{#if isLoading}}
+  <div class="text-center">
+    {{loading-image}}
+  </div>
+{{else}}
+  {{render 'activity/list' activity}}
+{{/if}}

@@ -1,0 +1,42 @@
+<h3>Convidar membros para a comunidade</h3>
+
+<p>
+Digite o nome de usuário no campo abaixo para convidar um usuário para o grupo <br>
+Exemplo de nome de usuário: @alberto
+<p>
+
+<div>
+
+<form role="form" {{action "findOneUserByUsername" on="submit"}}>
+  <div class="form-group">
+    <div class="input-group">
+      <label for="name" class="input-group-addon">Nome de usuário:</label>
+      {{input id="name" name="name" value=username type="text" placeholder="Ex.: albertosouza" required="true" classNames="form-control"}}
+      <span class="input-group-btn">
+        <button {{action "findOneUserByUsername"}} class="btn btn-primary" type="button">Buscar</button>
+      </span>
+    </div>
+  </div>
+</form>
+
+  {{#if user}}
+    <div class="text-center">
+      <span class="avatar-large">{{we-avatar userId=user.id size="medium"}}</span>
+      <h3>{{user.displayName}}</h3>
+      <p>{{user.bio}}</p>
+      <button {{action "inviteUser"}} class="btn btn-primary addMember" type="button" data-loading-text="Processando...">Adicionar</button>
+    </div>
+  {{else}}
+    {{#if notFound}}
+    <div class="alert alert-warning text-center" role="alert">          
+      <strong>Nenhum usuário encontrado!</strong>
+    </div>
+    {{/if}}
+  {{/if}}  
+
+  {{#if success}}
+  <div class="alert alert-success text-center" role="alert">          
+    Convite enviado com sucesso! 
+  </div>
+  {{/if}}
+</div>

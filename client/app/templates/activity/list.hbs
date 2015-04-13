@@ -1,0 +1,49 @@
+<div class="context-search">
+  <form  {{action "filter" on="submit"}} class="form-inline" role="form">
+  {{!--   <div class="form-group">
+      <label for="searchString">{{t 'activities.search.string.label'}}</label>
+    </div>
+    <div class="form-group">
+      {{input name="searchString" placeholderTranslation="activities.search.string.placeholder" classNames="form-control input-sm" value=searchString}}
+    </div> --}}
+
+    <div class="form-group">
+      {{view "select"
+        name="searchSort" classNames="form-control input-sm"
+        content=sortOptions
+        optionValuePath="content.value"
+        optionLabelPath="content.label"
+        value=sort
+      }}
+    </div>
+
+    <div class="form-group">
+      <button class="form-control input-sm btn-info" type="submit">{{t 'activities.search.submit'}}</button>
+    </div>
+    <div class="form-group">
+      <button {{action 'resetSearch'}} class="form-control input-sm" type="button">{{t 'activities.search.reset'}}</button>
+    </div>
+  </form>
+</div>
+
+<div id="activities" class="activities">
+  {{#if activityIsLoading}}
+    <br>
+    <div class="alert alert-info text-center" role="alert">
+      {{t 'activities.loading'}}... <img src="/plugi/we-core/files/images/loading.gif">
+    </div>
+  {{else}}
+    {{#each}}
+      {{we-activity-item activity=this}}
+    {{else}}
+      {{#unless activityIsLoading}}
+        <br>
+        <div class="alert alert-warning text-center" role="alert">
+          Nenhum conteúdo encontrado
+        </div>
+      {{/unless}}
+    {{/each}}
+  {{/if}}
+
+</div>
+{{we-timeline-loading loadingMore=loadingMore haveMore=haveMore getMore=getMore}}

@@ -8,6 +8,7 @@ WeApplicationRoutesMixin = Ember.Mixin.create({
     },
     // after change route
     didTransition: function() {
+      this._super();
       NProgress.done(true);
     },
 

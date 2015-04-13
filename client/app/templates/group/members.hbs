@@ -1,0 +1,13 @@
+{{#each members}}
+  {{#link-to 'user' id}}
+    <span class="creator-avatar avatar-small">{{we-avatar userId=id}}</span>
+  {{/link-to}}
+
+  {{#link-to 'user' id}}
+    <h3>{{displayName}}</h3>
+  {{/link-to}}
+
+  {{createdAt}}
+{{else}}
+  {{t 'group.members.empty'}}
+{{/each}}

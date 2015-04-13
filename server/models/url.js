@@ -12,7 +12,6 @@ module.exports = function Model(we) {
     definition: {
       url: {
         type: we.db.Sequelize.STRING(1500),
-        unique: true,
         allowNull: false,
       },
 

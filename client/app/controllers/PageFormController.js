@@ -30,11 +30,7 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
         })
       });
     },
-
-    saveAndPublishRecord: function() {
-
-    },
-
+    saveAndPublishRecord: function() {},
     cancel: function() {
       var record = this.get('record');
 

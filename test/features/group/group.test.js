@@ -84,7 +84,7 @@ describe('groupFeature', function () {
 
       var groupStub = stubs.groupStub(salvedUser.id);
 
-      request(http)
+      authenticatedRequest
       .post('/group')
       .send(groupStub)
       .set('Accept', 'application/json')
@@ -198,6 +198,25 @@ describe('groupFeature', function () {
 
       request(http)
       .get('/api/v1/group/'+ salvedGroup.id +'/content')
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) return done(err);
+
+        assert.equal(200, res.status);
+        assert(res.body.groupcontent);
+        assert( _.isArray(res.body.groupcontent) , 'groupcontent not is array');
+        assert(res.body.meta.count);
+        assert(res.body.meta.count >= 3);
+
+        done();
+      });
+
+    });
+
+    it('get /api/v1/group/:groupId/content/:contentModelName route should return a content list with model name', function (done) {
+
+      request(http)
+      .get('/api/v1/group/'+ salvedGroup.id +'/content/page')
       .set('Accept', 'application/json')
       .end(function (err, res) {
         if (err) return done(err);

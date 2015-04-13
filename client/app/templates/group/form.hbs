@@ -1,0 +1,57 @@
+<form role="form" {{action "submit" on="submit"}}>
+  <div class="form-group">
+    <div class="input-group">
+      <label for="name" class="input-group-addon">{{t 'group.form.name.label'}}</label>
+      {{input name="name" value=record.name type="text" placeholderTranslation="group.form.name.placeholder" required="true" classNames="form-control"}}
+    </div>
+  </div>
+
+  <div class="form-group">
+      <label for="description">{{t 'group.form.description.label'}}</label>
+      {{we-editor name="description" value=record.description type="text" required="true"}}
+  </div>
+
+
+  <div class="form-group">
+    <label class="story-form-label">{{t 'group.form.category.label'}}</label>
+    {{we-category-field required="true" value=category
+        newTagMark=' (nova)' vocabulary=vocabularyId}}
+  </div>
+
+  <div class="form-group">
+    <div class="input-group">
+      <label for="privacity" class="input-group-addon">
+        <span class="glyphicon glyphicon-lock"></span>
+        {{t 'Privacity'}}
+      </label>
+      {{view "select" name="Privacity" value=record.privacity optionValuePath="content.value" optionLabelPath="content.label" content=privacityList classNames="form-control"}}
+    </div>
+  </div>
+
+  {{#if imageSelected}}
+    {{we-image-crop src=salvedImage.urls.original file=salvedImage data=cropImageData}}
+  {{else}}
+    <div class="form-group">
+      <div class="row">
+        <div class="col-lg-9">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <label for="image">{{t 'Group image'}}</label>
+            </span>
+            {{image-upload multiple="false" files=files classNames="form-control"}}
+          </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+        <div class="col-lg-3">
+          <div class="input-group">
+            <button class="btn btn-primary" type="buttom" {{action 'selectFile'}}>Selecionar imagem</button>
+          </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+      </div><!-- /.row -->
+    </div>
+  {{/if}}
+
+  <div class="form-group">
+    <button class="btn btn-primary" type="buttom" {{action 'saveRecord'}}>{{t 'group.form.submit'}}</button>
+  </div>
+
+</form>

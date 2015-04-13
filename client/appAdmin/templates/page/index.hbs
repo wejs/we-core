@@ -2,20 +2,11 @@
   Title: {{record.title}}
   {{#link-to 'page.edit' record.id classNames="btn btn-default" }}edit{{/link-to}}
 </h2>
-
+{{!--
+{{we-field-url-alias modelName='page' modelId=record.id}}
+ --}}
 <div>
-  {{#if record.id}}
-    {{#can 'page_update' 'page' 'record'}}
-      {{#link-to 'page.edit' record.id classNames="btn btn-primary"}}
-        Edit
-      {{/link-to}}
-    {{/can}}
-    {{#can 'page_delete' 'page' 'record'}}
-      <button {{action 'deleteRecord' record.id}} class="btn btn-default">
-        Delete
-      </button>
-    {{/can}}
-  {{/if}}
+
   <div class="page-body">
     {{html record.body}}
   </div>
@@ -35,6 +26,19 @@
       </div>
     {{/if}}
   </div>
+
+  <hr>
+
+  {{#can 'page_update' 'page' 'record'}}
+    {{#link-to 'page.edit' record.id classNames="btn btn-primary btn-sm"}}
+      Edit
+    {{/link-to}}
+  {{/can}}
+  {{#can 'page_delete' 'page' 'record'}}
+    <button {{action 'deleteRecord' record.id}} class="btn btn-default btn-sm">
+      Delete
+    </button>
+  {{/can}}
 
   <hr>
   <div class="comment-area">

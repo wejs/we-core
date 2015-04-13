@@ -1,0 +1,76 @@
+{{#can 'create_post'}}
+  <div {{bind-attr class='shareboxClass'}}>
+  <form role="form" {{action "submit" on="submit"}}>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        {{#if post.isOpen}}
+          <div class="form-group">
+            {{we-wysiwyg-editor name="body" linkedPage=newWembed
+              value=post.body
+              focus=true
+              style="small"
+              onChangeText="onChangeBodyText"
+              onPasteText="onPasteBodyText"
+            }}
+          </div>
+
+          {{#if selectingAttachOption}}
+          <div class="form-group attach-options">
+            <button {{action 'openShareImage'}} type="button" class="btn btn-info" title="Imagem">
+              <i class="fa fa-image"></i>
+            </button>
+          </div>
+          {{/if}}
+
+          <div class="form-group">
+            {{#if post.newWembed.url}}
+              {{we-wembed url=post.newWembed.url imageIndex=post.newWembed.imageIndex isEditing='true'}}
+            {{/if}}
+          </div>
+
+          {{#if shareImages}}
+            <div class="form-group">
+              <div class="form-group row add-images">
+                <label for="addImages" class="col-sm-2 control-label">Imagens:</label>
+                <div class="col-sm-10">
+                  {{image-upload files=filesNew}}
+                </div>
+              </div>
+            </div>
+          {{/if}}
+
+          <div class="form-group images-preview">
+            <div class="row">
+              {{#each files}}
+                <div class="col-xs-6 col-md-3">
+                  {{we-image-preview file=this onRemove='onRemoveImage'}}
+                </div>
+              {{/each}}
+
+              {{#each images}}
+                <div class="col-xs-6 col-md-3">
+                  {{we-image file=this click='onRemoveSalvedImage'}}
+                </div>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="footer">
+            <div class="actions">
+              <button type="submit" class="btn btn-info">
+                Salvar
+              </button>
+              <button type="button" {{action 'cancel'}} class="btn btn-default">
+                <i class="fa fa-close"></i>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        {{else}}
+          <div {{action "openBox"}} class="post-placeholder form-control post-content"> {{t 'What is happening?'}}</div>
+        {{/if}}
+      </div>
+    </div>
+  </form>
+  </div>
+{{/can}}

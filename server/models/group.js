@@ -25,18 +25,18 @@ module.exports = function Model(we) {
       // group | cource
       type: {
         type: we.db.Sequelize.STRING,
-        defaultsValue: 'group'
+        defaultValue: 'group'
       },
 
       // public | restrict | hidden
       privacity: {
         type: we.db.Sequelize.ENUM('public', 'restrict', 'hidden'),
-        defaultsValue: 'public'
+        defaultValue: 'public'
       },
 
       active: {
         type: we.db.Sequelize.BOOLEAN,
-        defaultsValue: true
+        defaultValue: true
       }
     },
 

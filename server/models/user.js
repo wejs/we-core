@@ -60,12 +60,6 @@ module.exports = function UserModel(we) {
     },
 
     associations: {
-      images:  {
-        emberOnly: true,
-        type: 'hasMany',
-        model: 'image',
-        inverse: 'creator'
-      },
       avatar: {
         type: 'belongsTo',
         model : 'image',
@@ -109,6 +103,41 @@ module.exports = function UserModel(we) {
         emberOnly: true,
         type: 'hasMany',
         model: 'comments',
+        inverse: 'creator'
+      },
+
+      images:  {
+        emberOnly: true,
+        type: 'hasMany',
+        model: 'image',
+        inverse: 'creator'
+      },
+
+      urls:  {
+        emberOnly: true,
+        type: 'hasMany',
+        model: 'url',
+        inverse: 'creator'
+      },
+
+      groups:  {
+        emberOnly: true,
+        type: 'hasMany',
+        model: 'group',
+        inverse: 'creator'
+      },
+
+      wembeds:  {
+        emberOnly: true,
+        type: 'hasMany',
+        model: 'wembed',
+        inverse: 'creator'
+      },
+
+      posts:  {
+        emberOnly: true,
+        type: 'hasMany',
+        model: 'post',
         inverse: 'creator'
       }
     },

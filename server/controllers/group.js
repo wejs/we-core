@@ -33,24 +33,43 @@ module.exports = {
   addContent: function addContent(req, res, next) {
     if (!req.params.contentModelName || !req.params.contentId) return next();
 
+    var we = req.getWe();
+
     res.locals.group.addContent(
       req.params.contentModelName, req.params.contentId,
     function (err, groupcontent) {
       if (err) return res.serverError(err);
       if (!groupcontent) return res.serverError('groupcontent is empty in add content');
-      // return 200 for added
-      res.status(200).send();
+
+      return we.hooks.trigger('we:before:send:group:addContent', {
+        req: req,
+        res: res,
+        data: groupcontent
+      }, function() {
+        // return 200 for added
+        res.status(200).send({
+          meta: req.locals.metadata
+        });
+      })
     });
   },
 
   removeContent: function removeContent(req, res, next) {
     if (!req.params.contentModelName || !req.params.contentId) return next();
 
+    var we = req.getWe();
+
     res.locals.group.removeContent(
       req.params.contentModelName, req.params.contentId,
     function (err) {
       if (err) return res.serverError(err);
-      res.status(204).send();
+
+      return we.hooks.trigger('we:before:send:group:removeContent', {
+        req: req,
+        res: res
+      }, function() {
+        res.status(204).send();
+      });
     });
   },
 
@@ -59,6 +78,28 @@ module.exports = {
 
     res.locals.query.where.groupName = 'group';
     res.locals.query.where.groupId = res.locals.group.id;
+
+    we.db.models.groupcontent.findAndCountAll(res.locals.query)
+    .done(function(err, result) {
+      if (err) return res.serverError(err);
+
+      res.locals.record = result.rows;
+
+      return res.status(200).send({
+        groupcontent: result.rows,
+        meta: {
+          count: result.count
+        }
+      });
+    });
+  },
+
+  findContentByType: function findContentByType(req, res, next) {
+    var we = req.getWe();
+
+    res.locals.query.where.groupName = 'group';
+    res.locals.query.where.groupId = res.locals.group.id;
+    res.locals.query.where.contentModelName = req.params.contentModelName;
 
     we.db.models.groupcontent.findAndCountAll(res.locals.query)
     .done(function(err, result) {

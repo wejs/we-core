@@ -162,6 +162,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       },
       // publivars
       publicVars: {}
+    },
+
+    flag: {
+      available: {
+        like: {}
+      }
     }
   });
   // ser plugin routes
@@ -449,7 +455,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
 
     // create
-    // example: /api/v1/flag/post/1/2?flagType=follow
+    // example: /api/v1/follow/post/1/2?flagType=follow
     'post /api/v1/follow/:model/:modelId([0-9]+)': {
       controller    : 'follow',
       action        : 'follow',
@@ -457,10 +463,36 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
 
     // delete
-    // example: /api/v1/flag/post/1/2?flagType=follow
+    // example: /api/v1/follow/post/1/2?flagType=follow
     'delete /api/v1/follow/:model/:modelId([0-9]+)': {
       controller    : 'follow',
       action        : 'unFollow',
+      responseType  : 'json'
+    },
+
+    // -- FLAG
+
+    // get
+    // example: /api/v1/flag/post/1/2?flagType=follow
+    'get /api/v1/flag/:model/:modelId?/:userId?': {
+      controller    : 'flag',
+      action        : 'getModelFlags',
+      responseType  : 'json'
+    },
+
+    // create
+    // example: /api/v1/flag/post/1/2?flagType=follow
+    'post /api/v1/flag/:model/:modelId': {
+      controller    : 'flag',
+      action        : 'flag',
+      responseType  : 'json'
+    },
+
+    // delete
+    // example: /api/v1/flag/post/1/2?flagType=follow
+    'delete /api/v1/flag/:model/:modelId': {
+      controller    : 'flag',
+      action        : 'unFlag',
       responseType  : 'json'
     },
 
@@ -488,6 +520,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       responseType  : 'json'
     },
 
+    'get /api/v1/group/:groupId([0-9]+)/content/:contentModelName': {
+      controller    : 'group',
+      action        : 'findContentByType',
+      model         : 'group',
+      responseType  : 'json'
+    },
+
     'post /api/v1/group/:groupId([0-9]+)/join': {
       controller    : 'group',
       action        : 'join',
@@ -507,6 +546,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'term',
       action        : 'findTermTexts',
       model         : 'term',
+      responseType  : 'json'
+    },
+
+    // Activity
+
+    'get /group/:groupId([0-9]+)/activity': {
+      controller    : 'activity',
+      action        : 'findGroupActivity',
+      model         : 'activity',
       responseType  : 'json'
     }
   });

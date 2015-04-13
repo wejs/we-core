@@ -1,0 +1,133 @@
+<div class="content-block post">
+<div class="full-post panel panel-default">
+
+  <div class="header panel-heading">
+    <span class="creator">
+      {{#link-to 'user' post.creator.id}}
+        <span class="creator-avatar avatar-small">{{we-avatar userId=post.creator.id}}</span>
+        <span class="creator-name">{{post.creator.displayName}}</span>
+      {{/link-to}}
+    </span>
+    <a {{action 'showSharedWith'}} href="#" class="shared-with text-mute">
+      <span class="glyphicon glyphicon-globe"></span>
+    </a>
+    <span class="createdAt post-created-at">{{format-date post.createdAt}}</span>
+  </div>
+  {{#with post}}
+    <div class="panel-body">
+      {{#if isEditing}}
+        <form role="form" {{action "submit" on="submit"}}>
+          <div class="form-group">
+            {{we-wysiwyg-editor name="body" linkedPage=newWembed value=body
+              onChangeText="onChangeBodyText"
+              onPasteText="onPasteBodyText"
+            }}
+          </div>
+
+          {{#if selectingAttachOption}}
+          <div class="form-group attach-options">
+            <button {{action 'openShareImage'}} type="button" class="btn btn-xs btn-default">
+              <i class="glyphicon glyphicon-picture"></i> {{t "Image"}}
+            </button>
+          </div>
+          {{/if}}
+
+          <div class="form-group">
+            {{#if wembed.url}}
+              {{we-wembed url=wembed.url imageIndex=wembed.imageIndex isEditing='true'}}
+            {{/if}}
+          </div>
+
+          {{#if shareImages}}
+            <div class="form-group">
+              <div class="form-group row add-images">
+                <label for="addImages" class="col-sm-2 control-label">{{t "Attach images"}}</label>
+                <div class="col-sm-10">
+                  {{image-upload classNames="we-share-images-input" files=filesNew}}
+                </div>
+              </div>
+            </div>
+          {{/if}}
+          <div class="form-group images-preview">
+            <div class="row">
+              {{#each files}}
+                <div class="col-xs-6 col-md-3">
+                  {{we-image-preview file=this onRemove='onRemoveImage'}}
+                </div>
+              {{/each}}
+
+              {{#each images}}
+                <div class="col-xs-6 col-md-3">
+                  {{we-image file=this onClick='onRemoveSalvedImage'}}
+                </div>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="footer">
+            <div class="actions">
+              <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-ok"></span> {{t "Share"}}
+              </button>
+              <button type="button" {{action 'cancel'}} class="btn btn-default cancel"> {{t "Cancel"}}</button>
+            </div>
+          </div>
+        </form>
+      {{else}}
+        <div class="content">
+          <div class="post-text">{{marked-text body}}</div>
+          {{#if wembed.url}}
+            {{we-wembed url=wembed.url imageIndex=wembed.imageIndex }}
+          {{/if}}
+
+          <div class="videos">
+            {{#each videos}}
+              {{we-video url=this}}
+            {{/each}}
+          </div>
+          <div class="images row">
+            {{#each images}}
+              <div class="col-md-3">
+                {{#we-image-overlay href=urls.original ligthBoxName=inPost}}
+                  {{we-image file=this size="large" }}
+                {{/we-image-overlay}}
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        <div class="footer">
+          <div class="actions">
+            {{we-flag flagType='like' model='post' modelId=id
+              flagText='<span class="glyphicon glyphicon-thumbs-up"></span>'}}
+
+            {{we-follow model='post' modelId=id flagText="Seguir"}}
+
+            {{#can editPost content=this}}
+              <button type="button" class="btn btn-xs btn-default" {{action 'edit'}}>
+                <span class="glyphicon glyphicon-edit text-primary"></span> {{t 'Edit'}}
+              </button>
+            {{/can}}
+
+            {{#can deletePost content=this}}
+              <button class="btn btn-xs btn-default" {{action 'deleteItem'}}>
+                <span class="glyphicon glyphicon-remove text-danger"></span> {{t 'Delete'}}
+              </button>
+            {{/can}}
+
+            {{#if currentUser.id}}
+              {{#link-to 'post' id (query-params anchor="add-comment") classNames="btn btn-xs btn-primary"}}
+                <span class="glyphicon glyphicon-comment"></span> {{t 'Comment'}}
+              {{/link-to}}
+            {{/if}}
+          </div>
+        </div>
+      {{/if}}
+    </div>
+  {{/with}}
+  <div class="panel-footer">
+    {{we-comments commentedModelName="post" commentedModelId=post.id}}
+    {{we-comment-form commentedModelName="post" commentedModelId=post.id}}
+  </div>
+</div>
+</div>
+

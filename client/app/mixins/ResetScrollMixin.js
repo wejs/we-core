@@ -6,6 +6,7 @@ App.ResetScrollMixin = Ember.Mixin.create({
   actions: {
     didTransition: function() {
       window.scrollTo(0,0);
+      NProgress.done(true);
     }
   }
 });
