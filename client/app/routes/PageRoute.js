@@ -16,7 +16,7 @@ App.PagesIndexRoute = Ember.Route.extend(App.ResetScrollMixin, {
     q: { refreshModel: true },
     category: { refreshModel: true },
     sort: { refreshModel: true },
-    skip: { refreshModel: true },
+    offset: { refreshModel: true },
     limit: { refreshModel: true }
   },
 
@@ -36,8 +36,8 @@ App.PagesIndexRoute = Ember.Route.extend(App.ResetScrollMixin, {
     if (params.category && params.category != 'undefined') {
       query.category = params.category;
     }
-    //query.skip = (Number(params.currentPage) -1 )* Number(params.limit) ;
-    query.skip = params.skip;
+    //query.offset = (Number(params.currentPage) -1 )* Number(params.limit) ;
+    query.offset = params.offset;
     query.limit = params.limit;
     query.sort = params.sort;
 

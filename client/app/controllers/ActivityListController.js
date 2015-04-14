@@ -33,7 +33,7 @@ App.ActivityListController = Ember.ArrayController.extend({
   modelType: 'activity',
   page: 1,
   perPage: 10, // this is updated in init function
-  skip: 0,
+  offset: 0,
   count: Ember.computed.oneWay('parentController.count'),
 
   loadingMore: false,
@@ -143,7 +143,7 @@ App.ActivityListController = Ember.ArrayController.extend({
     // -- LOAD MORE FEATURE
     getMore: function() {
       var self = this;
-      // if dont have more skip this feature
+      // if dont have more offset this feature
       // in one timeline new contents go to timeline start and are added with push
       if (!this.get('haveMore')) return ;
       // don't load new data if we already are
@@ -151,7 +151,7 @@ App.ActivityListController = Ember.ArrayController.extend({
       this.set('loadingMore', true);
       // add some delay after get more content from server
       Ember.run.later(function() {
-        // get skip value
+        // get offset value
         // TODO change this to createdAt time
         var offset = self.get('page') * self.get('perPage');
 
