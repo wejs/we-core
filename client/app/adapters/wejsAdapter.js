@@ -36,6 +36,8 @@ Ember.$(document).ajaxSuccess(function(event, jqXHR) {
         Ember.get(App.Activity, 'store')
         .push('activity', jqXHR.responseJSON.meta.activity[i]);
       }
+
+      delete jqXHR.responseJSON.meta.activity;
     }
   } catch(e) {}
 

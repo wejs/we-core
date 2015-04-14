@@ -1,8 +1,8 @@
 /**
- * membershippermissions
+ * membershippermission
  *
  * @module      :: Model
- * @description :: membershippermissions model
+ * @description :: membershippermission model
  *
  */
 

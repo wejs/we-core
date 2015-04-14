@@ -405,6 +405,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'getAvatar'
     },
 
+    // get logged in user avatar
+    'get /user/:userId([0-9]+)/membership': {
+      controller    : 'group',
+      action        : 'findUserGroups',
+      model         : 'membership'
+    },
+
     // 'post /api/v1/user/:id([0-9]+)/avatar': {
     //   controller    : 'avatar',
     //   action        : 'changeAvatar'
@@ -538,6 +545,20 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'group',
       action        : 'leave',
       model         : 'group',
+      responseType  : 'json'
+    },
+
+    'get /group/:groupId([0-9]+)/member': {
+      controller    : 'group',
+      action        : 'findMembers',
+      model         : 'membership',
+      responseType  : 'json'
+    },
+
+    'get /group/:groupId([0-9]+)/role': {
+      controller    : 'group',
+      action        : 'findRoles',
+      model         : 'membershiprole',
       responseType  : 'json'
     },
 

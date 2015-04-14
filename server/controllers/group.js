@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = {
   join: function join(req, res, next) {
     if (!req.isAuthenticated) return res.forbidden();
@@ -113,6 +115,63 @@ module.exports = {
           count: result.count
         }
       });
+    });
+  },
+
+  findMembers: function(req, res, next) {
+    var we = req.getWe();
+
+    res.locals.query.where.memberName = 'user';
+    res.locals.query.where.modelName = 'group';
+    res.locals.query.where.modelId = req.params.groupId;
+
+    if (req.query.roleNames && _.isArray(req.query.roleNames)) {
+      res.locals.query.include = [
+        { model: we.db.models.membershiprole , as: 'roles', where: {
+          name: {
+            in: req.query.roleNames
+          }
+        }}
+      ];
+    }
+
+    we.db.models.membership.findAndCountAll(res.locals.query)
+    .then(function (result){
+      res.locals.record = result.rows;
+      res.locals.metadata.count = result.count;
+      res.ok();
+    }).catch(function(err){
+      next(err);
+    });
+  },
+
+  findUserGroups: function(req, res, next) {
+    var we = req.getWe();
+
+    res.locals.query.where.memberId = res.locals.user.id;
+    res.locals.query.where.memberName = 'user';
+    res.locals.query.where.status = 'active';
+
+    we.db.models.membership.findAndCountAll(res.locals.query)
+    .then(function (result) {
+      res.locals.record = result.rows;
+      res.locals.metadata.count = result.count;
+      res.ok();
+    }).catch(function(err){
+      next(err);
+    });
+  },
+
+  findRoles: function(req, res, next) {
+    var we = req.getWe();
+
+    we.db.models.membershiprole.findAndCountAll()
+    .then(function (result) {
+      res.locals.record = result.rows;
+      res.locals.metadata.count = result.count;
+      res.ok();
+    }).catch(function(err){
+      next(err);
     });
   }
 }

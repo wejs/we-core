@@ -5,9 +5,11 @@ App.Router.map(function() {
     // item route
     this.resource('group',{ path: '/:id' }, function(){
       this.route('addMember', {path: '/membros/add'});
-      this.route('members', {path: '/membros'});
-      this.route('about', {path: '/sobre'});
-      this.route('requests', {path: '/solicitacoes'});
+      this.route('members', {path: '/members'});
+      this.route('content', {path: '/content'});
+      this.route('about', {path: '/about'});
+      this.route('edit', {path: '/edit'});
+      this.route('requests', {path: '/requests'});
     });
   });
 });
@@ -36,9 +38,7 @@ App.GroupRoute = Ember.Route.extend({
   model: function(params) {
     return Ember.RSVP.hash({
       group: this.store.find('group', params.id),
-      // members: this.loadMembers(params.id, 10,'member'),
-      // moderators: this.loadMembers(params.id, 4, 'moderator'),
-      // pendingRequests: this.pendingRequests(params.id),
+      roles: this.loadRoles(params.id),
       membership: null
     });
   },
@@ -49,27 +49,16 @@ App.GroupRoute = Ember.Route.extend({
     }
   },
 
-  loadMembers: function(groupId, limit, role) {
+  loadRoles: function (groupId){
     var self = this;
-    if (!groupId) groupId = this.get('group.id');
-
-    if (!groupId) return;
-
-
-    var query = {};
-    // Só quem tem o status de ativo. Se for convite, o usuário ainda tem que aceitar...
-    query.status = 'active';
-    if (role) query.role = role;
-    if (role) query.limit = limit;
 
     return new Ember.RSVP.Promise(function(resolve, reject) {
       return $.ajax({
         type: 'GET',
-        url: '/api/v1/group/' + groupId + '/user',
-        data:  query
+        url: '/group/' + groupId + '/role'
       })
       .done(function success(data) {
-        return resolve(self.get('store').pushMany('user', data.user));
+        return resolve(self.get('store').pushMany('membershiprole', data.membershiprole));
       })
       .fail(reject)
     });
@@ -77,7 +66,7 @@ App.GroupRoute = Ember.Route.extend({
 });
 
 // route /user/:uid/index
-App.GroupIndexRoute = Ember.Route.extend(App.ResetScrollMixin,{
+App.GroupIndexRoute = Ember.Route.extend(App.ResetScrollMixin, {
   model: function() {
     var group = this.modelFor('group').group;
     return Ember.RSVP.hash({
@@ -87,7 +76,7 @@ App.GroupIndexRoute = Ember.Route.extend(App.ResetScrollMixin,{
   }
 });
 
-App.GroupAboutRoute = Ember.Route.extend({
+App.GroupAboutRoute = Ember.Route.extend(App.ResetScrollMixin, {
   model: function() {
     return Ember.RSVP.hash({
       group: this.modelFor('group').group
@@ -96,7 +85,7 @@ App.GroupAboutRoute = Ember.Route.extend({
 });
 
 // members list
-App.GroupMembersRoute = Ember.Route.extend(App.ResetScrollMixin,{
+App.GroupMembersRoute = Ember.Route.extend(App.ResetScrollMixin, {
   model: function() {
     var group = Ember.get(this.modelFor('group'), 'group' );
     // then return the list
@@ -122,11 +111,11 @@ App.GroupMembersRoute = Ember.Route.extend(App.ResetScrollMixin,{
     return new Ember.RSVP.Promise(function(resolve, reject) {
       return $.ajax({
         type: 'GET',
-        url: '/api/v1/group/' + groupId + '/user',
+        url: '/group/' + groupId + '/members',
         data:  query
       })
       .done(function success(data) {
-        return resolve(self.get('store').pushMany('user', data.user));
+        return resolve(self.get('store').pushMany('membership', data.user));
       })
       .fail(reject)
     });
@@ -134,7 +123,7 @@ App.GroupMembersRoute = Ember.Route.extend(App.ResetScrollMixin,{
 });
 
 // members list
-App.GroupRequestsRoute = Ember.Route.extend(App.ResetScrollMixin,{
+App.GroupRequestsRoute = Ember.Route.extend(App.ResetScrollMixin, {
   model: function() {
     var group = Ember.get(this.modelFor('group'), 'group' );
     // then return the list
@@ -169,3 +158,10 @@ App.GroupRequestsRoute = Ember.Route.extend(App.ResetScrollMixin,{
   }
 });
 
+App.GroupContentRoute = Ember.Route.extend(App.ResetScrollMixin, {
+  model: function() {
+    return Ember.RSVP.hash({
+      group: this.modelFor('group').group
+    });
+  }
+});

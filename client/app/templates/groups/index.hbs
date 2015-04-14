@@ -1,29 +1,16 @@
 <div class="bs-docs-header" {{bind-attr style=headerImage }}>
   <div class="container">
-    <h1>{{t 'groups.title'}}</h1>
-    <h5 class="subheading">{{html record.about}}</h5>
-  </div>
-</div>
-
-<div class="container bs-docs-container">
-  <div class="groups row">
-    <div class="col-md-12">
-      <h2>{{t 'Groups'}}
-        {{#if currentUser.id}}
-          {{#link-to 'groups.create' classNames="btn btn-primary"}}
+    <h1>{{t 'groups.title'}}
+      {{#if currentUser.id}}
+        {{#link-to 'groups.create' classNames="btn btn-primary"}}
             {{t 'Create group'}}
           {{/link-to}}
-          <hr>
         {{/if}}
-      </h2>
-    </div>
-    {{#each controller}}
-      {{render 'group/teaser' this}}
-    {{else}}
-      <div class="col-md-12">
-        <p>{{t 'No groups found'}}</p>
-      </div>
-    {{/each}}
+    </h1>
   </div>
+</div>
+<div class="container bs-docs-container">
+  {{we-user-membership-list widgetTitle="currentUser.groups" memberId=currentUser.id}}
 
+  {{we-group-list}}
 </div>

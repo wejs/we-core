@@ -75,6 +75,19 @@ describe('groupFeature', function () {
         done();
       });
     });
+
+    it('get /user/userId/membership route should find user memberships array', function (done) {
+      authenticatedRequest
+      .get('/user/'+ salvedUser.id +'/membership')
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        assert.equal(200, res.status);
+        assert(res.body.membership);
+        assert( _.isArray(res.body.membership) , 'group not is array');
+        assert(res.body.meta);
+        done();
+      });
+    });
   });
 
   describe('create', function () {
@@ -280,6 +293,20 @@ describe('groupFeature', function () {
       });
     });
 
+    it('get /group/:groupId/member route should return membership users', function (done) {
+
+      authenticatedRequest
+      .get('/group/'+ salvedGroup.id +'/member?roleNames[]=administrator&roleNames[]=moderator')
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) return done(err);
+        assert.equal(200, res.status);
+        assert(res.body.membership);
+        assert(res.body.meta.count);
+        done();
+      });
+    });
+
     it('post /api/v1/group/:groupId/leave route should add authenticated user in group', function (done) {
 
       authenticatedRequest
@@ -287,16 +314,31 @@ describe('groupFeature', function () {
       .set('Accept', 'application/json')
       .end(function (err, res) {
         if (err) return done(err);
-
         assert.equal(204, res.status);
 
         salvedGroup.findOneMember(salvedUser.id, function(err, membership) {
           if (err) return done(err);
-
           assert(!membership);
-
           done();
         });
+      });
+    });
+
+  });
+
+  describe('groupRoles', function () {
+    it('get /group/:groupId/roles route should return all group roles', function (done) {
+
+      authenticatedRequest
+      .get('/group/'+ salvedGroup.id +'/role')
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) return done(err);
+        assert.equal(200, res.status);
+        assert(res.body.membershiprole);
+        assert(res.body.membershiprole.length > 2);
+        assert(res.body.meta.count);
+        done();
       });
     });
   });
