@@ -30,7 +30,7 @@ App.ActivityListController = Ember.ArrayController.extend({
   ],
 
   // timeline get old itens vars
-  modelType: 'post',
+  modelType: 'activity',
   page: 1,
   perPage: 10, // this is updated in init function
   skip: 0,
@@ -153,10 +153,10 @@ App.ActivityListController = Ember.ArrayController.extend({
       Ember.run.later(function() {
         // get skip value
         // TODO change this to createdAt time
-        var skip = self.get('page') * self.get('perPage');
+        var offset = self.get('page') * self.get('perPage');
 
         var query = self.getCurrentQuery();
-        query.skip = skip;
+        query.offset = offset;
         query.limit = self.get('perPage');
 
         self.store.find( self.get('modelType'), query).then(function(posts){

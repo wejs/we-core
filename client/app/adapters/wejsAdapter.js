@@ -28,12 +28,14 @@ $.ajaxPrefilter(function( options ) {
 
 
 
-Ember.$(document).ajaxSuccess(function(event, jqXHR, object) {
+Ember.$(document).ajaxSuccess(function(event, jqXHR) {
 
   try {
     if (jqXHR.responseJSON.meta.activity)  {
-
-      Ember.get(App.Activity, 'store').pushMany(jqXHR.responseJSON.meta.activity);
+      for (var i = jqXHR.responseJSON.meta.activity.length - 1; i >= 0; i--) {
+        Ember.get(App.Activity, 'store')
+        .push('activity', jqXHR.responseJSON.meta.activity[i]);
+      }
     }
   } catch(e) {}
 

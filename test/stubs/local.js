@@ -18,11 +18,6 @@ module.exports = {
   },
 
   database: {
-    dev: {
-      // by default log to info
-      //logging: false
-    },
-
     test: {
       dialect: 'mysql',
       database: 'test',

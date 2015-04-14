@@ -9,7 +9,6 @@ before(function(callback) {
   this.slow(100);
 
   copyLocalConfigIfNotExitst(function() {
-
     we.bootstrap({
       i18n: {
         directory: path.join(__dirname, 'locales'),
@@ -54,7 +53,6 @@ after(function (callback) {
 
 function copyLocalConfigIfNotExitst (cb) {
   var dest = path.resolve(projectPath, 'config', 'local.js');
-
 
   fs.lstat(dest, function(err) {
     if (err) {
