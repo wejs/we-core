@@ -7,5 +7,34 @@
     {{loading-image}}
   </div>
 {{else}}
-  {{render 'activity/list' activity}}
+<div class="context-search">
+  <form  {{action "filter" on="submit"}} class="form-inline" role="form">
+  {{!--   <div class="form-group">
+      <label for="searchString">{{t 'activities.search.string.label'}}</label>
+    </div>
+    <div class="form-group">
+      {{input name="searchString" placeholderTranslation="activities.search.string.placeholder" classNames="form-control input-sm" value=searchString}}
+    </div> --}}
+
+    <div class="form-group">
+      {{view "select"
+        name="searchSort" classNames="form-control input-sm"
+        content=sortOptions
+        optionValuePath="content.value"
+        optionLabelPath="content.label"
+        value=sort
+      }}
+    </div>
+
+    <div class="form-group">
+      <button class="form-control input-sm btn-info" type="submit">{{t 'activities.search.submit'}}</button>
+    </div>
+    <div class="form-group">
+      <button {{action 'resetSearch'}} class="form-control input-sm" type="button">{{t 'activities.search.reset'}}</button>
+    </div>
+  </form>
+</div>
+  {{render 'activity/list' activity activityIsLoading=isSearching}}
+
+  {{we-timeline-loading loadingMore=loadingMore haveMore=haveMore }}
 {{/if}}

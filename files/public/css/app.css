@@ -3487,10 +3487,18 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 
 
 .activity-item {
-  min-height: 75px;
+  /*min-height: 75px;*/
   margin-top: 10px;
 }
 
 .activity-item.loading {
   text-align: center;
+}
+
+.activity-text {
+ text-align: center;
+}
+
+.widget {
+  margin:10px 0px 15px 0px;
 }

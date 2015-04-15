@@ -1,3 +1,9 @@
+/**
+ * we-category-field
+ *
+ * {{we-category-field required="true" value=record.categories modelName="Group" field="categories"}}
+ */
+
 App.inject( 'component:we-category-field', 'store', 'store:main' );
 
 App.WeCategoryFieldComponent = Ember.Component.extend(App.WeTermFieldMixin, {
@@ -13,13 +19,13 @@ App.WeCategoryFieldComponent = Ember.Component.extend(App.WeTermFieldMixin, {
     this._super();
 
     if ( !this.get('vocabulary') ) {
-
       if (this.get('modelName') && this.get('field')) {
-
-        this.set('vocabulary',
-          Ember.get('App.'+ this.get('modelName') + '.attributes')
-          .get(this.get('field')).options.vocabularyId
-        );
+        var attr = Ember.get('App.'+ this.get('modelName') + '.attributes');
+        if (attr) {
+          this.set('vocabulary', attr.get(this.get('field')).options.vocabularyId);
+        } else {
+          Ember.Logger.warn('we-category-field:Category field not found:', this.get('modelName'),  this.get('field'));
+        }
 
       } else if ( App.get('configs.vocabularyId') ) {
         this.set('vocabulary', App.get('config.vocabularyId'));

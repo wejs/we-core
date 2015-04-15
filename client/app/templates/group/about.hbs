@@ -1,18 +1,5 @@
-<h2>
-{{#we-content-editable value=group.name attribute='name'  maximumSelectionSize=2 onSave="salvarAtributo" canEdit=group.canAdmin }}
-  {{focus-input value=group.name type="text"}}
-{{/we-content-editable}}
-</h2>
+<h1>{{group.name}}</h1>
 
-<div class="group-categories">
-  {{#we-term-editable value=group.categories maximumSelectionSize=2 onSave="saveCategories"}}
-    {{we-category-field value=group.categories
-      newTagMark=' (nova)' vocabulary=vocabularyId canEdit=group.canAdmin}}
-  {{/we-term-editable}}
-</div>
-
-<div>
-  {{#we-content-editable value=group.description attribute='description' onSave="salvarAtributo" canEdit=group.canAdmin}}
-    {{we-editor value=group.description }}
-  {{/we-content-editable}}
-</div>
+<p class="group-categories">{{we-terms terms=group.categories}}</p>
+<br>
+<div>{{html group.description}}</div>

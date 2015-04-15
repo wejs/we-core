@@ -1,10 +1,21 @@
+/**
+ *  we-activities component
+ *
+ * Timeline
+ * {{we-activities userId=userId}}
+ *
+ * Group activity:
+ * {{we-activities group=group}}
+ *
+ * User Activity:
+ * {{we-activities userId=userId}}
+ */
+
 App.inject( 'component:we-activities', 'store', 'store:main' );
 
 App.WeActivitiesComponent = Ember.Component.extend({
   showSharebox: true,
-
   activity: null,
-
   // filter by user acttivities
   userId: null,
   // filter by group acttivities
@@ -16,20 +27,66 @@ App.WeActivitiesComponent = Ember.Component.extend({
   isSearching: false,
 
   searchString: '',
-  query: {
-    where: {}
-  },
+
+  where: {},
+
+  // timeline get old itens vars
+  modelType: 'activity',
+  page: 1,
+  loadingMore: false,
+  haveMore: true,
 
   limit: 7,
   count: null,
 
-  init: function init() {
+  // search
+  contextualFilter: null,
+  currentQuery: null,
+
+  selectedSort: 'createdAt',
+  sortProperties: ['createdAt'],
+  sortAscending: false,
+
+  defaultSort: 'createdAt DESC',
+  sort: 'createdAt DESC',
+  sortOptions: [
+    {
+      value: 'createdAt DESC',
+      label: 'sort.label.new'
+    },
+    {
+      value: 'createdAt ASC',
+      label: 'sort.label.old'
+    },
+    {
+      value: 'updatedAt DESC',
+      label: 'sort.label.updated'
+    }
+  ],
+
+  postIsLoading: Ember.computed.alias('parentController.isSearching'),
+
+  // static object used to track translated structures
+  translatedsObjects: {},
+
+  init: function() {
     this._super();
+
+    // localizate sortOptions
+    if(!this.translatedsObjects.sortOptions){
+      this.get('sortOptions').forEach(function(option){
+        option.label = Ember.I18n.t(option.label);
+      })
+      this.translatedsObjects.sortOptions = true;
+    }
   },
+
   didInsertElement: function didInsertElement() {
     this._super();
     // wait some time to load activity from server
     Ember.run.later(null, this.start.bind(this), null, this.get('delayToStart'));
+
+    $(window).on('scroll', $.proxy(this.didScroll, this) );
   },
   validRecordStatus:function(record) {
     if(Ember.get(record, 'currentState.stateName') == 'root.loaded.created.uncommitted') {
@@ -58,7 +115,7 @@ App.WeActivitiesComponent = Ember.Component.extend({
     if(this.get('group') && this.get('user')) {
       // activity created by user in group
       userId = this.get('user.id');
-      groupId = this.get('group.id');
+      groupId = this.get('groupId');
       return this.store.filter('activity', function (record) {
         if(!self.validRecordStatus(record)) return false;
         if(!self.filterQuery(record)) return false;
@@ -72,7 +129,7 @@ App.WeActivitiesComponent = Ember.Component.extend({
       });
     } else if(this.get('group')) {
       // activity created in group
-      groupId = this.get('group.id');
+      groupId = this.get('groupId');
       return this.store.filter('activity', function (record) {
         if(!self.validRecordStatus(record)) return false;
         if(!self.filterQuery(record)) return false;
@@ -112,39 +169,13 @@ App.WeActivitiesComponent = Ember.Component.extend({
     searchRecords: function() {
       var self  = this;
       var store = this.get('store');
-      var groupId = this.get('group.id');
-      var userId =  this.get('user.id');
 
       this.set('isSearching', true);
       self.set('activity', []);
 
-      var query = this.get('query');
-      if (!query) query = {
-        where: {}
-      };
-
-      if (groupId) query.where.groupId = groupId;
-      if (userId) query.where.actor = userId;
-
-      if(!query.limit) query.limit = this.get('limit');
-
       self.set('page', 1);
 
-      if (!query) {
-        return store.find('activity').then(function () {
-          if(this.isDestroyed) return;
-          self.set('isLoading', false);
-        });
-      }
-
-      if(!query.sort) query.sort = 'createdAt DESC';
-
-      if (
-        !Ember.isEmpty(query.where) &&
-        ( typeof query.where == 'object' )
-      ) {
-        query.where = JSON.stringify(query.where);
-      }
+      var query = this.getCurrentQuery();
 
       store.find('activity', query).then(function (res) {
         self.set('count', res.meta.count);
@@ -154,6 +185,139 @@ App.WeActivitiesComponent = Ember.Component.extend({
         self.set('isLoading', false);
         self.set('isSearching', false);
       });
+    },
+    // -- SEARCH FEATURE
+    filter: function() {
+      var sort = this.get('sort');
+
+      if (sort) {
+        if(sort.indexOf('createdAt') > -1) {
+          this.set('sortProperties', ['createdAt']);
+        } else {
+          this.set('sortProperties', ['updatedAt']);
+        }
+
+        if (sort.indexOf('ASC') > -1) {
+          this.set('sortAscending', true);
+        } else {
+          this.set('sortAscending', false);
+        }
+      } else {
+        this.set('sortProperties', ['createdAt']);
+        this.set('sortAscending', false);
+      }
+
+      this.send('searchRecords');
+    },
+
+    resetSearch: function(){
+      this.setProperties({
+        page: 1,
+        searchString: null,
+        currentQuery: null,
+        haveMore: true,
+        sortProperties: ['createdAt'],
+        sortAscending: false,
+        sort: this.get('defaultSort')
+      });
+
+      this.send('searchRecords');
+    },
+    // -- LOAD MORE FEATURE
+    getMore: function() {
+      var self = this;
+      // if dont have more offset this feature
+      // in one timeline new contents go to timeline start and are added with push
+      if (!this.get('haveMore')) return ;
+      // don't load new data if we already are
+      if (this.get('loadingMore')) return ;
+      this.set('loadingMore', true);
+
+      this.incrementProperty('page');
+
+      // add some delay after get more content from server
+      Ember.run.later(function() {
+        var query = self.getCurrentQuery();
+
+        self.store.find( self.get('modelType'), query).then(function(r){
+          if((Ember.get(r,'content.length') + self.get('length') ) < self.get('count') ) {
+            self.send('gotMore');
+          }else{
+            self.send('dontHaveMore');
+          }
+        });
+      }, 500);
+    },
+
+    // Also add a method `gotMore` that the route can call back to
+    // notify the controller that the new data is in and it can stop
+    // showing its loading indicator
+    gotMore: function() {
+      this.setProperties({
+        loadingMore: false
+      });
+    },
+    dontHaveMore: function() {
+      this.setProperties({
+        loadingMore: false,
+        haveMore: false
+      });
     }
+  },
+
+  onClickGetMore: function() {
+    this.send('getMore');
+  },
+
+  /**
+   * Build url query object
+   *
+   * @return {object} object with current query for user with $.ajax
+   */
+  getCurrentQuery: function(where) {
+    var query = {
+      where: {}
+    };
+
+    if (where) query.where = where;
+    if (this.get('groupId')) query.where.groupId = this.get('groupId');
+    if (this.get('userId')) query.where.actor = this.get('userId');
+    query.limit = this.get('limit');
+    if (this.get('page')) query.offset = query.limit * (this.get('page') -1);
+    // TODO add suport to search in we.js 0.3.x
+    if (this.get('searchString')) {
+      query.body = { contains: this.get('searchString') };
+    }
+    if(this.get('perPage')) query.limit = this.get('perPage');
+    if(!query.sort) query.sort = this.get('sort');
+
+    query.where = JSON.stringify(query.where);
+    return query;
+  },
+  willDestroyElement: function(){
+    // have to use the same argument to `off` that we did to `on`
+    $(window).off('scroll', $.proxy(this.didScroll,this) );
+  },
+
+  // this is called every time we scroll
+  didScroll: function() {
+    if (this.isScrolledToBottom()) {
+      this.send('getMore');
+    }
+  },
+
+  // we check if we are at the bottom of the page
+  isScrolledToBottom: function(){
+    var distanceToViewportTop = (
+      $(document).height() - $(window).height());
+    var viewPortTop = $(document).scrollTop();
+
+    if (viewPortTop === 0) {
+      // if we are at the top of the page, don't do
+      // the infinite scroll thing
+      return false;
+    }
+
+    return (viewPortTop - distanceToViewportTop === 0);
   }
 });

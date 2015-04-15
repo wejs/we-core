@@ -11,11 +11,11 @@
       {{we-editor name="description" value=record.description type="text" required="true"}}
   </div>
 
+  <hr>
 
   <div class="form-group">
     <label class="story-form-label">{{t 'group.form.category.label'}}</label>
-    {{we-category-field required="true" value=category
-        newTagMark=' (nova)' vocabulary=vocabularyId}}
+    {{we-category-field required="true" value=record.categories modelName="Group" field="categories"}}
   </div>
 
   <div class="form-group">
@@ -28,27 +28,32 @@
     </div>
   </div>
 
-  {{#if imageSelected}}
-    {{we-image-crop src=salvedImage.urls.original file=salvedImage data=cropImageData}}
-  {{else}}
+  <hr>
+
+  {{#if record.logo}}
     <div class="form-group">
-      <div class="row">
-        <div class="col-lg-9">
-          <div class="input-group">
-            <span class="input-group-addon">
-              <label for="image">{{t 'Group image'}}</label>
-            </span>
-            {{image-upload multiple="false" files=files classNames="form-control"}}
-          </div><!-- /input-group -->
-        </div><!-- /.col-lg-6 -->
-        <div class="col-lg-3">
-          <div class="input-group">
-            <button class="btn btn-primary" type="buttom" {{action 'selectFile'}}>Selecionar imagem</button>
-          </div><!-- /input-group -->
-        </div><!-- /.col-lg-6 -->
-      </div><!-- /.row -->
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td>{{we-image file=record.logo size="thumbnail" width="40px"}}</td>
+            <td>{{record.logo.id}}</td>
+            <td>{{record.logo.originalname}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   {{/if}}
+
+  <div class="form-group">
+    {{#unless inputReset}}
+      {{image-upload classNames="form-control header-inputs" files=selectedImage}}
+    {{/unless}}
+    {{#if selectedImage}}
+      <button {{action 'resetSelectedImage'}} class="btn btn-default">{{t 'reset'}}</button>
+    {{/if}}
+  </div>
+
+  <hr>
 
   <div class="form-group">
     <button class="btn btn-primary" type="buttom" {{action 'saveRecord'}}>{{t 'group.form.submit'}}</button>

@@ -84,6 +84,14 @@ App.GroupAboutRoute = Ember.Route.extend(App.ResetScrollMixin, {
   }
 });
 
+App.GroupEditRoute = Ember.Route.extend(App.ResetScrollMixin, {
+  model: function() {
+    return Ember.RSVP.hash({
+      record: this.modelFor('group').group
+    });
+  }
+});
+
 // members list
 App.GroupMembersRoute = Ember.Route.extend(App.ResetScrollMixin, {
   model: function() {
