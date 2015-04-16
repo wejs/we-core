@@ -1,6 +1,29 @@
 var _ = require('lodash');
 
 module.exports = {
+  findNewGroupsToUser: function findNewGroupsToUser(req, res) {
+    var we = req.getWe();
+
+    if (req.query.findNewForUserId) {
+      if (!res.locals.query.include) res.locals.query.include = [];
+      res.locals.query.include.push({
+        model: we.db.models.user, as: 'users',
+        where: {
+          id: { $not: req.query.findNewForUserId },
+        }
+      });
+    }
+
+    res.locals.Model.findAndCountAll(res.locals.query)
+    .done(function(err, record) {
+      if (err) return res.serverError(err);
+      res.locals.metadata.count = record.count;
+      res.locals.record = record.rows;
+
+      return res.ok();
+    });
+  },
+
   join: function join(req, res, next) {
     if (!req.isAuthenticated) return res.forbidden();
 

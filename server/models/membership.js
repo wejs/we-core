@@ -7,6 +7,7 @@
 module.exports = function Model(we) {
   var model = {
     definition: {
+      id: { type: we.db.Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
       // mebership model name
       memberName: {
         type: we.db.Sequelize.STRING,
@@ -37,7 +38,8 @@ module.exports = function Model(we) {
         type: 'belongsToMany',
         model: 'membershiprole',
         inverse: 'memberships',
-        through: 'membership_membershiprole'
+        through: 'membership_membershiprole',
+        foreignKey: 'id'
       }
     }
   }

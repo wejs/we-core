@@ -412,6 +412,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'membership'
     },
 
+    // find groups to user
+    'get /user/:userId([0-9]+)/find-new-groups': {
+      controller    : 'group',
+      action        : 'findNewGroupsToUser',
+      model         : 'membership'
+    },
+
     // 'post /api/v1/user/:id([0-9]+)/avatar': {
     //   controller    : 'avatar',
     //   action        : 'changeAvatar'

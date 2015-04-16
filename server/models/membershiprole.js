@@ -28,13 +28,13 @@ module.exports = function Model(we) {
         type: 'belongsToMany',
         model: 'membershippermission',
         inverse: 'membershiproles',
-        through: 'membershippermissions_membershippermissions'
+        through: 'membershiproles_membershippermissions'
       },
 
       memberships: {
         type: 'belongsToMany',
         model: 'membership',
-        inverse: 'roles',
+        inverse: 'membershiproles',
         through: 'membership_membershiprole'
       }
     },

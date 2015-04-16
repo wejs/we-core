@@ -88,6 +88,39 @@ describe('groupFeature', function () {
         done();
       });
     });
+    // /user/:userId([0-9]+)/find-new-groups
+    it('get /user/[userId]/find-new-groups route should find new groups to user', function (done) {
+
+      var userStub = stubs.userStub();
+      helpers.createUser(userStub, function(err, user) {
+        if (err) throw new Error(err);
+        var stub = stubs.groupStub(user.id);
+        we.db.models.group.create(stub)
+        .done(function (err, g) {
+          if (err) return done(err);
+
+          authenticatedRequest
+          .get('/user/'+ salvedUser.id +'/find-new-groups')
+          .set('Accept', 'application/json')
+          .end(function (err, res) {
+            assert.equal(200, res.status);
+            assert(res.body.group);
+            assert( _.isArray(res.body.group) , 'group not is array');
+            assert(res.body.meta);
+
+            var haveTheTestGroup = false;
+            res.body.group.forEach(function(group){
+              assert(group.id != salvedGroup.id);
+              if (group.id == g.id) haveTheTestGroup = true;
+            });
+
+            assert(haveTheTestGroup);
+
+            done();
+          });
+        });
+      });
+    });
   });
 
   describe('create', function () {

@@ -60,6 +60,20 @@ module.exports = function UserModel(we) {
     },
 
     associations: {
+      // inGroups: {
+      //   type: 'belongsToMany',
+      //   model: 'user',
+      //   through: {
+      //     model: 'membership',
+      //     scope: {
+      //       modelName: 'group'
+      //     }
+      //   },
+      //   // constraints: false,
+      //   foreignKey: 'id',
+      //   otherKey: 'memberId'
+      // },
+
       avatar: {
         type: 'belongsTo',
         model : 'image',

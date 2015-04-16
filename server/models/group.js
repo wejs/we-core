@@ -51,7 +51,21 @@ module.exports = function Model(we) {
         type: 'belongsTo',
         model: 'user',
         inverse: 'groups'
-      }
+      },
+
+      // users: {
+      //   type: 'belongsToMany',
+      //   model: 'user',
+      //   through: {
+      //     model: 'membership',
+      //     scope: {
+      //       modelName: 'group'
+      //     }
+      //   },
+      //   // constraints: false,
+      //   foreignKey: 'id',
+      //   otherKey: 'modelId'
+      // }
     },
 
     options: {
@@ -147,8 +161,6 @@ module.exports = function Model(we) {
                   break;
                 }
               }
-
-              if (!role) return cb(null, membership);
 
               membership.addRole(role).done(function(err) {
                 if (err) return cb(err);
@@ -271,7 +283,7 @@ module.exports = function Model(we) {
           var group = this;
           if (!group.dataValues.meta) group.dataValues.meta = {};
 
-          async.series([
+          async.parallel([
             function loadMembers(done) {
               group.loadMembersCount(function(err, count) {
                 if (err) return done(err);
@@ -344,13 +356,36 @@ module.exports = function Model(we) {
         return async.each(data.res.locals.record, function(record, next) {
           record.loadCounts(function(err) {
             if (err) return data.res.serverError(err);
-            next();
+            if (!data.req.user.id) return next();
+
+            we.db.models.membership.find({where: {
+              modelName: 'group',
+              modelId: record.id,
+              memberName: 'user',
+              memberId: data.req.user.id
+            }}).done(function(err, result){
+              if (err) return data.res.serverError(err);
+              // save current user group membership in metadata
+              if (result) record.dataValues.meta.membership = result;
+              next();
+            });
           });
         }, done);
       } else {
         return data.res.locals.record.loadCounts(function(err) {
           if (err) return data.res.serverError(err);
-          done();
+            if (!data.req.user.id) return done();
+            we.db.models.membership.find({where: {
+              modelName: 'group',
+              modelId: data.res.locals.record.id,
+              memberName: 'user',
+              memberId: data.req.user.id
+            }}).done(function(err, result){
+              if (err) return data.res.serverError(err);
+              // save current user group membership in metadata
+              if (result) data.res.locals.record.dataValues.meta.membership = result;
+              done();
+            });
         });
       }
     }
