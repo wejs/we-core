@@ -1,5 +1,5 @@
 {{#if isRecordLoaded}}
-  {{renderActivity activity.activityActionName activity.activityName  record=activity.relatedRecord}}
+  {{renderActivity activity.activityActionName activity.activityName  activity=activity}}
 {{else}}
   {{we-loading isLoading=true}}
 {{/if}}

@@ -18,13 +18,23 @@ $(function() {
         self.set('relatedRecord', r);
       });
     }.observes('modelName', 'modelId').on('init'),
-
     relatedRecord: null,
-
     // self remove it if related record is deleted
     onDeleteRelatedRecord: function() {
       if (this.get('relatedRecord.isDeleted') )
         this.deleteRecord();
-    }.observes('relatedRecord.isDeleted')
+    }.observes('relatedRecord.isDeleted'),
+
+
+    relatedActorLoader: function() {
+      if (this.get('relatedActor')) return;
+      if (!this.get('actor')) return;
+      var self = this;
+      this.get('store').find('user', this.get('actor'))
+      .then(function (r) {
+        self.set('relatedActor', r);
+      });
+    }.observes('actor').on('init'),
+    relatedActor: null
   });
 });
