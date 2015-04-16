@@ -6,6 +6,8 @@ App.WeShareboxComponent = Ember.Component.extend(
 
   post: {},
 
+  groupId: null,
+
   // posts sending list
   postsSending: [],
 
@@ -40,11 +42,10 @@ App.WeShareboxComponent = Ember.Component.extend(
   actions: {
     openBox: function openBox() {
       this.resetRecord();
-      this.get('post').setProperties({
-        'isOpen': true,
-        'shareboxClass': 'normal',
-        'newWembed': null
-      });
+      this.set('post.isOpen', true);
+      this.set('post.shareboxClass', 'normal');
+      this.set('post.newWembed', null);
+
     },
     cancel: function closeBox(){
       this.set('post', null);
@@ -68,7 +69,7 @@ App.WeShareboxComponent = Ember.Component.extend(
 
     submit: function submit() {
       var self = this;
-      var post = this.get('post');
+      var post = this.get('store').createRecord('post', this.get('post'));
       // set the post saver flag
       post.set('isSending', true);
       // reset sharebos post to clean
@@ -123,36 +124,29 @@ App.WeShareboxComponent = Ember.Component.extend(
         post.set('inSendingProcess', false);
         self.set('post', null);
 
-        if (self.get('group.id')) self.send('addPostInGroup', post);
+        if (self.get('groupId')) self.send('addPostInGroup', post);
       });
     },
 
     addPostInGroup: function(post) {
-      var groupId = this.get('group.id');
-
+      var groupId = this.get('groupId');
       Ember.$.ajax({
         type: 'POST',
         url: '/api/v1/group/'+ groupId +'/addContent/post/' + post.id
       })
-      .done(function(result) {
-        console.log('result>', result)
-      })
       .fail(function(xhr) {
-        console.log('error>', xhr)
-      })
-      .always(function() {
-        console.log('doneALl')
+        Ember.Logger.error('error on save post:', xhr)
       });
     }
   },
 
   resetRecord: function() {
-    var post = this.get('store').createRecord('post');
-    post.setProperties({
+    var post = {
+      'createdAt': new Date(),
       'creator': App.get('currentUser'),
       // temp vars
       'imagesToSave': []
-    });
+    };
     this.set('post', post);
   },
 

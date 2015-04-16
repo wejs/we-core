@@ -112,7 +112,7 @@ App.WeActivitiesComponent = Ember.Component.extend({
     var groupId;
 
     // set the filter
-    if(this.get('group') && this.get('user')) {
+    if(this.get('groupId') && this.get('user')) {
       // activity created by user in group
       userId = this.get('user.id');
       groupId = this.get('groupId');
@@ -127,7 +127,7 @@ App.WeActivitiesComponent = Ember.Component.extend({
         }
         return false;
       });
-    } else if(this.get('group')) {
+    } else if(this.get('groupId')) {
       // activity created in group
       groupId = this.get('groupId');
       return this.store.filter('activity', function (record) {

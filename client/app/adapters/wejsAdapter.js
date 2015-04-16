@@ -29,18 +29,13 @@ $.ajaxPrefilter(function( options ) {
 
 
 Ember.$(document).ajaxSuccess(function(event, jqXHR) {
+  if(!jqXHR.responseJSON.meta) return;
 
-  try {
-    if (jqXHR.responseJSON.meta.activity)  {
-      for (var i = jqXHR.responseJSON.meta.activity.length - 1; i >= 0; i--) {
-        Ember.get(App.Activity, 'store')
-        .push('activity', jqXHR.responseJSON.meta.activity[i]);
-      }
-
-      delete jqXHR.responseJSON.meta.activity;
-    }
-  } catch(e) {}
-
+  if (!Ember.isEmpty(jqXHR.responseJSON.meta.activity) )  {
+     Ember.get(App.Activity, 'store')
+    .pushPayload('activity', {activity: jqXHR.responseJSON.meta.activity} );
+    delete jqXHR.responseJSON.meta.activity;
+  }
 });
 
 App.ApplicationRESTAdapter = DS.RESTAdapter.extend({
