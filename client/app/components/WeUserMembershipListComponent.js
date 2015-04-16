@@ -13,6 +13,8 @@ App.WeUserMembershipListComponent = Ember.Component.extend({
   page: 0,
   count: 0,
 
+  isLoading: true,
+
   // delay to start in ms
   delayToStart: 500,
 
@@ -35,6 +37,8 @@ App.WeUserMembershipListComponent = Ember.Component.extend({
       var store = this.get('store');
       var memberId =  this.get('memberId');
 
+      if (!memberId) return Ember.Logger.warn('we-membership-list:memberId is required');
+
       this.set('isSearching', true);
       self.set('records', []);
 
@@ -43,7 +47,6 @@ App.WeUserMembershipListComponent = Ember.Component.extend({
         where: {}
       };
 
-      if (memberId) query.memberId = memberId;
       if(!query.limit) query.limit = this.get('limit');
 
       self.set('page', 1);

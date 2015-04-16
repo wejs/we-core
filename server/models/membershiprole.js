@@ -32,9 +32,10 @@ module.exports = function Model(we) {
       },
 
       memberships: {
+        emberOnly: true,
         type: 'belongsToMany',
         model: 'membership',
-        inverse: 'membershiproles',
+        inverse: 'roles',
         through: 'membership_membershiprole'
       }
     },

@@ -20,7 +20,8 @@ module.exports = function Model(we) {
         type: 'belongsToMany',
         model: 'membershiprole',
         inverse: 'permissions',
-        through: 'membershippermissions_membershippermissions'
+        through: 'membershiproles_membershippermissions',
+        constraints: false
       }
     },
 

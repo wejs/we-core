@@ -9,6 +9,8 @@ App.WeGroupListComponent = Ember.Component.extend({
   page: 0,
   count: 0,
 
+  isLoading: true,
+
   // delay to start in ms
   delayToStart: 500,
 
@@ -23,7 +25,7 @@ App.WeGroupListComponent = Ember.Component.extend({
 
   actions: {
     searchRecords: function() {
-      if (this.get('memberId')) this.send('searchUserRecords');
+      if (this.get('memberId')) return this.send('searchUserRecords');
 
       var self  = this;
       var store = this.get('store');
@@ -76,7 +78,6 @@ App.WeGroupListComponent = Ember.Component.extend({
         where: {}
       };
 
-      if (memberId) query.memberId = memberId;
       if(!query.limit) query.limit = this.get('limit');
 
       self.set('page', 1);
@@ -91,14 +92,20 @@ App.WeGroupListComponent = Ember.Component.extend({
       }
 
       $.ajax({
-        url: '/user/' + memberId + '/membership',
+        url: '/user/' + memberId +'/find-new-groups',
         data: query,
       }).done(function(res) {
         if(self.isDestroyed) return;
 
         self.set('count', res.meta.count);
-        // reset posts filter
-        self.set('records', store.pushMany('membership', res.membership) );
+
+        if (!Ember.isEmpty(res.group)) {
+          // reset posts filter
+          self.set('records', res.group.map(function(record){
+            return store.push('group', record);
+          }));
+        }
+
         self.set('isLoading', false);
         self.set('isSearching', false);
       })

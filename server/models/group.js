@@ -53,7 +53,17 @@ module.exports = function Model(we) {
         inverse: 'groups'
       },
 
-      // users: {
+      memberships: {
+        type: 'hasMany',
+        model: 'membership',
+        inverse: 'model',
+        constraints: false,
+        foreignKey: 'modelId',
+
+      }
+
+
+      // members: {
       //   type: 'belongsToMany',
       //   model: 'user',
       //   through: {
@@ -62,7 +72,7 @@ module.exports = function Model(we) {
       //       modelName: 'group'
       //     }
       //   },
-      //   // constraints: false,
+      //   //constraints: false,
       //   foreignKey: 'id',
       //   otherKey: 'modelId'
       // }
@@ -133,7 +143,7 @@ module.exports = function Model(we) {
         createRole: function createRole(roleName, cb) {
           we.db.models.group.createRole(this.id, roleName, cb);
         },
-        addMember: function addMember(userId, roleName, cb) {
+        addMember: function addMemberWithRole(userId, roleName, cb) {
           if (!roleName) roleName = 'member';
           var group = this;
 

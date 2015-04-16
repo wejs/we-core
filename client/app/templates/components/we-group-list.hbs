@@ -1,14 +1,18 @@
 <div class="groups row">
-  <div class="col-md-12">
-    <h3>Encontrar Grupos</h3>
-  </div>
-  {{#each record in records}}
-    <div class="col-md-3">
-      {{render 'group/teaser' record}}
-    </div>
+  {{#if isLoading}}
+    <div class="col-md-12">{{we-loading isLoading=isLoading}}</div>
   {{else}}
     <div class="col-md-12">
-      <p>{{t 'No groups found'}}</p>
+      <h3>Encontrar Grupos</h3>
     </div>
-  {{/each}}
+    {{#each record in records}}
+      <div class="col-md-3">
+        {{render 'group/teaser' record}}
+      </div>
+    {{else}}
+      <div class="col-md-12">
+        <p>{{t 'groups.empty'}}</p>
+      </div>
+    {{/each}}
+  {{/if}}
 </div>

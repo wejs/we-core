@@ -9,7 +9,6 @@ App.WeMenuComponent = Ember.Component.extend({
 
   didInsertElement: function () {
     this._super();
-    teste = this;
     if(this.get('enableMetisMenu'))
     	this.$().metisMenu();
   },

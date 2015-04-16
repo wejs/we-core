@@ -62,7 +62,7 @@ module.exports = function UserModel(we) {
     associations: {
       // inGroups: {
       //   type: 'belongsToMany',
-      //   model: 'user',
+      //   model: 'group',
       //   through: {
       //     model: 'membership',
       //     scope: {
@@ -74,6 +74,13 @@ module.exports = function UserModel(we) {
       //   otherKey: 'memberId'
       // },
 
+      inGroups: {
+        type: 'hasMany',
+        model: 'membership',
+        inverse: 'member',
+        constraints: false,
+        foreignKey: 'memberId'
+      },
       avatar: {
         type: 'belongsTo',
         model : 'image',

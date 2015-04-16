@@ -1,26 +1,37 @@
 var _ = require('lodash');
 
 module.exports = {
-  findNewGroupsToUser: function findNewGroupsToUser(req, res) {
+  findNewGroupsToUser: function findNewGroupsToUser(req, res, next) {
+    if (!req.params.userId) return next;
+
     var we = req.getWe();
 
-    if (req.query.findNewForUserId) {
-      if (!res.locals.query.include) res.locals.query.include = [];
-      res.locals.query.include.push({
-        model: we.db.models.user, as: 'users',
-        where: {
-          id: { $not: req.query.findNewForUserId },
-        }
-      });
-    }
+    if (!res.locals.query.include) res.locals.query.include = [];
 
-    res.locals.Model.findAndCountAll(res.locals.query)
+    res.locals.query.include.push({
+      model: we.db.models.membership , as: 'memberships', required: false,
+      attributes: ['modelId', 'id'],
+      where: {
+        memberId: req.params.userId
+      }
+    });
+
+    res.locals.query.where = [
+      '`group`.`deletedAt` IS NULL AND `memberships`.`modelId` IS NULL'
+    ];
+
+    res.locals.Model.findAll(res.locals.query, res.locals.queryOptions)
     .done(function(err, record) {
       if (err) return res.serverError(err);
-      res.locals.metadata.count = record.count;
-      res.locals.record = record.rows;
 
-      return res.ok();
+      res.locals.Model.count(res.locals.query, res.locals.queryOptions).then(function (count){
+        res.locals.metadata.count = count;
+        res.locals.record = record;
+
+        return res.ok();
+      }).catch(function(err){
+        return res.serverError(err);
+      })
     });
   },
 

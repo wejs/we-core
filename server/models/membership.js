@@ -15,7 +15,7 @@ module.exports = function Model(we) {
       },
       memberId: {
         type: we.db.Sequelize.INTEGER,
-        allowNull: false
+        //allowNull: false
       },
 
       modelName: {
@@ -24,7 +24,7 @@ module.exports = function Model(we) {
       },
       modelId: {
         type: we.db.Sequelize.INTEGER,
-        allowNull: false
+      //  allowNull: false
       },
 
       status: {
@@ -40,6 +40,16 @@ module.exports = function Model(we) {
         inverse: 'memberships',
         through: 'membership_membershiprole',
         foreignKey: 'id'
+      },
+
+      member: {
+        type: 'belongsTo',
+        model: 'user'
+      },
+
+      model: {
+        type: 'belongsTo',
+        model: 'group'
       }
     }
   }

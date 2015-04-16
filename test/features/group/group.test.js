@@ -88,8 +88,8 @@ describe('groupFeature', function () {
         done();
       });
     });
-    // /user/:userId([0-9]+)/find-new-groups
-    it('get /user/[userId]/find-new-groups route should find new groups to user', function (done) {
+
+    it('get /user/[userId]/find-new-groups?where=%7B%7D&limit=9&sort=createdAt+DESC. route should find new groups to user', function (done) {
 
       var userStub = stubs.userStub();
       helpers.createUser(userStub, function(err, user) {
@@ -100,7 +100,7 @@ describe('groupFeature', function () {
           if (err) return done(err);
 
           authenticatedRequest
-          .get('/user/'+ salvedUser.id +'/find-new-groups')
+          .get('/user/'+ salvedUser.id +'/find-new-groups?where=%7B%7D&limit=9&sort=createdAt+DESC')
           .set('Accept', 'application/json')
           .end(function (err, res) {
             assert.equal(200, res.status);
@@ -121,6 +121,20 @@ describe('groupFeature', function () {
         });
       });
     });
+
+    it('get /group?where=%7B%7D&limit=9&sort=createdAt+DESC route should find group list', function (done) {
+      authenticatedRequest
+      .get('/group?where=%7B%7D&limit=9&sort=createdAt+DESC')
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        assert.equal(200, res.status);
+        assert(res.body.group);
+        assert( _.isArray(res.body.group) , 'group not is array');
+        assert(res.body.meta);
+        done();
+      });
+    });
+
   });
 
   describe('create', function () {
