@@ -29,7 +29,7 @@ $.ajaxPrefilter(function( options ) {
 
 
 Ember.$(document).ajaxSuccess(function(event, jqXHR) {
-  if(!jqXHR.responseJSON.meta) return;
+  if(!jqXHR.responseJSON || !jqXHR.responseJSON.meta) return;
 
   if (!Ember.isEmpty(jqXHR.responseJSON.meta.activity) )  {
      Ember.get(App.Activity, 'store')

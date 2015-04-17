@@ -85,6 +85,8 @@ App.WeGroupJoinButtonComponent = Ember.Component.extend({
     },
 
     leaveGroup: function leaveGroup() {
+      if (!confirm(Ember.I18n.t('membership.leaveGroup.confirm') )) return;
+
       var self = this;
       var group = this.get('group');
       var userId = App.get('currentUser.id');
