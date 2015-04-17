@@ -1,4 +1,3 @@
-
 $(function() {
   App.Group.reopen({
     membership: function() {

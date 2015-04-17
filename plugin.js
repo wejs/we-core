@@ -168,6 +168,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       available: {
         like: {}
       }
+    },
+
+    database: {
+      resetAllData: false
     }
   });
   // ser plugin routes

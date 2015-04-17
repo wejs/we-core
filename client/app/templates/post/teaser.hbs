@@ -18,7 +18,6 @@
   </div>
 
   <div class="panel-body">
-
     {{#if isEditing}}
     <form role="form" {{action "submit" on="submit"}}>
       <div class="form-group">
@@ -117,14 +116,16 @@
             {{#link-to 'post' id classNames="btn btn-xs btn-default"}}
               <span class="glyphicon glyphicon-link text-success"></span>  {{t 'post.link.show'}}
             {{/link-to}}
-
-            {{#link-to 'post' id (query-params anchor="comments") classNames="btn btn-xs btn-primary"}}
-              <span class="glyphicon glyphicon-comment"></span> {{model.commentCount}} {{t 'Comment'}}
-            {{/link-to}}
           {{/if}}
         </div>
       </div>
     {{/if}}
+  </div>
+  <div class="panel-footer">
+    <div class="comments-area">
+      {{we-comments commentedModelName="post" commentedModelId=id}}
+      {{we-comment-form commentedModelName="post" commentedModelId=id}}
+    </div>
   </div>
 </div>
 </div>
