@@ -187,16 +187,17 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //
     // -- config routes
     //
-    '/api/v1/configs.json': {
+    'get /api/v1/configs.json': {
       controller: 'main',
       action: 'getConfigsJS',
       responseType  : 'json'
     },
 
-    '/api/v1/translations.js': {
+    'get /api/v1/translations.js': {
       controller: 'main',
       action: 'getTranslations',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : true
     },
 
     // ember.js models generated from sails.js models
@@ -403,7 +404,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'get /user/:username?': {
       controller    : 'user',
       action        : 'findOneByUsername',
-      model         : 'user'
+      model         : 'user',
+      permission    : 'find_user'
     },
     'get /user': {
       controller    : 'user',
@@ -411,16 +413,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'user',
       permission    : 'find_user'
     },
-    'get /user/:id': {
-      controller    : 'user',
-      action        : 'findOne',
-      model         : 'user',
-      permission    : 'find_user'
-    },
     // get logged in user avatar
     'get /avatar/:id([0-9]+)': {
       controller    : 'avatar',
-      action        : 'getAvatar'
+      action        : 'getAvatar',
+      permission    : 'find_user'
     },
     'get /user/:userId([0-9]+)/membership': {
       controller    : 'group',
@@ -434,6 +431,32 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'group'
     },
 
+    'get /user/:id([0-9]+)': {
+      controller    : 'user',
+      action        : 'findOne',
+      model         : 'user',
+      permission    : 'find_user'
+    },
+    'post /user': {
+      controller    : 'user',
+      action        : 'create',
+      model         : 'user',
+      permission    : 'create_user'
+    },
+    'put /user/:id([0-9]+)': {
+      controller    : 'user',
+      action        : 'update',
+      model         : 'user',
+      permission    : 'update_user'
+    },
+    'delete /user/:id([0-9]+)': {
+      controller    : 'user',
+      action        : 'destroy',
+      model         : 'user',
+      permission    : 'delete_user'
+    },
+
+
     // 'post /api/v1/user/:id([0-9]+)/avatar': {
     //   controller    : 'avatar',
     //   action        : 'changeAvatar'
@@ -443,27 +466,49 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // -- ROLES
     //
 
+    'get /role/:id([0-9]+)': {
+      controller    : 'role',
+      action        : 'findOne',
+      model         : 'role',
+      permission    : 'find_role'
+    },
+    'get /role': {
+      controller    : 'role',
+      action        : 'find',
+      model         : 'role',
+      permission    : 'find_role'
+    },
     'post /role': {
       controller    : 'role',
       action        : 'create',
-      model         : 'role'
+      model         : 'role',
+      permission    : 'manage_role'
+    },
+    'put /role/:id([0-9]+)': {
+      controller    : 'role',
+      action        : 'update',
+      model         : 'role',
+      permission    : 'manage_role'
     },
     'delete /role/:id([0-9]+)': {
       controller    : 'role',
       action        : 'destroy',
-      model         : 'role'
+      model         : 'role',
+      permission    : 'manage_role'
     },
     // add user role
     'post /user/:id([0-9]+)/role': {
       controller    : 'role',
       action        : 'addRoleToUser',
-      model         : 'user'
+      model         : 'user',
+      permission    : 'manage_role'
     },
     // remove role in user
     'delete /user/:id([0-9]+)/role': {
       controller    : 'role',
       action        : 'removeRoleFromUser',
-      model         : 'user'
+      model         : 'user',
+      permission    : 'manage_role'
     },
 
     //
@@ -479,7 +524,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'role',
       action        : 'addPermissionToRole',
       model         : 'role',
-      permission    : 'upload_image',
+      permission    : 'manage_permissions',
     },
 
     // -- FOLLOW
@@ -488,7 +533,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'get /api/v1/follow/:model/:modelId([0-9]+)?': {
       controller    : 'follow',
       action        : 'isFollowing',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'use_follow'
     },
 
     // create
@@ -496,7 +542,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'post /api/v1/follow/:model/:modelId([0-9]+)': {
       controller    : 'follow',
       action        : 'follow',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'use_follow'
     },
 
     // delete
@@ -504,7 +551,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'delete /api/v1/follow/:model/:modelId([0-9]+)': {
       controller    : 'follow',
       action        : 'unFollow',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'use_follow'
     },
 
     // -- FLAG
@@ -514,15 +562,16 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'get /api/v1/flag/:model/:modelId?/:userId?': {
       controller    : 'flag',
       action        : 'getModelFlags',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'use_flag'
     },
-
     // create
     // example: /api/v1/flag/post/1/2?flagType=follow
     'post /api/v1/flag/:model/:modelId': {
       controller    : 'flag',
       action        : 'flag',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'use_flag'
     },
 
     // delete
@@ -530,7 +579,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'delete /api/v1/flag/:model/:modelId': {
       controller    : 'flag',
       action        : 'unFlag',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'use_flag'
     },
 
     // GROUPS
@@ -570,44 +620,169 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'group',
       responseType  : 'json'
     },
-
     'post /api/v1/group/:groupId([0-9]+)/leave': {
       controller    : 'group',
       action        : 'leave',
       model         : 'group',
       responseType  : 'json'
     },
-
     'get /group/:groupId([0-9]+)/member': {
       controller    : 'group',
       action        : 'findMembers',
       model         : 'membership',
       responseType  : 'json'
     },
-
     'get /group/:groupId([0-9]+)/role': {
       controller    : 'group',
       action        : 'findRoles',
       model         : 'membershiprole',
       responseType  : 'json'
     },
+    'get /group/:id([0-9]+)': {
+      controller    : 'group',
+      action        : 'findOne',
+      model         : 'group',
+      permission    : 'find_group'
+    },
+    'get /group': {
+      controller    : 'group',
+      action        : 'find',
+      model         : 'group',
+      permission    : 'find_group'
+    },
+    'post /group': {
+      controller    : 'group',
+      action        : 'create',
+      model         : 'group',
+      permission    : 'create_group'
+    },
+    'put /group/:id([0-9]+)': {
+      controller    : 'group',
+      action        : 'update',
+      model         : 'group',
+      permission    : 'update_group'
+    },
+    'delete /group/:id([0-9]+)': {
+      controller    : 'group',
+      action        : 'destroy',
+      model         : 'group',
+      permission    : 'delete_group'
+    },
 
-    // - vocabularies and terms
+
+    // Activity
+    'get /group/:groupId([0-9]+)/activity': {
+      controller    : 'activity',
+      action        : 'findGroupActivity',
+      model         : 'activity',
+      responseType  : 'json'
+    },
+
+
+    // Page
+    'get /page/:id([0-9]+)': {
+      controller    : 'page',
+      action        : 'findOne',
+      model         : 'page',
+      permission    : 'find_page'
+    },
+    'get /page': {
+      controller    : 'page',
+      action        : 'find',
+      model         : 'page',
+      permission    : 'find_page'
+    },
+    'post /page': {
+      controller    : 'page',
+      action        : 'create',
+      model         : 'page',
+      permission    : 'create_page'
+    },
+    'put /page/:id([0-9]+)': {
+      controller    : 'page',
+      action        : 'update',
+      model         : 'page',
+      permission    : 'update_page'
+    },
+    'delete /page/:id([0-9]+)': {
+      controller    : 'page',
+      action        : 'destroy',
+      model         : 'page',
+      permission    : 'delete_page'
+    },
+
+    // Comment
+    'get /comment/:id([0-9]+)': {
+      controller    : 'comment',
+      action        : 'findOne',
+      model         : 'comment',
+      permission    : 'find_comment'
+    },
+    'get /comment': {
+      controller    : 'comment',
+      action        : 'find',
+      model         : 'comment',
+      permission    : 'find_comment'
+    },
+    'post /comment': {
+      controller    : 'comment',
+      action        : 'create',
+      model         : 'comment',
+      permission    : 'create_comment'
+    },
+    'put /comment/:id([0-9]+)': {
+      controller    : 'comment',
+      action        : 'update',
+      model         : 'comment',
+      permission    : 'update_comment'
+    },
+    'delete /comment/:id([0-9]+)': {
+      controller    : 'comment',
+      action        : 'destroy',
+      model         : 'comment',
+      permission    : 'delete_comment'
+    },
+
+    // Term
+    //
+
     'get /api/v1/term-texts': {
       controller    : 'term',
       action        : 'findTermTexts',
       model         : 'term',
       responseType  : 'json'
     },
-
-    // Activity
-
-    'get /group/:groupId([0-9]+)/activity': {
-      controller    : 'activity',
-      action        : 'findGroupActivity',
-      model         : 'activity',
-      responseType  : 'json'
+    'get /term/:id([0-9]+)': {
+      controller    : 'term',
+      action        : 'findOne',
+      model         : 'term',
+      permission    : 'find_term'
+    },
+    'get /term': {
+      controller    : 'term',
+      action        : 'find',
+      model         : 'term',
+      permission    : 'find_term'
+    },
+    'post /term': {
+      controller    : 'term',
+      action        : 'create',
+      model         : 'term',
+      permission    : 'create_term'
+    },
+    'put /term/:id([0-9]+)': {
+      controller    : 'term',
+      action        : 'update',
+      model         : 'term',
+      permission    : 'update_term'
+    },
+    'delete /term/:id([0-9]+)': {
+      controller    : 'term',
+      action        : 'destroy',
+      model         : 'term',
+      permission    : 'delete_term'
     }
+
   });
 
   plugin.hooks.on('we:create:default:folders', function(we, done) {

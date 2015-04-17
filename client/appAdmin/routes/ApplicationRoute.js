@@ -56,5 +56,72 @@ App.ApplicationRoute = Ember.Route.extend(WeApplicationRoutesMixin, {
     } else {
       App.set('currentUser.mentionOptions', []);
     }
+  },
+
+  actions: {
+    willTransition: function () {
+      NProgress.start();
+    },
+    loading: function(){
+      NProgress.set(0.5);
+    },
+    // after change route
+    didTransition: function() {
+      NProgress.done(true);
+    },
+
+    logRegister: function () {
+      App.auth.registerUser();
+    },
+
+    logIn: function () {
+      App.auth.authenticate();
+    },
+    /**
+     * Log out current user
+     */
+    logOut: function logOut() {
+      //disconect from socket.io
+      window.io.socket.disconnect();
+
+      App.auth.logOut(function(){
+        // redirect to logout in express
+        location.href = '/auth/logout';
+      });
+    },
+    error: function(error, transition){
+      if (error.status === 0) {
+        Ember.Logger.error('Unhandled error on route', error);
+        //showErrorDialog('Sorry, but we\'re having trouble connecting to the server. This problem is usually the result of a broken Internet connection. You can try refreshing this page.');
+      } else if (error.status == 403) {
+        Ember.Logger.error('Unhandled error on route', error);
+        //go to some default route
+      } else if (error.status == 401) {
+        Ember.Logger.error('Unhandled error on route', error);
+        //handle 401
+      } else if (error.status == 500) {
+        Ember.Logger.error('500 error', error);
+        this.transitionTo('500');
+        //handle 401
+      } else if (error.status == 404) {
+        // send to 404 page
+        this.transitionTo('404');
+      } else {
+        Ember.Logger.error('Unhandled error on route', error);
+      }
+    },
+    showModal: function(name, model) {
+      this.render(name, {
+        into: 'application',
+        outlet: 'modal',
+        model: model
+      });
+    },
+    removeModal: function() {
+      this.disconnectOutlet({
+        outlet: 'modal',
+        parentView: 'application'
+      });
+    }
   }
 });

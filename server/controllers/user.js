@@ -5,15 +5,11 @@
  * @description :: Contains logic for handling requests.
  */
 
-var _ = require('lodash');
-var async = require('async');
-
 module.exports = {
   findOneByUsername: function findOneByUsername (req, res, next) {
     var we = req.getWe();
 
     var username = req.params.username;
-
     if(!username) return next();
 
     res.locals.Model.find({
@@ -24,9 +20,7 @@ module.exports = {
         we.log.error('findOneByUsername:Error in find user by username', err);
         return res.serverError(err);
       }
-
       if(!user) return next();
-
       return res.ok(user);
     });
   },

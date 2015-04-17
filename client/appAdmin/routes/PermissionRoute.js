@@ -1,96 +1,70 @@
 App.Router.map(function(match) {
-  // post route map
   this.resource('permissions',{path: '/permissions'}, function(){
     this.route('create',{path: '/add'});
 
     this.resource('roles',{path: '/roles'}, function() {
       this.route('create',{path: '/add'});
-
-      this.resource('role',{path: '/role/:id'}, function(){
-        this.route('edit',{path: '/edit'});
-      });
+      this.route('view',{path: '/:id/view'});
+      this.route('edit',{path: '/:id/edit'});
     });
-
   });
-
 });
 
 App.PermissionsRoute = Ember.Route.extend({
   model: function () {
-    return {
-      attributes: Ember.get('App.Permission.attributes').keys.list,
-      records: this.get('store').find('permission'),
+    return Ember.RSVP.hash({
+      records: new Ember.RSVP.Promise(function(resolve, reject) {
+        var permissionsUrl = '/permission';
+        var permissionsHost = Ember.get('App.configs.permissionHost');
+        if ( permissionsHost ) {
+          permissionsUrl = permissionsHost + permissionsUrl;
+        }
+
+        return $.getJSON( permissionsUrl )
+        .done(function afterLoadData(data) {
+          // on success
+          resolve(data.permission);
+        })
+
+        .fail(function (result) {
+          if (result.status == '403') return resolve(Permissions._perms);
+
+          Ember.Logger.error('Error on load permissions' , result);
+          // on failure
+          return reject(result);
+        })
+      }),
       roles: this.get('store').find('role')
-    };
+    });
   },
 
   afterModel: function(model) {
     // remove administrator role
-    model.roles.then(function() {
-      var administrator = model.roles.filterProperty('name', 'administrator');
-      if (administrator)
-        model.roles.removeObject(administrator[0]);
-    })
+    var administrator = model.roles.filterProperty('name', 'administrator');
+    if (administrator)
+      model.roles.removeObject(administrator[0]);
+
   }
 });
 
+App.RolesRoute = Ember.Route.extend({
+  model: function () {
+    return this.get('store').find('role')
+  }
+});
 
-// App.VocabularyRoute = Ember.Route.extend({
-//   model: function (params) {
-//     if(params.vid === 'null' || params.vid == 0) {
-//       return {}
-//     }
+App.RolesIndexRoute = Ember.Route.extend({
+  model: function () {
+    return this.get('store').find('role', {
+      sort: 'id DESC'
+    });
+  }
+});
 
-//     return this.get('store').find('vocabulary', params.vid);
-//   }
-// });
-
-// App.VocabularyIndexRoute = Ember.Route.extend({
-//   model: function (params) {
-//     var vocabulary = this.modelFor('vocabulary');
-
-//     var vid;
-//     if (vocabulary.id) {
-//       vid = vocabulary.id;
-//     } else {
-//       vid = null;
-//     }
-
-//     this.loadRecords(vid);
-
-//     return {
-//       vocabulary: vocabulary,
-//       termAttr: Ember.get('App.Term.attributes').keys.list,
-//       terms: this.get('store').filter('term', function(record) {
-//         // if are loaded in store
-//         if (record.get) {
-//           if (record.get('vocabulary.id') == vid) {
-//             return true;
-//           }
-//         } else {
-//           // else if will be load in store
-//           if (record.vocabulary == vid) {
-//             return true;
-//           }
-//         }
-//         return false;
-//       }),
-//       newTerm: {}
-//     };
-//   },
-
-//   loadRecords: function(vid) {
-//     return this.get('store').find('term',{
-//       vocabulary: vid
-//     });
-//   }
-
-// });
-
-// App.VocabularyCreateRoute = Ember.Route.extend({
-//   model: function () {
-//     return {
-//       vocabulary: {}
-//     }
-//   }
-// });
+App.RolesCreateRoute = Ember.Route.extend({
+  model: function () {
+    return Ember.RSVP.hash({
+      role: {}
+    });
+  },
+});

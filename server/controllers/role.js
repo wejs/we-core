@@ -25,6 +25,29 @@ module.exports = {
     });
   },
 
+  update: function update(req, res, next) {
+    var we = req.getWe();
+    var id = req.params.id;
+
+    res.locals.Model.find(id)
+    .done(function(err, record) {
+      if (err) return res.serverError(err);
+      if (!record) return next();
+      // check if this role are in roles cache
+      if (we.acl.roles[!record.name]) return res.notFound();
+
+      record.updateAttributes(req.body)
+      .done(function(err) {
+        if (err) return res.serverError(err);
+        res.locals.record = record;
+        // update role in running app cache
+        we.acl.roles[record.name] = record;
+
+        return res.ok();
+      });
+    });
+  },
+
   addRoleToUser: function(req, res) {
     var we = req.getWe();
 

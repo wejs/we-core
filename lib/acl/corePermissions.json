@@ -15,8 +15,143 @@
     "title": "Delete image",
     "description": "Delete one image file and data"
   },
+
   "find_user": {
     "title": "Find user",
     "description": "Find and list users"
+  },
+
+  "manage_permissions": {
+    "title": "Manage permissions",
+    "description": "Change permissions"
+  },
+
+  "find_page": {
+    "group": "page",
+    "title": "Find pages",
+    "description": "Find and find all pages"
+  },
+  "create_page": {
+    "group": "page",
+    "title": "Create one page",
+    "description": "Create one new page"
+  },
+  "update_page": {
+    "group": "page",
+    "title": "Update one page",
+    "description": "Update one new page"
+  },
+  "delete_page": {
+    "group": "page",
+    "title": "Delete one page",
+    "description": "Delete one page record"
+  },
+
+  "find_comment": {
+    "group": "comment",
+    "title": "Find comments",
+    "description": "Find and find all comments"
+  },
+  "create_comment": {
+    "group": "comment",
+    "title": "Create one comment",
+    "description": "Create one new comment"
+  },
+  "update_comment": {
+    "group": "comment",
+    "title": "Update one comment",
+    "description": "Update one new comment"
+  },
+  "delete_comment": {
+    "group": "comment",
+    "title": "Delete one comment",
+    "description": "Delete one comment record"
+  },
+
+  "find_term": {
+    "group": "term",
+    "title": "Find terms",
+    "description": "Find and find all terms"
+  },
+  "create_term": {
+    "group": "term",
+    "title": "Create one term",
+    "description": "Create one new term"
+  },
+  "update_term": {
+    "group": "term",
+    "title": "Update one term",
+    "description": "Update one new term"
+  },
+  "delete_term": {
+    "group": "term",
+    "title": "Delete one term",
+    "description": "Delete one term record"
+  },
+
+  "find_group": {
+    "group": "group",
+    "title": "Find groups",
+    "description": "Find and find all groups"
+  },
+  "create_group": {
+    "group": "group",
+    "title": "Create one group",
+    "description": "Create one new group"
+  },
+  "update_group": {
+    "group": "group",
+    "title": "Update one group",
+    "description": "Update one new group"
+  },
+  "delete_group": {
+    "group": "group",
+    "title": "Delete one group",
+    "description": "Delete one group record"
+  },
+
+  "find_user": {
+    "group": "user",
+    "title": "Find users",
+    "description": "Find and find all users"
+  },
+  "create_user": {
+    "group": "user",
+    "title": "Create one user",
+    "description": "Create one new user"
+  },
+  "update_user": {
+    "group": "user",
+    "title": "Update one user",
+    "description": "Update one new user"
+  },
+  "delete_user": {
+    "group": "user",
+    "title": "Delete one user",
+    "description": "Delete one user record"
+  },
+
+
+  "find_role": {
+    "group": "role",
+    "title": "Find roles",
+    "description": "Find and findOne roles"
+  },
+  "manage_role": {
+    "group": "role",
+    "title": "Manage roles",
+    "description": "Change and update user roles"
+  },
+
+  "use_flag": {
+    "group": "flag",
+    "title": "Use flag API",
+    "description": ""
+  },
+  "use_follow": {
+    "group": "follow",
+    "title": "Use follow API",
+    "description": ""
   }
+
 }

@@ -86,12 +86,10 @@ describe('commentFeature', function () {
         })
         .set('Accept', 'application/json')
         .end(function (err, res) {
-          we.log.info(res.text)
           if (err) return done(err);
-
           assert.equal(200, res.status);
           assert(res.body.comment);
-          assert(res.body.comment[0].body, newBody);
+          assert.equal(res.body.comment[0].body, newBody);
 
           done();
         });

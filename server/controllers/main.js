@@ -5,15 +5,10 @@
  * @description	:: Contains logic for handling requests.
  */
 var fs = require('fs');
-var _ = require('lodash');
 var converter = require('../../lib/database/converter');
 var staticModels;
 
 module.exports = {
-  _config: {
-    acl: false
-  },
-
   /**
    * Index page route /
    */

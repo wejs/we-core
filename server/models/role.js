@@ -57,6 +57,12 @@ module.exports = function Model(we) {
 
           this.permissions = p;
           return this.save();
+        },
+
+        havePermission: function(permissionName) {
+          var p = this.permissions;
+          if (p.indexOf(permissionName) > -1) return true;
+          return false;
         }
       },
       hooks: {}

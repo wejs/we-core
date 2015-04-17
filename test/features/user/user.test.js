@@ -14,8 +14,10 @@ describe('userFeature', function () {
     request(http)
     .post('/user')
     .set('Accept', 'application/json')
+    .expect(201)
     .send( stubs.userStub() )
     .end(function (err, res) {
+      if (err) return done(err);
       salvedUser = res.body.user[0];
       done();
     });

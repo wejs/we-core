@@ -1,8 +1,8 @@
 
 App.WeRolePermissionCheckboxComponent = Ember.Component.extend({
-  tagName: 'td',
+  tagName: 'span',
   role: null,
-  permission: null,
+  permissionName: null,
 
   started: false,
 
@@ -11,19 +11,13 @@ App.WeRolePermissionCheckboxComponent = Ember.Component.extend({
   willInsertElement: function() {
     this._super();
 
-    var roleName = this.get('role.name');
-    var permissionRoles = this.get('permission.roles').toArray();
+    var rolePermissions = this.get('role.permissions');
+    var permissionName = this.get('permissionName');
     var has = false;
 
-    for (var i = permissionRoles.length - 1; i >= 0; i--) {
-      if ( Ember.get(permissionRoles[i], 'name' ) === roleName) {
-        has = true;
-        break;
-      }
-    };
+    if ( rolePermissions.indexOf(permissionName) > -1 ) has = true;
 
     this.set('hasPermission', has);
-
     this.set('started', true);
   },
 
@@ -36,24 +30,21 @@ App.WeRolePermissionCheckboxComponent = Ember.Component.extend({
     changePermission: function() {
       var flag = this.get('hasPermission');
       var role = this.get('role');
-      var permission = this.get('permission');
+      var permissionName = this.get('permissionName');
       var self = this;
       this.set('isSaving', true);
 
       if (flag) {
         // add
-        permission.get('roles').pushObject(role);
+        role.get('permissions').push(permissionName);
       } else {
         // remove
-        permission.get('roles').removeObject(role);
-
+        role.get('permissions').removeObject(permissionName);
       }
 
-      permission.save()
-      .then(function() {
+      role.save().then(function() {
         self.set('isSaving', false);
       })
-
     }
   }
 });
