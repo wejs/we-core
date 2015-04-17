@@ -18,6 +18,7 @@ describe('imageFeature', function () {
     .post('/api/v1/image')
     .attach('image', stubs.getImageFilePath())
     .end(function (err, res) {
+      if(err) return done(err);
       salvedImage = res.body.image[0];
       done(err);
     });
@@ -28,6 +29,7 @@ describe('imageFeature', function () {
       request(http)
       .get('/api/v1/image')
       .end(function (err, res) {
+        if(err) return done(err);
         assert.equal(200, res.status);
         assert(res.body.image);
         assert( _.isArray(res.body.image) , 'image not is array');
@@ -49,6 +51,8 @@ describe('imageFeature', function () {
       .post('/api/v1/image')
       .attach('image', stubs.getImageFilePath())
       .end(function (err, res) {
+        if(err) return done(err);
+
         assert.equal(201, res.status);
         assert(res.body.image);
         assert(res.body.image[0].mime);

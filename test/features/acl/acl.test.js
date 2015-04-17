@@ -38,7 +38,7 @@ describe('ACLFeature', function() {
       .expect(200)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-
+        if(err) return done(err);
         done();
       });
     })
@@ -55,28 +55,6 @@ describe('ACLFeature', function() {
         done();
       });
     })
-
-    it('we.acl.getAllActionPermisons return all we.acl action permissions'  ,function(done) {
-      we.acl.getAllActionPermisons(we, function (err, permissions) {
-        if(err) return done(err);
-        assert(permissions);
-        // console.log(permissions)
-        we.log.info('Total of: '+ Object.keys(permissions).length + ' permissions');
-        done();
-      });
-    })
-
-    it('we.acl.fetchAllActionPermissions should fetch and create all action permissions'  ,function(done) {
-
-      we.acl.fetchAllActionPermissions(we, function(err, permissions) {
-        if(err) return done(err);
-        assert(permissions);
-        //console.log(JSON.stringify(permissions, null, '\t') )
-
-        we.log.info('Total of: '+ permissions.length + ' permissions');
-        done();
-      })
-    });
 
     it('we.acl.createRole create role and set it in we.acl.roles'  ,function(done) {
       var roleNameStrig = 'hero'
@@ -122,19 +100,14 @@ describe('ACLFeature', function() {
       .set('Accept', 'application/json')
       .end(function (err, res) {
         if (err) return done(err);
-
         assert.equal(200, res.status);
         assert.ok(res.body.messages)
         assert.equal( res.body.messages[0].message, 'role.addRoleToUser.success');
         assert.equal( res.body.messages[0].status, 'success' );
-
         salvedUser.hasRole(salvedRole).done(function(err, result){
           if(err) return done(err);
-
           assert.equal(result, true);
-
           we.config.acl.disabled = false;
-
           done();
         });
       });
@@ -142,26 +115,20 @@ describe('ACLFeature', function() {
 
     it('delete /user/:id/role should remove one role to user', function (done) {
       we.config.acl.disabled = true;
-
       authenticatedRequest
       .delete('/user/'+ salvedUser.id +'/role')
       .send({ roleName: salvedRole.name})
       .set('Accept', 'application/json')
       .end(function (err, res) {
         if (err) return done(err);
-
         assert.equal(200, res.status);
         assert.ok(res.body.messages)
         assert.equal( res.body.messages[0].message, 'role.removeRoleFromUser.success');
         assert.equal( res.body.messages[0].status, 'success' );
-
         salvedUser.hasRole(salvedRole).done(function(err, result){
           if(err) return done(err);
-
           assert.equal(result, false);
-
           we.config.acl.disabled = false;
-
           done();
         });
       });
@@ -169,7 +136,6 @@ describe('ACLFeature', function() {
 
     it('get /user/:id should return 403 for unauthorized user', function (done) {
       we.config.acl.disabled = false;
-
       authenticatedRequest
       .get('/user/'+ salvedUser.id)
       .set('Accept', 'application/json')
@@ -177,12 +143,10 @@ describe('ACLFeature', function() {
         if (err) return done(err);
         assert.equal(res.status, 403);
         assert( _.isEmpty( res.body.user ));
-
         we.config.acl.disabled = true;
         done();
       });
     });
-
   });
 
   describe('admin', function () {
@@ -197,21 +161,17 @@ describe('ACLFeature', function() {
 
     it('get /user/:id should return user for admin', function (done) {
       we.config.acl.disabled = false;
-
       authenticatedRequest
       .get('/user/'+ salvedUser.id)
       .set('Accept', 'application/json')
       .end(function (err, res) {
         if (err) return done(err);
         assert.equal(res.status, 200);
-
         assert(res.body.user);
         assert.equal(res.body.user[0].id, salvedUser.id);
-
         we.config.acl.disabled = true;
         done();
       });
-
     });
 
     it('post /role should create one role', function (done) {
@@ -224,13 +184,10 @@ describe('ACLFeature', function() {
       .set('Accept', 'application/json')
       .end(function (err, res) {
         if (err) return done(err);
-
         assert.equal(201, res.status);
         assert.ok(res.body.role);
         assert.equal(res.body.role[0].name, 'coder');
-
         assert.equal(we.acl.roles.coder.name, 'coder');
-
         done();
       });
     });
@@ -241,7 +198,6 @@ describe('ACLFeature', function() {
       we.acl.createRole(we, { name: roleName }, function(err, role) {
         if (err) return done(err);
         if (!role) throw new Error('Role not created');
-
         authenticatedRequest
         .delete('/role/' + role.id)
         .set('Accept', 'application/json')
@@ -250,9 +206,7 @@ describe('ACLFeature', function() {
           assert.equal(200, res.status);
           done();
         });
-
       });
-
     });
   });
 

@@ -6,7 +6,6 @@
  */
 
 module.exports = {
-
   create: function(req, res) {
     var we = req.getWe();
 
@@ -123,6 +122,21 @@ module.exports = {
         res.addMessage('success', 'role.removeRoleFromUser.success');
         return res.ok();
       });
+    });
+  },
+
+  /**
+   * Add permission to role action
+   */
+  addPermissionToRole: function(req, res) {
+    var we = req.getWe();
+
+    if (we.acl.roles[!req.params.roleName]) return res.notFound();
+    if (we.acl.permissions[!req.params.permissionName]) return res.notFound();
+
+    we.acl.addPermissionToRole(we, req.params.roleName, req.params.permissionName, function(err, role) {
+      if (err) return res.serverError(err);
+      res.ok(role);
     });
   },
 

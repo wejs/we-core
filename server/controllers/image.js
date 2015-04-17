@@ -8,10 +8,6 @@ var gm = require('gm');
 var _ = require('lodash');
 
 module.exports = {
-  _config: {
-    // disable shadownroute feature
-    shadownRoutes: false
-  },
 
   findOne : function (req, res) {
     var we = req.getWe();

@@ -37,6 +37,7 @@
   , "DS"
   , "Permissions"
   , "NProgress"
+  , "WejsPrototypes"
   ]
 , "smarttabs": true
 , "strict": false

@@ -21,6 +21,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
   // set plugin configs
   plugin.setConfigs({
+    permissions: require('./lib/acl/corePermissions.json'),
+
     port: process.env.PORT || '3000',
     hostname: 'http://localhost:' + ( process.env.PORT || '3000' ),
     // default favicon, change in your project config/local.js
@@ -185,7 +187,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //
     // -- config routes
     //
-
     '/api/v1/configs.json': {
       controller: 'main',
       action: 'getConfigsJS',
@@ -212,45 +213,59 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'image',
       action        : 'find',
       model         : 'image',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'find_image'
     },
     'get /api/v1/image/:name': {
       controller    : 'image',
       action        : 'findOne',
       model         : 'image',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'find_image'
     },
     // Image style thumbnail | medium | large
     'get /api/v1/image/:style(original|mini|thumbnail|medium|large)/:name': {
       controller    : 'image',
       action        : 'findOne',
       model         : 'image',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'find_image'
     },
     'get /api/v1/image/:id([0-9]+)/data': {
       controller    : 'image',
       action        : 'findOneReturnData',
       model         : 'image',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'find_image'
     },
     'get /api/v1/image-crop/:id([0-9]+)': {
       controller    : 'image',
       action        : 'cropImage',
       model         : 'image',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'crop_image'
     },
     'post /api/v1/image-crop/:id([0-9]+)': {
       controller    : 'image',
       action        : 'cropImage',
       model         : 'image',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'crop_image'
     },
+    // 'delete /api/v1/image/:id([0-9]+)': {
+    //   controller    : 'image',
+    //   action        : 'delete',
+    //   model         : 'image',
+    //   responseType  : 'json',
+    //   permission    : 'delete_image'
+    // },
     // upload one image
     'post /api/v1/image': {
       controller    : 'image',
       action        : 'create',
       model         : 'image',
       responseType  : 'json',
+      permission    : 'upload_image',
       upload: {
         dest: projectPath + '/files/uploads/images/original',
         rename: function (fieldname, filename) {
@@ -271,18 +286,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           }
         }
       }
-    },
-
-    // -- FILES
-
-    'get /files': {
-      controller    : 'files',
-      action        : 'find'
-    },
-
-    'post /files': {
-      controller    : 'files',
-      action        : 'create'
     },
 
     //
@@ -402,20 +405,28 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'findOneByUsername',
       model         : 'user'
     },
-
+    'get /user': {
+      controller    : 'user',
+      action        : 'find',
+      model         : 'user',
+      permission    : 'find_user'
+    },
+    'get /user/:id': {
+      controller    : 'user',
+      action        : 'findOne',
+      model         : 'user',
+      permission    : 'find_user'
+    },
     // get logged in user avatar
     'get /avatar/:id([0-9]+)': {
       controller    : 'avatar',
       action        : 'getAvatar'
     },
-
-    // get logged in user avatar
     'get /user/:userId([0-9]+)/membership': {
       controller    : 'group',
       action        : 'findUserGroups',
       model         : 'membership'
     },
-
     // find groups to user
     'get /user/:userId([0-9]+)/find-new-groups': {
       controller    : 'group',
@@ -432,13 +443,22 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // -- ROLES
     //
 
-    // add role in user
+    'post /role': {
+      controller    : 'role',
+      action        : 'create',
+      model         : 'role'
+    },
+    'delete /role/:id([0-9]+)': {
+      controller    : 'role',
+      action        : 'destroy',
+      model         : 'role'
+    },
+    // add user role
     'post /user/:id([0-9]+)/role': {
       controller    : 'role',
       action        : 'addRoleToUser',
       model         : 'user'
     },
-
     // remove role in user
     'delete /user/:id([0-9]+)/role': {
       controller    : 'role',
@@ -448,19 +468,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     //
     // -- Permissions
-    //
 
-    'post /permission/:id([0-9]+)/roles': {
+    'get /permission': {
       controller    : 'permission',
-      action        : 'addRoleToPermission',
-      model         : 'permission'
+      action        : 'find',
+      responseType  : 'json'
     },
 
-    'get /api/v1/fetchActionPermissions': {
-      controller    : 'permission',
-      action        : 'fetchActionPermissions',
-      model         : 'permission',
-      responseType  : 'json'
+    'post /role/:roleName/permissions/:permissionName': {
+      controller    : 'role',
+      action        : 'addPermissionToRole',
+      model         : 'role',
+      permission    : 'upload_image',
     },
 
     // -- FOLLOW
@@ -591,12 +610,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
   });
 
-  plugin.events.on('we:create:default:folders', function(we) {
+  plugin.hooks.on('we:create:default:folders', function(we, done) {
     // create image upload path
     mkdirp(we.config.upload.image.uploadPath, function(err) {
       if (err) we.log.error('Error on create image upload path', err);
-    })
 
+      done();
+    })
   });
 
   return plugin;

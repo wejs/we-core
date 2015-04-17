@@ -9,7 +9,6 @@ var _ = require('lodash');
 var async = require('async');
 
 module.exports = {
-
   findOneByUsername: function findOneByUsername (req, res, next) {
     var we = req.getWe();
 

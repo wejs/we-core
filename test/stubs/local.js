@@ -13,10 +13,6 @@ module.exports = {
     cookieSecure: false
   },
 
-  acl: {
-    disabled: true
-  },
-
   database: {
     test: {
       dialect: 'mysql',

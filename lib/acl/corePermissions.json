@@ -1,0 +1,22 @@
+{
+  "find_image": {
+    "title": "Find image",
+    "description": "Find and list images"
+  },
+  "crop_image": {
+    "title": "Crop image",
+    "description": "Crop image and update size data"
+  },
+  "upload_image": {
+    "title": "Upload image",
+    "description": "Upload and save images on server"
+  },
+  "delete_image": {
+    "title": "Delete image",
+    "description": "Delete one image file and data"
+  },
+  "find_user": {
+    "title": "Find user",
+    "description": "Find and list users"
+  }
+}

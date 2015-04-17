@@ -17,6 +17,7 @@ before(function(callback) {
       }
     } , function(err, we) {
       if (err) return console.error(err);
+
       we.startServer(function(err) {
         if (err) return console.error(err);
         callback();
