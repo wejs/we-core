@@ -116,6 +116,21 @@ describe('activityFeature', function() {
         done();
       });
     });
+
+    it('get /activity should return activity list', function(done) {
+
+      authenticatedRequest
+      .get('/activity')
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) return done(err);
+        assert.equal(200, res.status);
+        assert(res.body.activity);
+        assert(res.body.activity.length > 0);
+        assert(res.body.meta.count);
+        done();
+      });
+    });
   });
 
 });

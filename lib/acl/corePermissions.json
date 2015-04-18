@@ -89,6 +89,33 @@
     "description": "Delete one term record"
   },
 
+  "find_activity": {
+    "group": "activity",
+    "title": "Find activity",
+    "description": "Find and find all activity"
+  },
+
+  "find_vocabulary": {
+    "group": "vocabulary",
+    "title": "Find vocabularys",
+    "description": "Find and find all vocabularys"
+  },
+  "create_vocabulary": {
+    "group": "vocabulary",
+    "title": "Create one vocabulary",
+    "description": "Create one new vocabulary"
+  },
+  "update_vocabulary": {
+    "group": "vocabulary",
+    "title": "Update one vocabulary",
+    "description": "Update one new vocabulary"
+  },
+  "delete_vocabulary": {
+    "group": "vocabulary",
+    "title": "Delete one vocabulary",
+    "description": "Delete one vocabulary record"
+  },
+
   "find_group": {
     "group": "group",
     "title": "Find groups",

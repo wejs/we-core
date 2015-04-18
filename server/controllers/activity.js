@@ -3,9 +3,6 @@
  */
 
 module.exports = {
-  create: function(req, res) { return res.notFound(); },
-  update: function(req, res) {  return res.notFound(); },
-  delete: function(req, res) {  return res.notFound(); },
 
   findGroupActivity: function(req, res, next) {
     var we = req.getWe();

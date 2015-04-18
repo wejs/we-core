@@ -675,9 +675,21 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'activity',
       action        : 'findGroupActivity',
       model         : 'activity',
-      responseType  : 'json'
+      responseType  : 'json',
+      permission    : 'find_activity'
     },
-
+    'get /activity/:id([0-9]+)': {
+      controller    : 'activity',
+      action        : 'findOne',
+      model         : 'activity',
+      permission    : 'find_activity'
+    },
+    'get /activity': {
+      controller    : 'activity',
+      action        : 'find',
+      model         : 'activity',
+      permission    : 'find_activity'
+    },
 
     // Page
     'get /page/:id([0-9]+)': {
@@ -744,8 +756,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
 
     // Term
-    //
-
     'get /api/v1/term-texts': {
       controller    : 'term',
       action        : 'findTermTexts',
@@ -781,6 +791,39 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'destroy',
       model         : 'term',
       permission    : 'delete_term'
+    },
+
+    // vocabulary
+    'get /vocabulary/:id([0-9]+)': {
+      controller    : 'vocabulary',
+      action        : 'findOne',
+      model         : 'vocabulary',
+      permission    : 'find_vocabulary'
+    },
+
+    'get /vocabulary': {
+      controller    : 'vocabulary',
+      action        : 'find',
+      model         : 'vocabulary',
+      permission    : 'find_vocabulary'
+    },
+    'post /vocabulary': {
+      controller    : 'vocabulary',
+      action        : 'create',
+      model         : 'vocabulary',
+      permission    : 'create_vocabulary'
+    },
+    'put /vocabulary/:id([0-9]+)': {
+      controller    : 'vocabulary',
+      action        : 'update',
+      model         : 'vocabulary',
+      permission    : 'update_vocabulary'
+    },
+    'delete /vocabulary/:id([0-9]+)': {
+      controller    : 'vocabulary',
+      action        : 'destroy',
+      model         : 'vocabulary',
+      permission    : 'delete_vocabulary'
     }
 
   });

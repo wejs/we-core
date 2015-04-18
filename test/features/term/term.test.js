@@ -161,6 +161,39 @@ describe('termFeature', function () {
       });
     });
 
+    it('get /vocabulary should return a vocabulary list', function(done){
+      request(http)
+      .get('/vocabulary')
+      .set('Accept', 'application/json')
+      .expect(200)
+      .end(function (err, res) {
+        if (err) return done(err);
+
+        assert(res.body.vocabulary);
+        assert( _.isArray(res.body.vocabulary) , 'vocabulary not is array');
+        assert(res.body.meta);
+
+        assert(res.body.meta.count);
+
+        done();
+      });
+    });
+
+    it('get /vocabulary/:id should return a one vocabulary', function(done){
+      request(http)
+      .get('/vocabulary/' + salvedVocabulary.id)
+      .set('Accept', 'application/json')
+      .expect(200)
+      .end(function (err, res) {
+        if (err) return done(err);
+        assert(res.body.vocabulary);
+        assert( _.isArray(res.body.vocabulary) , 'vocabulary not is array');
+        assert.equal(res.body.vocabulary[0].id, salvedVocabulary.id);
+        assert.equal(res.body.vocabulary[0].name, salvedVocabulary.name);
+        done();
+      });
+    });
+
   });
 
   describe('create', function () {
