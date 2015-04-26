@@ -116,6 +116,27 @@
     "description": "Delete one vocabulary record"
   },
 
+  "find_post": {
+    "group": "post",
+    "title": "Find posts",
+    "description": "Find and find all posts"
+  },
+  "create_post": {
+    "group": "post",
+    "title": "Create one post",
+    "description": "Create one new post"
+  },
+  "update_post": {
+    "group": "post",
+    "title": "Update one post",
+    "description": "Update one new post"
+  },
+  "delete_post": {
+    "group": "post",
+    "title": "Delete one post",
+    "description": "Delete one post record"
+  },
+
   "find_group": {
     "group": "group",
     "title": "Find groups",

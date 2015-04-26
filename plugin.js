@@ -849,6 +849,41 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'destroy',
       model         : 'vocabulary',
       permission    : 'delete_vocabulary'
+    },
+
+    //
+    // POST
+    //
+    'get /post/:id([0-9]+)': {
+      controller    : 'post',
+      action        : 'findOne',
+      model         : 'post',
+      permission    : 'find_post'
+    },
+
+    'get /post': {
+      controller    : 'post',
+      action        : 'find',
+      model         : 'post',
+      permission    : 'find_post'
+    },
+    'post /post': {
+      controller    : 'post',
+      action        : 'create',
+      model         : 'post',
+      permission    : 'create_post'
+    },
+    'put /post/:id([0-9]+)': {
+      controller    : 'post',
+      action        : 'update',
+      model         : 'post',
+      permission    : 'update_post'
+    },
+    'delete /post/:id([0-9]+)': {
+      controller    : 'post',
+      action        : 'destroy',
+      model         : 'post',
+      permission    : 'delete_post'
     }
 
   });
