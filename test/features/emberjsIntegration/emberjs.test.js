@@ -58,6 +58,9 @@ describe('emberjsIntegration', function () {
       assert.equal( res.body.appLogo, we.config.appLogo );
       assert.equal( res.body.defaultUserAvatar, we.config.defaultUserAvatar );
 
+      assert( _.isEqual(res.body.groupRoles, we.config.groupRoles) );
+      assert( _.isEqual(res.body.groupPermissions, we.config.groupPermissions) );
+
       done();
     });
   });

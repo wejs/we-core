@@ -28,9 +28,9 @@ module.exports = function Model(we) {
         defaultValue: 'group'
       },
 
-      // public | restrict | hidden
+      // public | private | hidden
       privacity: {
-        type: we.db.Sequelize.ENUM('public', 'restrict', 'hidden'),
+        type: we.db.Sequelize.ENUM('public', 'private', 'hidden'),
         defaultValue: 'public'
       },
 
@@ -58,8 +58,7 @@ module.exports = function Model(we) {
         model: 'membership',
         inverse: 'model',
         constraints: false,
-        foreignKey: 'modelId',
-
+        foreignKey: 'modelId'
       }
 
 
@@ -91,92 +90,89 @@ module.exports = function Model(we) {
       },
 
       classMethods: {
-        createDefaultRoles: function createDefaultRoles(groupId, cb) {
-          async.series([
-            function memberRole(done) {
-              we.db.models.group.createRole(groupId, 'member', done);
-            },
-            function moderatorRole(done) {
-              we.db.models.group.createRole(groupId, 'moderator', done);
-            },
-            function administratorRole(done) {
-              we.db.models.group.createRole(groupId, 'administrator', done);
-            }
-          ], function(err, results) {
-            return cb(err, results.map(function(result){
-              return result[0];
-            }))
-          });
-        },
-        createDefaultPermissions: function(groupId, cb) {
-          // TODO
-          cb();
-        },
-        createRole: function createRole(groupId, roleName, cb) {
-          we.db.models.membershiprole.findOrCreate({
-            where: { name: roleName, modelId: groupId, modelName: 'group'},
-            defaults: { name: roleName, modelId: groupId, modelName: 'group'}
-          }).done(cb);
-        },
-        findAllGroupRoles: function findAllGroupRoles(groupId, cb) {
-          we.db.models.membershiprole.findAll({
-            where: { modelId: groupId, modelName: 'group'}
-          }).done(cb);
-        },
+        // createDefaultRoles: function createDefaultRoles(groupId, cb) {
+        //   async.series([
+        //     function memberRole(done) {
+        //       we.db.models.group.createRole(groupId, 'member', done);
+        //     },
+        //     function moderatorRole(done) {
+        //       we.db.models.group.createRole(groupId, 'moderator', done);
+        //     },
+        //     function administratorRole(done) {
+        //       we.db.models.group.createRole(groupId, 'administrator', done);
+        //     }
+        //   ], function(err, results) {
+        //     return cb(err, results.map(function(result){
+        //       return result[0];
+        //     }))
+        //   });
+        // },
+        // createDefaultPermissions: function(groupId, cb) {
+        //   // TODO
+        //   cb();
+        // },
+        // createRole: function createRole(groupId, roleName, cb) {
+        //   we.db.models.membershiprole.findOrCreate({
+        //     where: { name: roleName, modelId: groupId, modelName: 'group'},
+        //     defaults: { name: roleName, modelId: groupId, modelName: 'group'}
+        //   }).done(cb);
+        // },
+        // findAllGroupRoles: function findAllGroupRoles(groupId, cb) {
+        //   we.db.models.membershiprole.findAll({
+        //     where: { modelId: groupId, modelName: 'group'}
+        //   }).done(cb);
+        // },
 
         findAllMembers: function findAllMembers(modelId, cb) {
           we.db.models.membership.findAll({
-            where: { memberName: 'user', modelName: 'group', modelId: modelId}
+            where: { modelId: modelId}
           }).done(cb);
         },
 
         findOneMember: function findOneMember(modelId, userId, cb) {
           we.db.models.membership.find({
             where: {
-              memberName: 'user', memberId: userId,
-              modelName: 'group', modelId: modelId
+              memberId: userId,
+              modelId: modelId
             }
           }).done(cb);
         }
       },
       instanceMethods: {
-        createRole: function createRole(roleName, cb) {
-          we.db.models.group.createRole(this.id, roleName, cb);
+        // createRole: function createRole(roleName, cb) {
+        //   we.db.models.group.createRole(this.id, roleName, cb);
+        // },
+        createRequestMembership: function(userId, cb) {
+          var self = this;
+          we.db.models.membershiprequest.findOrCreate({
+            where: {
+              userId: userId, groupId: self.id
+            },
+            defaults: {
+              userId: userId, groupId: self.id
+            }
+          }).spread(function(membershiprequest) {
+            cb(null, membershiprequest);
+          }).catch(cb);
         },
         addMember: function addMemberWithRole(userId, roleName, cb) {
           if (!roleName) roleName = 'member';
-          var group = this;
+
+          if (we.config.groupRoles.indexOf(roleName) == -1)
+            return cb(new Error('Invalid role')) ;
 
           we.db.models.membership.findOrCreate({
             where: {
-              memberName: 'user',
               memberId: userId,
-              modelName: 'group',
               modelId: this.id
             },
             defaults: {
-              memberName: 'user',
               memberId: userId,
-              modelName: 'group',
-              modelId: this.id
+              modelId: this.id,
+              roles: roleName
             }
           }).spread(function(membership) {
-            group.findAllRoles(function(err, roles) {
-              if (err) return cb(err);
-
-              var role;
-              for (var i = roles.length - 1; i >= 0; i--) {
-                if (roles[i].name == roleName) {
-                  role = roles[i];
-                  break;
-                }
-              }
-
-              membership.addRole(role).done(function(err) {
-                if (err) return cb(err);
-                return cb(null, membership);
-              })
-            });
+            cb(null, membership);
           }).catch(cb);
         },
 
@@ -184,32 +180,58 @@ module.exports = function Model(we) {
           var groupId = this.id;
           we.db.models.membership.find({
             where: {
-              memberName: 'user',
               memberId: userId,
-              modelName: 'group',
               modelId: groupId
             }
           }).then(function(membership) {
+            if (!membership) return cb(null, null);
+
             membership.destroy().then(function() {
               we.db.models.follow.unFollow('group', groupId, userId, cb);
             }).catch(cb);
           }).catch(cb);
         },
 
+        /**
+         * Invite one user to group
+         *
+         * @todo check if this user already solicited invite and if solicited create a membership
+         *
+         * @param  {[type]}   userId invited user id
+         * @param  {Function} cb     callback
+         */
+        inviteMember: function(userId, cb) {
+          var self = this;
+          we.db.models.membershiprequest.findOrCreate({
+            where: {
+              userId: userId, groupId: self.id
+            },
+            defaults: {
+              userId: userId, groupId: self.id, status: 'invite'
+            }
+          }).spread(function(membershiprequest) {
+            cb(null, membershiprequest);
+          }).catch(cb);
+        },
+
         userJoin: function userJoin(userId, cb) {
-          this.addMember(userId, 'member', cb);
+          if (this.privacity == 'public') {
+            this.addMember(userId, 'member', cb);
+          } else {
+            this.createRequestMembership(userId, cb);
+          }
         },
 
         userLeave: function userLeave(userId, cb) {
           this.removeMember(userId, cb);
         },
 
-        findAllRoles: function(cb) {
-          // cache
-          if (this.dataValues.roles) return cb(null, this.dataValues.roles);
+        // findAllRoles: function(cb) {
+        //   // cache
+        //   if (this.dataValues.roles) return cb(null, this.dataValues.roles);
 
-          we.db.models.group.findAllGroupRoles(this.id, cb);
-        },
+        //   we.db.models.group.findAllGroupRoles(this.id, cb);
+        // },
 
         findAllMembers: function(cb) {
           we.db.models.group.findAllMembers(this.id, function(err, memberships){
@@ -273,8 +295,6 @@ module.exports = function Model(we) {
         loadMembersCount: function loadMembersCount(cb) {
           we.db.models.membership.count({
             where: {
-              memberName: 'user',
-              modelName: 'group',
               modelId: this.id
             }
           }).done(cb);
@@ -348,11 +368,7 @@ module.exports = function Model(we) {
         },
         // After create default roles and register admin member
         afterCreate: function(record, options, next) {
-          we.db.models.group.createDefaultRoles(record.id, function (err, roles) {
-            if (err) return next(err);
-            record.dataValues.roles = roles;
-            record.addMember(record.creatorId, 'administrator', next);
-          });
+          record.addMember(record.creatorId, 'manager', next);
         }
       }
     }
@@ -369,9 +385,7 @@ module.exports = function Model(we) {
             if (!data.req.user.id) return next();
 
             we.db.models.membership.find({where: {
-              modelName: 'group',
               modelId: record.id,
-              memberName: 'user',
               memberId: data.req.user.id
             }}).done(function(err, result){
               if (err) return data.res.serverError(err);
@@ -386,9 +400,7 @@ module.exports = function Model(we) {
           if (err) return data.res.serverError(err);
             if (!data.req.user.id) return done();
             we.db.models.membership.find({where: {
-              modelName: 'group',
               modelId: data.res.locals.record.id,
-              memberName: 'user',
               memberId: data.req.user.id
             }}).done(function(err, result){
               if (err) return data.res.serverError(err);

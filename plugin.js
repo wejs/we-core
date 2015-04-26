@@ -21,7 +21,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
   // set plugin configs
   plugin.setConfigs({
+    // default app permissions
     permissions: require('./lib/acl/corePermissions.json'),
+    // default group permissions
+    groupPermissions: {
+      public: require('./lib/acl/group/publicPermissions.json'),
+      private: require('./lib/acl/group/privatePermissions.json'),
+      hidden: require('./lib/acl/group/hiddenPermissions.json')
+    },
+    groupRoles: ['manager', 'moderator', 'member'],
 
     port: process.env.PORT || '3000',
     hostname: 'http://localhost:' + ( process.env.PORT || '3000' ),
@@ -400,7 +408,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //
     // -- User routes
     //
-
     'get /user/:username?': {
       controller    : 'user',
       action        : 'findOneByUsername',
@@ -590,28 +597,32 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'group',
       action        : 'addContent',
       model         : 'group',
-      responseType  : 'json'
+      responseType  : 'json',
+      groupPermission : 'add_content'
     },
 
     'delete /api/v1/group/:groupId([0-9]+)/addContent/:contentModelName/:contentId': {
       controller    : 'group',
       action        : 'removeContent',
       model         : 'group',
-      responseType  : 'json'
+      responseType  : 'json',
+      groupPermission : 'remove_content'
     },
 
     'get /api/v1/group/:groupId([0-9]+)/content': {
       controller    : 'group',
       action        : 'findAllContent',
       model         : 'group',
-      responseType  : 'json'
+      responseType  : 'json',
+      groupPermission : 'find_content'
     },
 
     'get /api/v1/group/:groupId([0-9]+)/content/:contentModelName': {
       controller    : 'group',
       action        : 'findContentByType',
       model         : 'group',
-      responseType  : 'json'
+      responseType  : 'json',
+      groupPermission : 'find_content'
     },
 
     'post /api/v1/group/:groupId([0-9]+)/join': {
@@ -630,13 +641,27 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'group',
       action        : 'findMembers',
       model         : 'membership',
+      responseType  : 'json',
+      groupPermission : 'find_members'
+    },
+    'post /group/:groupId([0-9]+)/member/:userId([0-9]+)': {
+      controller    : 'group',
+      action        : 'inviteMember',
+      model         : 'membership',
+      responseType  : 'json',
+      groupPermission : 'manage_members'
+    },
+    'post /group/:groupId([0-9]+)/accept-invite/': {
+      controller    : 'group',
+      action        : 'acceptInvite',
+      model         : 'membership',
       responseType  : 'json'
     },
     'get /group/:groupId([0-9]+)/role': {
       controller    : 'group',
       action        : 'findRoles',
-      model         : 'membershiprole',
-      responseType  : 'json'
+      responseType  : 'json',
+      groupPermission : 'find_members'
     },
     'get /group/:id([0-9]+)': {
       controller    : 'group',

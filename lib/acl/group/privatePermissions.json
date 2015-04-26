@@ -1,0 +1,17 @@
+{
+  "create_post": {
+    "title": "Create post",
+    "description": "Create one post in group",
+    "roles": [
+      "mananger", "moderator", "member"
+    ]
+  },
+
+  "manage_members": {
+    "title": "Manage members",
+    "description": "Manage members in groups",
+    "roles": [
+      "mananger", "moderator"
+    ]
+  }
+}

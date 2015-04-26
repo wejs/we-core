@@ -38,7 +38,7 @@ App.GroupRoute = Ember.Route.extend({
   model: function(params) {
     return Ember.RSVP.hash({
       group: this.store.find('group', params.id),
-      roles: this.loadRoles(params.id),
+      roles: App.configs.groupRoles,
       membership: null
     });
   },
@@ -47,21 +47,6 @@ App.GroupRoute = Ember.Route.extend({
     if (membership) {
       model.membership = this.store.push('membership', membership);
     }
-  },
-
-  loadRoles: function (groupId){
-    var self = this;
-
-    return new Ember.RSVP.Promise(function(resolve, reject) {
-      return $.ajax({
-        type: 'GET',
-        url: '/group/' + groupId + '/role'
-      })
-      .done(function success(data) {
-        return resolve(self.get('store').pushMany('membershiprole', data.membershiprole));
-      })
-      .fail(reject)
-    });
   }
 });
 

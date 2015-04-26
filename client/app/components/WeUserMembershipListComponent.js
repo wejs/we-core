@@ -36,7 +36,6 @@ App.WeUserMembershipListComponent = Ember.Component.extend({
       var self  = this;
       var store = this.get('store');
       var memberId =  this.get('memberId');
-
       if (!memberId) return Ember.Logger.warn('we-membership-list:memberId is required');
 
       this.set('isSearching', true);
@@ -65,18 +64,16 @@ App.WeUserMembershipListComponent = Ember.Component.extend({
         data: query,
       }).done(function(res) {
         if(self.isDestroyed) return;
-
         self.set('count', res.meta.count);
         // reset posts filter
         self.set('records', store.pushMany('membership', res.membership) );
-        self.set('isLoading', false);
-        self.set('isSearching', false);
       })
       .fail(function(xhr) {
         Ember.Logger.error('Erro on load user membership', xhr);
       })
       .always(function() {
-        self.set('isSearching', true);
+        self.set('isLoading', false);
+        self.set('isSearching', false);
       });
     }
   }

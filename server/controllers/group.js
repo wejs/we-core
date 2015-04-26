@@ -37,11 +37,18 @@ module.exports = {
 
   join: function join(req, res, next) {
     if (!req.isAuthenticated) return res.forbidden();
+    if (res.locals.group.privacity == 'hidden') return res.forbidden();
 
     var we = req.getWe();
 
     res.locals.group.userJoin(req.user.id, function(err, membership) {
       if (err) return res.serverError(err);
+
+      if (res.locals.group.privacity != 'public') {
+        return res.status(200).send({
+          membershiprequest: membership
+        });
+      }
 
       we.db.models.follow.follow('group', res.locals.group.id, req.user.id, function (err, follow) {
         if (err) return res.serverError(err);
@@ -152,29 +159,96 @@ module.exports = {
     });
   },
 
+  inviteMember: function inviteMember(req, res) {
+    if (!req.isAuthenticated) return res.forbidden();
+
+    var we = req.getWe();
+
+    res.locals.group.findOneMember(req.params.userId, function(err, membership) {
+      if (err) return res.serverError(err);
+      if (membership) {
+        return res.status(200).send({
+          membership: membership
+        });
+      }
+
+      res.locals.group.inviteMember(req.params.userId, function (err, membership) {
+        if (err) return res.serverError(err);
+
+        if (res.locals.group.privacity != 'public') {
+          return res.status(200).send({
+            membershiprequest: membership
+          });
+        }
+
+        we.db.models.follow.follow('group', res.locals.group.id, req.params.userId, function (err, follow) {
+          if (err) return res.serverError(err);
+          if (!follow) return res.forbidden();
+
+          res.status(200).send({
+            membership: membership,
+            follow: follow
+          });
+        });
+      });
+    })
+  },
+
+  acceptInvite: function acceptInvite(req, res) {
+    if (!req.isAuthenticated) return res.forbidden();
+    var we = req.getWe();
+
+    we.db.models.membershiprequest.find({
+      where: {
+        userId: req.user.id,
+        groupId: req.params.groupId
+      }
+    }).then(function (membershiprequest) {
+      if (!membershiprequest) return res.notFound();
+
+      res.locals.group.addMember(req.user.id, 'member', function(err, membership) {
+        if(err) return res.serverError(err);
+
+        we.db.models.follow.follow('group', res.locals.group.id, req.user.id, function (err, follow) {
+          if (err) return res.serverError(err);
+          if (!follow) return res.forbidden();
+
+          res.status(200).send({
+            membership: membership,
+            follow: follow
+          });
+        });
+      });
+    })
+    .catch(res.serverError);
+  },
+
   findMembers: function(req, res, next) {
     var we = req.getWe();
 
-    res.locals.query.where.memberName = 'user';
-    res.locals.query.where.modelName = 'group';
     res.locals.query.where.modelId = req.params.groupId;
 
     if (req.query.roleNames && _.isArray(req.query.roleNames)) {
-      res.locals.query.include = [
-        { model: we.db.models.membershiprole , as: 'roles', where: {
-          name: {
-            in: req.query.roleNames
-          }
-        }}
-      ];
+      var roles = [];
+      req.query.roleNames.forEach(function(r) {
+        if (typeof r != 'string') return;
+        if (we.config.groupRoles.indexOf(r) > -1) roles.push(r);
+      });
+
+      var or = [];
+      roles.forEach(function(r) {
+        or.push({ $like: '%'+r+'%' })
+      });
+
+      if ( !_.isEmpty(or) ) res.locals.query.where.roles = { $or: or };
     }
 
     we.db.models.membership.findAndCountAll(res.locals.query)
-    .then(function (result){
+    .then(function (result) {
       res.locals.record = result.rows;
       res.locals.metadata.count = result.count;
       res.ok();
-    }).catch(function(err){
+    }).catch(function(err) {
       next(err);
     });
   },
@@ -183,7 +257,6 @@ module.exports = {
     var we = req.getWe();
 
     res.locals.query.where.memberId = res.locals.user.id;
-    res.locals.query.where.memberName = 'user';
     res.locals.query.where.status = 'active';
 
     we.db.models.membership.findAndCountAll(res.locals.query)
@@ -196,16 +269,11 @@ module.exports = {
     });
   },
 
-  findRoles: function(req, res, next) {
+  findRoles: function(req, res) {
     var we = req.getWe();
 
-    we.db.models.membershiprole.findAndCountAll()
-    .then(function (result) {
-      res.locals.record = result.rows;
-      res.locals.metadata.count = result.count;
-      res.ok();
-    }).catch(function(err){
-      next(err);
+    return res.send({
+      role: we.config.groupRoles
     });
   }
 }

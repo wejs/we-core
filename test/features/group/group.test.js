@@ -8,7 +8,8 @@ var http;
 var we;
 
 describe('groupFeature', function () {
-  var salvedGroup, salvedUser, salvedUserPassword, authenticatedRequest;
+  var salvedGroup, salvedUser, salvedUserPassword, salvedUser2, salvedUser2Password;
+  var authenticatedRequest, authenticatedRequest2;
 
   before(function (done) {
     http = helpers.getHttp();
@@ -45,7 +46,6 @@ describe('groupFeature', function () {
           });
         }, function(err) {
           if (err) return done(err);
-
           // login user and save the browser
           authenticatedRequest = request.agent(http);
           authenticatedRequest.post('/login')
@@ -54,8 +54,26 @@ describe('groupFeature', function () {
             email: salvedUser.email,
             password: salvedUserPassword
           })
-          .expect(200)
-          .end(done);
+          .expect(200).end(function() {
+
+            var userStub = stubs.userStub();
+            helpers.createUser(userStub, function(err, user) {
+              if (err) throw new Error(err);
+              salvedUser2 = user;
+              salvedUser2Password = userStub.password;
+              // login user and save the browser
+              authenticatedRequest2 = request.agent(http);
+              authenticatedRequest2.post('/login')
+              .set('Accept', 'application/json')
+              .send({
+                email: salvedUser2.email,
+                password: salvedUser2Password
+              })
+              .expect(200)
+
+              .end(done);
+            });
+          });
         });
       })
     });
@@ -156,31 +174,13 @@ describe('groupFeature', function () {
         assert(res.body.group[0].id);
         assert(res.body.group[0].name, groupStub.name);
 
-        we.db.models.group.findAllGroupRoles(
-          res.body.group[0].id,
-        function(err, roles){
-          if (err) return done(err);
-
-          var roleNames = roles.map(function(role) {
-            return role.get().name;
+        we.db.models.group.findAllMembers(res.body.group[0].id, function (err, memberships) {
+          if(err) return done(err);
+          var membersIds = memberships.map(function(membership) {
+            return membership.memberId;
           });
-
-          assert(roles.length >= 3, 'Wrong role length: '+ roles.length);
-
-          assert(roleNames.indexOf('member') >-1);
-          assert(roleNames.indexOf('moderator') >-1);
-          assert(roleNames.indexOf('administrator') >-1);
-
-          we.db.models.group.findAllMembers(res.body.group[0].id, function (err, memberships) {
-            if(err) return done(err);
-
-            var membersIds = memberships.map(function(membership) {
-              return membership.memberId;
-            });
-
-            assert(membersIds.indexOf(salvedUser.id) > -1);
-            done();
-          });
+          assert(membersIds.indexOf(salvedUser.id) > -1);
+          done();
         });
       });
     });
@@ -326,14 +326,11 @@ describe('groupFeature', function () {
         assert.equal(200, res.status);
         assert(res.body.membership);
         assert.equal(res.body.membership.memberId, salvedUser.id);
-        assert.equal(res.body.membership.memberName, 'user');
-
 
         salvedGroup.findOneMember(salvedUser.id, function(err, membership) {
           if (err) return done(err);
 
           assert.equal(membership.memberId,  salvedUser.id);
-          assert.equal(res.body.membership.memberName, 'user');
 
           done();
         });
@@ -341,9 +338,21 @@ describe('groupFeature', function () {
     });
 
     it('get /group/:groupId/member route should return membership users', function (done) {
-
       authenticatedRequest
-      .get('/group/'+ salvedGroup.id +'/member?roleNames[]=administrator&roleNames[]=moderator')
+      .get('/group/'+ salvedGroup.id + '/member')
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) return done(err);
+        assert.equal(200, res.status);
+        assert(res.body.membership);
+        assert(res.body.meta.count);
+        done();
+      });
+    });
+
+    it('get /group/:groupId/member route should return membership users with role filter', function (done) {
+      authenticatedRequest
+      .get('/group/'+ salvedGroup.id +'/member?roleNames[]=manager&roleNames[]=moderator')
       .set('Accept', 'application/json')
       .end(function (err, res) {
         if (err) return done(err);
@@ -355,14 +364,12 @@ describe('groupFeature', function () {
     });
 
     it('post /api/v1/group/:groupId/leave route should add authenticated user in group', function (done) {
-
       authenticatedRequest
       .post('/api/v1/group/'+ salvedGroup.id +'/leave')
       .set('Accept', 'application/json')
       .end(function (err, res) {
         if (err) return done(err);
         assert.equal(204, res.status);
-
         salvedGroup.findOneMember(salvedUser.id, function(err, membership) {
           if (err) return done(err);
           assert(!membership);
@@ -375,64 +382,146 @@ describe('groupFeature', function () {
 
   describe('groupRoles', function () {
     it('get /group/:groupId/roles route should return all group roles', function (done) {
-
       authenticatedRequest
       .get('/group/'+ salvedGroup.id +'/role')
       .set('Accept', 'application/json')
       .end(function (err, res) {
         if (err) return done(err);
         assert.equal(200, res.status);
-        assert(res.body.membershiprole);
-        assert(res.body.membershiprole.length > 2);
-        assert(res.body.meta.count);
+        assert(res.body.role);
+        assert( _.isEqual(res.body.role, we.config.groupRoles) );
         done();
       });
     });
   });
 
-  // describe('update', function () {
-  //   it('put /page/:id should upate and return page', function(done){
-  //     var newTitle = 'my new title';
+  describe('groupACL', function () {
+    before(function (done) {
+      we.config.acl.disabled = false;
+      done();
+    });
+    after(function (done) {
+      we.config.acl.disabled = true;
+      done();
+    });
 
-  //     request(http)
-  //     .put('/page/' + salvedPage.id)
-  //     .send({
-  //       title: newTitle
-  //     })
-  //     .set('Accept', 'application/json')
-  //     .end(function (err, res) {
-  //       if (err) return done(err);
-  //       assert.equal(200, res.status);
-  //       assert(res.body.page);
-  //       assert(res.body.page[0].title, newTitle);
+    describe('privateGroup', function () {
+      var privateGroup, salvedPages = [];
+      before(function (done) {
+        var stub = stubs.groupStub(salvedUser.id);
+        stub.privacity = 'private';
+        we.db.models.group.create(stub)
+        .done(function (err, g) {
+          if (err) return done(err);
+          privateGroup = g;
+          var pages = [
+            stubs.pageStub(salvedUser.id),
+            stubs.pageStub(salvedUser.id),
+            stubs.pageStub(salvedUser.id)
+          ];
+          async.eachSeries(pages, function(page, next) {
+            var pageStub = stubs.pageStub(salvedUser.id);
+            we.db.models.page.create(pageStub)
+            .done(function (err, p) {
+              if (err) return next(err);
+              salvedPages.push(p);
+              privateGroup.addContent('page', p.id, next);
+            });
+          }, function(err) {
+            if (err) return done(err);
+            done();
+          });
+        });
+      });
 
-  //       salvedPage.title = newTitle;
-  //       done();
-  //     });
-  //   });
-  // });
+      describe('privateGroupNotMember', function() {
+        it('get /api/v1/group/:groupId/content route should return all group roles', function (done) {
+          authenticatedRequest2
+          .get('/api/v1/group/' + privateGroup.id + '/content')
+          .set('Accept', 'application/json')
+          .end(function (err, res) {
+            if (err) return done(err);
+            assert.equal(403, res.status);
+            assert(_.isEmpty(res.body.group));
+            done();
+          });
+        });
 
-  // describe('destroy', function () {
-  //   it('delete /page/:id should delete one page', function(done){
-  //     var pageStub = stubs.pageStub(salvedUser.id);
-  //     we.db.models.page.create(pageStub)
-  //     .done(function (err, p) {
-  //       if (err) return done(err);
-  //       request(http)
-  //       .delete('/page/' + p.id)
-  //       .set('Accept', 'application/json')
-  //       .end(function (err, res) {
-  //         if (err) return done(err);
-  //         assert.equal(204, res.status);
+        it('post group invite engine should work', function (done) {
+          this.slow(200);
+          authenticatedRequest
+          .post('/group/' + privateGroup.id + '/member/' + salvedUser2.id)
+          .set('Accept', 'application/json')
+          .end(function (err, res) {
+            if (err) return done(err);
+            assert.equal(200, res.status);
+            assert(res.body.membershiprequest);
+            assert.equal(res.body.membershiprequest.status, 'invite');
+            assert.equal(res.body.membershiprequest.userId, salvedUser2.id);
+            assert.equal(res.body.membershiprequest.groupId, privateGroup.id);
+            assert(_.isEmpty(res.body.group));
+            authenticatedRequest2
+            .post('/group/' + privateGroup.id + '/accept-invite/')
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end(function (err, res) {
+              if (err) return done(err);
+              assert(res.body.membership);
+              assert.equal(res.body.membership.memberId, salvedUser2.id);
+              privateGroup.findOneMember(salvedUser2.id, function(err, membership) {
+                if (err) return done(err);
+                assert(membership);
+                done();
+              });
+            });
+          });
+        });
 
-  //         we.db.models.page.find(p.id).done( function(err, page){
-  //           if (err) return done(err);
+        it('post /group/:groupId/leave should remove user from group', function (done) {
+          authenticatedRequest2
+          .post('/api/v1/group/'+ privateGroup.id +'/leave')
+          .set('Accept', 'application/json')
+          .end(function (err, res) {
+            if (err) return done(err);
+            assert.equal(204, res.status);
+            privateGroup.findOneMember(salvedUser2.id, function(err, membership) {
+              if (err) return done(err);
+              assert(!membership);
+              done();
+            });
+          });
+        });
+      });
 
-  //           assert.equal(page, null);
-  //           done();
-  //         })
-  //       });
-  //     })
-  //   });
-  // });
+      describe('privateGroupMember', function() {
+        before(function (done) {
+          authenticatedRequest2
+          .post('/api/v1/group/'+ privateGroup.id +'/join')
+          .set('Accept', 'application/json')
+          .end(function (err, res) {
+            if (err) return done(err);
+            assert.equal(200, res.status);
+            assert(res.body.membershiprequest);
+            assert.equal(res.body.membershiprequest.status, 'request');
+            assert.equal(res.body.membershiprequest.userId, salvedUser2.id);
+            assert.equal(res.body.membershiprequest.groupId, privateGroup.id);
+            assert(!res.body.membership);
+            done();
+          });
+        });
+
+        it('get /api/v1/group/:groupId/content route should return all group roles', function (done) {
+          authenticatedRequest2
+          .get('/api/v1/group/' + privateGroup.id + '/content')
+          .set('Accept', 'application/json')
+          .end(function (err, res) {
+            if (err) return done(err);
+            assert.equal(403, res.status);
+            assert(_.isEmpty(res.body.group));
+            done();
+          });
+        });
+      });
+    });
+  });
 });
