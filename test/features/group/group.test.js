@@ -521,7 +521,6 @@ describe('groupFeature', function () {
             if (err) return done(err);
             assert.equal(200, res.status);
             assert(res.body.membershiprequest);
-            assert.equal(res.body.membershiprequest.status, 'request');
             assert.equal(res.body.membershiprequest.userId, salvedUser2.id);
             assert.equal(res.body.membershiprequest.groupId, privateGroup.id);
             assert(!res.body.membership);
