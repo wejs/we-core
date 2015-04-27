@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var async = require('async');
 
 module.exports = {
   findNewGroupsToUser: function findNewGroupsToUser(req, res, next) {
@@ -163,34 +164,46 @@ module.exports = {
     if (!req.isAuthenticated) return res.forbidden();
 
     var we = req.getWe();
+    var userId = null;
+    var membership = null;
 
-    res.locals.group.findOneMember(req.params.userId, function(err, membership) {
+    async.series([
+      function checkIfUserAreInRegistered(done) {
+        we.db.models.user.find({
+          where: {
+            email: req.body.email
+          }
+        }).then(function(u) {
+          if (u) userId = u.id;
+          done();
+        }).catch(done);
+      },
+      function checkIfUserIsMember(done) {
+        if (!userId) return done();
+        res.locals.group.findOneMember(userId, function(err, m) {
+          if (err) return done(err);
+          membership = m;
+          done();
+        });
+      }
+    ], function(err) {
       if (err) return res.serverError(err);
+
       if (membership) {
         return res.status(200).send({
           membership: membership
         });
       }
 
-      res.locals.group.inviteMember(req.params.userId, function (err, membership) {
+      res.locals.group.inviteMember(req.user.id, userId,
+        req.body.name, req.body.text, req.body.email,
+         function (err, membership) {
         if (err) return res.serverError(err);
 
-        if (res.locals.group.privacity != 'public') {
-          return res.status(200).send({
-            membershiprequest: membership
-          });
-        }
-
-        we.db.models.follow.follow('group', res.locals.group.id, req.params.userId, function (err, follow) {
-          if (err) return res.serverError(err);
-          if (!follow) return res.forbidden();
-
-          res.status(200).send({
-            membership: membership,
-            follow: follow
-          });
+        return res.status(200).send({
+          membershipinvite: membership
         });
-      });
+      })
     })
   },
 
@@ -198,7 +211,7 @@ module.exports = {
     if (!req.isAuthenticated) return res.forbidden();
     var we = req.getWe();
 
-    we.db.models.membershiprequest.find({
+    we.db.models.membershipinvite.find({
       where: {
         userId: req.user.id,
         groupId: req.params.groupId

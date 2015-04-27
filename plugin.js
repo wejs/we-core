@@ -644,7 +644,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       responseType  : 'json',
       groupPermission : 'find_members'
     },
-    'post /group/:groupId([0-9]+)/member/:userId([0-9]+)': {
+    'post /group/:groupId([0-9]+)/member': {
       controller    : 'group',
       action        : 'inviteMember',
       model         : 'membership',
@@ -693,7 +693,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'group',
       permission    : 'delete_group'
     },
-
+    'get /group/:groupId([0-9]+)/members/invites': {
+      controller    : 'membershipinvite',
+      action        : 'find',
+      model         : 'membershipinvite',
+      groupPermission    : 'manage_members'
+    },
 
     // Activity
     'get /group/:groupId([0-9]+)/activity': {
@@ -860,7 +865,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'post',
       permission    : 'find_post'
     },
-
     'get /post': {
       controller    : 'post',
       action        : 'find',

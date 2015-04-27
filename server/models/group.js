@@ -200,14 +200,18 @@ module.exports = function Model(we) {
          * @param  {[type]}   userId invited user id
          * @param  {Function} cb     callback
          */
-        inviteMember: function(userId, cb) {
+        inviteMember: function(inviterId, userId, name, text, email, cb) {
           var self = this;
-          we.db.models.membershiprequest.findOrCreate({
+          we.db.models.membershipinvite.findOrCreate({
             where: {
-              userId: userId, groupId: self.id
+              email: email, groupId: self.id
             },
             defaults: {
-              userId: userId, groupId: self.id, status: 'invite'
+              inviterId: inviterId,
+              userId: userId, groupId: self.id,
+              name: name,
+              text: text,
+              email: email
             }
           }).spread(function(membershiprequest) {
             cb(null, membershiprequest);

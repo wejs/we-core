@@ -4,6 +4,8 @@
  * @description :: We.js membership model
  */
 
+var async = require('async');
+
 module.exports = function Model(we) {
   var model = {
     definition: {
@@ -63,16 +65,29 @@ module.exports = function Model(we) {
         }
       },
       hooks: {
-
         afterCreate: function(instance, options, done) {
-          we.db.models.membershiprequest.destroy({
-            where: {
-              userId: instance.memberId,
-              groupId: instance.modelId
+          async.parallel([
+            function deleteRequests(done) {
+              we.db.models.membershiprequest.destroy({
+                where: {
+                  userId: instance.memberId,
+                  groupId: instance.modelId
+                }
+              }).then(function () {
+                done()
+              }).catch(done);
+            },
+            function deleteInvites(done) {
+              we.db.models.membershipinvite.destroy({
+                where: {
+                  userId: instance.memberId,
+                  groupId: instance.modelId
+                }
+              }).then(function () {
+                done()
+              }).catch(done);
             }
-          }).then(function () {
-            done();
-          }).catch(done)
+          ], done);
         }
       }
     }

@@ -22,7 +22,15 @@ App.GroupsIndexRoute = Ember.Route.extend(App.ResetScrollMixin,{
   }
 });
 
-App.GroupAddMemberRoute = Ember.Route.extend(App.ResetScrollMixin);
+App.GroupAddMemberRoute = Ember.Route.extend(App.ResetScrollMixin,{
+
+  model: function() {
+    return {
+      group: this.modelFor('group').group,
+      newInvite: {}
+    }
+  }
+});
 
 // route create
 App.GroupsCreateRoute = Ember.Route.extend(App.ResetScrollMixin,{

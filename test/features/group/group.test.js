@@ -449,29 +449,48 @@ describe('groupFeature', function () {
 
         it('post group invite engine should work', function (done) {
           this.slow(200);
+          // invite one user
           authenticatedRequest
-          .post('/group/' + privateGroup.id + '/member/' + salvedUser2.id)
+          .post('/group/' + privateGroup.id + '/member')
+          .send({
+            name: 'Santos Souza',
+            email: salvedUser2.email,
+            text: 'You are invited to our comunity!'
+          })
           .set('Accept', 'application/json')
+          .expect(200)
           .end(function (err, res) {
             if (err) return done(err);
-            assert.equal(200, res.status);
-            assert(res.body.membershiprequest);
-            assert.equal(res.body.membershiprequest.status, 'invite');
-            assert.equal(res.body.membershiprequest.userId, salvedUser2.id);
-            assert.equal(res.body.membershiprequest.groupId, privateGroup.id);
+            assert(res.body.membershipinvite);
+            assert.equal(res.body.membershipinvite.inviterId, salvedUser.id);
+            assert.equal(res.body.membershipinvite.userId, salvedUser2.id);
+            assert.equal(res.body.membershipinvite.groupId, privateGroup.id);
             assert(_.isEmpty(res.body.group));
-            authenticatedRequest2
-            .post('/group/' + privateGroup.id + '/accept-invite/')
+
+            // check if the invite exits
+            authenticatedRequest
+            .get('/group/'+ privateGroup.id +'/members/invites')
             .set('Accept', 'application/json')
             .expect(200)
             .end(function (err, res) {
               if (err) return done(err);
-              assert(res.body.membership);
-              assert.equal(res.body.membership.memberId, salvedUser2.id);
-              privateGroup.findOneMember(salvedUser2.id, function(err, membership) {
+              assert(res.body.membershipinvite);
+              assert( _.isArray(res.body.membershipinvite) );
+
+              // accept
+              authenticatedRequest2
+              .post('/group/' + privateGroup.id + '/accept-invite/')
+              .set('Accept', 'application/json')
+              .expect(200)
+              .end(function (err, res) {
                 if (err) return done(err);
-                assert(membership);
-                done();
+                assert(res.body.membership);
+                assert.equal(res.body.membership.memberId, salvedUser2.id);
+                privateGroup.findOneMember(salvedUser2.id, function(err, membership) {
+                  if (err) return done(err);
+                  assert(membership);
+                  done();
+                });
               });
             });
           });

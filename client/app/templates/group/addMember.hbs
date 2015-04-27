@@ -1,42 +1,53 @@
-<h3>Convidar membros para a comunidade</h3>
+<h2>{{t "group.invite.title"}}</h2>
 
-<p>
-Digite o nome de usuário no campo abaixo para convidar um usuário para o grupo <br>
-Exemplo de nome de usuário: @alberto
-<p>
-
-<div>
-
-<form role="form" {{action "findOneUserByUsername" on="submit"}}>
-  <div class="form-group">
-    <div class="input-group">
-      <label for="name" class="input-group-addon">Nome de usuário:</label>
-      {{input id="name" name="name" value=username type="text" placeholder="Ex.: albertosouza" required="true" classNames="form-control"}}
-      <span class="input-group-btn">
-        <button {{action "findOneUserByUsername"}} class="btn btn-primary" type="button">Buscar</button>
-      </span>
+<h4>{{t "group.invite.form.title"}}</h4>
+{{#if isLoading}}
+  Enviando ...
+{{else}}
+  <form role="form" {{action "invite" on="submit"}}>
+    <div class="form-group">
+      <label>{{t 'group.invite.form.user.email'}}</label>
+      {{input name="email" value=newInvite.email type="email" required="true" classNames="form-control"}}
     </div>
+
+    <div class="form-group">
+      <label>{{t 'group.invite.form.user.name'}}</label>
+      {{input name="name" value=newInvite.name type="text" required="true" classNames="form-control"}}
+    </div>
+
+    <div class="form-group">
+      <label>{{t 'group.invite.form.text'}}</label>
+      {{we-editor value=newInvite.text style="small"}}
+    </div>
+
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit">{{t "group.invite.form.submit"}}</button>
+    </div>
+  </form>
+{{/if}}
+
+<h4>{{t "group.invite.list.title"}}</h4>
+
+{{we-group-invite-list groupId=group.id}}
+
+{{!-- {{#if user}}
+  <div class="text-center">
+    <span class="avatar-large">{{we-avatar userId=user.id size="medium"}}</span>
+    <h3>{{user.displayName}}</h3>
+    <p>{{user.bio}}</p>
+    <button {{action "inviteUser"}} class="btn btn-primary addMember" type="button" data-loading-text="Processando...">Adicionar</button>
   </div>
-</form>
-
-  {{#if user}}
-    <div class="text-center">
-      <span class="avatar-large">{{we-avatar userId=user.id size="medium"}}</span>
-      <h3>{{user.displayName}}</h3>
-      <p>{{user.bio}}</p>
-      <button {{action "inviteUser"}} class="btn btn-primary addMember" type="button" data-loading-text="Processando...">Adicionar</button>
-    </div>
-  {{else}}
-    {{#if notFound}}
-    <div class="alert alert-warning text-center" role="alert">          
-      <strong>Nenhum usuário encontrado!</strong>
-    </div>
-    {{/if}}
-  {{/if}}  
-
-  {{#if success}}
-  <div class="alert alert-success text-center" role="alert">          
-    Convite enviado com sucesso! 
+{{else}}
+  {{#if notFound}}
+  <div class="alert alert-warning text-center" role="alert">
+    <strong>Nenhum usuário encontrado!</strong>
   </div>
   {{/if}}
+{{/if}}
+
+{{#if success}}
+<div class="alert alert-success text-center" role="alert">
+  Convite enviado com sucesso!
 </div>
+{{/if}}
+ --}}

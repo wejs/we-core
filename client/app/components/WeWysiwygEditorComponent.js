@@ -1,5 +1,7 @@
 /**
  * WeWysiwygEditorComponent editor html for we.js
+ *
+ * {{we-editor style="small" value=variable}}
  */
 
 App.WeWysiwygEditorComponent = Ember.Component.extend({
@@ -31,14 +33,14 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
 
     if (this.get('limit')) {
       this.addObserver('value', this, this.countCharacters);
-    }     
+    }
   },
 
   didInsertElement: function () {
     this._super();
-    
+
     this.countCharacters();
-    
+
     var self = this;
     var value = self.get('value');
     if (!value) value = '';
@@ -61,7 +63,7 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
       focus: this.get('focus'),
       styleWithSpan: false,
 
-      toolbar: toobar,     
+      toolbar: toobar,
 
       onblur: function() {
         self.set('value',editor.code());
@@ -84,8 +86,8 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
             e.preventDefault();
             e.stopPropagation()
         }
-      } 
-    }    
+      }
+    }
 
     // make on change event optional
     if (this.get('onChangeText')) {
@@ -159,7 +161,7 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
       return this.set('trackCount', 0);
     }
     return this.set('trackCount', diff);
-  }    
+  }
 
 });
 
