@@ -29,6 +29,27 @@ module.exports = function Model(we) {
         type: we.db.Sequelize.STRING,
         allowNull: false
       }
+    },
+    options: {
+      getterMethods   : {
+        acceptUrl: function() {
+          return 'acceptUrl';
+        },
+        refuseUrl: function() {
+          return 'refuseUrl';
+        }
+      },
+      instanceMethods: {
+        toJSON: function() {
+          var obj = this.get();
+
+          // obj.acceptUrl = this.acceptUrl;
+          // obj.refuseUrl = '';
+
+
+          return obj;
+        }
+      }
     }
   }
 

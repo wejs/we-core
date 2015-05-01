@@ -200,8 +200,31 @@ module.exports = {
          function (err, membership) {
         if (err) return res.serverError(err);
 
-        return res.status(200).send({
-          membershipinvite: membership
+        we.db.models.follow.follow('group', res.locals.group.id, req.user.id, function (err, follow) {
+          if (err) return res.serverError(err);
+          if (!follow) return res.forbidden();
+
+          var templateVariables = {
+            group: res.locals.group,
+            inviter: req.user,
+            invite: membership,
+            we: we
+          };
+
+          return we.email.sendEmail('GroupInvite', {
+              subject: req.__('we.email.groupInvite.subject', templateVariables),
+              to: req.body.email
+            },
+            templateVariables,
+          function (err) {
+            if (err) {
+              we.log.error('Action:group:invite:email:', err);
+            }
+
+            return res.status(200).send({
+              membershipinvite: membership
+            });
+          });
         });
       })
     })

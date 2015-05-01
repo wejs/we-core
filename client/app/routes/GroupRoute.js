@@ -4,8 +4,8 @@ App.Router.map(function() {
     this.route('create',{path: '/create'});
     // item route
     this.resource('group',{ path: '/:id' }, function(){
-      this.route('addMember', {path: '/membros/add'});
-      this.route('members', {path: '/members'});
+      this.route('addMember', {path: '/invites'});
+      this.route('members', {path: '/member'});
       this.route('content', {path: '/content'});
       this.route('about', {path: '/about'});
       this.route('edit', {path: '/edit'});
@@ -23,11 +23,11 @@ App.GroupsIndexRoute = Ember.Route.extend(App.ResetScrollMixin,{
 });
 
 App.GroupAddMemberRoute = Ember.Route.extend(App.ResetScrollMixin,{
-
   model: function() {
     return {
       group: this.modelFor('group').group,
-      newInvite: {}
+      newInvite: {},
+      showInviteForm: false
     }
   }
 });
@@ -99,9 +99,7 @@ App.GroupMembersRoute = Ember.Route.extend(App.ResetScrollMixin, {
   loadMembers: function(groupId, limit, role) {
     var self = this;
     if (!groupId) groupId = this.get('group.id');
-
     if (!groupId) return;
-
 
     var query = {};
     // Só quem tem o status de ativo. Se for convite, o usuário ainda tem que aceitar...
@@ -112,11 +110,11 @@ App.GroupMembersRoute = Ember.Route.extend(App.ResetScrollMixin, {
     return new Ember.RSVP.Promise(function(resolve, reject) {
       return $.ajax({
         type: 'GET',
-        url: '/group/' + groupId + '/members',
+        url: '/group/' + groupId + '/member',
         data:  query
       })
       .done(function success(data) {
-        return resolve(self.get('store').pushMany('membership', data.user));
+        return resolve(self.get('store').pushPayload(data));
       })
       .fail(reject)
     });

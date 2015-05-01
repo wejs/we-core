@@ -56,9 +56,11 @@
               Convidar Pessoa
             {{/link-to}}
           {{/if}}
-
           {{#link-to 'group.content' classNames="list-group-item"}}
             {{t 'group.contents'}}
+          {{/link-to}}
+          {{#link-to 'group.members' group.id classNames="list-group-item" }}
+            Members
           {{/link-to}}
         </div>
       </div>
@@ -75,7 +77,7 @@
             {{t 'Edit'}}
           {{/link-to}}
           {{#link-to 'group.addMember' group.id classNames="list-group-item" }}
-            Convidar Pessoa
+            Convites
           {{/link-to}}
         </div>
       </div>

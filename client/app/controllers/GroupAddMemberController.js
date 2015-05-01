@@ -36,34 +36,13 @@ App.GroupAddMemberController = Ember.ObjectController.extend({
       }).always(function(){
         self.set('isLoading', false);
       });
+    },
+    showInvite: function() {
+      this.set('showInviteForm', true);
+    },
+    cancelInvite: function() {
+      this.set('showInviteForm', false);
+      this.set('newInvite', {});
     }
-
-    // /**
-    //  * search for member by username
-    //  */
-    // findOneUserByUsername: function findOneUserByUsername() {
-    //   var self = this;
-    //   var username = this.get('username');
-
-    //   // /user/:username
-
-    //   return Ember.$.ajax({
-    //     url: '/user/' + username
-    //   }).then(function(data) {
-    //     // console.log(self.store.all('user').content);
-    //     // console.log(self.get('members'));
-    //     self.setProperties({
-    //       'user': data.user,
-    //       'notFound': false
-    //     });
-    //   }).fail(function( jqXHR, textStatus, errorThrown) {
-    //     self.setProperties({
-    //       'user': null,
-    //       'notFound': true
-    //     });
-    //     Ember.Logger.error('Error on findOneUserByUsername',textStatus, errorThrown);
-    //     return []
-    //   });
-    // },
   }
 });
