@@ -100,6 +100,31 @@ Permissions = {
   },
 
   /**
+   * get current user roles property
+   * @return {array}
+   */
+  currentUserRolesWithProp: function(prop) {
+    var roles = [];
+    var property = prop || 'name';
+
+    // unAuthenticated
+    if ( !App.get('currentUser.id') ) {
+      return [ Permissions.roles.unAuthenticated[property] ];
+    }
+
+    var rolesObj = App.get('currentUser.roles').toArray();
+
+    for (var i = rolesObj.length - 1; i >= 0; i--) {
+      roles.push(Ember.get(rolesObj[i], property));
+    }
+
+    if (Permissions.roles.authenticated)
+      roles.push(Permissions.roles.authenticated[property]);
+
+    return roles;
+  },
+
+  /**
    * Check if currentUser can do something
    *
    * @param  {string} permission name
@@ -128,6 +153,7 @@ Permissions = {
     if (!Permissions.roles) return false;
 
     for (var i = roles.length - 1; i >= 0; i--) {
+      if (!Permissions.roles[roles[i]]) continue;
       if (Permissions.roles[roles[i]].permissions && Permissions.roles[roles[i]].permissions.indexOf(name) >= 0) {
         return Permissions.canCache[canName] = true;
       }
@@ -188,8 +214,13 @@ Permissions = {
 
       return $.getJSON( rolesUrl )
       .done(function afterLoadData(data) {
+
         if (data.role) {
+          // save roles in store
+          store.pushPayload({ role: data.role });
+
           data.role.forEach(function(role) {
+
             Permissions.roles[role.name] = role;
           })
           Permissions.rolesIsLoaded = true;

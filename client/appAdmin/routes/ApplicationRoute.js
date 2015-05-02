@@ -35,7 +35,7 @@ App.ApplicationRoute = Ember.Route.extend(WeApplicationRoutesMixin, {
 
     // // check acess
     if (!App.get('auth.isAuthenticated')) return this.transitionTo('authLogin');
-    if (!Permissions.can('can_administer')) return this.transitionTo('403');
+   // if (!Permissions.can('can_administer')) return this.transitionTo('403');
 
     // app configs
     promisse.configs = App.configs;
@@ -92,7 +92,6 @@ App.ApplicationRoute = Ember.Route.extend(WeApplicationRoutesMixin, {
     error: function(error, transition){
       if (error.status === 0) {
         Ember.Logger.error('Unhandled error on route', error);
-        //showErrorDialog('Sorry, but we\'re having trouble connecting to the server. This problem is usually the result of a broken Internet connection. You can try refreshing this page.');
       } else if (error.status == 403) {
         Ember.Logger.error('Unhandled error on route', error);
         //go to some default route
@@ -100,7 +99,7 @@ App.ApplicationRoute = Ember.Route.extend(WeApplicationRoutesMixin, {
         Ember.Logger.error('Unhandled error on route', error);
         //handle 401
       } else if (error.status == 500) {
-        Ember.Logger.error('500 error', error);
+        Ember.Logger.error('500 error:', error);
         this.transitionTo('500');
         //handle 401
       } else if (error.status == 404) {

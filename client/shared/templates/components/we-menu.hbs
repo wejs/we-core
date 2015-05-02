@@ -1,4 +1,4 @@
-{{#each menu.links}}
+{{#each filteredLinks}}
   <li>
     {{#if external}}
       <a {{bind-attr href=href}}  {{bind-attr target=target}}>
@@ -14,7 +14,7 @@
           <a href="javascript:;">{{text}} <span class="fa arrow"></span></a>
           {{we-submenu text=text links=links}}
         {{else}}
-          {{#link-to model}} 
+          {{#link-to model}}
             {{we-menu-item-text item=this}}
           {{/link-to}}
         {{/if}}
