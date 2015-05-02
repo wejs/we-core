@@ -6,15 +6,15 @@ App.AuthRegisterController = Ember.ObjectController.extend({
   isVisible: true,
   attributeBindings: ['isVisible'],
 
-  defaultlanguages: ['pt-br', 'en-us'],
+  defaultlanguages: ['pt-br', 'en'],
 
   init: function(){
     this._super();
     var self = this;
 
-    if( App.get('currentUser.id') ) {
-      this.set('isVisible', false);
-    }
+    if ( App.get('currentUser.id') ) this.transitionTo('home');
+
+    this.set('defaultlanguages', App.configs.locales);
 
     we.hooks.on('user-authenticated',function(user, done){
       self.set('isVisible', false);

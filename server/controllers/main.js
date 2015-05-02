@@ -13,14 +13,8 @@ module.exports = {
    * Index page route /
    */
   index: function(req, res) {
-    var we = req.getWe();
-    var context = res.locals;
-
-    we.log.info('rodou o main.index', context);
-
     res.locals.template = 'home/index';
-
-    res.view({ title: 'Express' });
+    res.view({ title: App.config.appName });
   },
 
   /**
