@@ -23,7 +23,7 @@
     <div class="header panel-body">
       <div class="user-area-data row">
         <div class="user-area-data-left col-md-2" >
-          <span class="avatar-large">{{we-avatar userId=user.id size="responsive"}}</span>
+          <span class="avatar-large">{{user-avatar user=user size="medium"}}</span>
           {{#if edit}}
             <div class="form-group">
               {{view "select" name="language" value=user.language content=defaultlanguages classNames="form-control input-md"}}
