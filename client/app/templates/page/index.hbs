@@ -1,9 +1,7 @@
 <article class="bs-docs-section">
   <span class="meta">{{t 'page.created.by'}}
-    {{#link-to 'user' record.creator.id}}
-      {{record.creator.displayName}}</a>
-    {{/link-to}}
-     - {{date record.createdAt}}
+    {{#link-to 'user' record.creator.id}} {{record.creator.displayName}} {{/link-to}}
+    - {{date record.createdAt}}
   </span>
 
   <div class="article-body">

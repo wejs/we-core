@@ -108,7 +108,7 @@ module.exports = function UserModel(we) {
 
       pages:  {
         emberOnly: true,
-        type: 'belongsTo',
+        type: 'hasMany',
         model: 'page',
         inverse: 'creator'
       },
