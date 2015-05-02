@@ -7,6 +7,7 @@
  */
 var  fs = require('fs');
 var gm = require('gm');
+var async = require('async');
 
 module.exports = function ImageModel(we) {
 
@@ -94,8 +95,22 @@ module.exports = function ImageModel(we) {
           };
         },
 
+        /**
+         * Get image styles
+         *
+         * @return {object} avaible image styles
+         */
+        getImageStyles: function getImageStyles() {
+          return we.config.upload.image.avaibleStyles;
+        },
+
+        getImagePath: function getImagePath(imageStyle, fileName) {
+          if (!imageStyle) imageStyle = 'original';
+          return we.config.upload.image.uploadPath + '/'+ imageStyle +'/' + fileName;
+        },
+
         getFileOrResize: function getFileOrResize(fileName, imageStyle, callback) {
-          var path = we.config.upload.image.uploadPath + '/'+ imageStyle +'/' + fileName;
+          var path = we.db.models.image.getImagePath(imageStyle, fileName);
 
           fs.readFile(path,function (err, contents) {
             if (err) {
@@ -123,6 +138,51 @@ module.exports = function ImageModel(we) {
               callback(null, contents);
             }
           });
+        },
+
+        /**
+         * Resize one image in server and retur size
+         *
+         * @param  {strinh}   originalFile
+         * @param  {object}   cords
+         * @param  {Function} cb           callback
+         */
+        resizeImageAndReturnSize: function(originalFile, cords, cb) {
+          gm(originalFile).crop(cords.width, cords.height, cords.x, cords.y)
+          .write(originalFile, function (err) {
+            if (err) {
+              we.log.error('Error on crop file:', originalFile, cords, err);
+              return cb(err);
+            }
+            // get image size
+            gm(originalFile).size(function (err, size) {
+              if (err) return cb(err);
+              return cb(null,size);
+            });
+          });
+        },
+
+        /**
+         * Delete old image styles for one image
+         * @param  {string}   imageName
+         * @param  {Function} callback
+         */
+        deleteImageStylesWithImageName: function(imageName, callback){
+          var imageStyles = we.db.models.image.getImageStyles();
+          async.each(imageStyles,function(style, next){
+            var path = we.db.models.image.getImagePath(style, imageName);
+            fs.exists(path, function(exists) {
+              we.log.verbose(path, exists);
+              if (exists) {
+                fs.unlink(path, function (err) {
+                  if (err) throw err;
+                  next();
+                });
+              } else {
+                next();
+              }
+            });
+          },callback);
         }
       },
 

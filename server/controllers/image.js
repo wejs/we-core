@@ -18,7 +18,7 @@ module.exports = {
       return res.badRequest('image:findOne: fileName is required');
     }
 
-    var avaibleImageStyles = we.config.upload.image.avaibleStyles;
+    var avaibleImageStyles = we.db.models.image.getImageStyles();
 
     var imageStyle = req.param.style;
     if (!imageStyle) {
@@ -134,68 +134,46 @@ module.exports = {
   // /**
   //  * Crop one file by file id
   //  */
-  cropImage : function (req, res) {
+  cropImage: function cropImage(req, res) {
     var we = req.getWe();
 
-    var fileId = req.params.id;
+    if (!res.locals.record) return res.notFound();
+
     var cords = {};
     cords.width = req.body.w;
     cords.height = req.body.h;
     cords.x = req.body.x;
     cords.y = req.body.y;
 
-    if(!fileId ) { return res.send(400,'File id param is required'); }
-
-    if(!cords.width || !cords.height || cords.x === null || cords.y === null){
-      return res.send(400,'Width, height, x and y params is required');
+    if (!cords.width || !cords.height || cords.x === null || cords.y === null){
+      return res.badRequest('Width, height, x and y params is required');
     }
 
-    if(!req.user || !req.user.id) {
-      we.log.warn('errr no user')
-      return res.send(404);
-    }
+    var originalFile = we.db.models.image.getImagePath('original', res.locals.record.name);
 
-    var user_id = req.user.id;
+    we.log.verbose('resize image to:', cords);
 
-    we.db.models.image.find({
-      where: {id: fileId}
-    }).done(function(err, image) {
-      if (err) {
-        we.log.error('Error on get image from BD: ',err, fileId);
-        return res.send(404);
-      }
-      if(!image || user_id !== image.creator){
-        we.log.error('Image crop forbiden');
-        return res.send(404);
-      }
+    we.db.models.image
+    .resizeImageAndReturnSize(originalFile, cords, function(err, size) {
+      res.locals.record.width = size.width;
+      res.locals.record.height = size.height;
 
-      var originalFile = FileImageService.getImagePath(image.name, 'original');
-
-
-      we.log.verbose('Filename:', image.name);
-
-      FileImageService.resizeImageAndReturnSize(originalFile, cords, function(err, size){
-
-        image.width = size.width;
-        image.height = size.height;
-        // save the new width and height on db
-        image.save();
-
-        we.log.verbose('resize image to:', cords);
-
+      // save the new width and height on db
+      res.locals.record.save().then(function() {
         we.log.verbose('result:',size.width, size.width);
 
         // delete old auto generated image styles
-        FileImageService.deleteImageStylesWithImageName(image.name, function(err){
+        we.db.models.image
+        .deleteImageStylesWithImageName(res.locals.record.name, function(err){
           if (err){
-            we.log.error('Error on delete old image styles:',image, err);
+            we.log.error('Error on delete old image styles:',res.locals.record, err);
             return res.send(500);
           }
           res.send({
-            image: image
+            image: res.locals.record
           });
         });
-      });
+      })
     });
   }
 };

@@ -6,7 +6,7 @@
 App.inject( 'component:we-avatar-modal', 'store', 'store:main' );
 
 App.WeAvatarModalComponent = Ember.Component.extend({
-  url: '/api/v1/images/',
+  url: '/api/v1/image',
   attributeBindings: ['user'],
   file: null,
   files: {},
@@ -20,7 +20,7 @@ App.WeAvatarModalComponent = Ember.Component.extend({
   },
   filesDidChange: function() {
     if (Ember.isEmpty(this.get('files'))) return;
-    this.set('file',this.get('files').item(0));    
+    this.set('file',this.get('files').item(0));
   }.observes('files'),
   onShowAvatarChangeModal: function(data){
     this.set('user', data.user);
@@ -58,7 +58,7 @@ App.WeAvatarModalComponent = Ember.Component.extend({
       var uploader = Ember.Uploader.create({
         url: this.get('url'),
         type: 'POST',
-        paramName: 'images'
+        paramName: 'image'
       });
 
       if (!Ember.isEmpty(file)) {
@@ -67,7 +67,7 @@ App.WeAvatarModalComponent = Ember.Component.extend({
 
         var promisseUpload = uploader.upload(file);
         promisseUpload.then(function(data) {
-          self.set('salvedImage',data.images[0]);
+          self.set('salvedImage',data.image[0]);
           self.set('imageSelected', true);
 
           self.set('isLoading',false);
@@ -87,11 +87,11 @@ App.WeAvatarModalComponent = Ember.Component.extend({
 
       $.ajax({
         type: 'post',
-        url: '/api/v1/images-crop/'+ imageId ,
+        url: '/api/v1/image-crop/' + imageId,
         data:  JSON.stringify(cords),
         contentType: 'application/json'
       }).done(function(newImage){
-        self.get('store').push('images', newImage.image);
+        self.get('store').push('image', newImage.image);
         self.send('saveAvatar');
       }).fail(function(e){
         console.error('Error on image crop',e);
@@ -113,7 +113,7 @@ App.WeAvatarModalComponent = Ember.Component.extend({
       }).done(function (data) {
         var avatar = data.avatar;
         // update user and image on store
-        var storeImage = self.get('store').push('images', avatar);
+        var storeImage = self.get('store').push('image', avatar);
         data.avatar = storeImage;
         // set current user avatarId
         App.currentUser.set('avatar', storeImage);

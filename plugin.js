@@ -245,20 +245,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'findOneReturnData',
       model         : 'image',
       responseType  : 'json',
+      loadRecord    :  true,
       permission    : 'find_image'
-    },
-    'get /api/v1/image-crop/:id([0-9]+)': {
-      controller    : 'image',
-      action        : 'cropImage',
-      model         : 'image',
-      responseType  : 'json',
-      permission    : 'crop_image'
     },
     'post /api/v1/image-crop/:id([0-9]+)': {
       controller    : 'image',
       action        : 'cropImage',
       model         : 'image',
       responseType  : 'json',
+      loadRecord    :  true,
       permission    : 'crop_image'
     },
     // 'delete /api/v1/image/:id([0-9]+)': {
