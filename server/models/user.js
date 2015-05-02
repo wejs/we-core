@@ -85,6 +85,7 @@ module.exports = function UserModel(we) {
         type: 'belongsTo',
         model : 'image',
         inverse: 'avatarOf',
+        constraints: false,
         foreignKey : 'avatarId'
       },
       passports:  {

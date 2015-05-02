@@ -31,18 +31,15 @@ module.exports = {
 
     if(!id) return res.forbidden();
 
-    we.db.models.user.find(id).done(function (err, user) {
-      if (err) return res.serverError(err);
+    we.db.models.user.find(id).then(function (user) {
+      if (user && user.avatarId) {
+        we.db.models.image.find(user.avatarId).then(function (image) {
+          if (!image) return res.notFound();
 
-      if (user && user.avatar) {
-        we.db.models.image.find(user.avatar).done(function (err, image) {
-          if (err) return res.serverError(err);
-
-          we.db.models.image.getFileOrResize
-          .getFileOrResize(image.name, style,function (err, contents) {
-            if(err){
-              we.log.debug('Error on get avatar: ', err);
-              return res.notFound();
+          we.db.models.image.getFileOrResize(image.name, style, function (err, contents) {
+            if(err) {
+              we.log.error('Error on get avatar: ', err);
+              return res.serverError();
             }
 
             if (!contents) return res.notFound();
@@ -56,7 +53,7 @@ module.exports = {
             res.send(contents);
           });
 
-        });
+        })
       } else {
         fs.readFile(defaultAvatarPath, function (err, contents) {
           if (err) return res.serverError(err);
@@ -65,42 +62,38 @@ module.exports = {
           res.send(contents);
         });
       }
-    });
-
+    }).catch(res.serverError);
   },
 
-  // changeAvatar: function (req, res) {
-  //   // TODO validate req.files.files
-  //   var imageId = req.param('image');
+  changeAvatar: function changeAvatar(req, res) {
+    if (!req.isAuthenticated()) return res.forbidden();
+    if (!res.locals.record) return res.notFound();
 
-  //   if(!req.isAuthenticated()){
-  //     return res.forbidden();
-  //   }
+    var we = req.getWe();
 
-  //   Images.findOneById(imageId)
-  //   .exec(function(err, image){
-  //     if (err) return res.negotiate(err);
+    var imageId = req.body.image;
 
-  //     if(!image || req.user.id !== image.creator){
-  //       sails.log.debug('User:avatarChange:User dont are image woner or image not found',req.user, image);
-  //       return res.forbidden();
-  //     }
+    we.db.models.image.find({
+      where: { id: imageId }
+    }).then(function (image) {
+      we.log.warn(image.get(), req.user.id)
 
-  //     // set current user vars
-  //     req.user.avatar = image.id;
+      if (!image || req.user.id !== image.creatorId) {
+        we.log.debug('User:avatarChange:User dont are image woner or image not found',req.user, image);
+        return res.forbidden();
+      }
 
-  //     // update db user
-  //     User.update(
-  //       {id: req.user.id},
-  //       {avatar: image.id}
-  //     ).exec(function afterwards(err){
-  //       if (err) return res.negotiate(err);
-  //       res.send({
-  //         'user': req.user,
-  //         'avatar': image
-  //       });
-  //     });
-  //   });
-  // }
+      // set current user vars
+      req.user.avatar = image.id;
+
+      // update db user
+      res.locals.record.setAvatar(image).then(function() {
+        res.send({
+          'user': req.user
+        });
+      });
+
+    }).catch(res.serverError);
+  }
 
 };

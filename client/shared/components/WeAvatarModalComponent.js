@@ -90,7 +90,7 @@ App.WeAvatarModalComponent = Ember.Component.extend({
         url: '/api/v1/image-crop/' + imageId,
         data:  JSON.stringify(cords),
         contentType: 'application/json'
-      }).done(function(newImage){
+      }).done(function(newImage) {
         self.get('store').push('image', newImage.image);
         self.send('saveAvatar');
       }).fail(function(e){
@@ -105,18 +105,14 @@ App.WeAvatarModalComponent = Ember.Component.extend({
 
       $.ajax({
         type: 'post',
-        url: '/api/v1/user/'+userId+'/avatar',
+        url: '/api/v1/user/'+ userId +'/avatar',
         data: JSON.stringify({
           image: image.id
         }),
         contentType: 'application/json'
       }).done(function (data) {
-        var avatar = data.avatar;
-        // update user and image on store
-        var storeImage = self.get('store').push('image', avatar);
-        data.avatar = storeImage;
-        // set current user avatarId
-        App.currentUser.set('avatar', storeImage);
+        // set current user avatar
+        App.currentUser.set('avatar', self.get('store').find('image', image.id));
         // close modal
         self.send('close');
         // triger event change modal

@@ -8,6 +8,8 @@
 var  fs = require('fs');
 var gm = require('gm');
 var async = require('async');
+var mkdirp = require('mkdirp');
+
 
 module.exports = function ImageModel(we) {
 
@@ -67,12 +69,12 @@ module.exports = function ImageModel(we) {
 
     associations: {
       creator:  {
-        type: 'hasOne',
+        type: 'belongsTo',
         model: 'user',
-        inverse: 'images',
-        foreignKey : 'creatorId'
+        inverse: 'images'
       },
       avatarOf: {
+        emberOnly: true,
         type: 'hasOne',
         model: 'user',
         inverse: 'avatar',
@@ -112,13 +114,13 @@ module.exports = function ImageModel(we) {
         getFileOrResize: function getFileOrResize(fileName, imageStyle, callback) {
           var path = we.db.models.image.getImagePath(imageStyle, fileName);
 
-          fs.readFile(path,function (err, contents) {
+          fs.readFile(path, function (err, contents) {
             if (err) {
               if (err.code != 'ENOENT' || imageStyle == 'original' ) {
                 return callback(err);
               }
 
-              var originalFile = we.config.upload.image.uploadPath + '/original/' + fileName;
+              var originalFile =  we.db.models.image.getImagePath('original', fileName);
 
               var width = we.config.upload.image.styles[imageStyle].width;
               var heigth = we.config.upload.image.styles[imageStyle].heigth;
@@ -129,7 +131,7 @@ module.exports = function ImageModel(we) {
               .noProfile()
               .write(path, function (err) {
                 if (err) return callback(err);
-                fs.readFile(path,function (err, contents) {
+                fs.readFile(path, function (err, contents) {
                   callback(null, contents);
                 });
               });
@@ -208,6 +210,22 @@ module.exports = function ImageModel(we) {
       }
     }
   }
+
+  we.hooks.on('we:create:default:folders', function(we, done) {
+    // create image upload path
+    mkdirp(we.config.upload.image.uploadPath, function(err) {
+      if (err) we.log.error('Error on create image upload path', err);
+
+      var imageStyles = we.db.models.image.getImageStyles();
+
+      async.each(imageStyles, function (style, next) {
+        mkdirp(we.config.upload.image.uploadPath + '/' + style, function (err) {
+          if (err) we.log.error('Error on create upload path', err);
+          next();
+        })
+      }, done);
+    })
+  });
 
   return model;
 }

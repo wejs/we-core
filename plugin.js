@@ -457,12 +457,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'user',
       permission    : 'delete_user'
     },
-
-
-    // 'post /api/v1/user/:id([0-9]+)/avatar': {
-    //   controller    : 'avatar',
-    //   action        : 'changeAvatar'
-    // },
+    'post /api/v1/user/:id([0-9]+)/avatar': {
+      controller    : 'avatar',
+      action        : 'changeAvatar',
+      model         : 'user',
+      loadRecord    :  true,
+      permission    : 'update_user'
+    },
 
     //
     // -- ROLES
@@ -890,8 +891,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   plugin.hooks.on('we:create:default:folders', function(we, done) {
     // create image upload path
     mkdirp(we.config.upload.image.uploadPath, function(err) {
-      if (err) we.log.error('Error on create image upload path', err);
-
+      if (err) we.log.error('Error on create upload path', err);
       done();
     })
   });
