@@ -8,13 +8,13 @@
 
   <div class="article-body">
     {{#if record.id}}
-      {{#can 'page_update' 'page' 'record'}}
+      {{#can 'update_page' 'page' 'record'}}
         {{#link-to 'page.edit' record.id classNames="btn btn-primary"}}
           Edit
         {{/link-to}}
       {{/can}}
 
-      {{#can 'page_delete' 'page' 'record'}}
+      {{#can 'delete_page' 'page' 'record'}}
         <button {{action 'deleteRecord' record.id}} class="btn btn-default">
           Delete
         </button>

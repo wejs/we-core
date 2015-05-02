@@ -168,7 +168,6 @@ module.exports = function UserModel(we) {
       comment: 'We.js users table',
 
       classMethods: {
-
         validUsername: function(username){
           var restrictedUsernames = [
             'logout',
@@ -184,6 +183,31 @@ module.exports = function UserModel(we) {
             return false;
           }
           return true
+        },
+        /**
+         * Context loader, preload current request record and related data
+         *
+         * @param  {Object}   req  express.js request
+         * @param  {Object}   res  express.js response
+         * @param  {Function} done callback
+         */
+        contextLoader: function contextLoader(req, res, done) {
+          if (!res.locals.id || !res.locals.loadCurrentRecord) return done();
+
+          this.find(res.locals.id)
+          .done(function (err, record) {
+            if (err) return done(err);
+
+            res.locals.record = record;
+
+            if (record && record.id && req.isAuthenticated()) {
+              // ser role owner
+              if (req.user.id == record.id)
+                if(req.userRoleNames.indexOf('owner') == -1 ) req.userRoleNames.push('owner');
+            }
+
+            return done();
+          })
         }
       },
       instanceMethods: {

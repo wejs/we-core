@@ -17,7 +17,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-8">
-      {{#can 'article_create'}}
+      {{#can 'create_article'}}
         <div class="articles-actions">
           {{#link-to 'articles.create'}}
             {{t 'article.create'}}
@@ -34,7 +34,7 @@
           </div>
         {{/if}}
       </div>
-     
+
     </div>
 
     {{partial 'partials/sidebar' }}

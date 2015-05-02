@@ -58,12 +58,7 @@ Permissions = {
    *
    * @type {Object}
    */
-  defaultRoles: {
-    authenticated: 'authenticated',
-    unAuthenticated: 'unAuthenticated',
-    owner: 'owner',
-    administrator: 'administrator'
-  },
+  roles: {},
 
   currentUserRolesCache: null,
 
@@ -88,7 +83,7 @@ Permissions = {
     // if dont have cache
     // unAuthenticated
     if ( !App.get('currentUser.id') ) {
-      return [ Permissions.defaultRoles.unAuthenticated ];
+      return [ 'unAuthenticated' ];
     }
 
     var rolesObj = App.get('currentUser.roles').toArray();
@@ -97,7 +92,7 @@ Permissions = {
       roles.push(Ember.get(rolesObj[i], 'name'));
     }
 
-    roles.push(Permissions.defaultRoles.authenticated);
+    roles.push('authenticated');
 
     Permissions.currentUserRolesCache = roles;
 
@@ -119,33 +114,21 @@ Permissions = {
     var canName = Permissions.makeCanName(name, modelName, model);
 
     // check if has a can cache
-    if (typeof(Permissions.canCache[canName]) !== 'undefined' )
-      return Permissions.canCache[canName];
+    if (typeof(Permissions.canCache[canName]) !== 'undefined' ) return Permissions.canCache[canName];
 
     // load roles
     var roles = Permissions.currentUserRoles();
     // add owner role
-    if (Permissions.isOwner(modelName, model))
-      roles.push(Permissions.defaultRoles.owner);
+    if (Permissions.isOwner(modelName, model)) roles.push('owner');
 
     // return true if has admin role
     if ( roles.indexOf('administrator') > -1 ) return true;
 
-    var permission = Permissions.get(name);
-    if (!permission) {
-      // set cache and return
-      return Permissions.canCache[canName] = false;
-    }
-
-    var permissionRoles = permission.roles;
-
     // return false if this permission dont have roles
-    if (!permissionRoles || permissionRoles.length < 1) {
-      return false;
-    }
+    if (!Permissions.roles) return false;
 
-    for (var i = permissionRoles.length - 1; i >= 0; i--) {
-      if ( roles.indexOf(permissionRoles[i]) > -1 ) {
+    for (var i = roles.length - 1; i >= 0; i--) {
+      if (Permissions.roles[roles[i]].permissions && Permissions.roles[roles[i]].permissions.indexOf(name) >= 0) {
         return Permissions.canCache[canName] = true;
       }
     }
@@ -162,6 +145,7 @@ Permissions = {
   isOwner: function(modelName, model) {
     var currentUserId = App.get('currentUser.id');
     if (!currentUserId || !model) return false;
+    if (!model.id) return true; // recent created model
 
     if (modelName === 'user') {
       if (model.id == App.get('currentUser.id')) {
@@ -205,14 +189,11 @@ Permissions = {
       return $.getJSON( rolesUrl )
       .done(function afterLoadData(data) {
         if (data.role) {
-          store.pushMany('role', data.role);
           data.role.forEach(function(role) {
-            Permissions.defaultRoles[role.name] = role.name;
+            Permissions.roles[role.name] = role;
           })
-
           Permissions.rolesIsLoaded = true;
         }
-
         resolve();
       })
       .fail(function (result) {
@@ -224,45 +205,45 @@ Permissions = {
     });
   },
 
-  /**
-   * Load and register all permissions and roles, use in app bootstrap
-   *
-   * @param  {Object} store Ember data store
-   * @return {Object}       Promisse Ember.RSVP
-   */
-  loadAndRegisterAllPermissions: function(store) {
-    return new Ember.RSVP.Promise(function(resolve, reject) {
-      var permissionsUrl = '/permission';
-      var permissionsHost = Ember.get('App.configs.permissionHost');
-      if ( permissionsHost ) {
-        permissionsUrl = permissionsHost + permissionsUrl;
-      }
+  // /**
+  //  * Load and register all permissions and roles, use in app bootstrap
+  //  *
+  //  * @param  {Object} store Ember data store
+  //  * @return {Object}       Promisse Ember.RSVP
+  //  */
+  // loadAndRegisterAllPermissions: function(store) {
+  //   return new Ember.RSVP.Promise(function(resolve, reject) {
+  //     var permissionsUrl = '/permission';
+  //     var permissionsHost = Ember.get('App.configs.permissionHost');
+  //     if ( permissionsHost ) {
+  //       permissionsUrl = permissionsHost + permissionsUrl;
+  //     }
 
-      return $.getJSON( permissionsUrl )
-      .done(function afterLoadData(data) {
-        if (data.permission) {
-          // register all permissions
-          Permissions.registerAll(data.permission);
-        }
+  //     return $.getJSON( permissionsUrl )
+  //     .done(function afterLoadData(data) {
+  //       if (data.permission) {
+  //         // register all permissions
+  //         Permissions.registerAll(data.permission);
+  //       }
 
-        // on success
-        resolve(Permissions._perms);
-      })
+  //       // on success
+  //       resolve(Permissions._perms);
+  //     })
 
-      .fail(function (result) {
-        if (result.status == '403') return resolve(Permissions._perms);
+  //     .fail(function (result) {
+  //       if (result.status == '403') return resolve(Permissions._perms);
 
-        Ember.Logger.error('Error on load permissions' , result);
-        // on failure
-        return reject(result);
-      })
-    });
-  },
+  //       Ember.Logger.error('Error on load permissions' , result);
+  //       // on failure
+  //       return reject(result);
+  //     })
+  //   });
+  // },
 
   loadAndRegisterAllRolesAndPermissions: function(store) {
     return new Ember.RSVP.hash({
       roles: Permissions.loadAndRegisterAllRoles(store),
-      permissions: Permissions.loadAndRegisterAllPermissions(store),
+      // permissions: Permissions.loadAndRegisterAllPermissions(store),
     });
   }
 };
