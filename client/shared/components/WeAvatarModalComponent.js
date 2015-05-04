@@ -111,8 +111,12 @@ App.WeAvatarModalComponent = Ember.Component.extend({
         }),
         contentType: 'application/json'
       }).done(function (data) {
-        // set current user avatar
-        App.currentUser.set('avatar', self.get('store').find('image', image.id));
+
+        self.get('store').find('image', image.id).then(function(i) {
+          // set current user avatar
+          App.currentUser.set('avatar', i);
+        });
+
         // close modal
         self.send('close');
         // triger event change modal
