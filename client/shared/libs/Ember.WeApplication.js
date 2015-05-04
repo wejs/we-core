@@ -2,9 +2,16 @@
 window.ENV = {FEATURES: {'query-params-new': true}};
 Ember.FEATURES['query-params-new'] = true;
 
+var weDevEnv = window.WE_BOOTSTRAP_CONFIG.env != 'prod';
+
 Ember.WeApplication = Ember.Application.extend({
   // authenticated user
   currentUser: {},
+
+  LOG_TRANSITIONS: weDevEnv,
+  LOG_TRANSITIONS_INTERNAL: weDevEnv,
+  LOG_VIEW_LOOKUPS: weDevEnv,
+  LOG_ACTIVE_GENERATION: weDevEnv,
 
   configs: Ember.Object.create({
     vocabularyId: 1,
@@ -23,13 +30,17 @@ Ember.WeApplication = Ember.Application.extend({
       this.set('WeNotification', window.WeNotification.create());
     }
 
+    Ember.ENV.I18N_COMPILE_WITHOUT_HANDLEBARS = false;
+
     // dev configs
-    if ( !window.PRODUCTION_ENV ) {
+    if ( window.WE_BOOTSTRAP_CONFIG.env != 'prod'  ) {
       // basic logging of successful transitions
-      this.set('LOG_TRANSITIONS', true);
-      // detailed logging of all routing steps
-      this.set('LOG_TRANSITIONS_INTERNAL', true);
-      this.set('LOG_VIEW_LOOKUPS', true);
+
+      //this.set('LOG_RESOLVER', true);
+      //Ember.LOG_BINDINGS = true
+    } else {
+      Ember.ENV.RAISE_ON_DEPRECATION = false;
+      Ember.LOG_STACKTRACE_ON_DEPRECATION = false;
     }
   },
 
