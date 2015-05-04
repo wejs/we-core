@@ -21,7 +21,7 @@ before_script:
   - npm install -g codeclimate-test-reporter
 
 after_success:
-  - istanbul cover _mocha -- -R spec ./test/bootstrap.js ./test/**/*.js
+  - NODE_ENV=test LOG_LV=info istanbul cover _mocha -- -R spec test/bootstrap.js test/**/*.test.js --timeout 20000
   - codeclimate < ./coverage/lcov.info
 
 notifications:
