@@ -24,7 +24,8 @@ WeApplicationRoutesMixin = Ember.Mixin.create({
      */
     logOut: function logOut() {
       //disconect from socket.io
-      window.io.socket.disconnect();
+      if (window.io && window.io.socket && window.io.socket.disconnect)
+        window.io.socket.disconnect();
 
       App.auth.logOut(function(){
         // redirect to logout in express
