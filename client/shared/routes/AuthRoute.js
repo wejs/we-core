@@ -16,8 +16,38 @@ App.AuthLoginRoute = Ember.Route.extend(App.UnAuthenticatedRouteMixin, {
     return {
       email: '',
       password: '',
-      messages: []
+      messages: [],
+
+      auth: App.auth
     };
+  },
+
+  actions: {
+    //Submit the modal
+    login: function() {
+      var self = this;
+
+      $.post('/auth/login',{
+        email: this.get('currentModel.email'),
+        password: this.get('currentModel.password')
+      })
+      .done(function(data) {
+        if (data.id || data.user) {
+          location.reload();
+        } else {
+          if (data.messages) {
+            self.set('currentModel.messages', data.messages);
+          }
+        }
+      })
+      .fail(function(data) {
+        if (data.responseJSON) {
+          self.set('currentModel.messages', data.responseJSON.messages);
+        }else{
+          Ember.Logger.error( 'Error on login', data);
+        }
+      });
+    },
   }
 });
 

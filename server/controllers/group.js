@@ -140,24 +140,9 @@ module.exports = {
 
   findContentByType: function findContentByType(req, res) {
     var we = req.getWe();
-
-    res.locals.query.where.groupName = 'group';
-    res.locals.query.where.groupId = res.locals.group.id;
     res.locals.query.where.contentModelName = req.params.contentModelName;
 
-    we.db.models.groupcontent.findAndCountAll(res.locals.query)
-    .done(function(err, result) {
-      if (err) return res.serverError(err);
-
-      res.locals.record = result.rows;
-
-      return res.status(200).send({
-        groupcontent: result.rows,
-        meta: {
-          count: result.count
-        }
-      });
-    });
+    we.controllers.group.findAllContent(req, res);
   },
 
   inviteMember: function inviteMember(req, res) {

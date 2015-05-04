@@ -20,6 +20,8 @@ App.WeMenuComponent = Ember.Component.extend({
   filteredLinks: function (){
     var currentUserRoles = Permissions.currentUserRolesWithProp('name');
 
+    if (!this.get('menu.links')) return;
+
     // filter links if current user not is admin
     if (currentUserRoles.indexOf('administrator') === -1) {
 
