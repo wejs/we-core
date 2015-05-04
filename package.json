@@ -3,6 +3,7 @@
   "version": "0.3.10",
   "main": "./lib/index.js",
   "scripts": {
+    "lint": "./node_modules/.bin/jshint .",
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js --timeout 20000"
   },
   "keywords": [
@@ -67,6 +68,7 @@
   "devDependencies": {
     "chance": "^0.7.3",
     "grunt-cli": "^0.1.13",
+    "jshint": "^2.7.0",
     "mocha": "^2.1.0",
     "sinon": "^1.14.0",
     "supertest": "^0.15.0",

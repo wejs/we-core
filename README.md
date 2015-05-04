@@ -38,6 +38,12 @@ npm test
 NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -g 'userFeature'
 ```
 
+##### For run the javascript linter
+
+```sh
+npm run lint
+```
+
 ##Features:
 
 - User register and authentication
