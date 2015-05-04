@@ -1,10 +1,10 @@
 App.CommentItemController = Ember.ObjectController.extend({
   isSaving: false,
 
-	actions: {
-		edit: function() {
-			this.set('isEditing', true);
-		},
+  actions: {
+    edit: function() {
+      this.set('isEditing', true);
+    },
     sendComment: function(){
       var self = this;
       this.set('isSaving', true);
@@ -23,5 +23,5 @@ App.CommentItemController = Ember.ObjectController.extend({
         this.get('model').destroyRecord();
       }
     }
-	}
+  }
 });

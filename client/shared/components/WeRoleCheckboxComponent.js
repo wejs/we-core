@@ -44,7 +44,7 @@ App.WeRolePermissionCheckboxComponent = Ember.Component.extend({
 
       role.save().then(function() {
         self.set('isSaving', false);
-      })
+      });
     }
   }
 });

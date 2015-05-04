@@ -11,7 +11,7 @@ window.FlagObject = Ember.Object.create({
       this.flagIndex[flagType][model+'/'+modelId+'-count'] = count;
     }
 
-    return this.flagIndex[flagType][model+'/'+modelId] = value;
+    return (this.flagIndex[flagType][model+'/'+modelId] = value);
   },
   getFromCache: function(flagType, model, modelId) {
     if( !this.flagIndex[flagType] ) {
@@ -57,7 +57,7 @@ window.FlagObject = Ember.Object.create({
         resolve({
           flag: flagOnCache,
           count: flagIndex.count
-        })
+        });
       });
     }
 
@@ -159,11 +159,11 @@ window.FlagObject = Ember.Object.create({
     }
     return false;
   }
-})
+});
 
 
 $(function() {
   App.Flag.reopen({
     count: DS.attr('number')
-  })
-})
+  });
+});

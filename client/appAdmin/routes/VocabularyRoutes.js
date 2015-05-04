@@ -97,6 +97,6 @@ App.VocabularyCreateRoute = Ember.Route.extend({
   model: function () {
     return {
       vocabulary: {}
-    }
+    };
   }
 });

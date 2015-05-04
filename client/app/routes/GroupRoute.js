@@ -28,7 +28,7 @@ App.GroupAddMemberRoute = Ember.Route.extend(App.ResetScrollMixin,{
       group: this.modelFor('group').group,
       newInvite: {},
       showInviteForm: false
-    }
+    };
   }
 });
 
@@ -93,7 +93,7 @@ App.GroupMembersRoute = Ember.Route.extend(App.ResetScrollMixin, {
     return Ember.RSVP.hash({
       group: group,
       members: this.loadMembers(group.id, 20)
-    })
+    });
   },
 
   loadMembers: function(groupId, limit, role) {
@@ -116,7 +116,7 @@ App.GroupMembersRoute = Ember.Route.extend(App.ResetScrollMixin, {
       .done(function success(data) {
         return resolve(self.get('store').pushPayload(data));
       })
-      .fail(reject)
+      .fail(reject);
     });
   }
 });
@@ -129,7 +129,7 @@ App.GroupRequestsRoute = Ember.Route.extend(App.ResetScrollMixin, {
     return Ember.RSVP.hash({
       group: group,
       memberships: this.loadRequests(group.id)
-    })
+    });
   },
 
   loadRequests: function(groupId) {
@@ -152,7 +152,7 @@ App.GroupRequestsRoute = Ember.Route.extend(App.ResetScrollMixin, {
       .done(function success(data) {
         return resolve(data.membership);
       })
-      .fail(reject)
+      .fail(reject);
     });
   }
 });

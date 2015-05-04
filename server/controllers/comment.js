@@ -19,16 +19,12 @@ module.exports = {
   },
 
   findOne: function (req, res) {
-    var we = req.getWe();
-
     if (!res.locals.record) return res.notFound();
 
     res.ok();
   },
 
   find: function findRecords (req, res) {
-    var we = req.getWe();
-
     var modelName = req.query.modelName;
     var modelId = req.query.modelId;
 

@@ -100,7 +100,7 @@ App.GroupController = Ember.ObjectController.extend(App.GroupSaveAttributeMixin,
           logo.then(function(){
             self.send('cancelChangeAvatar');
             self.send('saveAttribute', 'logo');
-          })
+          });
         } else {
           self.send('cancelChangeAvatar');
         }

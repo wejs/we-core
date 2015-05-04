@@ -41,6 +41,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     defaultUserAvatar: projectPath + '/node_modules/we-core/files/public/images/avatars/user-avatar.png',
 
+    defaultCommentLimit: 3,
+
     log: {
       level: 'debug'
     },
@@ -154,10 +156,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // whether to write new locale information to disk - defaults to true
       updateFiles: true,
       // what to use as the indentation unit - defaults to "\t"
-      indent: "\t",
-      // setting extension of json files - defaults to '.json' (you might want to set this to '.js' according to webtranslateit)
+      indent: '\t',
+      // setting extension of json files - defaults to '.json'
+      // (you might want to set this to '.js' according to webtranslateit)
       extension: '.json',
-      // setting prefix of json files name - default to none '' (in case you use different locale files naming scheme (webapp-en.json), rather then just en.json)
+      // setting prefix of json files name - default to none ''
+      // (in case you use different locale files naming scheme
+      // (webapp-en.json), rather then just en.json)
       prefix: '',
       // enable object notation
       objectNotation: false
@@ -270,7 +275,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       permission    : 'upload_image',
       upload: {
         dest: projectPath + '/files/uploads/images/original',
-        rename: function (fieldname, filename) {
+        /**
+         * Rename file
+         * @param  {string} fieldname
+         * @param  {string} filename
+         * @return {string}           uuid
+         */
+        rename: function () {
           return Date.now() + '_' + uuid.v1();
         },
         limits: {

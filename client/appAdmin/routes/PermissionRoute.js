@@ -32,7 +32,7 @@ App.PermissionsRoute = Ember.Route.extend({
           Ember.Logger.error('Error on load permissions' , result);
           // on failure
           return reject(result);
-        })
+        });
       }),
       roles: this.get('store').find('role')
     });
@@ -49,7 +49,7 @@ App.PermissionsRoute = Ember.Route.extend({
 
 App.RolesRoute = Ember.Route.extend({
   model: function () {
-    return this.get('store').find('role')
+    return this.get('store').find('role');
   }
 });
 

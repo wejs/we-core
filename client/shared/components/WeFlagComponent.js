@@ -49,7 +49,7 @@ App.WeFlagComponent = Ember.Component.extend({
     var self = this;
 
     if (this.get('flagText') && Ember.isEmpty(this.get('unFlagText')) ) {
-      this.set('unFlagText', this.get('flagText') )
+      this.set('unFlagText', this.get('flagText') );
     }
 
     if (!this.get('flag')) {

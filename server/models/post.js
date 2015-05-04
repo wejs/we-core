@@ -7,7 +7,6 @@
  */
 
 var S = require('string');
-var _ = require('lodash');
 
 module.exports = function Model(we) {
   var model = {
@@ -85,60 +84,3 @@ module.exports = function Model(we) {
 
   return model;
 }
-
-
-
-
-// module.exports = {
-
-//   //-- Lifecycle Callbacks
-
-//   beforeCreate: function(post, next) {
-//     var originalBody = post.body;
-//     // sanitize
-//     post = SanitizeHtmlService.sanitizeAllAttr(post);
-//     // create one tag clean text version
-//     post.bodyClean = S(originalBody).stripTags().s;
-//     // small teaser text
-//     post.bodyTeaser = post.bodyClean.substr(0, 30);
-//     next();
-//   },
-
-//   beforeUpdate: function(post, next) {
-//     // dont update post.comments in post.update
-//     delete post.comments;
-//     // sanitize
-//     post = SanitizeHtmlService.sanitizeAllAttr(post);
-//     next();
-//   },
-
-//   loadPostImageAndComments: function (post, callback){
-//     Post.findOne({id: post.id})
-//     .populate('images')
-//     .populate('sharedIn')
-//     //.populate('comments', { limit: 2, sort: 'createdAt asc' })
-//     .exec( function( err, postPopulated){
-//       if(err){
-//         sails.log.error('erro on find and populate post', err, post);
-//         callback(err);
-//       }
-
-//       //fetch metadata and some comments for every post
-//       Comment.getCommentsAndCount(postPopulated.id, function(err, comments, commentCount){
-//         if (err) {
-//           sails.log.error('loadPostImageAndComments:error on Comment.getCommentsAndCount', err,postPopulated);
-//           return callback(err, postPopulated);
-//         }
-
-//         postPopulated.meta = {};
-//         postPopulated.meta.commentCount = commentCount;
-//         postPopulated._comments = [];
-
-//         postPopulated._comments = comments.reverse();
-
-//         callback(err, postPopulated);
-
-//       });
-//     })
-//   }
-// };

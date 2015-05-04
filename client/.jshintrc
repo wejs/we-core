@@ -1,0 +1,11 @@
+{
+  "predef": [
+    "Ember"
+    , "App"
+    , "DS"
+    , "Permissions"
+    , "NProgress"
+    , "WejsPrototypes"
+    , "we"
+  ]
+}

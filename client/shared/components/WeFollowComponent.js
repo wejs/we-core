@@ -48,7 +48,7 @@ App.WeFollowComponent = Ember.Component.extend(App.LoggedInMixin,{
     }
 
     if (this.get('flagText') && Ember.isEmpty(this.get('unFlagText')) ) {
-      this.set('unFlagText', this.get('flagText') )
+      this.set('unFlagText', this.get('flagText') );
     }
 
     if (!this.get('flag')) {

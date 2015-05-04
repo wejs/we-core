@@ -31,7 +31,7 @@ App.LayoutController = Ember.ObjectController.extend({
 
         self.set('newRegion', self.get('store').createRecord('region', {
           columns: 12
-        }) )
+        }));
 
       });
     }

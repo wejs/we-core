@@ -16,7 +16,7 @@ App.WeFieldUrlAliasComponent = Ember.Component.extend({
 
     var self = this;
 
-    this.set('url', {})
+    this.set('url', {});
 
     this.get('store').find('url', {
       where: JSON.stringify({

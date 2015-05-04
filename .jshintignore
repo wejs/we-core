@@ -1,3 +1,8 @@
 node_modules
 coverage
 config
+test
+files
+docs
+client/shared/libs
+client/shared/beforeAll

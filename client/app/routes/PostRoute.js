@@ -79,12 +79,12 @@ App.PostRoute = Ember.Route.extend(App.ResetScrollMixin,{
         }
         return false;
       })
-    })
+    });
   },
   afterModel: function(model) {
     App.WeNotification.markModelNotificationAsRead(
       this.get('store'), 'post', model.post.id
-    )
+    );
   },
 
   subscribe: function(modelName, id) {
@@ -99,6 +99,6 @@ App.PostRoute = Ember.Route.extend(App.ResetScrollMixin,{
 
 App.PostsRoute = Ember.Route.extend({
   model: function() {
-    return []
+    return [];
   }
 });

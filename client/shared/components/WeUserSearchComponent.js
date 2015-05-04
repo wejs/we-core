@@ -21,7 +21,7 @@ App.WeUserSearchComponent = Ember.Component.extend({
        if (this.get('delegate')) {
           this.get('delegate').set(this.get('property') || 'WeUserSearch', this);
        }
-    },    
+    },
 
     didInsertElement: function() {
         var self = this;
@@ -34,7 +34,7 @@ App.WeUserSearchComponent = Ember.Component.extend({
         options.tokenSeparators = [','];
         options.minimumInputLength = self.get('minimumInputLength');
 
-        options.escapeMarkup = function (m) { return m; }
+        options.escapeMarkup = function (m) { return m; };
 
         options.formatSelection = function(item) {
             return self.formatUserSelection(item);
@@ -52,14 +52,14 @@ App.WeUserSearchComponent = Ember.Component.extend({
               var limit = 30;
               var skip = ( page - 1 ) * limit;
               var helper = {};
-              helper[self.get('weSearchField')] = {}
+              helper[self.get('weSearchField')] = {};
               helper[self.get('weSearchField')].contains = term;
 
               var query = {
                 where: JSON.stringify(helper),
                 limit: limit,
                 skip: skip
-              };          
+              };
 
               return query;
             },
@@ -72,7 +72,7 @@ App.WeUserSearchComponent = Ember.Component.extend({
                 more: more
               };
             }
-        }
+        };
 
         Ember.assert("select2 has to exist", Ember.$.fn.select2);
         // Ember.assert("select2 needs a content array", self.get('content'));
@@ -91,15 +91,15 @@ App.WeUserSearchComponent = Ember.Component.extend({
     formatUserResult: function(user) {
       var size = '44px';
       if(this.get('addEmail')) size = '60px';
-      
+
       var markup = '<div class="container-fluid">' +
            '<div class="row">' +
-           '<div class="col-sm-3 text-center"><img style="width: ' + size + '; height: ' + size + '" src="/avatar/' + user.avatar + '" /></div>' +           
-           '<div class="col-sm-9">' + 
+           '<div class="col-sm-3 text-center"><img style="width: ' + size + '; height: ' + size + '" src="/avatar/' + user.avatar + '" /></div>' +
+           '<div class="col-sm-9">' +
               '<div>@' + user.username + '</div>' +
               '<div>' + user.displayName + '</div>';
 
-      if (this.get('addEmail')) markup += '<div>' + user.email + '</div>'
+      if (this.get('addEmail')) markup += '<div>' + user.email + '</div>';
 
       markup += '</div></div></div>';
 

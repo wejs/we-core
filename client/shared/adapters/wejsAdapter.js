@@ -22,7 +22,7 @@ $.ajaxPrefilter(function( options ) {
       // set auth token
       if (App.auth.token)
         xhr.setRequestHeader('Authorization','Bearer ' + App.auth.token);
-    }
+    };
   }
 });
 

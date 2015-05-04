@@ -73,7 +73,7 @@ App.WePaginationComponent = Ember.Component.extend({
   }).property('currentPage'),
   actions: {
     pageClicked: function(number) {
-      return this.sendAction('onPageClicked', number)
+      return this.sendAction('onPageClicked', number);
     },
     stepForward: function() {
       return this.sendAction('onStepForward');

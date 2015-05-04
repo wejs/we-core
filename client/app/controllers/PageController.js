@@ -6,7 +6,7 @@ App.PageController = Ember.ObjectController.extend({
     }
     var image = this.get('record.featuredImage');
     if(image && image.get('urls')) {
-      return this.bgStyle( image.get('urls').original )
+      return this.bgStyle( image.get('urls').original );
     }
     return this.bgStyle();
   }.property('record.featuredImage.urls', 'selectedPreviewImage'),

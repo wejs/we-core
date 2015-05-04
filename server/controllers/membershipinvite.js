@@ -1,8 +1,6 @@
 
 module.exports = {
   find: function findAll(req, res, next) {
-    var we = req.getWe();
-
     res.locals.query.groupId = req.params.groupId;
 
     res.locals.Model.findAndCountAll(res.locals.query, res.locals.queryOptions)

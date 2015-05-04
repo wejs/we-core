@@ -32,7 +32,7 @@ App.PostMecanismMixin,
 
   onNewWembed: function () {
     var store = this.get('store');
-    this.set('wembed', store.createRecord('wembed', this.get('newWembed')))
+    this.set('wembed', store.createRecord('wembed', this.get('newWembed')));
   }.observes('newWembed'),
 
   currentUser: function () {

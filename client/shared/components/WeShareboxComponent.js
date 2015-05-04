@@ -135,7 +135,7 @@ App.WeShareboxComponent = Ember.Component.extend(
         url: '/api/v1/group/'+ groupId +'/addContent/post/' + post.id
       })
       .fail(function(xhr) {
-        Ember.Logger.error('error on save post:', xhr)
+        Ember.Logger.error('error on save post:', xhr);
       });
     }
   },

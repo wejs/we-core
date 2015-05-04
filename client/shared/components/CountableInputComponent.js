@@ -14,7 +14,7 @@ App.CountableInputComponent = Ember.TextField.extend({
 		this._super.apply(this, arguments);
 
 		if (this.get('type') != 'checkbox' && this.get('limit')) {
-			this.addObserver('value', this, this.countCharacters);			
+			this.addObserver('value', this, this.countCharacters);
 		}
 	},
 
@@ -29,7 +29,7 @@ App.CountableInputComponent = Ember.TextField.extend({
 		}
 		var diff = parseInt(this.get('limit')) - this.get('value').length;
 		if (diff < 0) {
-			this.set('value', this.get('value').substr(0, parseInt(this.get('limit'))))
+			this.set('value', this.get('value').substr(0, parseInt(this.get('limit'))));
 			return this.set('trackCount', 0);
 		}
 		return this.set('trackCount', diff);

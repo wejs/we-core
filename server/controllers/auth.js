@@ -1,8 +1,6 @@
 // api/controllers/AuthController.js
 
-var _ = require('lodash'),
-  async = require('async'),
-  util = require('util');
+var _ = require('lodash');
 
 module.exports = {
   _config: {
@@ -47,6 +45,8 @@ module.exports = {
         we.log.error('signup:Error on checkIfIsSpamInRegister', err);
         return res.serverError();
       }
+
+      if (isSpam) return res.forbidden();
 
       var requireAccountActivation = we.config.auth.requireAccountActivation;
 
@@ -550,7 +550,7 @@ module.exports = {
     res.view();
   },
 
-  newPassword: function newPasswordAction(req, res, next) {
+  newPassword: function newPasswordAction(req, res) {
     if(!req.isAuthenticated()) return res.redirect('/');
     if (!req.user.isAdmin && !req.session.resetPassword) return res.forbidden();
 
@@ -642,7 +642,7 @@ module.exports = {
   /**
    * Change authenticated user password
    */
-  changePassword: function (req, res, next) {
+  changePassword: function (req, res) {
     if(!req.isAuthenticated()) return res.redirect('/');
     var we = req.getWe();
 

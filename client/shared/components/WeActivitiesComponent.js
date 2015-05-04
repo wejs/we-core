@@ -68,7 +68,7 @@ App.WeActivitiesComponent = Ember.Component.extend(App.WeLoadMoreMixin, {
     if(!this.translatedsObjects.sortOptions){
       this.get('sortOptions').forEach(function(option){
         option.label = Ember.I18n.t(option.label);
-      })
+      });
       this.translatedsObjects.sortOptions = true;
     }
   },

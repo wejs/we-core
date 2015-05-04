@@ -25,7 +25,7 @@
     }.observes('filesNew'),
 
     onNewWembed: function () {
-      this.set('wembed', this.get('newWembed'))
+      this.set('wembed', this.get('newWembed'));
     }.observes('newWembed'),
 
     actions: {
@@ -104,8 +104,7 @@
         var self = this;
 
         store.find('user', we.authenticatedUser.id)
-        .then(function(user){
-            console.warn(commentNew,self.get('model') )
+        .then(function (user) {
           // create new comment on store
           var comment = store.createRecord('comment', commentNew);
           comment.setProperties({

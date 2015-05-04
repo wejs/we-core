@@ -9,7 +9,7 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
     }
     var image = this.get('record.featuredImage');
     if(image && image.get('urls')) {
-      return this.bgStyle( image.get('urls').original )
+      return this.bgStyle( image.get('urls').original );
     }
     return this.bgStyle();
   }.property('record.featuredImage.urls', 'selectedPreviewImage'),
@@ -51,7 +51,7 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
         record.save().then(function(r) {
           self.set('isSaving', false);
           self.transitionToRoute('page', r.id);
-        })
+        });
       });
     },
 
@@ -76,7 +76,7 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
       var record = this.get('record');
       record.destroy().then(function(){
         self.transitionToRoute('pages');
-      })
+      });
     }
   }
 });

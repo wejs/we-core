@@ -13,8 +13,10 @@ module.exports = {
    * Index page route /
    */
   index: function(req, res) {
+    var we = req.getWe();
+
     res.locals.template = 'home/index';
-    res.view({ title: App.config.appName });
+    res.view({ title: we.config.appName });
   },
 
   /**

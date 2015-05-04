@@ -121,7 +121,7 @@ App.WeCategoryFieldComponent = Ember.Component.extend(App.WeTermFieldMixin, {
       if (value && value.then) {
         value.then(function(v){
           element.select2('data', v.content);
-        })
+        });
       } else {
         element.select2('data', this.get('value').toArray());
       }

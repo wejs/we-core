@@ -1,7 +1,7 @@
 { "asi": true
 , "boss": true
 , "browser": true
-, "camelcase": true
+, "camelcase": false
 , "curly": false
 , "devel": false
 , "devel": true
@@ -15,9 +15,9 @@
 , "latedef": false
 , "laxbreak": true
 , "laxcomma": true
-, "maxcomplexity": 10
+, "maxcomplexity": 20
 , "maxdepth": 4
-, "maxstatements": 25
+, "maxstatements": 30
 , "maxlen": 120
 , "newcap": true
 , "node": true
@@ -32,12 +32,6 @@
   , "beforeEach"
   , "after"
   , "afterEach"
-  , "Ember"
-  , "App"
-  , "DS"
-  , "Permissions"
-  , "NProgress"
-  , "WejsPrototypes"
   ]
 , "smarttabs": true
 , "strict": false

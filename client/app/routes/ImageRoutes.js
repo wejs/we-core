@@ -18,7 +18,7 @@
       this.render('image/item');
     },
     model: function(params) {
-      return this.store.find('image', params['name']);
+      return this.store.find('image', params.name);
     },
   });
 

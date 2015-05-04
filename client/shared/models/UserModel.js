@@ -24,9 +24,9 @@ $(function() {
     }),
 
     biographyClean: function() {
-      var text = this.get('biography')
+      var text = this.get('biography');
       if(!text) return '';
-      return text.replace(/(<([^>]+)>)/ig,'')
+      return text.replace(/(<([^>]+)>)/ig,'');
     }.property('biography'),
 
   });
@@ -36,5 +36,5 @@ $(function() {
       async: true,
       inverse: 'avatar'
     }),
-  })
+  });
 });

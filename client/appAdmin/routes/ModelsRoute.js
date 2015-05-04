@@ -19,7 +19,7 @@ App.ModelRoute = Ember.Route.extend({
 
     var attrs = Ember.get(typeMap + '.attributes');
     if (attrs) {
-      attributes = attrs.keys.list
+      attributes = attrs.keys.list;
     }
 
     return Ember.RSVP.hash({

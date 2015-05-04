@@ -64,13 +64,13 @@ App.AuthNewPasswordRoute = Ember.Route.extend({
       }).fail(function() {
         transition.abort();
         self.transitionTo('authForgotPassword');
-      })
+      });
     });
   },
   model: function(params) {
     return {
       currentUser: App.currentUser,
-      userId: params['id'],
+      userId: params.id,
       requestSend: false
     };
   },

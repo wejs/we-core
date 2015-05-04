@@ -28,7 +28,7 @@ App.WeAdminMenuComponent = Ember.Component.extend({
       self.set('menuName', result.menuName);
       self.set('links', result.links );
     }).fail(function(xhr, status, err){
-      Ember.Logger.error(err)
+      Ember.Logger.error(err);
     }).always(function() {
       self.set('isLoading', false);
     });
@@ -53,9 +53,9 @@ App.WeAdminMenuComponent = Ember.Component.extend({
           text: model,
           icon: '',
           model: routeName
-        })
+        });
       }
-    })
+    });
     return links;
   }.property('models'),
 

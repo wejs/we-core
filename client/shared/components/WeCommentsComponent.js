@@ -38,7 +38,7 @@ App.WeCommentsComponent = Ember.Component.extend({
           return true;
         }
         return false;
-      }))
+      }));
     }
 
   }.observes('commentedModelName', 'commentedModelId').on('init'),

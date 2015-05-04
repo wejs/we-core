@@ -31,7 +31,7 @@
     }.property('App.currentUser.id'),
 
     onNewWembed: function () {
-      this.set('wembed', this.get('newWembed'))
+      this.set('wembed', this.get('newWembed'));
     }.observes('newWembed'),
 
     imageUploadUrl: '/api/v1/images',

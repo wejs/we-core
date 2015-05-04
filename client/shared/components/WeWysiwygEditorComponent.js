@@ -71,22 +71,22 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
       onImageUpload: function(files, editor, welEditable) {
         console.warn('onImageUpdateEditor', files, editor, welEditable);
 
-        editor.insertImage(welEditable, url);
+        editor.insertImage(welEditable);
       }
     };
 
     if (this.get('limit')) {
       editorConfigs.onkeydown = function(e){
         var num = self.get('editor').code().replace(/&nbsp;/g,' ').replace(/(<([^>]+)>)/ig,'').length;
-        var key = e.keyCode;;
-        var allowed_keys = [8, 37, 38, 39, 40, 46]
+        var key = e.keyCode;
+        var allowed_keys = [8, 37, 38, 39, 40, 46];
         if($.inArray(key, allowed_keys) != -1)
-            return true
+            return true;
         else if( num >= parseInt(self.get('limit')) ){
             e.preventDefault();
-            e.stopPropagation()
+            e.stopPropagation();
         }
-      }
+      };
     }
 
     // make on change event optional
@@ -100,7 +100,7 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
 
     editorConfigs.onChange = function onChange(contents) {
       self.set('value', contents );
-    }
+    };
 
 
     // make on paste event optional
@@ -126,7 +126,7 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
             return {
               id: Ember.get(c, 'id'),
               name: name
-            }
+            };
           }
         );
       }
@@ -156,7 +156,9 @@ App.WeWysiwygEditorComponent = Ember.Component.extend({
     if (!this.get('value')) {
       return this.set('trackCount', parseInt(this.get('limit')));
     }
-    var diff = parseInt(this.get('limit')) - this.get('value').replace(/&nbsp;/g,' ').replace(/(<([^>]+)>)/ig,'').length;
+    var diff = parseInt(this.get('limit')) -
+      this.get('value').replace(/&nbsp;/g,' ')
+      .replace(/(<([^>]+)>)/ig,'').length;
     if (diff < 0) {
       return this.set('trackCount', 0);
     }

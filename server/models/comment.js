@@ -69,7 +69,7 @@ module.exports = function Model(we) {
 
             Comment.find()
             .sort('updatedAt DESC')
-            .limit(defaultCommentLimit)
+            .limit(we.config.defaultCommentLimit)
             .where({
               post: postId
             }).exec(function(err, comments){

@@ -1,11 +1,11 @@
 App.WeOauthSearchComponent = Ember.Component.extend({
   classNames: ['modal', 'fade'],
-  attributeBindings: ['id'], 
+  attributeBindings: ['id'],
   id: 'we-oauth-search',
   store: null,
   notInCdp: false,
   msgNotFound: function (){
-  	if (this.get('notFound') && !this.get('user')) {  		  		
+  	if (this.get('notFound') && !this.get('user')) {
   		return true;
   	}
   	return false;
@@ -24,22 +24,22 @@ App.WeOauthSearchComponent = Ember.Component.extend({
   	var self = this;
   	if (!self.get('user') || !self.get('store')) return self.set('notInCdp', false);
   	var email = self.get('user.email');
-  	if (!email) return self.set('notInCdp', false);  	
+  	if (!email) return self.set('notInCdp', false);
   	self.get('store').find('user', {email: email})
   	.then(function (cdpUser){
-  		if (cdpUser.get('length')) {  			
+  		if (cdpUser.get('length')) {
   			return self.set('notInCdp', true);
   		}
   		return self.set('notInCdp', false);
   	}, function (error){
   		console.debug('Error finding associated user in CdP system: ', error);
   		return self.set('notInCdp', false);
-  	})
+  	});
   },
 
   didInsertElement: function (){
   	Ember.$('.cpf-search-form').bootstrapValidator({
-  		message: 'Valor invalido', 		
+  		message: 'Valor invalido',
   		fields:{
 	      cpf: {
 	        validators: {
@@ -51,7 +51,7 @@ App.WeOauthSearchComponent = Ember.Component.extend({
 	            message: 'Número de CPF inválido.'
 	          }
 	        }
-	      },  			
+	      },
   		}
   	});
   	this.set('validator', Ember.$('.cpf-search-form').data('bootstrapValidator'));
@@ -83,13 +83,13 @@ App.WeOauthSearchComponent = Ember.Component.extend({
 					return self.setProperties({
 						user: null,
 						notFound: true
-					})
+					});
 				}
-				self.set('user', response.user[0]);				
+				self.set('user', response.user[0]);
 			}).fail(function (error){
 				Ember.$( '#' + self.get('id') + ' .search').button('reset');
 				console.log(error);
-			});  		
+			});
   	},
 
   	updateEmail: function (){
@@ -104,11 +104,11 @@ App.WeOauthSearchComponent = Ember.Component.extend({
 
       Ember.$('#' + self.get('id') + ' .activate-loading').show();
 
-  		self.set('user.active', true);	
+  		self.set('user.active', true);
   		var data = {
   			username: self.get('user.username'),
   			active: self.get('user.active')
-  		}
+  		};
 
 			Ember.$.ajax({
 			  url: we.configs.server.providers.accounts + '/user/' + this.get('user.id'),
@@ -121,11 +121,11 @@ App.WeOauthSearchComponent = Ember.Component.extend({
 	   		data: data
 			}).then(function (res){
 				console.debug('userState: ', self.get('user.active'));
-        Ember.$('#' + self.get('id') + ' .activate-loading').hide();				
+        Ember.$('#' + self.get('id') + ' .activate-loading').hide();
 			}).fail(function (error){
 				console.log(error);
         Ember.$('#' + self.get('id') + ' .activate-loading').hide();
-			}); 
+			});
   	}
   }
 });

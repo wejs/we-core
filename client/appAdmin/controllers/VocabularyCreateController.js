@@ -28,7 +28,7 @@ App.VocabularyCreateController = Ember.ObjectController.extend({
         })
         .catch(function (err) {
           Ember.Logger.error('Error on create vocabulary',err);
-        })
+        });
 
       });
     },

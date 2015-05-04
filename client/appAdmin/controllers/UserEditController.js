@@ -15,7 +15,7 @@ App.UserEditController = Ember.ObjectController.extend({
 					user.rollback();
 					Ember.$('.save-success').button('reset');
 					console.log(error);
-				});				
+				});
 			})
 			.fail(function (error){
 					user.rollback();
@@ -29,7 +29,7 @@ App.UserEditController = Ember.ObjectController.extend({
 		var accounts = we.configs.server.providers.accounts;
 		var url = '';
 		var changed = user.changedAttributes();
-		
+
 		if (user.get('idInProvider')){
 			url = accounts + '/user/' + user.get('idInProvider');
 
@@ -48,7 +48,7 @@ App.UserEditController = Ember.ObjectController.extend({
 
 		} else {
 			var email = user.get('email');
-			if (changed['email']) email = changed['email'][0];
+			if (changed.email) email = changed.email[0];
 
 			url = accounts + '/user?email=' +  email;
 
@@ -78,7 +78,7 @@ App.UserEditController = Ember.ObjectController.extend({
 		   		data: user._attributes
 	   		});
 
-			});			
+			});
 		}
 	},
 });

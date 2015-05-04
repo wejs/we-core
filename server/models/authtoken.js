@@ -110,7 +110,7 @@ module.exports = function Model(we) {
         beforeCreate: function(token, options, next) {
           if (token.userId) {
             // before invalid all user old tokens
-            we.db.models.authtoken.invalidOldUserTokens(token.userId, function(err, result){
+            we.db.models.authtoken.invalidOldUserTokens(token.userId, function(){
               // generete new token
               token.token = crypto.randomBytes(25).toString('hex');
               next(null, token);

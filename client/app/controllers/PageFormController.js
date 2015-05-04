@@ -27,7 +27,7 @@ App.PageFormController = Ember.ObjectController.extend( App.ImageSelectorMixin, 
         record.save().then(function(r) {
           self.set('isSaving', false);
           self.transitionToRoute('page', r.id);
-        })
+        });
       });
     },
     saveAndPublishRecord: function() {},

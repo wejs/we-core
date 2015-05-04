@@ -25,7 +25,7 @@ App.WeLoadingComponent = Ember.Component.extend({
     this.setProperties({
       textDone: Ember.I18n.t('loaded'),
       textLoading: Ember.I18n.t('loading')
-    })
+    });
   },
 
   srcDone: '/public/plugin/we-core/files/images/done.png',

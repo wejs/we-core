@@ -26,8 +26,8 @@ App.TermFormController = Ember.ObjectController.extend({
         })
         .catch(function (err) {
           Ember.Logger.error('Error on create term', err, term, vocabulary);
-        })
-      })
+        });
+      });
     },
 
   }

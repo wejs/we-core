@@ -36,7 +36,7 @@ module.exports = {
     });
   },
 
-  join: function join(req, res, next) {
+  join: function join(req, res) {
     if (!req.isAuthenticated) return res.forbidden();
     if (res.locals.group.privacity == 'hidden') return res.forbidden();
 
@@ -63,7 +63,7 @@ module.exports = {
     });
   },
 
-  leave: function leave(req, res, next) {
+  leave: function leave(req, res) {
     if (!req.isAuthenticated) return res.forbidden();
 
     res.locals.group.userLeave(req.user.id, function(err) {
@@ -117,7 +117,7 @@ module.exports = {
     });
   },
 
-  findAllContent: function findAllContent(req, res, next) {
+  findAllContent: function findAllContent(req, res) {
     var we = req.getWe();
 
     res.locals.query.where.groupName = 'group';
@@ -138,7 +138,7 @@ module.exports = {
     });
   },
 
-  findContentByType: function findContentByType(req, res, next) {
+  findContentByType: function findContentByType(req, res) {
     var we = req.getWe();
 
     res.locals.query.where.groupName = 'group';

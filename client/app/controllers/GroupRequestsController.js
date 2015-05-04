@@ -1,10 +1,9 @@
 App.GroupRequestsController = Ember.ObjectController.extend(App.GroupSaveAttributeMixin, {
   actions:{
     acceptRequest: function(member) {
-      var self = this;      
+      var self = this;
       var group = self.get('group');
-      var members = self.get('members');
-      var member = member;
+
       return Ember.$.ajax({
         url: '/api/v1/group/' + group.id + '/member/' + member.id,
         method: 'PUT',
@@ -12,7 +11,7 @@ App.GroupRequestsController = Ember.ObjectController.extend(App.GroupSaveAttribu
         data: {
           status: 'active'
         }
-      }).then(function(data) {        
+      }).then(function(data) {
         self.set('memberships', self.get('memberships').filter(function (member){
           if (member.user === data.membership.user) return false;
           return true;
@@ -22,10 +21,9 @@ App.GroupRequestsController = Ember.ObjectController.extend(App.GroupSaveAttribu
       });
     },
     denyRequest: function(member) {
-      var self = this;      
+      var self = this;
       var group = self.get('group');
-      var members = self.get('members');
-      var member = member;      
+
       return Ember.$.ajax({
         url: '/api/v1/group/' + group.id + '/member/' + member.id,
         method: 'DELETE'

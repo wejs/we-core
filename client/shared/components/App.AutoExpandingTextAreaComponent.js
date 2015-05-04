@@ -4,7 +4,7 @@ App.AutoExpandingTextareaComponent = Ember.TextArea.extend({
     Ember.run.next(function() {
       this.$().focus(this.expandTextarea);
 
-      this.$().on('keypress', this.expandTextarea)
+      this.$().on('keypress', this.expandTextarea);
 
       this.$().focus();
 
