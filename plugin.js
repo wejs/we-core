@@ -37,7 +37,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     favicon: __dirname + '/files/public/core-favicon.ico',
 
     appName: 'We.js app',
-    appLogo: '/public/plugin/we-core/files/images/logo.png',
+    appLogo: '/public/plugin/we-core/files/images/logo-small.png',
 
     coreCssApp: '/public/plugin/we-core/files/css/app.css',
 
