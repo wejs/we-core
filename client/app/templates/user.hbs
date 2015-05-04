@@ -24,6 +24,13 @@
       <div class="user-area-data row">
         <div class="user-area-data-left col-md-2" >
           <span class="avatar-large">{{user-avatar user=user size="medium"}}</span>
+
+          {{#can 'update_user' 'user' 'user'}}
+            <button class="btn btn-primary btn-block btn-change-user-avatar" {{action "showAvatarChangeModal"}} >
+              Mudar imagem
+            </button>
+          {{/can}}
+
           {{#if edit}}
             <div class="form-group">
               {{view "select" name="language" value=user.language content=defaultlanguages classNames="form-control input-md"}}

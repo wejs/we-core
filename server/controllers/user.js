@@ -44,24 +44,18 @@ module.exports = {
   update: function updateRecord(req, res) {
     var we = req.getWe();
 
-    var pk = req.params.id;
+    delete req.body.email;
+    delete req.body.active;
+    delete req.body.images;
+    delete req.body.roles;
 
-    res.locals.Model.find(pk)
-    .done(function (err, user){
-      if (err) {
-        we.log.error('Error on find user by id.', pk, err);
-        return res.serverError();
-      }
-
-      user.updateAttributes(req.body)
-      .done(function(err) {
-        if (err) {
-          we.log.error('Error on update user', pk, req.params, err);
-          return res.serverError();
-        }
-        return res.ok(user);
-      })
-    });
+    res.locals.record.updateAttributes(req.body)
+    .then(function () {
+      return res.ok();
+    }).catch(function(err) {
+      we.log.error('Error on update user', req.body, err);
+      return res.serverError();
+    })
   },
 
   destroy: function(req, res) {

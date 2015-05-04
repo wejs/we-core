@@ -12,10 +12,12 @@
 
     defaultlanguages: [
       'pt-br',
-      'en-us'
+      'en'
     ],
     init: function() {
       this._super();
+
+      this.set('defaultlanguages', App.configs.locales);
 
       we.events.on('contact:requested', this.onCreateContact.bind(this));
      // we.events.on('sails:contact:accepted', this.onUpdateContact.bind(this));
@@ -45,7 +47,7 @@
       we.events.off('sails:deleted:contact', this.onDeleteContact);
     },
     showSocialActions: function(){
-      if(this.get('user.id') == we.authenticatedUser.id){
+      if(this.get('user.id') == App.get('currentUser.id')){
         return false;
       }else{
         return true;
@@ -83,10 +85,9 @@
       save: function save(){
         var self = this;
 
-        // do nothin if is already salved
-        if( self.get('user.currentState.stateName') == 'root.loaded.saved' ){
-          return ;
-        }
+        // do nothing if is already salved
+        // if ( self.get('user.currentState.stateName') == 'root.loaded.saved' )
+        //   return ;
 
         // save the model
         self.get('user').save().then(function(){
