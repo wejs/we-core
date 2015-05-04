@@ -472,14 +472,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'get /role/:id([0-9]+)': {
       controller    : 'role',
       action        : 'findOne',
-      model         : 'role',
-      permission    : 'find_role'
+      model         : 'role'
     },
     'get /role': {
       controller    : 'role',
       action        : 'find',
-      model         : 'role',
-      permission    : 'find_role'
+      model         : 'role'
     },
     'post /role': {
       controller    : 'role',

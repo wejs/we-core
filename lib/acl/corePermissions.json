@@ -179,12 +179,6 @@
     "description": "Delete one user record"
   },
 
-
-  "find_role": {
-    "group": "role",
-    "title": "Find roles",
-    "description": "Find and findOne roles"
-  },
   "manage_role": {
     "group": "role",
     "title": "Manage roles",
