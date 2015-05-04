@@ -39,8 +39,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     appName: 'We.js app',
     appLogo: '/public/plugin/we-core/files/images/logo-small.png',
 
-    coreCssApp: '/public/plugin/we-core/files/css/app.css',
-
     defaultUserAvatar: projectPath + '/node_modules/we-core/files/public/images/avatars/user-avatar.png',
 
     log: {
