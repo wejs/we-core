@@ -1,3 +1,6 @@
+var stubs = require('./stubs');
+var request = require('supertest');
+
 var helpers = {};
 
 helpers.getHttp = function getHttp() {
@@ -29,6 +32,35 @@ helpers.createUser = function(user, done) {
       if (error) return done(error);
       newUser.setPassword(password).then(function () {
         done(null, newUser, password);
+      });
+    });
+  });
+}
+
+helpers.createAndLoginUser = function(done) {
+  var userStub = stubs.userStub();
+  helpers.createUser(userStub, function(err, user) {
+    if (err) throw new Error(err);
+
+    var salvedUser = user;
+    var salvedUserPassword = userStub.password;
+
+    // login user and save the browser
+    var authenticatedRequest = request.agent(helpers.getHttp());
+    authenticatedRequest.post('/login')
+    .set('Accept', 'application/json')
+    .send({
+      email: salvedUser.email,
+      password: salvedUserPassword
+    })
+    .expect(200).end(function(err, res) {
+      if (err) return done(err);
+
+      done(null, {
+        salvedUser: salvedUser,
+        salvedUserPassword: salvedUserPassword,
+        authenticatedRequest: authenticatedRequest,
+        token: res.body.token
       });
     });
   });
