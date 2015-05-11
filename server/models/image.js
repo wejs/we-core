@@ -219,12 +219,19 @@ module.exports = function ImageModel(we) {
       var imageStyles = we.db.models.image.getImageStyles();
 
       async.each(imageStyles, function (style, next) {
-        fs.lstat(we.config.upload.image.uploadPath + '/' + style, function(err, stats) {
-          if (!err && stats.isDirectory()) {
-            mkdirp(we.config.upload.image.uploadPath + '/' + style, function (err) {
-              if (err) we.log.error('Error on create upload path', err);
-              next();
-            })
+        var imageDir = we.config.upload.image.uploadPath + '/' + style;
+        fs.lstat(imageDir, function (err) {
+          if (err) {
+            if (err.code == 'ENOENT') {
+              we.log.info('Creating the image upload directory: ' + imageDir);
+              return mkdirp(imageDir, function (err) {
+                if (err) we.log.error('Error on create upload path', err);
+                return next();
+              });
+            }
+
+            we.log.error('Error on create image dir: ', imageDir);
+            return next(err);
           } else {
             next();
           }
