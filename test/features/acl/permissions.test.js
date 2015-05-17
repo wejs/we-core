@@ -1,6 +1,6 @@
 var assert = require('assert');
 var request = require('supertest');
-var helpers = require('../../helpers');
+var helpers = require('we-test-tools').helpers;
 var _ = require('lodash');
 var http;
 var we;

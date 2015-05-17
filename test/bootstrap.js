@@ -1,15 +1,20 @@
 var projectPath = process.cwd();
-var deleteDir = require('rimraf');
-var fs = require('fs-extra');
 var path = require('path');
+var deleteDir = require('rimraf');
 var async = require('async');
+var testTools = require('we-test-tools');
 var we;
+
+// we-test-tools
 
 before(function(callback) {
   this.slow(100);
 
-  copyLocalConfigIfNotExitst(function() {
+  testTools.copyLocalConfigIfNotExitst(projectPath, function() {
     we = require('../lib');
+
+    testTools.init({}, we);
+
     we.bootstrap({
       i18n: {
         directory: path.join(__dirname, 'locales'),
@@ -53,22 +58,3 @@ after(function (callback) {
   })
 
 })
-
-function copyLocalConfigIfNotExitst (cb) {
-  var dest = path.resolve(projectPath, 'config', 'local.js');
-
-  fs.lstat(dest, function(err) {
-    if (!err) return cb();
-
-    fs.ensureDir(path.resolve(projectPath, 'config'), function (err) {
-      if (err) throw new Error(err);
-
-      var source = path.resolve(projectPath ,'test/stubs', 'local.js');
-      return fs.copy(source, dest, function(err) {
-        if (err) throw new Error(err);
-
-        cb();
-      });
-    });
-  });
-}
