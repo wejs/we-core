@@ -5,6 +5,7 @@
 var uuid = require('node-uuid');
 var log = require('./lib/log')();
 var mkdirp = require('mkdirp');
+var path = require('path');
 
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
@@ -176,7 +177,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // publivars
       publicVars: {}
     },
-
+    template: {
+      helpers: {
+        'render-metadata-tags': __dirname + '/lib/themeEngine/template-helpers/render-metadata-tags.js',
+        'render-stylesheet-tags': __dirname + '/lib/themeEngine/template-helpers/render-stylesheet-tags.js',
+        'render-javascript-tags': __dirname + '/lib/themeEngine/template-helpers/render-javascript-tags.js',
+        'render-bootstrap-config': __dirname + '/lib/themeEngine/template-helpers/render-bootstrap-config.js',
+        't':  __dirname + '/lib/themeEngine/template-helpers/t.js',
+      }
+    },
     metadata: {},
 
     flag: {
