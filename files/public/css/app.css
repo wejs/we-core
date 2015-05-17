@@ -3797,3 +3797,46 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 .widget {
   margin:10px 0px 15px 0px;
 }
+
+
+/*  we.js messenger*/
+
+.messenger-zone-wrapper {
+  visibility: hidden;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+}
+
+.messenger-zone {
+  float: right;
+  visibility: hidden;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+}
+.messenger-box-list {
+  width: 100%;
+  bottom: 0px;
+  position: relative;
+}
+.messenger-box-wrapper {
+  width: 274px;
+  height: 400px;
+  position: relative;
+  float: right;
+}
+
+.messenger-box {
+  width: 270px;
+  height: 350px;
+  visibility: visible;
+  position: absolute;
+  bottom: 0;
+}
