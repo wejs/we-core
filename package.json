@@ -4,7 +4,7 @@
   "main": "./lib/index.js",
   "scripts": {
     "lint": "./node_modules/.bin/jshint .",
-    "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js --timeout 20000"
+    "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js"
   },
   "keywords": [
     "we.js",
