@@ -177,6 +177,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       publicVars: {}
     },
 
+    metadata: {},
+
     flag: {
       available: {
         like: {}
