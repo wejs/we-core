@@ -30,6 +30,16 @@ Ember.WeApplication = Ember.Application.extend({
       this.set('WeNotification', window.WeNotification.create());
     }
 
+    if (window.io) {
+      App.socket = window.io.connect({ query: 'authToken=' + $.cookie(App.configs.auth.cookieName) }) ;
+
+      App.socket.on('connect', function() {
+        App.socket.on('logger:live', function(data) {
+          console.log('logger:live>>', data);
+        });
+      });
+    }
+
     Ember.ENV.I18N_COMPILE_WITHOUT_HANDLEBARS = false;
 
     // dev configs
