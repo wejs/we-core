@@ -51,7 +51,8 @@
             contentType: 'application/json'
           }).done(function(data){
             if(data.contact){
-              resolve( store.push('contact',data.contact) );
+              delete data.meta;
+              resolve( store.pushPayload(data) );
             }else{
               resolve( Ember.Object.create({status: ''}) );
             }

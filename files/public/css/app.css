@@ -3824,12 +3824,11 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 .messenger-box-list {
   width: 100%;
   bottom: 0px;
-  position: relative;
+  position: fixed;
 }
 .messenger-box-wrapper {
   width: 274px;
   height: 400px;
-  position: relative;
   float: right;
 }
 
@@ -3839,4 +3838,12 @@ http://nicolasgallagher.com/micro-clearfix-hack/
   visibility: visible;
   position: absolute;
   bottom: 0;
+  overflow: hidden;
+}
+
+.messenger-contact-list-area {
+  height: 400px;
+  position: relative;
+  float: right;
+  visibility: visible;
 }
