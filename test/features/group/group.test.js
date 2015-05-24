@@ -43,7 +43,7 @@ describe('groupFeature', function () {
             salvedGroup.addContent('page', p.id, next);
           });
         }, function(err) {
-          if (err) return done(err);
+          if (err) throw err;
           // login user and save the browser
           authenticatedRequest = request.agent(http);
           authenticatedRequest.post('/login')
@@ -165,7 +165,7 @@ describe('groupFeature', function () {
       .send(groupStub)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
 
         assert.equal(201, res.status);
         assert(res.body.group);
@@ -173,7 +173,7 @@ describe('groupFeature', function () {
         assert(res.body.group[0].name, groupStub.name);
 
         we.db.models.group.findAllMembers(res.body.group[0].id, function (err, memberships) {
-          if(err) return done(err);
+          if(err) throw err;
           var membersIds = memberships.map(function(membership) {
             return membership.memberId;
           });
@@ -190,7 +190,7 @@ describe('groupFeature', function () {
       .get('/group/' + salvedGroup.id)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(200, res.status);
         assert(res.body.group);
         assert(res.body.group[0].id, salvedGroup.id);
@@ -213,7 +213,7 @@ describe('groupFeature', function () {
         .post('/api/v1/group/'+ salvedGroup.id +'/addContent/page/'+ p.id)
         .set('Accept', 'application/json')
         .end(function (err, res) {
-          if (err) return done(err);
+          if (err) throw err;
 
           assert.equal(200, res.status);
 
@@ -227,17 +227,17 @@ describe('groupFeature', function () {
       we.db.models.page.create(pageStub)
       .then(function (p) {
         salvedGroup.addContent('page', p.id, function(err) {
-          if (err) return done(err);
+          if (err) throw err;
           request(http)
           .delete('/api/v1/group/'+ salvedGroup.id +'/addContent/page/'+ p.id)
           .set('Accept', 'application/json')
           .end(function (err, res) {
-            if (err) return done(err);
+            if (err) throw err;
 
             assert.equal(204, res.status);
 
             salvedGroup.findContent('page', p.id, function(err, groupContent) {
-              if (err) return done(err);
+              if (err) throw err;
 
               assert(!groupContent);
 
@@ -255,7 +255,7 @@ describe('groupFeature', function () {
       .get('/api/v1/group/'+ salvedGroup.id +'/content')
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
 
         assert.equal(200, res.status);
         assert(res.body.groupcontent);
@@ -274,7 +274,7 @@ describe('groupFeature', function () {
       .get('/api/v1/group/'+ salvedGroup.id +'/content/page')
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
 
         assert.equal(200, res.status);
         assert(res.body.groupcontent);
@@ -293,7 +293,7 @@ describe('groupFeature', function () {
       .get('/api/v1/group/'+ salvedGroup.id +'/content?limit=2')
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
 
         assert.equal(200, res.status);
         assert(res.body.groupcontent);
@@ -316,14 +316,14 @@ describe('groupFeature', function () {
       .post('/api/v1/group/'+ salvedGroup.id +'/join')
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
 
         assert.equal(200, res.status);
         assert(res.body.membership);
         assert.equal(res.body.membership.memberId, salvedUser.id);
 
         salvedGroup.findOneMember(salvedUser.id, function(err, membership) {
-          if (err) return done(err);
+          if (err) throw err;
 
           assert.equal(membership.memberId,  salvedUser.id);
 
@@ -337,7 +337,7 @@ describe('groupFeature', function () {
       .get('/group/'+ salvedGroup.id + '/member')
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(200, res.status);
         assert(res.body.membership);
         assert(res.body.meta.count);
@@ -350,7 +350,7 @@ describe('groupFeature', function () {
       .get('/group/'+ salvedGroup.id +'/member?roleNames[]=manager&roleNames[]=moderator')
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(200, res.status);
         assert(res.body.membership);
         assert(res.body.meta.count);
@@ -363,10 +363,10 @@ describe('groupFeature', function () {
       .post('/api/v1/group/'+ salvedGroup.id +'/leave')
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(204, res.status);
         salvedGroup.findOneMember(salvedUser.id, function(err, membership) {
-          if (err) return done(err);
+          if (err) throw err;
           assert(!membership);
           done();
         });
@@ -381,7 +381,7 @@ describe('groupFeature', function () {
       .get('/group/'+ salvedGroup.id +'/role')
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(200, res.status);
         assert(res.body.role);
         assert( _.isEqual(res.body.role, we.config.groupRoles) );
@@ -421,7 +421,7 @@ describe('groupFeature', function () {
               privateGroup.addContent('page', p.id, next);
             });
           }, function(err) {
-            if (err) return done(err);
+            if (err) throw err;
             done();
           });
         });
@@ -432,9 +432,9 @@ describe('groupFeature', function () {
           authenticatedRequest2
           .get('/api/v1/group/' + privateGroup.id + '/content')
           .set('Accept', 'application/json')
+          .expect(403)
           .end(function (err, res) {
-            if (err) return done(err);
-            assert.equal(403, res.status);
+            if (err) throw err;
             assert(_.isEmpty(res.body.group));
             done();
           });
@@ -453,7 +453,7 @@ describe('groupFeature', function () {
           .set('Accept', 'application/json')
           .expect(200)
           .end(function (err, res) {
-            if (err) return done(err);
+            if (err) throw err;
             assert(res.body.membershipinvite);
             assert.equal(res.body.membershipinvite.inviterId, salvedUser.id);
             assert.equal(res.body.membershipinvite.userId, salvedUser2.id);
@@ -466,7 +466,7 @@ describe('groupFeature', function () {
             .set('Accept', 'application/json')
             .expect(200)
             .end(function (err, res) {
-              if (err) return done(err);
+              if (err) throw err;
               assert(res.body.membershipinvite);
               assert( _.isArray(res.body.membershipinvite) );
 
@@ -476,11 +476,11 @@ describe('groupFeature', function () {
               .set('Accept', 'application/json')
               .expect(200)
               .end(function (err, res) {
-                if (err) return done(err);
+                if (err) throw err;
                 assert(res.body.membership);
                 assert.equal(res.body.membership.memberId, salvedUser2.id);
                 privateGroup.findOneMember(salvedUser2.id, function(err, membership) {
-                  if (err) return done(err);
+                  if (err) throw err;
                   assert(membership);
                   done();
                 });
@@ -494,10 +494,10 @@ describe('groupFeature', function () {
           .post('/api/v1/group/'+ privateGroup.id +'/leave')
           .set('Accept', 'application/json')
           .end(function (err, res) {
-            if (err) return done(err);
+            if (err) throw err;
             assert.equal(204, res.status);
             privateGroup.findOneMember(salvedUser2.id, function(err, membership) {
-              if (err) return done(err);
+              if (err) throw err;
               assert(!membership);
               done();
             });
@@ -510,9 +510,9 @@ describe('groupFeature', function () {
           authenticatedRequest2
           .post('/api/v1/group/'+ privateGroup.id +'/join')
           .set('Accept', 'application/json')
+          .expect(200)
           .end(function (err, res) {
-            if (err) return done(err);
-            assert.equal(200, res.status);
+            if (err) throw err
             assert(res.body.membershiprequest);
             assert.equal(res.body.membershiprequest.userId, salvedUser2.id);
             assert.equal(res.body.membershiprequest.groupId, privateGroup.id);
@@ -525,9 +525,9 @@ describe('groupFeature', function () {
           authenticatedRequest2
           .get('/api/v1/group/' + privateGroup.id + '/content')
           .set('Accept', 'application/json')
+          .expect(403)
           .end(function (err, res) {
-            if (err) return done(err);
-            assert.equal(403, res.status);
+            if (err) throw err;
             assert(_.isEmpty(res.body.group));
             done();
           });

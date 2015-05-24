@@ -133,9 +133,9 @@ describe('ACLFeature', function() {
       authenticatedRequest
       .get('/user/'+ salvedUser.id)
       .set('Accept', 'application/json')
+      .expect(403)
       .end(function (err, res) {
         if (err) throw err;
-        assert.equal(res.status, 403);
         assert( _.isEmpty( res.body.user ));
         we.config.acl.disabled = true;
         done();
@@ -144,7 +144,6 @@ describe('ACLFeature', function() {
   });
 
   describe('admin', function () {
-
     before(function (done) {
       salvedUser.addRole(we.acl.roles.administrator)
       .then(function () {
@@ -157,9 +156,9 @@ describe('ACLFeature', function() {
       authenticatedRequest
       .get('/user/'+ salvedUser.id)
       .set('Accept', 'application/json')
+      .expect(200)
       .end(function (err, res) {
         if (err) throw err;
-        assert.equal(res.status, 200);
         assert(res.body.user);
         assert.equal(res.body.user[0].id, salvedUser.id);
         we.config.acl.disabled = true;
@@ -175,9 +174,9 @@ describe('ACLFeature', function() {
         description: 'a description for this role'
       })
       .set('Accept', 'application/json')
+      .expect(201)
       .end(function (err, res) {
         if (err) throw err;
-        assert.equal(201, res.status);
         assert.ok(res.body.role);
         assert.equal(res.body.role[0].name, 'coder');
         assert.equal(we.acl.roles.coder.name, 'coder');
