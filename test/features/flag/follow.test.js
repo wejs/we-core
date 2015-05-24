@@ -23,9 +23,7 @@ describe('followFeature', function () {
 
       var pageStub = stubs.pageStub(user.id);
       we.db.models.page.create(pageStub)
-      .done(function (err, p) {
-        if (err) return done(err);
-
+      .then(function (p) {
         salvedPage = p;
 
         // login user and save the browser
@@ -38,8 +36,8 @@ describe('followFeature', function () {
         })
         .expect(200)
         .set('Accept', 'application/json')
-        .end(function (err, res) {
-
+        .end(function (err) {
+          if(err) throw err;
           done();
         });
       })
@@ -69,11 +67,9 @@ describe('followFeature', function () {
       assert.equal(200, res.status);
       assert(res.body.follow);
       assert(res.body.follow.id);
-
       assert.equal('page', res.body.follow.model);
       assert.equal(salvedPage.id, res.body.follow.modelId);
       assert.equal(salvedUser.id, res.body.follow.userId);
-
       done();
     });
   });
@@ -90,14 +86,9 @@ describe('followFeature', function () {
       // check if is following
       we.db.models.follow.isFollowing(
         salvedUser.id, 'page', salvedPage.id)
-      .done(function (err, follow) {
-        if (err) return done(err);
-
+      .then(function (follow) {
         assert( _.isEmpty(follow) );
-
-
         done();
-
       });
     });
   });

@@ -85,14 +85,11 @@ module.exports = function Model(we) {
       hooks: {
         validate: function(record, options, next) {
           if( !we.db.models[record.modelName] ) return next('modelName.required');
-
-          we.db.models[record.modelName].find(record.modelId)
-          .done(function (err, commentedRecord) {
-            if(err) return next(err);
+          we.db.models[record.modelName].findById(record.modelId)
+          .then(function (commentedRecord) {
             if(!commentedRecord) return next('modelId.required');
-
             return next();
-          });
+          }).catch(next);
         },
 
         beforeCreate: function(record, options, next) {

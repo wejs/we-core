@@ -7,7 +7,7 @@ var http;
 var we;
 
 describe('commentFeature', function () {
-  var salvedPage, salvedUser, salvedUserPassword, salvedComment;
+  var salvedPage, salvedUser, salvedUserPassword;
 
   before(function (done) {
     http = helpers.getHttp();
@@ -15,18 +15,15 @@ describe('commentFeature', function () {
 
     var userStub = stubs.userStub();
     helpers.createUser(userStub, function(err, user) {
-      if (err) throw new Error(err);
+      if (err) throw err;
 
       salvedUser = user;
       salvedUserPassword = userStub.password;
 
       var pageStub = stubs.pageStub(user.id);
       we.db.models.page.create(pageStub)
-      .done(function (err, p) {
-        if (err) return done(err);
-
+      .then(function (p) {
         salvedPage = p;
-
         done();
       })
     });
@@ -74,9 +71,7 @@ describe('commentFeature', function () {
     it('put /comment/:id should update and return comment', function(done){
       var commentStub = stubs.commentStub(salvedUser.id, 'page', salvedPage);
       we.db.models.comment.create(commentStub)
-      .done(function (err, r) {
-        if (err) return done(err);
-
+      .then(function (r) {
         var newBody = 'my new body';
 
         request(http)
@@ -101,9 +96,7 @@ describe('commentFeature', function () {
     it('delete /comment/:id should delete one comment', function(done){
       var commentStub = stubs.commentStub(salvedUser.id, 'page', salvedPage);
       we.db.models.comment.create(commentStub)
-      .done(function (err, r) {
-        if (err) return done(err);
-
+      .then(function (r) {
         request(http)
         .delete('/comment/' + r.id)
         .set('Accept', 'application/json')
@@ -111,9 +104,8 @@ describe('commentFeature', function () {
           if (err) return done(err);
           assert.equal(204, res.status);
 
-          we.db.models.comment.find(r.id)
-          .done( function (err, comment) {
-            if (err) return done(err);
+          we.db.models.comment.findById(r.id)
+          .then( function (comment) {
             assert.equal(comment, null);
             done();
           })

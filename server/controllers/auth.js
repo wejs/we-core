@@ -67,12 +67,7 @@ module.exports = {
         return res.badRequest();
       }
 
-      we.db.models.user.find({ where: { email: email }}).done(function (err, usr) {
-        if (err) {
-          we.log.error('Error on find user by email.',err);
-          return res.serverError();
-        }
-
+      we.db.models.user.find({ where: { email: email }}).then(function (usr) {
         if (usr) {
           res.addMessage('error', 'auth.register.email.exists', {
             field: 'email',
@@ -83,12 +78,7 @@ module.exports = {
 
         // user is valid then save the record and password
 
-        we.db.models.user.create(user).done(function (error, newUser) {
-          if (error) {
-            we.log.error('signup:User.create:Error on create user', error);
-            return res.serverError();
-          }
-
+        we.db.models.user.create(user).then(function (newUser) {
           newUser.updatePassword(user.password, function(error) {
             if (error) {
               we.log.error('auth:signup: Error on generate user passport');
@@ -99,9 +89,7 @@ module.exports = {
 
             if (requireAccountActivation) {
               return we.db.models.authtoken.create({ userId: newUser.id })
-              .done(function (error, token) {
-                if(error) return res.serverError(error);
-
+              .then(function (token) {
                 var templateVariables = {
                   user: newUser,
                   site: {
@@ -253,12 +241,7 @@ module.exports = {
       }
 
       // token is valid then get user form db
-      we.db.models.user.find(user.id).done(function (err, usr) {
-        if (err) {
-          we.log.error('auth:activate: error on find user: ', err);
-          return res.serverError();
-        }
-
+      we.db.models.user.findById(user.id).then(function (usr) {
         // user found
         if (!usr) {
           we.log.error('auth:activate: user not found: ', user.id);
@@ -268,20 +251,14 @@ module.exports = {
 
         // activate user and login
         usr.active = true;
-        usr.save().done(function (err) {
-          if (err) {
-            we.log.error('auth:activate: error on update user');
-            return res.serverError();
-          }
-
+        usr.save().then(function () {
           // destroy auth token after use
-          authToken.destroy().done(function (err) {
+          authToken.destroy().catch(function (err) {
             if (err) we.log.error('Error on delete token', err);
           });
 
           // login and redirect the user
           we.auth.logIn(req, res, usr, function(err) {
-
             if (err) {
               we.log.error('logIn error:', err);
               return res.negotiate(err);
@@ -330,12 +307,7 @@ module.exports = {
     }
 
     we.db.models.user.find({ where: {email: email }})
-    .done(function (error, user) {
-      if (error) {
-        we.log.error('AuthController:forgotPassword: Error on find user by email', error);
-        return res.serverError();
-      }
-
+    .then(function (user) {
       if (!user) {
         we.log.warn('AuthController:forgotPassword: User not found', email);
         res.addMessage('error', 'auth.forgot-password.user.not-found');
@@ -345,12 +317,7 @@ module.exports = {
       we.db.models.authtoken.create({
         userId: user.id,
         tokenType: 'resetPassword'
-      }).done(function(error, token) {
-        if (error) {
-          we.log.error('AuthController:forgotPassword: Error on create authtoken', error);
-          return res.serverError();
-        }
-
+      }).then(function (token) {
         var appName = we.config.appName;
 
         var options = {
@@ -423,23 +390,13 @@ module.exports = {
     }
 
     we.db.models.user.find({ where: {email: email}})
-    .done(function (error, user) {
-      if (error) {
-        we.log.error(error);
-        return res.serverError(error);
-      }
-
+    .then(function (user) {
       if (!user) return res.badRequest('unknow error trying to find a user');
 
       we.db.models.authtoken.create({
         'userId': user.id,
         tokenType: 'resetPassword'
-      }).done(function (error, token) {
-        if(error){
-          we.log.error(error);
-          return res.serverError(error);
-        }
-
+      }).then(function (token) {
         if (!token) {
           return res.serverError('unknow error on create auth token');
         }
@@ -497,11 +454,7 @@ module.exports = {
       } else {
         // If user dont are active, change and salve the active status
         user.active = true;
-        user.save().done(function (err) {
-          if (err) {
-            we.log.error('Error on change user active status', err, user);
-            return res.serverError(err);
-          }
+        user.save().then(function () {
           respondToUser();
         });
       }
@@ -514,8 +467,7 @@ module.exports = {
           }
           // consumes the token
           authToken.isValid = false;
-          authToken.destroy().done(function (err) {
-            if (err) we.log.error('auth:consumeForgotPasswordToken: Error on dstroy token:', err);
+          authToken.destroy().then(function () {
             // set session variable req.session.resetPassword to indicate that there is a new password to be defined
             req.session.resetPassword = true;
 
@@ -524,6 +476,8 @@ module.exports = {
             }
 
             res.redirect( '/auth/' + user.id + '/new-password/');
+          }).catch(function(err) {
+            if (err) we.log.error('auth:consumeForgotPasswordToken: Error on dstroy token:', err);
           });
 
         });
@@ -586,18 +540,12 @@ module.exports = {
       return res.badRequest();
     }
 
-    we.db.models.user.find(userId)
-    .done(function (error, user) {
-      if (error) {
-        we.log.error('newPassword: Error on get user', user);
-        return res.serverError();
-      }
-
+    we.db.models.user.findById(userId)
+    .then(function (user) {
       if (!user) {
         we.log.info('newPassword: User not found', user);
         return res.serverError();
       }
-
       user.updatePassword(newPassword, function(err) {
         if (err) {
           we.log.error('newPassword: Error on update user password', err);
@@ -677,13 +625,8 @@ module.exports = {
       return res.badRequest();
     }
 
-    we.db.models.user.find(userId)
-    .done(function (error, user) {
-      if (error) {
-        we.log.error('resetPassword: Error on get user', user);
-        return res.serverError(error);
-      }
-
+    we.db.models.user.findById(userId)
+    .then(function (user) {
       if (!user) {
         we.log.info('resetPassword: User not found', user);
         return res.badRequest();
@@ -783,13 +726,8 @@ function setDefaultRegisterLocals(req, res){
  * @param  {Function} callback    callback(error, user, authToken)
  */
 function loadUserAndAuthToken(we, uid, token, callback){
-  we.db.models.user.find(uid)
-  .done(function (error, user) {
-    if (error) {
-      we.log.error('consumeForgotPasswordToken: Error on get user', user, token);
-      return callback(error, null, null);
-    }
-
+  we.db.models.user.findById(uid)
+  .then(function (user) {
     if (!user) {
       // user not found
       return callback(null, null, null);
@@ -799,14 +737,7 @@ function loadUserAndAuthToken(we, uid, token, callback){
       userId: user.id,
       token: token,
       isValid: true
-    }})
-
-    .done(function(error, authToken){
-      if (error) {
-        we.log.error('consumeForgotPasswordToken: Error on get token', user, token);
-        return callback(error, null, null);
-      }
-
+    }}).then(function(authToken){
       if (authToken) {
         return callback(null, user, authToken);
       }else{

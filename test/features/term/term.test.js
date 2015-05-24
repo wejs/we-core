@@ -26,9 +26,7 @@ describe('termFeature', function () {
 
           var pageStub = stubs.pageStub(user.id);
           we.db.models.page.create(pageStub)
-          .done(function (err, p) {
-            if (err) return done(err);
-
+          .then(function (p) {
             we.term.updateModelTerms(
               pageStub.tags, 'page', p.id,
               'tags',
@@ -46,8 +44,7 @@ describe('termFeature', function () {
       function createVocabulary(done) {
         var vocabularyStub = stubs.vocabularyStub(salvedUser.id);
         we.db.models.vocabulary.create(vocabularyStub)
-        .done(function(err, v){
-          if (err) return done(err);
+        .then(function (v) {
           salvedVocabulary = v;
           done();
         });
@@ -57,11 +54,9 @@ describe('termFeature', function () {
           salvedUser.id, salvedVocabulary.id
         );
         we.db.models.term.bulkCreate(termsStub)
-        .done(function(){
+        .then(function(){
           we.db.models.term.find()
-          .done(function(err, ts){
-            if (err) return done(err);
-
+          .then(function(ts){
             savedTerms = ts;
             done();
           })
@@ -275,9 +270,7 @@ describe('termFeature', function () {
             field: 'tags'
           },
           include: [{ all: true,  attributes: ['text'] }]
-        }).done(function(err, result) {
-          if (err) return done(err);
-
+        }).then(function(result) {
           var terms = result.map(function(modelterm) {
             return modelterm.get().term.get().text;
           });
@@ -291,15 +284,11 @@ describe('termFeature', function () {
               field: 'categories'
             },
             include: [{ all: true,  attributes: ['text'] }]
-          }).done(function(err, result) {
-            if (err) return done(err);
-
-            var terms = result.map(function(modelterm) {
+          }).then(function(result) {
+              var terms = result.map(function(modelterm) {
               return modelterm.get().term.get().text;
             });
-
             assert( _.isEqual(newCategories, terms) );
-
             return done();
           });
         })
@@ -325,8 +314,7 @@ describe('termFeature', function () {
             modelId: salvedPage.id,
             field: 'tags'
           }
-        }).done(function(err, result) {
-          if (err) return done(err);
+        }).then(function(result) {
           assert(_.isEmpty(result));
           return done();
         })

@@ -195,43 +195,36 @@ module.exports = function UserModel(we) {
         contextLoader: function contextLoader(req, res, done) {
           if (!res.locals.id || !res.locals.loadCurrentRecord) return done();
 
-          this.find(res.locals.id)
-          .done(function (err, record) {
-            if (err) return done(err);
-
-            res.locals.record = record;
+          this.findById(res.locals.id)
+          .then(function (record) {
+             res.locals.record = record;
 
             if (record && record.id && req.isAuthenticated()) {
               // ser role owner
               if (req.user.id == record.id)
                 if(req.userRoleNames.indexOf('owner') == -1 ) req.userRoleNames.push('owner');
             }
-
             return done();
-          })
+          });
         }
       },
       instanceMethods: {
         verifyPassword: function(password, cb) {
-          this.getPassword().done( function(err, passwordObj){
-            if (err) return cb(err);
+          return this.getPassword().then( function(passwordObj){
             if (!passwordObj) return cb(null, false);
             passwordObj.validatePassword(password, cb);
           });
         },
         updatePassword: function updatePassword(newPassword, cb) {
           var user = this;
-          this.getPassword().done( function(err, password){
-            if (err) return cb(err);
-
+          return this.getPassword().then( function (password){
             if (!password) {
               // create one password if this user dont have one
               return we.db.models.password.create({
                 userId: user.id,
                 password: newPassword
-              }).done(function (err, password) {
-                if (err) return cb(err);
-                user.setPassword(password).done(function () {
+              }).then(function (password) {
+                user.setPassword(password).then(function () {
                   user.passwordId = password.id;
                   return cb(null, password);
                 })
@@ -239,7 +232,7 @@ module.exports = function UserModel(we) {
             }
             // update
             password.password = newPassword;
-            password.save().done(cb);
+            password.save().then(function(r){ cb(null, r) });
           });
         },
         toJSON: function toJSON() {
@@ -267,21 +260,7 @@ module.exports = function UserModel(we) {
           delete obj._context;
 
           return obj;
-        },
-
-        // verifyPassword: function (password, cb) {
-        //   return we.db.models.user.verifyPassword(password, this.password, cb);
-        // },
-
-        // changePassword: function(user, oldPassword, newPassword, next){
-        //   user.updateAttribute( 'password', newPassword , function (err) {
-        //     if (!err) {
-        //         next();
-        //     } else {
-        //         next(err);
-        //     }
-        //   });
-        // }
+        }
       },
       hooks: {
         beforeValidate: function(user, options, next) {

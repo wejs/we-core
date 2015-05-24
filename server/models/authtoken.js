@@ -56,7 +56,8 @@ module.exports = function Model(we) {
               userId: uid
             }}
           )
-          .done(next);
+          .then(function(r){ next(null, r); })
+          .catch(next);
         },
 
         /**
@@ -67,17 +68,12 @@ module.exports = function Model(we) {
           we.db.models.authtoken.find({ where: {
             token: token,
             userId: userId
-          }}).done(function (err, authToken) {
-            if (err) {
-              return cb('Error on get token', null);
-            }
-
+          }}).then(function (authToken) {
             // auth token found then check if is valid
             if (!authToken) {
               // auth token not fount
               return cb(null, false, null);
             }
-
             // user id how wons the auth token is invalid then return false
             if(authToken.userId !== userId || !authToken.isValid){
               return cb(null, false,{
@@ -85,14 +81,11 @@ module.exports = function Model(we) {
                 message: 'Invalid token'
               });
             }
-
-            authToken.destroy().done(function (err) {
-              if (err) return cb(err, false);
+            authToken.destroy().then(function () {
               // authToken is valid
               return cb(null, true, authToken);
-            });
-
-          });
+            }).catch(cb);
+          }).catch(cb);
         }
 
       },

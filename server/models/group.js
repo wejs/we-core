@@ -90,43 +90,10 @@ module.exports = function Model(we) {
       },
 
       classMethods: {
-        // createDefaultRoles: function createDefaultRoles(groupId, cb) {
-        //   async.series([
-        //     function memberRole(done) {
-        //       we.db.models.group.createRole(groupId, 'member', done);
-        //     },
-        //     function moderatorRole(done) {
-        //       we.db.models.group.createRole(groupId, 'moderator', done);
-        //     },
-        //     function administratorRole(done) {
-        //       we.db.models.group.createRole(groupId, 'administrator', done);
-        //     }
-        //   ], function(err, results) {
-        //     return cb(err, results.map(function(result){
-        //       return result[0];
-        //     }))
-        //   });
-        // },
-        // createDefaultPermissions: function(groupId, cb) {
-        //   // TODO
-        //   cb();
-        // },
-        // createRole: function createRole(groupId, roleName, cb) {
-        //   we.db.models.membershiprole.findOrCreate({
-        //     where: { name: roleName, modelId: groupId, modelName: 'group'},
-        //     defaults: { name: roleName, modelId: groupId, modelName: 'group'}
-        //   }).done(cb);
-        // },
-        // findAllGroupRoles: function findAllGroupRoles(groupId, cb) {
-        //   we.db.models.membershiprole.findAll({
-        //     where: { modelId: groupId, modelName: 'group'}
-        //   }).done(cb);
-        // },
-
         findAllMembers: function findAllMembers(modelId, cb) {
           we.db.models.membership.findAll({
             where: { modelId: modelId}
-          }).done(cb);
+          }).then(function(r){cb(null, r);}).catch(cb)
         },
 
         findOneMember: function findOneMember(modelId, userId, cb) {
@@ -135,7 +102,7 @@ module.exports = function Model(we) {
               memberId: userId,
               modelId: modelId
             }
-          }).done(cb);
+          }).then(function(r){cb(null, r);}).catch(cb)
         }
       },
       instanceMethods: {
@@ -293,7 +260,7 @@ module.exports = function Model(we) {
               contentModelName: contentModelName,
               contentId: contentId
             }
-          }).done(cb);
+          }).then(function(r){cb(null, r);}).catch(cb)
         },
 
         loadMembersCount: function loadMembersCount(cb) {
@@ -301,7 +268,7 @@ module.exports = function Model(we) {
             where: {
               modelId: this.id
             }
-          }).done(cb);
+          }).then(function(r){cb(null, r);}).catch(cb)
         },
 
         loadContentCount: function loadContentCount(cb) {
@@ -310,7 +277,7 @@ module.exports = function Model(we) {
               groupName: 'group',
               groupId: this.id
             }
-          }).done(cb);
+          }).then(function(r){cb(null, r);}).catch(cb)
         },
 
         loadCounts: function loadCounts(cb) {
@@ -391,8 +358,7 @@ module.exports = function Model(we) {
             we.db.models.membership.find({where: {
               modelId: record.id,
               memberId: data.req.user.id
-            }}).done(function(err, result){
-              if (err) return data.res.serverError(err);
+            }}).then(function (result){
               // save current user group membership in metadata
               if (result) record.dataValues.meta.membership = result;
               next();
@@ -406,8 +372,7 @@ module.exports = function Model(we) {
             we.db.models.membership.find({where: {
               modelId: data.res.locals.record.id,
               memberId: data.req.user.id
-            }}).done(function(err, result){
-              if (err) return data.res.serverError(err);
+            }}).then(function (result) {
               // save current user group membership in metadata
               if (result) data.res.locals.record.dataValues.meta.membership = result;
               done();

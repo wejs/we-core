@@ -32,9 +32,7 @@ module.exports = {
 
     we.db.models.follow.findAll({
       where: query
-    }).done( function (err, records) {
-      if (err) return res.serverError(err);
-
+    }).then( function (records) {
       res.send({
         follow: records
       });

@@ -66,8 +66,9 @@ module.exports = function Model(we) {
             return cb('Model type dont exist.');
           }
 
-          RelatedModel.find(modelId)
-          .done(cb);
+          RelatedModel.findById(modelId)
+          .then(function(r){ cb(null, r); })
+          .catch(cb);
         }
       }
     }

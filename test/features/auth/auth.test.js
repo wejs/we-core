@@ -20,7 +20,7 @@ describe('authFeature', function () {
 
     var userStub = stubs.userStub();
     helpers.createUser(userStub, function(err, user, password) {
-      if (err) throw new Error(err);
+      if (err) throw err;
 
       salvedUser = user;
       salvedUserPassword = userStub.password;
@@ -123,7 +123,7 @@ describe('authFeature', function () {
       .get('/signup')
       .expect(200)
       .end(function (err, res) {
-        if (err) throw new Error(err);
+        if (err) throw err;
         // todo add a static login form
         done();
       });
@@ -137,7 +137,7 @@ describe('authFeature', function () {
       .get('/login')
       .expect(200)
       .end(function (err, res) {
-        if (err) throw new Error(err);
+        if (err) throw err;
         // todo add a static login form
         done();
       });
@@ -156,7 +156,7 @@ describe('authFeature', function () {
       .expect(200)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) throw new Error(err);
+        if (err) throw err;
 
         assert(res.headers['set-cookie'])
         assert(res.body.user.id);
@@ -184,7 +184,7 @@ describe('authFeature', function () {
       .expect(400)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) throw new Error(err);
+        if (err) throw err;
 
         assert(res.body.messages)
         assert.equal(res.body.messages[0].status, 'warning');
@@ -200,12 +200,10 @@ describe('authFeature', function () {
     it('get /user/:id/activate/:token activate one user', function (done) {
 
       salvedUser.active = false;
-      salvedUser.save().done(function (err) {
-        if(err) throw new Error(err);
+      salvedUser.save().then(function () {
 
         we.db.models.authtoken.create({ userId: salvedUser.id })
-        .done(function (err, token) {
-          if(err) throw new Error(err);
+        .then(function (token) {
 
           request(http)
           .get('/user/'+ salvedUser.id +'/activate/' + token.token)
@@ -213,14 +211,10 @@ describe('authFeature', function () {
           .expect(302)
           .set('Accept', 'application/json')
           .end(function (err, res) {
-            if (err) throw new Error(err);
-
+            if (err) throw err;
             // get user from db to check if are active
-            we.db.models.user.find(salvedUser.id).done(function(err, user) {
-              if (err) throw new Error(err);
-
+            we.db.models.user.findById(salvedUser.id).then(function(user) {
               assert.equal(true, user.active);
-
               // todo add a static login form
               done();
             })
@@ -236,7 +230,7 @@ describe('authFeature', function () {
       .get('/user/'+ salvedUser.id +'/activate/aninvalidtoken')
       .expect(400)
       .end(function (err, res) {
-        if (err) throw new Error(err);
+        if (err) throw err;
 
         done();
       });
@@ -246,14 +240,12 @@ describe('authFeature', function () {
     it('get /user/:id/activate/:token should return bad request with invalid user id', function (done) {
 
       salvedUser.active = false;
-      salvedUser.save().done(function (err) {
-        if(err) throw new Error(err);
-
+      salvedUser.save().then(function () {
         request(http)
         .get('/user/10/activate/aninvalidtoken')
         .expect(400)
         .end(function (err, res) {
-          if (err) throw new Error(err);
+          if (err) throw err;
 
           done();
         });
@@ -267,7 +259,7 @@ describe('authFeature', function () {
       .get('/auth/forgot-password')
       .expect(200)
       .end(function (err, res) {
-        if (err) throw new Error(err);
+        if (err) throw err;
         // todo check tags
         done();
       });
@@ -284,7 +276,7 @@ describe('authFeature', function () {
         email: salvedUser.email
       })
       .end(function (err, res) {
-        if (err) throw new Error(err);
+        if (err) throw err;
 
         assert(we.email.sendEmail.calledOnce);
 
@@ -308,7 +300,7 @@ describe('authFeature', function () {
       .get('/auth/'+ salvedUser.id +'/new-password')
       .expect(302)
       .end(function (err, res) {
-        if (err) throw new Error(err);
+        if (err) throw err;
         // todo check tags
         done();
       });
@@ -318,7 +310,7 @@ describe('authFeature', function () {
       authenticatedRequest.get('/auth/'+ salvedUser.id +'/new-password')
       .expect(200)
       .end(function (err, res) {
-        if (err) throw new Error(err);
+        if (err) throw err;
         // todo check tags
         done();
       });
@@ -333,13 +325,11 @@ describe('authFeature', function () {
       we.db.models.authtoken.create({
         userId: salvedUser.id,
         tokenType: 'resetPassword'
-      }).done(function (err, authToken) {
-        if(err) return done(err);
-
+      }).then(function (authToken) {
         authenticatedRequest.get('/auth/'+ salvedUser.id +'/reset-password/' + authToken.token)
         .expect(302)
-        .end(function (err, res) {
-          if (err) throw new Error(err);
+        .end(function (err) {
+          if (err) throw err;
 
           // then change the password
           authenticatedRequest.post('/auth/new-password')
@@ -349,8 +339,8 @@ describe('authFeature', function () {
           })
           .expect(200)
           .set('Accept', 'application/json')
-          .end(function (err, res) {
-            if (err) throw new Error(err);
+          .end(function (err) {
+            if (err) throw err;
 
             // check if new password is valid
             request(http)
@@ -363,7 +353,7 @@ describe('authFeature', function () {
             .expect(200)
             .set('Accept', 'application/json')
             .end(function (err, res) {
-              if (err) throw new Error(err);
+              if (err) throw err;
 
               salvedUserPassword = newPassword;
 
@@ -390,8 +380,8 @@ describe('authFeature', function () {
     it('get /change-password should load change password page', function(done) {
       authenticatedRequest.get('/change-password')
       .expect(200)
-      .end(function (err, res) {
-        if(err) throw new Error(err);
+      .end(function (err) {
+        if(err) throw err;
         done();
       });
     });
@@ -409,8 +399,8 @@ describe('authFeature', function () {
       })
       .expect(200)
       .set('Accept', 'application/json')
-      .end(function (err, res) {
-        if (err) throw new Error(err);
+      .end(function (err) {
+        if (err) throw err;
 
         // check if new password is valid
         request(http)
@@ -423,7 +413,7 @@ describe('authFeature', function () {
         .expect(200)
         .set('Accept', 'application/json')
         .end(function (err, res) {
-          if (err) throw new Error(err);
+          if (err) throw err;
 
           salvedUserPassword = newPassword;
 
@@ -458,28 +448,26 @@ describe('authFeature', function () {
        request(http)
        .get('/api/v1/auth/check-if-can-reset-password')
         .expect(403)
-        .end(function (err, res) {
-          if(err) throw new Error(err);
-
+        .end(function (err) {
+          if(err) throw err;
           done();
         });
     });
   });
 
   describe('consumeForgotPasswordToken', function() {
-    it('get /auth/:id/reset-password/:token should set req.session.resetPassword to true with valid token', function (done) {
+    it('get /auth/:id/reset-password/:token should set req.session.resetPassword to true with valid token',
+    function (done) {
       var localAgent = request.agent(http);
 
       we.db.models.authtoken.create({
         userId: salvedUser.id,
         tokenType: 'resetPassword'
-      }).done(function (err, authToken) {
-        if(err) return done(err);
-
+      }).then(function (authToken) {
         localAgent.get('/auth/'+ salvedUser.id +'/reset-password/' + authToken.token)
         .expect(302)
-        .end(function (err, res) {
-          if (err) throw new Error(err);
+        .end(function (err) {
+          if (err) throw err;
 
           // use setTime out to skip supertest error
           // see: https://github.com/visionmedia/superagent/commit/04a04e22a4126bd64adf85b1f41f2962352203d1
@@ -488,7 +476,7 @@ describe('authFeature', function () {
             localAgent.get('/api/v1/auth/check-if-can-reset-password')
             .expect(200)
             .end(function (err, res) {
-              if(err) throw new Error(err);
+              if(err) throw err;
 
               assert.equal(res.body.messages[0].message, 'auth.reset-password.success.can');
 

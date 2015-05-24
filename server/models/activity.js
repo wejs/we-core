@@ -57,8 +57,12 @@ module.exports = function Model(we) {
   }
 
   we.hooks.on('we:before:send:createdResponse', function registerActivity(data, done){
-
-    if (!data.res.locals.model || !data.res.locals.record.id || !data.req.user.id || !data.res.locals.action) {
+    if (
+      !data.res.locals.model ||
+      !data.res.locals.record ||
+      !data.res.locals.record.id ||
+      !data.req.isAuthenticated() ||
+      !data.res.locals.action) {
       return done();
     }
 

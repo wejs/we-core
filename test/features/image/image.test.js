@@ -8,7 +8,7 @@ var we;
 var db;
 
 describe('imageFeature', function () {
-  var salvedImage, salvedUser;
+  var salvedImage;
 
   before(function (done) {
     http = helpers.getHttp();
@@ -18,7 +18,7 @@ describe('imageFeature', function () {
     .post('/api/v1/image')
     .attach('image', stubs.getImageFilePath())
     .end(function (err, res) {
-      if(err) return done(err);
+      if(err) throw err;
       salvedImage = res.body.image[0];
       done(err);
     });
@@ -29,7 +29,7 @@ describe('imageFeature', function () {
       request(http)
       .get('/api/v1/image')
       .end(function (err, res) {
-        if(err) return done(err);
+        if(err) throw err;
         assert.equal(200, res.status);
         assert(res.body.image);
         assert( _.isArray(res.body.image) , 'image not is array');
@@ -50,10 +50,10 @@ describe('imageFeature', function () {
       request(http)
       .post('/api/v1/image')
       .attach('image', stubs.getImageFilePath())
+      .expect(201)
       .end(function (err, res) {
-        if(err) return done(err);
-
-        assert.equal(201, res.status);
+        console.log('>>>', res.body)
+        if(err) throw err;
         assert(res.body.image);
         assert(res.body.image[0].mime);
         assert(res.body.image[0].width);
@@ -69,15 +69,12 @@ describe('imageFeature', function () {
       var userStub = stubs.userStub();
       var imageDataStub = stubs.imageDataStub();
 
-      db.models.user.create(userStub).done(function(err, user) {
-        if(err) throw new Error(err);
-
+      db.models.user.create(userStub).then(function(user) {
         //imageDataStub.creator = user.id;
-        db.models.image.create(imageDataStub).done(function(err, image) {
-          if(err) throw new Error(err);
-          image.setCreator(user).done(function(){
+        db.models.image.create(imageDataStub).then(function(image) {
+          image.setCreator(user).then(function(){
             image.fetchAssociatedIds(function(err) {
-              if(err) throw new Error(err);
+              if(err) throw err;
               done();
             });
           })

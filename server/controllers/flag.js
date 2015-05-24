@@ -29,9 +29,7 @@ module.exports = {
 
     we.db.models.flag.findAndCountAll({
       where: query
-    }).done( function (err, result) {
-      if ( err ) return res.serverError(err);
-
+    }).then( function (result) {
       return res.send({
         flag: result.rows,
         meta: {
@@ -79,9 +77,7 @@ module.exports = {
 
       // check if is flagged
       we.db.models.flag.isFlagged(flagType ,userId, modelName, modelId)
-      .done(function(err, flag) {
-        if (err) return res.serverError(err);
-
+      .then(function(flag) {
         // is following
         if (flag) return res.send({flag: flag});
 
@@ -91,14 +87,11 @@ module.exports = {
           model: modelName,
           modelId: modelId
         })
-        .done(function (err, salvedFlag) {
-          if (err) return res.serverError(err);
-
+        .then(function (salvedFlag) {
           // send the change to others user connected devices
-          // var socketRoomName = 'user_' + userId;
-          // we.io.sockets.in(socketRoomName).emit(
-          //   'flag:flag', salvedFlag
-          // );
+          we.io.sockets.in('user_' + userId).emit(
+            'flag:flag', salvedFlag
+          );
 
           return res.send({flag: salvedFlag});
         })
@@ -128,26 +121,14 @@ module.exports = {
 
     // check if is following
     we.db.models.flag.isFlagged(flagType, userId, modelName, modelId)
-    .done(function isFlaggedCB (err, flag) {
-      if (err) {
-        we.log.error('unFlag:Flag.unFlag:Error on check if user is isFlagged',modelName, modelId, err);
-        return res.serverError(err);
-      }
-
+    .then(function isFlaggedCB (flag) {
       if( !flag ) return res.send();
 
       we.db.models.flag.destroy({id: flag.id})
-      .done(function (err) {
-        if (err) return res.serverError(err);
+      .then(function () {
 
         // send the change to others user connected devices
-        // var socketRoomName = 'user_' + userId;
-        // sails.io.sockets.in(socketRoomName).emit(
-        //   'flag:unFlag', {
-        //     flagType: flag.flagType,
-        //     id: flag.id
-        //   }
-        // );
+        we.io.sockets.in('user_' + userId).emit('flag:unFlag', flag);
 
         // send a 200 response on success
         return res.send();

@@ -31,9 +31,9 @@ module.exports = {
 
     if(!id) return res.forbidden();
 
-    we.db.models.user.find(id).then(function (user) {
+    we.db.models.user.findById(id).then(function (user) {
       if (user && user.avatarId) {
-        we.db.models.image.find(user.avatarId).then(function (image) {
+        we.db.models.image.findById(user.avatarId).then(function (image) {
           if (!image) return res.notFound();
 
           we.db.models.image.getFileOrResize(image.name, style, function (err, contents) {
@@ -62,7 +62,7 @@ module.exports = {
           res.send(contents);
         });
       }
-    }).catch(res.serverError);
+    });
   },
 
   changeAvatar: function changeAvatar(req, res) {
@@ -92,8 +92,7 @@ module.exports = {
           'user': req.user
         });
       });
-
-    }).catch(res.serverError);
+    });
   }
 
 };

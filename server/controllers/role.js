@@ -29,16 +29,14 @@ module.exports = {
     var we = req.getWe();
     var id = req.params.id;
 
-    res.locals.Model.find(id)
-    .done(function(err, record) {
-      if (err) return res.serverError(err);
+    res.locals.Model.findById(id)
+    .then(function(record) {
       if (!record) return next();
       // check if this role are in roles cache
       if (we.acl.roles[!record.name]) return res.notFound();
 
       record.updateAttributes(req.body)
-      .done(function(err) {
-        if (err) return res.serverError(err);
+      .then(function() {
         res.locals.record = record;
         // update role in running app cache
         we.acl.roles[record.name] = record;
@@ -58,13 +56,8 @@ module.exports = {
       return res.badRequest();
     }
 
-    res.locals.Model.find(req.params.id)
-    .done(function(err, user) {
-      if (err) {
-        we.log.error('role:addRoleToUser: Error on find user', err);
-        return res.serverError(err);
-      }
-
+    res.locals.Model.findById(req.params.id)
+    .then(function (user) {
       if (!user) {
         res.addMessage('warn', 'role.addRoleToUser.user.not.found');
         return res.notFound();
@@ -73,23 +66,13 @@ module.exports = {
       // check if the role exists
       we.db.models.role.find({ where:
         { name: roleName }
-      }).done(function(err, role){
-        if (err) {
-          we.log.error('role:addRoleToUser: Error on find role', err);
-          return res.serverError(err);
-        }
-
+      }).then(function (role){
         if (!role) {
           res.addMessage('warn', 'role.addRoleToUser.role.not.found');
           return res.badRequest();
         }
 
-        user.addRole(role).done(function(err) {
-          if (err) {
-            we.log.error('role:addRoleToUser: Error on add role to user', err);
-            return res.serverError();
-          }
-
+        user.addRole(role).then(function () {
           res.addMessage('success', 'role.addRoleToUser.success');
           return res.ok();
         });
@@ -97,7 +80,7 @@ module.exports = {
     });
   },
 
-  removeRoleFromUser: function(req, res) {
+  removeRoleFromUser: function (req, res) {
     var we = req.getWe();
 
     var roleName = req.body.roleName;
@@ -110,12 +93,7 @@ module.exports = {
     res.locals.Model.find({
       where: { id: req.params.id },
       include: [ { model: we.db.models.role, as: 'roles'} ]
-    }).done(function (err, user) {
-      if (err) {
-        we.log.error('role:removeRoleFromUser: Error on find user', err);
-        return res.serverError(err);
-      }
-
+    }).then(function (user) {
       if (!user) {
         res.addMessage('warn', 'role.removeRoleFromUser.user.not.found');
         return res.notFound();
@@ -136,12 +114,7 @@ module.exports = {
         return res.ok();
       }
 
-      user.removeRole(roleToDelete).done(function(err) {
-        if (err) {
-          we.log.error('role:removeRoleFromUser: Error on remove role from user', err);
-          return res.serverError();
-        }
-
+      user.removeRole(roleToDelete).then(function() {
         res.addMessage('success', 'role.removeRoleFromUser.success');
         return res.ok();
       });

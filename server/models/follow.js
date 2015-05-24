@@ -58,7 +58,7 @@ module.exports = function Model(we) {
 
             // check if is following
             we.db.models.follow.isFollowing(userId, modelName, modelId)
-            .done(function (err, follow) {
+            .then(function (follow) {
               if (err) return cb(err);
               if (follow) return cb(null, follow);
 
@@ -66,8 +66,7 @@ module.exports = function Model(we) {
                 userId: userId,
                 model: modelName,
                 modelId: modelId
-              }).done(function (err, salvedFollow) {
-                if (err) return cb(err);
+              }).then(function (salvedFollow) {
                 return cb(null, salvedFollow);
               })
             })
@@ -78,10 +77,10 @@ module.exports = function Model(we) {
           // check if is following
           we.db.models.follow.isFollowing(
             userId, modelName, modelId)
-          .done(function (err, follow) {
-            if (err) return cb(err);
+          .then(function (follow) {
             if (!follow) return cb(null, null);
-            follow.destroy().done(cb);
+            follow.destroy()
+            .then(function(r) { cb(null, r); });
           });
         },
 
@@ -91,8 +90,7 @@ module.exports = function Model(we) {
         recordExists: function (modelName, modelId, cb) {
           if (!we.db.models[modelName])
             return cb('Model type dont exist.');
-
-          we.db.models[modelName].find(modelId).done(cb);
+          we.db.models[modelName].findById(modelId).then(function(r) { cb(null, r); });
         },
 
         getUsersFollowing: function(modelName, modelId) {

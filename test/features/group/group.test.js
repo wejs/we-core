@@ -17,15 +17,14 @@ describe('groupFeature', function () {
 
     var userStub = stubs.userStub();
     helpers.createUser(userStub, function(err, user) {
-      if (err) throw new Error(err);
+      if (err) throw err;
 
       salvedUser = user;
       salvedUserPassword = userStub.password;
 
       var stub = stubs.groupStub(user.id);
       we.db.models.group.create(stub)
-      .done(function (err, g) {
-        if (err) return done(err);
+      .then(function (g) {
         salvedGroup = g;
 
         var pages = [
@@ -39,8 +38,7 @@ describe('groupFeature', function () {
         async.eachSeries(pages, function(page, next) {
           var pageStub = stubs.pageStub(salvedUser.id);
           we.db.models.page.create(pageStub)
-          .done(function (err, p) {
-            if (err) return next(err);
+          .then(function (p) {
             salvedPages.push(p);
             salvedGroup.addContent('page', p.id, next);
           });
@@ -58,7 +56,7 @@ describe('groupFeature', function () {
 
             var userStub = stubs.userStub();
             helpers.createUser(userStub, function(err, user) {
-              if (err) throw new Error(err);
+              if (err) throw err;
               salvedUser2 = user;
               salvedUser2Password = userStub.password;
               // login user and save the browser
@@ -84,12 +82,13 @@ describe('groupFeature', function () {
       request(http)
       .get('/group')
       .set('Accept', 'application/json')
+      .expect(200)
       .end(function (err, res) {
-        assert.equal(200, res.status);
+        console.log('>>',res.text)
+        if (err) throw err;
         assert(res.body.group);
         assert( _.isArray(res.body.group) , 'group not is array');
         assert(res.body.meta);
-
         done();
       });
     });
@@ -98,8 +97,9 @@ describe('groupFeature', function () {
       authenticatedRequest
       .get('/user/'+ salvedUser.id +'/membership')
       .set('Accept', 'application/json')
+      .expect(200)
       .end(function (err, res) {
-        assert.equal(200, res.status);
+        if (err) throw err;
         assert(res.body.membership);
         assert( _.isArray(res.body.membership) , 'group not is array');
         assert(res.body.meta);
@@ -111,12 +111,10 @@ describe('groupFeature', function () {
 
       var userStub = stubs.userStub();
       helpers.createUser(userStub, function(err, user) {
-        if (err) throw new Error(err);
+        if (err) throw err;
         var stub = stubs.groupStub(user.id);
         we.db.models.group.create(stub)
-        .done(function (err, g) {
-          if (err) return done(err);
-
+        .then(function (g) {
           authenticatedRequest
           .get('/user/'+ salvedUser.id +'/find-new-groups?where=%7B%7D&limit=9&sort=createdAt+DESC')
           .set('Accept', 'application/json')
@@ -210,9 +208,7 @@ describe('groupFeature', function () {
     it('post /api/v1/group/:groupId/addContent/:contentModelName/:contentId route should add one content in group', function (done) {
       var pageStub = stubs.pageStub(salvedUser.id);
       we.db.models.page.create(pageStub)
-      .done(function (err, p) {
-        if (err) return done(err);
-
+      .then(function (p) {
         request(http)
         .post('/api/v1/group/'+ salvedGroup.id +'/addContent/page/'+ p.id)
         .set('Accept', 'application/json')
@@ -229,8 +225,7 @@ describe('groupFeature', function () {
     it('delete /api/v1/group/:groupId/addContent/:contentModelName/:contentId route should remove content from group', function (done) {
       var pageStub = stubs.pageStub(salvedUser.id);
       we.db.models.page.create(pageStub)
-      .done(function (err, p) {
-        if (err) return done(err);
+      .then(function (p) {
         salvedGroup.addContent('page', p.id, function(err) {
           if (err) return done(err);
           request(http)
@@ -411,8 +406,7 @@ describe('groupFeature', function () {
         var stub = stubs.groupStub(salvedUser.id);
         stub.privacity = 'private';
         we.db.models.group.create(stub)
-        .done(function (err, g) {
-          if (err) return done(err);
+        .then(function (g) {
           privateGroup = g;
           var pages = [
             stubs.pageStub(salvedUser.id),
@@ -422,8 +416,7 @@ describe('groupFeature', function () {
           async.eachSeries(pages, function(page, next) {
             var pageStub = stubs.pageStub(salvedUser.id);
             we.db.models.page.create(pageStub)
-            .done(function (err, p) {
-              if (err) return next(err);
+            .then(function (p) {
               salvedPages.push(p);
               privateGroup.addContent('page', p.id, next);
             });

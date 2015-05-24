@@ -16,7 +16,7 @@ describe('pageFeature', function () {
 
     var userStub = stubs.userStub();
     helpers.createUser(userStub, function(err, user) {
-      if (err) throw new Error(err);
+      if (err) throw err;
 
       salvedUser = user;
       salvedUserPassword = userStub.password;
@@ -32,14 +32,11 @@ describe('pageFeature', function () {
       .expect(200)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-
+        if (err) throw err;
         var pageStub = stubs.pageStub(user.id);
         we.db.models.page.create(pageStub)
-        .done(function (err, p) {
-          if (err) return done(err);
-
+        .then(function (p) {
           salvedPage = p;
-
           done();
         })
 
@@ -74,7 +71,7 @@ describe('pageFeature', function () {
       .send(pageStub)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
 
         assert.equal(201, res.status);
         assert(res.body.page);
@@ -92,7 +89,7 @@ describe('pageFeature', function () {
       .get('/page/' + salvedPage.id)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(200, res.status);
         assert(res.body.page);
         assert(res.body.page[0].title, salvedPage.title);
@@ -114,7 +111,7 @@ describe('pageFeature', function () {
       })
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(200, res.status);
         assert(res.body.page);
         assert(res.body.page[0].title, newTitle);
@@ -129,18 +126,14 @@ describe('pageFeature', function () {
     it('delete /page/:id should delete one page', function(done){
       var pageStub = stubs.pageStub(salvedUser.id);
       we.db.models.page.create(pageStub)
-      .done(function (err, p) {
-        if (err) return done(err);
+      .then(function (p) {
         authenticatedRequest
         .delete('/page/' + p.id)
         .set('Accept', 'application/json')
         .end(function (err, res) {
-          if (err) return done(err);
+          if (err) throw err;
           assert.equal(204, res.status);
-
-          we.db.models.page.find(p.id).done( function(err, page){
-            if (err) return done(err);
-
+          we.db.models.page.findById(p.id).then( function(page){
             assert.equal(page, null);
             done();
           })

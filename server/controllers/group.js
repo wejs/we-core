@@ -21,14 +21,11 @@ module.exports = {
       '`group`.`deletedAt` IS NULL AND `memberships`.`modelId` IS NULL'
     ];
 
-    res.locals.Model.findAll(res.locals.query, res.locals.queryOptions)
-    .done(function(err, record) {
-      if (err) return res.serverError(err);
-
-      res.locals.Model.count(res.locals.query, res.locals.queryOptions).then(function (count){
+    res.locals.Model.findAll(res.locals.query)
+    .then(function(record) {
+      res.locals.Model.count(res.locals.query).then(function (count){
         res.locals.metadata.count = count;
         res.locals.record = record;
-
         return res.ok();
       }).catch(function(err){
         return res.serverError(err);
@@ -124,11 +121,8 @@ module.exports = {
     res.locals.query.where.groupId = res.locals.group.id;
 
     we.db.models.groupcontent.findAndCountAll(res.locals.query)
-    .done(function(err, result) {
-      if (err) return res.serverError(err);
-
+    .then(function(result) {
       res.locals.record = result.rows;
-
       return res.status(200).send({
         groupcontent: result.rows,
         meta: {

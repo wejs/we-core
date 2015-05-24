@@ -31,12 +31,7 @@ module.exports = {
     }
 
     we.db.models.image.find({ where: {name: fileName} })
-    .done(function(err, image) {
-      if (err) {
-        we.log.error('Error on find image by name:', fileName, err);
-        return res.serverError(err);
-      }
-
+    .then(function(image) {
       // image not found
       if (!image) {
         we.log.silly('image:findOne: image not found:', fileName);
@@ -118,14 +113,8 @@ module.exports = {
 
 
       res.locals.Model.create(files.image)
-      .done(function(err, record) {
-        if (err) {
-          we.log.error('Error on create image record:', err);
-          return res.serverError(err);
-        }
-
+      .then(function (record) {
         if (record) we.log.debug('New image record created:', record.get());
-
         return res.created(record);
       });
     });

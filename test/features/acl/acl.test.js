@@ -2,7 +2,6 @@ var assert = require('assert');
 var request = require('supertest');
 var helpers = require('we-test-tools').helpers;
 var stubs = require('we-test-tools').stubs;
-var sinon = require('sinon');
 var _ = require('lodash');
 var http;
 var we;
@@ -21,7 +20,7 @@ describe('ACLFeature', function() {
     we.config.acl.disabled = false;
 
     var userStub = stubs.userStub();
-    helpers.createUser(userStub, function(err, user, password) {
+    helpers.createUser(userStub, function(err, user) {
       if (err) throw new Error(err);
 
       salvedUser = user;
@@ -38,7 +37,7 @@ describe('ACLFeature', function() {
       .expect(200)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if(err) return done(err);
+        if(err) throw err;
         done();
       });
     })
@@ -46,12 +45,9 @@ describe('ACLFeature', function() {
 
   describe('API', function() {
     it('we.acl.init should create default roles on init', function(done) {
-      we.db.models.role.findAll().done(function(err, roles) {
-        if(err) return done(err);
-
+      we.db.models.role.findAll().then(function(roles) {
         assert(roles);
         assert.equal(4, roles.length);
-
         done();
       });
     })
@@ -59,7 +55,7 @@ describe('ACLFeature', function() {
     it('we.acl.createRole create role and set it in we.acl.roles'  ,function(done) {
       var roleNameStrig = 'hero'
       we.acl.createRole(we, { name: roleNameStrig }, function(err, role) {
-        if(err) return done(err);
+        if(err) throw err;
         assert(role);
         assert(role.id);
         assert.equal(role.name, roleNameStrig);
@@ -82,7 +78,7 @@ describe('ACLFeature', function() {
       var roleName = 'player';
       // after create a stub role
       we.acl.createRole(we, { name: roleName }, function(err, role) {
-        if (err) return done(err);
+        if (err) throw err;
         if (!role) throw new Error('Role not created');
 
         salvedRole = role;
@@ -99,13 +95,12 @@ describe('ACLFeature', function() {
       .send({ roleName: salvedRole.name})
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(200, res.status);
         assert.ok(res.body.messages)
         assert.equal( res.body.messages[0].message, 'role.addRoleToUser.success');
         assert.equal( res.body.messages[0].status, 'success' );
-        salvedUser.hasRole(salvedRole).done(function(err, result){
-          if(err) return done(err);
+        salvedUser.hasRole(salvedRole).then(function(result){
           assert.equal(result, true);
           we.config.acl.disabled = false;
           done();
@@ -120,13 +115,12 @@ describe('ACLFeature', function() {
       .send({ roleName: salvedRole.name})
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(200, res.status);
         assert.ok(res.body.messages)
         assert.equal( res.body.messages[0].message, 'role.removeRoleFromUser.success');
         assert.equal( res.body.messages[0].status, 'success' );
-        salvedUser.hasRole(salvedRole).done(function(err, result){
-          if(err) return done(err);
+        salvedUser.hasRole(salvedRole).then(function(result){
           assert.equal(result, false);
           we.config.acl.disabled = false;
           done();
@@ -140,7 +134,7 @@ describe('ACLFeature', function() {
       .get('/user/'+ salvedUser.id)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(res.status, 403);
         assert( _.isEmpty( res.body.user ));
         we.config.acl.disabled = true;
@@ -153,8 +147,7 @@ describe('ACLFeature', function() {
 
     before(function (done) {
       salvedUser.addRole(we.acl.roles.administrator)
-      .done(function (err) {
-        if (err) return done(err);
+      .then(function () {
         done();
       });
     });
@@ -165,7 +158,7 @@ describe('ACLFeature', function() {
       .get('/user/'+ salvedUser.id)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(res.status, 200);
         assert(res.body.user);
         assert.equal(res.body.user[0].id, salvedUser.id);
@@ -183,7 +176,7 @@ describe('ACLFeature', function() {
       })
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) throw err;
         assert.equal(201, res.status);
         assert.ok(res.body.role);
         assert.equal(res.body.role[0].name, 'coder');
@@ -196,13 +189,13 @@ describe('ACLFeature', function() {
      var roleName = 'tempRole';
       // after create a stub role
       we.acl.createRole(we, { name: roleName }, function(err, role) {
-        if (err) return done(err);
+        if (err) throw err;
         if (!role) throw new Error('Role not created');
         authenticatedRequest
         .delete('/role/' + role.id)
         .set('Accept', 'application/json')
         .end(function (err, res) {
-          if (err) return done(err);
+          if (err) throw err;
           assert.equal(200, res.status);
           done();
         });

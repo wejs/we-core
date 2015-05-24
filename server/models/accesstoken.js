@@ -64,7 +64,8 @@ module.exports = function Model(we) {
               userId: uid
             }}
           )
-          .done(next);
+          .then(function (r){ next(null, r) })
+          .catch(next);
         },
 
         /**
@@ -74,13 +75,9 @@ module.exports = function Model(we) {
           // then get user token form db
           we.db.models.accesstoken.find({ where: {
             token: token
-          }}).done(function(err, accessToken) {
-            if (err) {
-              return cb('Error on get token', null);
-            }
-
+          }}).then(function (accessToken) {
             // access token found then check if is valid
-            if(accessToken){
+            if (accessToken) {
               // user id how wons the access token is invalid then return false
               if(accessToken.userId !== userId || !accessToken.isValid){
                 return cb(null, false,{
@@ -88,28 +85,18 @@ module.exports = function Model(we) {
                   message: 'Invalid token'
                 });
               }
-
-              // TODO implement expiration time
-
               // set this access token as used
               accessToken.isValid = false;
-              accessToken.save(function(err){
-                if (err) {
-                  // not valid with error
-                  return cb(err, false);
-                }
+              accessToken.save().then(function() {
                 // accessToken is valid
                 return cb(null, true, accessToken);
-              });
-
+              }).catch(cb);
             } else {
               // Access token not fount
               return cb('Access token not found', false, null);
             }
-
           });
         }
-
       },
 
       instanceMethods: {
@@ -117,6 +104,10 @@ module.exports = function Model(we) {
           return we.config.hostname + '/auth/'+ this.userId +'/reset-password/' + this.token;
         },
         toJSON: function() {
+          if (!this.get) {
+            console.trace()
+          }
+
           var obj = this.get();
           delete obj.updatedAt;
           return obj;

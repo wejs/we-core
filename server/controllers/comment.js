@@ -8,19 +8,16 @@
 module.exports = {
   create: function (req, res) {
     var comment = req.body;
-
     if (req.user) comment.creatorId = req.user.id;
 
     res.locals.Model.create(comment)
-    .done(function (err, newInstance) {
-      if (err) return res.serverError(err);
+    .then(function (newInstance) {
       res.created(newInstance);
     });
   },
 
   findOne: function (req, res) {
     if (!res.locals.record) return res.notFound();
-
     res.ok();
   },
 
@@ -31,11 +28,8 @@ module.exports = {
     res.locals.query.where.modelName = modelName;
     res.locals.query.where.modelId = modelId;
 
-
     res.locals.Model.findAll(res.locals.query)
-    .done(function(err, comments) {
-      if(err) return res.serverError(err);
-
+    .then(function(comments) {
       return res.ok(comments);
     })
   },

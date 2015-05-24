@@ -25,9 +25,7 @@ describe('urlFeature', function() {
         url: '/about/me',
         modelName: 'user',
         modelId: user.id
-      }).done(function(err, url) {
-        if (err) return done(err);
-
+      }).then(function(url) {
         salvedUrl = url;
         done();
       })

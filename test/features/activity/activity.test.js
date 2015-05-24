@@ -40,8 +40,7 @@ describe('activityFeature', function() {
         if (err) return done(err);
 
         we.db.models.group.create(stubs.groupStub(salvedUser.id))
-        .done(function (err, g) {
-          if (err) return done(err);
+        .then(function (g) {
           salvedGroup = g;
 
           we.db.models.activity.create({

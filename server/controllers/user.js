@@ -7,19 +7,13 @@
 
 module.exports = {
   findOneByUsername: function findOneByUsername (req, res, next) {
-    var we = req.getWe();
-
     var username = req.params.username;
     if(!username) return next();
 
     res.locals.Model.find({
       where: { username: username }
     })
-    .done(function found(err, user) {
-      if (err) {
-        we.log.error('findOneByUsername:Error in find user by username', err);
-        return res.serverError(err);
-      }
+    .then(function found(user) {
       if(!user) return next();
       return res.ok(user);
     });
@@ -32,11 +26,7 @@ module.exports = {
    */
   create: function createRecord (req, res) {
     res.locals.Model.create(req.body)
-    .done(function(err, record) {
-      if (err) {
-        return res.serverError(err);
-      }
-
+    .then(function(record) {
       return res.created(record);
     });
   },
