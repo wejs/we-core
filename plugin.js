@@ -184,6 +184,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         'render-javascript-tags': __dirname + '/lib/themeEngine/template-helpers/render-javascript-tags.js',
         'render-bootstrap-config': __dirname + '/lib/themeEngine/template-helpers/render-bootstrap-config.js',
         't':  __dirname + '/lib/themeEngine/template-helpers/t.js',
+        'form':  __dirname + '/lib/themeEngine/template-helpers/form.js',
       }
     },
     metadata: {},
