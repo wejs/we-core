@@ -17,22 +17,25 @@ App.AuthNewPasswordController = Ember.ObjectController.extend({
       var newPassword = self.get('user.password');
       var rNewPassword = self.get('user.repeatpassword');
 
-      $.post(we.configs.server.providers.accounts + '/change-password', {
+      var host = Ember.get(App, 'configs.auth.oauth.server') || '';
+
+      $.post( host + '/change-password', {
         newPassword: this.get('newPassword'),
         rNewPassword: this.get('rNewPassword')
       })
       .done(function(data) {
         alert(data.messages[0].message);
-        NProgress.done(true);
         self.transitionToRoute('home');
       })
-      .fail(function(data) {
-        NProgress.done(true);        
+      .fail(function (data) {
         if (data.responseJSON.messages) {
-          self.set('messages', data.responseJSON.messages);  
+          self.set('messages', data.responseJSON.messages);
         } else {
           Ember.Logger.error('Unknow error on change password:', data.responseJSON);
-        }        
+        }
+      })
+      .always(function(){
+        NProgress.done(true);
       });
     }
   }

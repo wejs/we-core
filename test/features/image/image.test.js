@@ -52,7 +52,6 @@ describe('imageFeature', function () {
       .attach('image', stubs.getImageFilePath())
       .expect(201)
       .end(function (err, res) {
-        console.log('>>>', res.body)
         if(err) throw err;
         assert(res.body.image);
         assert(res.body.image[0].mime);
