@@ -4,11 +4,11 @@
   "pages": {
     "getstarted": {
       "title": "Getting started",
-      "file": "getstarted/README.md",
+      "file": "getstarted/README.md"
     },
     "filestructure": {
       "title": "File Structure",
-      "file": "filestructure/README.md",
+      "file": "filestructure/README.md"
     },
     "features": {
       "title": "Features",
