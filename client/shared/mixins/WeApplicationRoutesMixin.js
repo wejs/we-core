@@ -51,5 +51,14 @@ WeApplicationRoutesMixin = Ember.Mixin.create({
         Ember.Logger.error('Unhandled error on route', error.stack, error);
       }
     }
+  },
+  init: function() {
+    this._super();
+
+    var self = this;
+    $( document ).delegate('a[data-dlink="true"]', 'click', function() {
+      self.transitionTo($(this).data('model-name'), $(this).data('model-id'));
+      return false;
+    });
   }
 });
