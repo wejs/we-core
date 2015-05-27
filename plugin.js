@@ -185,6 +185,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         'render-bootstrap-config': __dirname + '/lib/themeEngine/template-helpers/render-bootstrap-config.js',
         't':  __dirname + '/lib/themeEngine/template-helpers/t.js',
         'form':  __dirname + '/lib/themeEngine/template-helpers/form.js',
+        'html': __dirname + '/lib/themeEngine/template-helpers/html.js'
       }
     },
     metadata: {},
