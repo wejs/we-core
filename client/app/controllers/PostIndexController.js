@@ -1,1 +1,0 @@
-App.PostIndexController = Ember.ObjectController.extend();

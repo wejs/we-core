@@ -1,5 +1,0 @@
-{{#each}}
-  {{render 'comment/item' this}}
-{{else}}
-  <div>{{{t 'comments.empty' loginUrlBinding=auth.loginUrl registerUrlBinding=auth.register}}}</div>
-{{/each}}
