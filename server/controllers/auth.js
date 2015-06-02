@@ -16,7 +16,6 @@ module.exports = {
   // Signup method GET function
   signupPage: function (req, res) {
     var we = req.getWe();
-
     // log out user if it access register page
     we.auth.logOut(req, res, function(err) {
       if(err) we.log.error(err);

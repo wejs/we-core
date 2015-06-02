@@ -916,5 +916,39 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     })
   });
 
+
+  plugin.events.on('we:express:set:params', function(data) {
+    // group pre-loader
+    data.express.param('groupId', function (req, res, next, id) {
+      if (!/^\d+$/.exec(String(id))) return res.notFound();
+      data.we.db.models.group.findById(id).then(function(group) {
+        if (!group) return res.notFound();
+        res.locals.group = group;
+
+        if (!req.user) return next();
+
+        data.we.db.models.membership.find({
+          where: {
+            memberId: req.user.id
+          }
+        }).then(function(membership) {
+          res.locals.membership = membership;
+          req.membership = membership;
+
+          next();
+        }).catch(next);
+      });
+    });
+    // user pre-loader
+    data.express.param('userId', function (req, res, next, id) {
+      if (!/^\d+$/.exec(String(id))) return res.notFound();
+      data.we.db.models.user.findById(id).then(function (user) {
+        if (!user) return res.notFound();
+        res.locals.user = user;
+        next();
+      });
+    })
+  })
+
   return plugin;
 };
