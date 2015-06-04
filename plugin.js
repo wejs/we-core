@@ -183,6 +183,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         'render-stylesheet-tags': __dirname + '/lib/themeEngine/template-helpers/render-stylesheet-tags.js',
         'render-javascript-tags': __dirname + '/lib/themeEngine/template-helpers/render-javascript-tags.js',
         'render-bootstrap-config': __dirname + '/lib/themeEngine/template-helpers/render-bootstrap-config.js',
+        'render-import-polymer-app': __dirname + '/lib/themeEngine/template-helpers/render-import-polymer-app.js',
         't':  __dirname + '/lib/themeEngine/template-helpers/t.js',
         'form':  __dirname + '/lib/themeEngine/template-helpers/form.js',
         'html': __dirname + '/lib/themeEngine/template-helpers/html.js'
