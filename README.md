@@ -37,7 +37,7 @@ npm test
 ##### For run only 'userFeature' test use:
 
 ```sh
-NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -g 'userFeature'
+NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -gb 'userFeature'
 ```
 
 ##### For run the javascript linter
