@@ -96,7 +96,7 @@
       ctx.pageContent = '<wejs-static-home-page></wejs-static-home-page>';
       ctx.fullLayout = true;
 
-      var url = 'http://wejs.dev/public/project/client/admin/styles/test.json';
+      var url = '/public/project/client/admin/styles/test.json';
       ctx.model = $.get(url).then(function (r) {
         ctx.data = r;
         next();

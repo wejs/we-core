@@ -133,18 +133,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // publivars
       publicVars: {}
     },
-    template: {
-      helpers: {
-        'render-metadata-tags': __dirname + '/lib/themeEngine/template-helpers/render-metadata-tags.js',
-        'render-stylesheet-tags': __dirname + '/lib/themeEngine/template-helpers/render-stylesheet-tags.js',
-        'render-javascript-tags': __dirname + '/lib/themeEngine/template-helpers/render-javascript-tags.js',
-        'render-bootstrap-config': __dirname + '/lib/themeEngine/template-helpers/render-bootstrap-config.js',
-        'render-import-polymer-app': __dirname + '/lib/themeEngine/template-helpers/render-import-polymer-app.js',
-        't':  __dirname + '/lib/themeEngine/template-helpers/t.js',
-        'form':  __dirname + '/lib/themeEngine/template-helpers/form.js',
-        'html': __dirname + '/lib/themeEngine/template-helpers/html.js'
-      }
-    },
     metadata: {},
 
     flag: {
@@ -157,7 +145,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       resetAllData: false
     }
   });
-  // ser plugin routes
+  // set plugin routes
   plugin.setRoutes({
     // homepage | default home page
     'get /': {
@@ -778,7 +766,71 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'destroy',
       model         : 'post',
       permission    : 'delete_post'
+    },
+
+    //
+    // Widget
+    //
+    'get /api/v1/widget/:id([0-9]+)': {
+      controller    : 'widget',
+      action        : 'findOne',
+      model         : 'widget',
+      permission    : 'find_widget'
+    },
+    'get /api/v1/widget': {
+      controller    : 'widget',
+      action        : 'find',
+      model         : 'widget',
+      permission    : 'find_widget'
+    },
+    'post /api/v1/widget': {
+      controller    : 'widget',
+      action        : 'create',
+      model         : 'widget',
+      permission    : 'create_widget'
+    },
+    'put /api/v1/widget/:id([0-9]+)': {
+      controller    : 'widget',
+      action        : 'update',
+      model         : 'widget',
+      permission    : 'update_widget'
+    },
+    'delete /api/v1/widget/:id([0-9]+)': {
+      controller    : 'widget',
+      action        : 'destroy',
+      model         : 'widget',
+      permission    : 'delete_widget'
     }
+  });
+
+  plugin.setHelpers({
+    'render-metadata-tags': __dirname + '/lib/view/template-helpers/render-metadata-tags.js',
+    'render-stylesheet-tags': __dirname + '/lib/view/template-helpers/render-stylesheet-tags.js',
+    'render-javascript-tags': __dirname + '/lib/view/template-helpers/render-javascript-tags.js',
+    'render-bootstrap-config': __dirname + '/lib/view/template-helpers/render-bootstrap-config.js',
+    'render-import-polymer-app': __dirname + '/lib/view/template-helpers/render-import-polymer-app.js',
+    't':  __dirname + '/lib/view/template-helpers/t.js',
+    'form':  __dirname + '/lib/view/template-helpers/form.js',
+    'html': __dirname + '/lib/view/template-helpers/html.js',
+    'widget-wrapper': __dirname + '/lib/view/template-helpers/widget-wrapper.js',
+    'region': __dirname + '/lib/view/template-helpers/region.js',
+    'link-to': __dirname + '/lib/view/template-helpers/link-to.js',
+  });
+
+  plugin.setLayouts({
+    default: __dirname + '/server/templates/default-layout.hbs'
+  });
+
+  plugin.setTemplates({
+    'region': __dirname + '/server/templates/region.hbs',
+    '400': __dirname + '/server/templates/400.hbs',
+    '403': __dirname + '/server/templates/403.hbs',
+    '404': __dirname + '/server/templates/404.hbs',
+    '500': __dirname + '/server/templates/500.hbs'
+  });
+
+  plugin.setWidgets({
+    html: __dirname + '/server/widgets/html'
   });
 
   plugin.events.on('we:express:set:params', function(data) {
