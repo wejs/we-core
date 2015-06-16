@@ -54,6 +54,7 @@
     "passport-oauth": "^1.0.0",
     "path-to-regexp": "^1.2.0",
     "rc": "^1.0.3",
+    "recursive-readdir": "^1.2.1",
     "request": "^2.57.0",
     "require-all": "^1.1.0",
     "rimraf": "^2.3.4",

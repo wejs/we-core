@@ -12,6 +12,7 @@ function widgetStub() {
     layout: 'default',
     regionName: 'highlighted',
     type: 'html',
+    theme: 'app',
     configuration: {
       html: '<iframe width="560" height="315" src="https://www.youtube.com/embed/Oiyh33__Txw"'+
        'frameborder="0" allowfullscreen></iframe>'

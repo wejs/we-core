@@ -775,13 +775,31 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'widget',
       action        : 'findOne',
       model         : 'widget',
-      permission    : 'find_widget'
+      permission    : true
+    },
+    'get /api/v1/widget/:id([0-9]+)/form': {
+      controller    : 'widget',
+      action        : 'getForm',
+      model         : 'widget',
+      permission    : 'update_widget'
+    },
+    'get /api/v1/widget-form/:theme/:layout/:type': {
+      controller    : 'widget',
+      action        : 'getCreateForm',
+      model         : 'widget',
+      permission    : 'create_widget'
     },
     'get /api/v1/widget': {
       controller    : 'widget',
       action        : 'find',
       model         : 'widget',
-      permission    : 'find_widget'
+      permission    : true
+    },
+    'post /api/v1/widget-sort': {
+      controller    : 'widget',
+      action        : 'sortWidgets',
+      model         : 'widget',
+      permission    : 'update_widget'
     },
     'post /api/v1/widget': {
       controller    : 'widget',
@@ -800,6 +818,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'destroy',
       model         : 'widget',
       permission    : 'delete_widget'
+    },
+    'get /admin/structure/theme/:name/layout/:layout': {
+      controller    : 'widget',
+      action        : 'updateThemeLayout',
+      permission    : 'update_theme'
+    },
+
+    // - admin
+    'get /admin': {
+      controller    : 'admin',
+      action        : 'index',
+      permission    : 'access_admin'
     }
   });
 
@@ -811,8 +841,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'render-import-polymer-app': __dirname + '/lib/view/template-helpers/render-import-polymer-app.js',
     't':  __dirname + '/lib/view/template-helpers/t.js',
     'form':  __dirname + '/lib/view/template-helpers/form.js',
-    'html': __dirname + '/lib/view/template-helpers/html.js',
     'widget-wrapper': __dirname + '/lib/view/template-helpers/widget-wrapper.js',
+    'layout': __dirname + '/lib/view/template-helpers/layout.js',
     'region': __dirname + '/lib/view/template-helpers/region.js',
     'link-to': __dirname + '/lib/view/template-helpers/link-to.js',
   });

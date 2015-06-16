@@ -194,6 +194,11 @@
     "group": "follow",
     "title": "Use follow API",
     "description": ""
-  }
+  },
 
+  "access_admin": {
+    "group": "admin",
+    "title": "Access admin page",
+    "description": ""
+  }
 }

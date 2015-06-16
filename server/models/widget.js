@@ -36,6 +36,11 @@ module.exports = function Model(we) {
         type:  we.db.Sequelize.STRING,
       },
 
+      theme: {
+        type:  we.db.Sequelize.STRING,
+        allowNull: false
+      },
+
       weight: {
         type:  we.db.Sequelize.FLOAT,
         defaultValue: 0
