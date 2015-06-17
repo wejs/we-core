@@ -143,9 +143,7 @@ describe('authFeature', function () {
       });
     })
 
-
     it('post /login should login one user', function (done) {
-
       request(http)
       .post('/login')
       .set('Accept', 'application/json')

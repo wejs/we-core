@@ -1,0 +1,22 @@
+{
+  "title": "auth.login.title",
+
+  "requestType": "json",
+  "actionType": "",
+  "action": "/login",
+
+  "fields": {
+    "email": {
+      "type": "text",
+      "defaultValue": ""
+    },
+    "password": {
+      "type": "password",
+      "defaultValue": ""
+    },
+
+    "submit": {
+      "type": "submit"
+    }
+  }
+}

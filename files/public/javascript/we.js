@@ -1,10 +1,15 @@
+/**
+ * We.js client side lib
+ */
+
 (function (window, page) {
   var we = {
-
     config: {},
     element: null,
+    isAdmin: false,
     initialize: function initialize(cb) {
       if (!cb) cb = function(){};
+      var self =  this;
 
       if (window.WE_BOOTSTRAP_CONFIG) {
         this.config = window.WE_BOOTSTRAP_CONFIG;
@@ -20,7 +25,51 @@
 
       this.setElementEvents();
 
+      // partial page loader
+      this.router.loadRoutes().then(function (r){
+        if (self.isAdmin) {
+          self.router.bindPartialAdminRoutes(r);
+        } else {
+          self.router.bindPartialRoutes(r);
+        }
+
+        setTimeout(function(){ page({ hashbang: false }); }, 200);
+      });
+
+      if (location.pathname.substring(0, 6) === '/admin') this.isAdmin = true;
+
       cb();
+    },
+    router: {
+      currentRoute: null,
+      firstRoute: true,
+      loadRoutes: function() {
+        return $.get('/api/v1/routes');
+      },
+      bindPartialRoutes: function(routes) {
+        for (var url in routes) {
+          if (url.substring(0, 6) !== '/admin') {
+            routes[url].url = url;
+            page(url, we.router.bindPartialRoute.bind(routes[url]));
+          }
+        }
+      },
+      bindPartialRoute: function (ctx) {
+        if (we.router.firstRoute) {
+          we.router.firstRoute = false; return;
+        }
+        $('layout').load(ctx.path + '?skipHTML=true', function(){
+          $('html, body').animate({ scrollTop: 0 }, 0);
+        });
+      },
+      bindPartialAdminRoutes: function(routes) {
+        for(var url in routes) {
+          if (url.substring(0, 6) === '/admin') {
+            routes[url].url = url;
+            page(url, we.router.bindPartialRoute.bind(routes[url]));
+          }
+        }
+      },
     },
     structure: {
       regions: {},
@@ -107,14 +156,13 @@
               formData[d.name] = d.value;
             });
 
-            $.post('/api/v1/widget?responseType=json', formData).then(function (r) {
-              console.log('r',r )
+            $.post('/api/v1/widget?responseType=json', formData).then(function () {
               modalForm.modal('hide');
+              // reload widgets page TODO change to insert new item un widget table
+              page(location.pathname);
             });
           });
         });
-
-        console.log('TODO,get widgetForm');
       });
 
       // - update widget form

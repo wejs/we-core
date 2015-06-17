@@ -72,7 +72,12 @@ module.exports = function Model(we) {
           this.generatePassword(record.password, function(err, hash) {
             if (err) return next(err);
             record.password = hash;
-            return next(null, record);
+            // remove old user paswords
+            we.db.models.password.destroy({
+              where: { userId: record.userId }
+            }).then(function(){
+              return next(null, record);
+            });
           });
         },
         beforeUpdate: function(record, options, next) {

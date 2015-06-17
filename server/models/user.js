@@ -56,111 +56,30 @@ module.exports = function UserModel(we) {
       },
       city: {
         type: we.db.Sequelize.STRING
-      }
+      },
+
+      avatarId: { type: we.db.Sequelize.BIGINT }
     },
 
     associations: {
-      // inGroups: {
-      //   type: 'belongsToMany',
-      //   model: 'group',
-      //   through: {
-      //     model: 'membership',
-      //     scope: {
-      //       modelName: 'group'
-      //     }
-      //   },
-      //   // constraints: false,
-      //   foreignKey: 'id',
-      //   otherKey: 'memberId'
-      // },
-
-      inGroups: {
-        type: 'hasMany',
-        model: 'membership',
-        inverse: 'member',
-        constraints: false,
-        foreignKey: 'memberId'
-      },
-      avatar: {
-        type: 'belongsTo',
-        model : 'image',
-        inverse: 'avatarOf',
-        constraints: false,
-        foreignKey : 'avatarId'
-      },
+    //   inGroups: {
+    //     type: 'hasMany',
+    //     model: 'membership',
+    //     inverse: 'member',
+    //     constraints: false,
+    //     foreignKey: 'memberId'
+    //   },
       passports:  {
         type: 'belongsToMany',
         model: 'passport',
         inverse: 'user',
         through: 'users_passports'
       },
-      password:  {
-        type: 'belongsTo',
-        model: 'password',
-        inverse: 'user'
-      },
-
       roles: {
         type: 'belongsToMany',
         model: 'role',
         inverse: 'users',
         through: 'users_roles'
-      },
-
-      pages:  {
-        emberOnly: true,
-        type: 'hasMany',
-        model: 'page',
-        inverse: 'creator'
-      },
-
-      vocabularies:  {
-        emberOnly: true,
-        type: 'hasMany',
-        model: 'vocabulary',
-        inverse: 'creator'
-      },
-
-      comments:  {
-        emberOnly: true,
-        type: 'hasMany',
-        model: 'comments',
-        inverse: 'creator'
-      },
-
-      images:  {
-        emberOnly: true,
-        type: 'hasMany',
-        model: 'image',
-        inverse: 'creator'
-      },
-
-      urls:  {
-        emberOnly: true,
-        type: 'hasMany',
-        model: 'url',
-        inverse: 'creator'
-      },
-
-      groups:  {
-        emberOnly: true,
-        type: 'hasMany',
-        model: 'group',
-        inverse: 'creator'
-      },
-
-      wembeds:  {
-        emberOnly: true,
-        type: 'hasMany',
-        model: 'wembed',
-        inverse: 'creator'
-      },
-
-      posts:  {
-        emberOnly: true,
-        type: 'hasMany',
-        model: 'post',
-        inverse: 'creator'
       }
     },
 
@@ -209,6 +128,11 @@ module.exports = function UserModel(we) {
         }
       },
       instanceMethods: {
+        getPassword: function getPassword() {
+          return we.db.models.password.findOne({
+            where: { userId: this.id }
+          });
+        },
         verifyPassword: function(password, cb) {
           return this.getPassword().then( function(passwordObj){
             if (!passwordObj) return cb(null, false);
@@ -224,10 +148,7 @@ module.exports = function UserModel(we) {
                 userId: user.id,
                 password: newPassword
               }).then(function (password) {
-                user.setPassword(password).then(function () {
-                  user.passwordId = password.id;
-                  return cb(null, password);
-                })
+                return cb(null, password);
               })
             }
             // update

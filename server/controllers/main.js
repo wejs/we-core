@@ -113,6 +113,21 @@ module.exports = {
     res.set('Content-Type', 'application/javascript');
 
     res.send(staticModels);
+  },
+
+  getRoutes: function(req, res) {
+    var we = req.getWe();
+    var getRoutes = {};
+    var url;
+
+    for(var routePath in we.routes) {
+      if (routePath.substring(0, 4) === 'get ' && we.routes[routePath].responseType != 'json') {
+        url = routePath.replace('get ', '');
+        getRoutes[url] = we.routes[routePath];
+      }
+    }
+
+    res.send(getRoutes);
   }
 };
 

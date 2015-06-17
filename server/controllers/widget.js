@@ -242,7 +242,7 @@ module.exports = {
       });
 
       res.locals.data.layout = req.params.layout;
-
+      res.locals.data.currentTheme = we.view.themes[req.params.name];
       res.locals.data.themeName = req.params.name;
 
       res.locals.template = 'structure/theme/layout';

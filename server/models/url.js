@@ -10,6 +10,8 @@ module.exports = function Model(we) {
   // set sequelize model define and options
   var model = {
     definition: {
+      creatorId: { type: we.db.Sequelize.BIGINT },
+
       url: {
         type: we.db.Sequelize.STRING(1500),
         allowNull: false,
@@ -27,14 +29,6 @@ module.exports = function Model(we) {
 
       hostName: {
         type: we.db.Sequelize.STRING
-      }
-    },
-
-    associations: {
-      creator:  {
-        type: 'belongsTo',
-        model: 'user',
-        inverse: 'urls'
       }
     },
 

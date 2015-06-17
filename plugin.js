@@ -9,13 +9,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   plugin.setConfigs({
     // default app permissions
     permissions: require('./lib/acl/corePermissions.json'),
-    // default group permissions
-    groupPermissions: {
-      public: require('./lib/acl/group/publicPermissions.json'),
-      private: require('./lib/acl/group/privatePermissions.json'),
-      hidden: require('./lib/acl/group/hiddenPermissions.json')
-    },
-    groupRoles: ['manager', 'moderator', 'member'],
 
     port: process.env.PORT || '3000',
     hostname: 'http://localhost:' + ( process.env.PORT || '3000' ),
@@ -26,8 +19,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     appLogo: '/public/plugin/we-core/files/images/logo-small.png',
 
     defaultUserAvatar: projectPath + '/node_modules/we-core/files/public/images/avatars/user-avatar.png',
-
-    defaultCommentLimit: 3,
 
     log: {
       level: 'debug'
@@ -135,12 +126,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     metadata: {},
 
-    flag: {
-      available: {
-        like: {}
-      }
+    forms: {
+      'login': __dirname + '/server/forms/login.json'
     },
-
     database: {
       resetAllData: false
     }
@@ -299,23 +287,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'user',
       permission    : 'find_user'
     },
-    // get logged in user avatar
-    'get /avatar/:id([0-9]+)': {
-      controller    : 'avatar',
-      action        : 'getAvatar',
-      permission    : 'find_user'
-    },
-    'get /user/:userId([0-9]+)/membership': {
-      controller    : 'group',
-      action        : 'findUserGroups',
-      model         : 'membership'
-    },
-    // find groups to user
-    'get /user/:userId([0-9]+)/find-new-groups': {
-      controller    : 'group',
-      action        : 'findNewGroupsToUser',
-      model         : 'group'
-    },
 
     'get /user/:id([0-9]+)': {
       controller    : 'user',
@@ -340,13 +311,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'destroy',
       model         : 'user',
       permission    : 'delete_user'
-    },
-    'post /api/v1/user/:id([0-9]+)/avatar': {
-      controller    : 'avatar',
-      action        : 'changeAvatar',
-      model         : 'user',
-      loadRecord    :  true,
-      permission    : 'update_user'
     },
 
     //
@@ -412,362 +376,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       permission    : 'manage_permissions',
     },
 
-    // -- FOLLOW
-    // get
-    // example: /api/v1/follow/post/1/2?flagType=follow
-    'get /api/v1/follow/:model/:modelId([0-9]+)?': {
-      controller    : 'follow',
-      action        : 'isFollowing',
-      responseType  : 'json',
-      permission    : 'use_follow'
-    },
-
-    // create
-    // example: /api/v1/follow/post/1/2?flagType=follow
-    'post /api/v1/follow/:model/:modelId([0-9]+)': {
-      controller    : 'follow',
-      action        : 'follow',
-      responseType  : 'json',
-      permission    : 'use_follow'
-    },
-
-    // delete
-    // example: /api/v1/follow/post/1/2?flagType=follow
-    'delete /api/v1/follow/:model/:modelId([0-9]+)': {
-      controller    : 'follow',
-      action        : 'unFollow',
-      responseType  : 'json',
-      permission    : 'use_follow'
-    },
-
-    // -- FLAG
-
-    // get
-    // example: /api/v1/flag/post/1/2?flagType=follow
-    'get /api/v1/flag/:model/:modelId?/:userId?': {
-      controller    : 'flag',
-      action        : 'getModelFlags',
-      responseType  : 'json',
-      permission    : 'use_flag'
-    },
-    // create
-    // example: /api/v1/flag/post/1/2?flagType=follow
-    'post /api/v1/flag/:model/:modelId': {
-      controller    : 'flag',
-      action        : 'flag',
-      responseType  : 'json',
-      permission    : 'use_flag'
-    },
-
-    // delete
-    // example: /api/v1/flag/post/1/2?flagType=follow
-    'delete /api/v1/flag/:model/:modelId': {
-      controller    : 'flag',
-      action        : 'unFlag',
-      responseType  : 'json',
-      permission    : 'use_flag'
-    },
-
-    // GROUPS
-    //
-
-    'post /api/v1/group/:groupId([0-9]+)/addContent/:contentModelName/:contentId': {
-      controller    : 'group',
-      action        : 'addContent',
-      model         : 'group',
-      responseType  : 'json',
-      groupPermission : 'add_content'
-    },
-
-    'delete /api/v1/group/:groupId([0-9]+)/addContent/:contentModelName/:contentId': {
-      controller    : 'group',
-      action        : 'removeContent',
-      model         : 'group',
-      responseType  : 'json',
-      groupPermission : 'remove_content'
-    },
-
-    'get /api/v1/group/:groupId([0-9]+)/content': {
-      controller    : 'group',
-      action        : 'findAllContent',
-      model         : 'group',
-      responseType  : 'json',
-      groupPermission : 'find_content'
-    },
-
-    'get /api/v1/group/:groupId([0-9]+)/content/:contentModelName': {
-      controller    : 'group',
-      action        : 'findContentByType',
-      model         : 'group',
-      responseType  : 'json',
-      groupPermission : 'find_content'
-    },
-
-    'post /api/v1/group/:groupId([0-9]+)/join': {
-      controller    : 'group',
-      action        : 'join',
-      model         : 'group',
-      responseType  : 'json'
-    },
-    'post /api/v1/group/:groupId([0-9]+)/leave': {
-      controller    : 'group',
-      action        : 'leave',
-      model         : 'group',
-      responseType  : 'json'
-    },
-    'get /group/:groupId([0-9]+)/member': {
-      controller    : 'group',
-      action        : 'findMembers',
-      model         : 'membership',
-      responseType  : 'json',
-      groupPermission : 'find_members'
-    },
-    'post /group/:groupId([0-9]+)/member': {
-      controller    : 'group',
-      action        : 'inviteMember',
-      model         : 'membership',
-      responseType  : 'json',
-      groupPermission : 'manage_members'
-    },
-    'post /group/:groupId([0-9]+)/accept-invite/': {
-      controller    : 'group',
-      action        : 'acceptInvite',
-      model         : 'membership',
-      responseType  : 'json'
-    },
-    'get /group/:groupId([0-9]+)/role': {
-      controller    : 'group',
-      action        : 'findRoles',
-      responseType  : 'json',
-      groupPermission : 'find_members'
-    },
-    'get /group/:id([0-9]+)': {
-      controller    : 'group',
-      action        : 'findOne',
-      model         : 'group',
-      permission    : 'find_group'
-    },
-    'get /group': {
-      controller    : 'group',
-      action        : 'find',
-      model         : 'group',
-      permission    : 'find_group'
-    },
-    'post /group': {
-      controller    : 'group',
-      action        : 'create',
-      model         : 'group',
-      permission    : 'create_group'
-    },
-    'put /group/:id([0-9]+)': {
-      controller    : 'group',
-      action        : 'update',
-      model         : 'group',
-      permission    : 'update_group'
-    },
-    'delete /group/:id([0-9]+)': {
-      controller    : 'group',
-      action        : 'destroy',
-      model         : 'group',
-      permission    : 'delete_group'
-    },
-    'get /group/:groupId([0-9]+)/members/invites': {
-      controller    : 'membershipinvite',
-      action        : 'find',
-      model         : 'membershipinvite',
-      groupPermission    : 'manage_members'
-    },
-
-    // Activity
-    'get /group/:groupId([0-9]+)/activity': {
-      controller    : 'activity',
-      action        : 'findGroupActivity',
-      model         : 'activity',
-      responseType  : 'json',
-      permission    : 'find_activity'
-    },
-    'get /activity/:id([0-9]+)': {
-      controller    : 'activity',
-      action        : 'findOne',
-      model         : 'activity',
-      permission    : 'find_activity'
-    },
-    'get /activity': {
-      controller    : 'activity',
-      action        : 'find',
-      model         : 'activity',
-      permission    : 'find_activity'
-    },
-
-    // Page
-    'get /page/:id([0-9]+)': {
-      controller    : 'page',
-      action        : 'findOne',
-      model         : 'page',
-      permission    : 'find_page'
-    },
-    'get /page': {
-      controller    : 'page',
-      action        : 'find',
-      model         : 'page',
-      permission    : 'find_page'
-    },
-    'post /page': {
-      controller    : 'page',
-      action        : 'create',
-      model         : 'page',
-      permission    : 'create_page'
-    },
-    'put /page/:id([0-9]+)': {
-      controller    : 'page',
-      action        : 'update',
-      model         : 'page',
-      permission    : 'update_page'
-    },
-    'delete /page/:id([0-9]+)': {
-      controller    : 'page',
-      action        : 'destroy',
-      model         : 'page',
-      permission    : 'delete_page'
-    },
-
-    // Comment
-    'get /comment/:id([0-9]+)': {
-      controller    : 'comment',
-      action        : 'findOne',
-      model         : 'comment',
-      permission    : 'find_comment'
-    },
-    'get /comment': {
-      controller    : 'comment',
-      action        : 'find',
-      model         : 'comment',
-      permission    : 'find_comment'
-    },
-    'post /comment': {
-      controller    : 'comment',
-      action        : 'create',
-      model         : 'comment',
-      permission    : 'create_comment'
-    },
-    'put /comment/:id([0-9]+)': {
-      controller    : 'comment',
-      action        : 'update',
-      model         : 'comment',
-      permission    : 'update_comment'
-    },
-    'delete /comment/:id([0-9]+)': {
-      controller    : 'comment',
-      action        : 'destroy',
-      model         : 'comment',
-      permission    : 'delete_comment'
-    },
-
-    // Term
-    'get /api/v1/term-texts': {
-      controller    : 'term',
-      action        : 'findTermTexts',
-      model         : 'term',
-      responseType  : 'json'
-    },
-    'get /term/:id([0-9]+)': {
-      controller    : 'term',
-      action        : 'findOne',
-      model         : 'term',
-      permission    : 'find_term'
-    },
-    'get /term': {
-      controller    : 'term',
-      action        : 'find',
-      model         : 'term',
-      permission    : 'find_term'
-    },
-    'post /term': {
-      controller    : 'term',
-      action        : 'create',
-      model         : 'term',
-      permission    : 'create_term'
-    },
-    'put /term/:id([0-9]+)': {
-      controller    : 'term',
-      action        : 'update',
-      model         : 'term',
-      permission    : 'update_term'
-    },
-    'delete /term/:id([0-9]+)': {
-      controller    : 'term',
-      action        : 'destroy',
-      model         : 'term',
-      permission    : 'delete_term'
-    },
-
-    // vocabulary
-    'get /vocabulary/:id([0-9]+)': {
-      controller    : 'vocabulary',
-      action        : 'findOne',
-      model         : 'vocabulary',
-      permission    : 'find_vocabulary'
-    },
-
-    'get /vocabulary': {
-      controller    : 'vocabulary',
-      action        : 'find',
-      model         : 'vocabulary',
-      permission    : 'find_vocabulary'
-    },
-    'post /vocabulary': {
-      controller    : 'vocabulary',
-      action        : 'create',
-      model         : 'vocabulary',
-      permission    : 'create_vocabulary'
-    },
-    'put /vocabulary/:id([0-9]+)': {
-      controller    : 'vocabulary',
-      action        : 'update',
-      model         : 'vocabulary',
-      permission    : 'update_vocabulary'
-    },
-    'delete /vocabulary/:id([0-9]+)': {
-      controller    : 'vocabulary',
-      action        : 'destroy',
-      model         : 'vocabulary',
-      permission    : 'delete_vocabulary'
-    },
-
-    //
-    // POST
-    //
-    'get /post/:id([0-9]+)': {
-      controller    : 'post',
-      action        : 'findOne',
-      model         : 'post',
-      permission    : 'find_post'
-    },
-    'get /post': {
-      controller    : 'post',
-      action        : 'find',
-      model         : 'post',
-      permission    : 'find_post'
-    },
-    'post /post': {
-      controller    : 'post',
-      action        : 'create',
-      model         : 'post',
-      permission    : 'create_post'
-    },
-    'put /post/:id([0-9]+)': {
-      controller    : 'post',
-      action        : 'update',
-      model         : 'post',
-      permission    : 'update_post'
-    },
-    'delete /post/:id([0-9]+)': {
-      controller    : 'post',
-      action        : 'destroy',
-      model         : 'post',
-      permission    : 'delete_post'
-    },
-
     //
     // Widget
     //
@@ -825,11 +433,32 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       permission    : 'update_theme'
     },
 
+    'get /api/v1/routes': {
+      controller: 'main',
+      action: 'getRoutes',
+      permission    : true,
+      responseType: 'json'
+    },
+
     // - admin
     'get /admin': {
       controller    : 'admin',
       action        : 'index',
       permission    : 'access_admin'
+    },
+
+    // theme routes
+    'get /admin/structure/theme': {
+      controller: 'theme',
+      action: 'themesList',
+      permission    : 'update_theme',
+      responseType: 'html'
+    },
+    'get /admin/structure/theme/:themeName': {
+      controller: 'theme',
+      action: 'themeSettings',
+      permission    : 'update_theme',
+      responseType: 'html'
     }
   });
 
@@ -840,11 +469,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'render-bootstrap-config': __dirname + '/lib/view/template-helpers/render-bootstrap-config.js',
     'render-import-polymer-app': __dirname + '/lib/view/template-helpers/render-import-polymer-app.js',
     't':  __dirname + '/lib/view/template-helpers/t.js',
-    'form':  __dirname + '/lib/view/template-helpers/form.js',
     'widget-wrapper': __dirname + '/lib/view/template-helpers/widget-wrapper.js',
     'layout': __dirname + '/lib/view/template-helpers/layout.js',
     'region': __dirname + '/lib/view/template-helpers/region.js',
     'link-to': __dirname + '/lib/view/template-helpers/link-to.js',
+    'template': __dirname + '/lib/view/template-helpers/template.js',
   });
 
   plugin.setLayouts({
@@ -864,27 +493,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
   plugin.events.on('we:express:set:params', function(data) {
-    // group pre-loader
-    data.express.param('groupId', function (req, res, next, id) {
-      if (!/^\d+$/.exec(String(id))) return res.notFound();
-      data.we.db.models.group.findById(id).then(function(group) {
-        if (!group) return res.notFound();
-        res.locals.group = group;
-
-        if (!req.user) return next();
-
-        data.we.db.models.membership.find({
-          where: {
-            memberId: req.user.id
-          }
-        }).then(function(membership) {
-          res.locals.membership = membership;
-          req.membership = membership;
-
-          next();
-        }).catch(next);
-      });
-    });
     // user pre-loader
     data.express.param('userId', function (req, res, next, id) {
       if (!/^\d+$/.exec(String(id))) return res.notFound();
