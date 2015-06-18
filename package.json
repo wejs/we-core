@@ -73,7 +73,7 @@
     "sinon": "^1.14.0",
     "supertest": "^1.0.1",
     "we-test-tools": "^0.3.4",
-    "we-theme-admin-default": "^0.3.1",
-    "we-theme-site-wejs": "^0.3.10"
+    "we-theme-admin-default": "^0.3.2",
+    "we-theme-site-wejs": "^0.3.12"
   }
 }
