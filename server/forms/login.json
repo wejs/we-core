@@ -2,7 +2,8 @@
   "title": "auth.login.title",
 
   "requestType": "json",
-  "actionType": "",
+  "actionType": "ajax",
+  "method": "post",
   "action": "/login",
 
   "fields": {

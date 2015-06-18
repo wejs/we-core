@@ -130,6 +130,29 @@
       $('body').on('click', 'button[we-action=event]', we.handleWeElementEvent);
       $('body').on('click', 'a[we-action=event]', we.handleWeElementEvent);
 
+      // - form submit feature
+      $('body').on('submit', 'form[we-submit=ajax]', function (event) {
+        event.preventDefault();
+
+        var form = $(this);
+        var formData = {};
+        form.serializeArray().forEach(function (d) {
+          formData[d.name] = d.value;
+        });
+
+        var url = form.attr('action');
+
+        $.ajax({
+          url: url + '?responseType=json',
+          method: 'POST',
+          dataType: 'json',
+          contentType: 'application/json; charset=utf-8',
+          data: JSON.stringify(formData)
+        }).then(function (r) {
+          we.events.emit('model-update', 'widget', r.widget);
+        });
+      });
+
       // - create widget form
       $('body').on('submit', 'form[name=layout-widget-selector]', function (event) {
         event.preventDefault();

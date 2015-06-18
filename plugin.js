@@ -467,7 +467,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'render-stylesheet-tags': __dirname + '/lib/view/template-helpers/render-stylesheet-tags.js',
     'render-javascript-tags': __dirname + '/lib/view/template-helpers/render-javascript-tags.js',
     'render-bootstrap-config': __dirname + '/lib/view/template-helpers/render-bootstrap-config.js',
-    'render-import-polymer-app': __dirname + '/lib/view/template-helpers/render-import-polymer-app.js',
     't':  __dirname + '/lib/view/template-helpers/t.js',
     'widget-wrapper': __dirname + '/lib/view/template-helpers/widget-wrapper.js',
     'layout': __dirname + '/lib/view/template-helpers/layout.js',
