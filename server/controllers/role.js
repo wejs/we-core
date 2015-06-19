@@ -135,6 +135,27 @@ module.exports = {
       res.ok(role);
     });
   },
+  /**
+   * remove permission from role action
+   */
+  removePermissionFromRole: function(req, res) {
+    var we = req.getWe();
+
+    if (we.acl.roles[!req.params.roleName]) {
+      we.log.warn('Role not found: ',req.params.roleName);
+      return res.notFound();
+    }
+    if (we.acl.permissions[!req.params.permissionName]) {
+      we.log.warn('Permission not found: ',req.params.permissionName);
+      return res.notFound();
+    }
+
+    we.acl.removePermissionFromRole(we, req.params.roleName, req.params.permissionName, function(err) {
+      if (err) return res.serverError(err);
+      res.deleted();
+    });
+  },
+
 
   destroy: function (req, res) {
     var we = req.getWe();

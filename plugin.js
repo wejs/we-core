@@ -131,6 +131,27 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     database: {
       resetAllData: false
+    },
+    menu: {
+      admin: {
+        class: 'nav',
+        links: [
+          {
+            beforeText: '<i class="fa fa-picture-o"></i>',
+            text: 'theme.link',
+            afterText: '',
+            type: 'route',
+            name: 'theme.themesList'
+          },
+          {
+            beforeText: '<i class="fa fa-unlock-alt"></i>',
+            text: 'permission.link',
+            afterText: '',
+            type: 'route',
+            name: 'permission_manage'
+          },
+        ]
+      }
     }
   });
   // set plugin routes
@@ -362,16 +383,23 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     //
     // -- Permissions
-
-    'get /permission': {
+    'get /admin/permission': {
+      name          : 'permission_manage',
       controller    : 'permission',
-      action        : 'find',
-      responseType  : 'json'
+      action        : 'manage',
+      template      : 'admin/permission/index',
+      responseType  : 'html'
     },
 
-    'post /role/:roleName/permissions/:permissionName': {
+    'post /admin/role/:roleName/permissions/:permissionName': {
       controller    : 'role',
       action        : 'addPermissionToRole',
+      model         : 'role',
+      permission    : 'manage_permissions',
+    },
+    'delete /admin/role/:roleName/permissions/:permissionName': {
+      controller    : 'role',
+      action        : 'removePermissionFromRole',
       model         : 'role',
       permission    : 'manage_permissions',
     },
@@ -476,6 +504,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'region': __dirname + '/lib/view/template-helpers/region.js',
     'link-to': __dirname + '/lib/view/template-helpers/link-to.js',
     'template': __dirname + '/lib/view/template-helpers/template.js',
+    'we-menu':  __dirname + '/lib/view/template-helpers/we-menu.js',
+    'ifCond': __dirname + '/lib/view/template-helpers/ifCond.js',
+    'we-contains': __dirname + '/lib/view/template-helpers/we-contains.js'
   });
 
   plugin.setLayouts({

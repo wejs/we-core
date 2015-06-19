@@ -368,7 +368,47 @@ we.admin.layouts = {
     }
   }
 }
+we.admin.permission = {
+  liveUpdate: function(selector) {
+    $(selector).on('change', 'input[type="checkbox"]', function() {
+      var checked = this.checked;
+      var element = this;
 
+      var input = $(this);
+
+      var roleName = input.attr('role-name');
+      var permissionName = input.attr('permission-name');
+
+      if (checked) {
+        we.admin.permission.addPermission(roleName, permissionName)
+        .fail(function () {
+          element.checked = !checked;
+        });
+      } else {
+        we.admin.permission.removePermission(roleName, permissionName)
+        .fail(function () {
+          element.checked = !checked;
+        });
+      }
+    });
+  },
+  addPermission: function(roleName, permissionName) {
+    return $.ajax({
+      url: '/admin/role/'+roleName+'/permissions/' + permissionName+ '?responseType=json',
+      method: 'POST',
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
+    });
+  },
+  removePermission: function(roleName, permissionName) {
+    return $.ajax({
+      url: '/admin/role/'+roleName+'/permissions/' + permissionName+ '?responseType=json',
+      method: 'delete',
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
+    });
+  }
+}
 
 
 window.we = we;

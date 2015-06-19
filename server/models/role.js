@@ -52,8 +52,7 @@ module.exports = function Model(we) {
           var p = this.permissions;
           var index = p.indexOf(permissionName);
 
-          if (index + -1)
-            p.splice(index, 1);
+          if (index + -1) p.splice(index, 1);
 
           this.permissions = p;
           return this.save();
