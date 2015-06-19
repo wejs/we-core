@@ -24,66 +24,7 @@ describe('permissionsFeature', function() {
         done();
       })
     });
+
+    it('we.acl.removePermissionFromRole should remove a permission from role');
   });
-
-  describe('API', function() {
-    it('get /permission should return all permissions list', function(done) {
-      request(http)
-      .get('/permission')
-      .set('Accept', 'application/json')
-      .expect(200)
-      .end(function (err, res) {
-        if (err) return done(err);
-        assert(res.body.permission);
-        assert( _.isArray( res.body.permission ) );
-        done();
-      });
-    });
-
-    it('get /role should return roles with permissions attr', function(done) {
-      request(http)
-      .get('/role')
-      .set('Accept', 'application/json')
-      .expect(200)
-      .end(function (err, res) {
-        if (err) return done(err);
-        assert(res.body.role);
-        assert( _.isArray( res.body.role ) );
-        // res.body.role.forEach(function(r){
-        //   assert(r.permissions);
-        // });
-        done();
-      });
-    });
-
-    it('post /permission should return 404', function(done) {
-      request(http)
-      .post('/permission')
-      .send({
-        name: 'one_permission_name'
-      })
-      .set('Accept', 'application/json')
-      .expect(404)
-      .end(function (err, res) {
-        if (err) return done(err);
-        done();
-      });
-    });
-
-    it('post /role/:id/permissions should add one permission to role', function(done) {
-      var permissionName = 'find_post';
-      var roleName = 'owner';
-      request(http)
-      .post('/role/' + roleName + '/permissions/' + permissionName)
-      .set('Accept', 'application/json')
-      .expect(200)
-      .end(function (err, res) {
-        if (err) return done(err);
-        assert(res.body.role);
-        assert.equal(res.body.role.length, 1);
-        assert(res.body.role[0].permissions.indexOf(permissionName) > -1);
-        done();
-      });
-    });
-  })
 })

@@ -22,5 +22,6 @@
 	"role.addRoleToUser.param.roleName.required": "role.addRoleToUser.param.roleName.required",
 	"role.removeRoleFromUser.param.roleName.required": "role.removeRoleFromUser.param.roleName.required",
 	"we.email.groupInvite.subject": "we.email.groupInvite.subject",
-	"login.block.button.text": "login.block.button.text"
+	"login.block.button.text": "login.block.button.text",
+	"login.block.form.new.account.link": "login.block.form.new.account.link"
 }
