@@ -430,6 +430,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'get /admin/structure/theme/:name/layout/:layout': {
       controller    : 'widget',
       action        : 'updateThemeLayout',
+      template         : 'admin/structure/theme/layout',
       permission    : 'update_theme'
     },
 
@@ -452,12 +453,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller: 'theme',
       action: 'themesList',
       permission    : 'update_theme',
+      template      : 'admin/structure/theme/list',
       responseType: 'html'
     },
     'get /admin/structure/theme/:themeName': {
       controller: 'theme',
       action: 'themeSettings',
       permission    : 'update_theme',
+      template      : 'admin/structure/theme/index',
       responseType: 'html'
     }
   });

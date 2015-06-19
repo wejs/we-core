@@ -245,7 +245,7 @@ module.exports = {
       res.locals.data.currentTheme = we.view.themes[req.params.name];
       res.locals.data.themeName = req.params.name;
 
-      res.locals.template = 'structure/theme/layout';
+      //res.locals.template = 'structure/theme/layout';
       res.view();
     });
   }
