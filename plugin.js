@@ -159,7 +159,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // homepage | default home page
     'get /': {
       controller: 'main',
-      action: 'index'
+      action: 'index',
+      template   : 'home/index',
     },
 
     //
