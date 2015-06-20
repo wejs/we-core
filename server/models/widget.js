@@ -61,7 +61,13 @@ module.exports = function Model(we) {
           }
         }
       }
-
+    },
+    options: {
+      instanceMethods: {
+        viewMiddleware: function viewMiddleware(req, res, next) {
+          return we.view.widgets[this.type].viewMiddleware(this, req, res, next);
+        }
+      }
     }
   }
 

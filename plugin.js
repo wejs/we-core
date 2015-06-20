@@ -539,7 +539,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
   plugin.setWidgets({
-    html: __dirname + '/server/widgets/html'
+    html: __dirname + '/server/widgets/html',
+    menu: __dirname + '/server/widgets/menu'
   });
 
   plugin.events.on('we:express:set:params', function(data) {
