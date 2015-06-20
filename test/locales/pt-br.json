@@ -23,5 +23,11 @@
 	"role.removeRoleFromUser.param.roleName.required": "role.removeRoleFromUser.param.roleName.required",
 	"we.email.groupInvite.subject": "we.email.groupInvite.subject",
 	"login.block.button.text": "login.block.button.text",
-	"login.block.form.new.account.link": "login.block.form.new.account.link"
+	"login.block.form.new.account.link": "login.block.form.new.account.link",
+	"form-login-email": "form-login-email",
+	"form-placeholder-login-email": "form-placeholder-login-email",
+	"form-login-password": "form-login-password",
+	"form-placeholder-login-password": "form-placeholder-login-password",
+	"form-login-submit": "form-login-submit",
+	"auth.login.title": "auth.login.title"
 }

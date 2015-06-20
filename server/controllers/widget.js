@@ -16,7 +16,10 @@ module.exports = {
         res.locals.template = record.type + '/wiew';
         res.status(201);
 
-        record.dataValues.html = we.view.widgets[record.type].render(record, res.locals.theme);
+        record.dataValues.html = we.view.widgets[record.type].render({
+          locals: res.locals,
+          widget: record
+        }, res.locals.theme);
 
         if (res.locals.responseType == 'html') {
           return res.send(record.dataValues.html);
@@ -69,7 +72,10 @@ module.exports = {
       res.locals.template = record.type + '/wiew';
       res.status(200);
 
-      record.dataValues.html = we.view.widgets[record.type].render(record, res.locals.theme);
+      record.dataValues.html = we.view.widgets[record.type].render({
+        locals: res.locals,
+        widget: record
+      }, res.locals.theme);
 
       if (res.locals.responseType == 'html') {
         return res.send(record.dataValues.html);
@@ -89,7 +95,10 @@ module.exports = {
 
       if (result.rows)  {
         result.rows.forEach(function (record) {
-          record.dataValues.html =  we.view.widgets[record.type].render(record, res.locals.theme);
+          record.dataValues.html =  we.view.widgets[record.type].render({
+            locals: res.locals,
+            widget: record
+          }, res.locals.theme);
         });
       }
 
@@ -188,7 +197,10 @@ module.exports = {
           res.locals.template = record.type + '/wiew';
           res.status(200);
 
-          record.dataValues.html = we.view.widgets[record.type].render(record, res.locals.theme);
+          record.dataValues.html = we.view.widgets[record.type].render({
+            locals: res.locals,
+            widget: record
+          }, res.locals.theme);
 
           if (res.locals.responseType == 'html') {
             return res.send(record.dataValues.html);
