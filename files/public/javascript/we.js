@@ -24,6 +24,7 @@ var we = {
     }
 
     this.setElementEvents();
+    this.handlerErrorMessage();
 
     // partial page loader
     this.router.loadRoutes().then(function (r){
@@ -467,6 +468,32 @@ we.components = {
   }
 }
 
+we.message: {
+  newMessage: function newMessage(status, message) {
+    $('form[we-submit="ajax"] > fieldset').fadeIn('slow', function() {
+      $(this).append('<message class="alert alert-' + status + '">' + message + '</message>');
+    });
+  },
+
+  closeMessage: function closeMessage(obj) {
+    setTimeout(function() {
+       $('message').fadeOut('slow', function() {
+        $(this).remove();
+       });
+    }, 3000);
+  }
+},
+  
+  handlerErrorMessage: function handlerErrorMessage() {
+    /**
+     * Intercept all requests error and display the messages attr
+     */
+    //$(window.document).ajaxComplete(function(e, xhr, settings)
+    $(window.document).ajaxError(function(e, xhr, settings) {
+      we.message.closeMessage(we.message.newMessage(xhr.responseJSON.messages[0].status,
+                                                    xhr.responseJSON.messages[0].message));
+    });
+  }
 
 window.we = we;
 
