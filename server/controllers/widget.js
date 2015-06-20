@@ -109,23 +109,26 @@ module.exports = {
     var layoutToUpdate = we.view.themes[req.params.theme].layouts[req.params.layout];
     if (!layoutToUpdate) return res.notFound();
 
-    var data = {
-      type: req.params.type,
-      layout: req.params.layout,
-      theme: req.params.theme,
-      regions: {}
-    };
+    we.view.widgets[req.params.type].formMiddleware(req, res, function (err) {
+      if (err) return res.serverError(err);
 
-    var regions = _.cloneDeep(layoutToUpdate.regions);
-    for (var r in regions) {
-      if (r == req.query.regionName) regions[r].selected = true;
-      data.regions[r] = regions[r];
-    }
+      res.locals.title = null;
 
-    var html = we.view.widgets[req.params.type].renderForm(data);
+      res.locals.type = req.params.type;
+      res.locals.layout = req.params.layout;
+      res.locals.theme = req.params.theme;
+      res.locals.regions = {};
 
-    res.status(200);
-    return res.send(html);
+      var regions = _.cloneDeep(layoutToUpdate.regions);
+      for (var r in regions) {
+        if (r == req.query.regionName) regions[r].selected = true;
+        res.locals.regions[r] = regions[r];
+      }
+
+      var html = we.view.widgets[req.params.type].renderForm(res.locals, res.locals.theme);
+      res.status(200);
+      return res.send(html);
+    });
   },
 
   getForm: function getForm(req, res, next) {
@@ -139,24 +142,30 @@ module.exports = {
 
       res.status(200);
 
-      var widget = record.toJSON();
+      we.view.widgets[record.type].formMiddleware(req, res, function (err) {
+        if (err) return res.serverError(err);
 
-      widget.regions = {};
+        var widget = record.toJSON();
 
-      var regions = _.cloneDeep(we.view.themes[widget.theme].layouts[record.layout].regions);
-      for (var r in regions) {
-        if (r == widget.regionName) regions[r].selected = true;
-        widget.regions[r] = regions[r];
-      }
+        widget.regions = {};
 
-      record.dataValues.html = we.view.widgets[record.type].renderForm(widget, res.locals.theme);
+        var regions = _.cloneDeep(we.view.themes[widget.theme].layouts[record.layout].regions);
+        for (var r in regions) {
+          if (r == widget.regionName) regions[r].selected = true;
+          widget.regions[r] = regions[r];
+        }
 
-      if (res.locals.responseType == 'html') {
-        return res.send(record.dataValues.html);
-      } else {
-        res.locals.record = record;
-        return res.ok();
-      }
+        _.merge(res.locals, widget);
+
+        record.dataValues.html = we.view.widgets[record.type].renderForm(res.locals, res.locals.theme);
+
+        if (res.locals.responseType == 'html') {
+          return res.send(record.dataValues.html);
+        } else {
+          res.locals.record = record;
+          return res.ok();
+        }
+      });
     });
   },
 
