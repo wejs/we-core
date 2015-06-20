@@ -24,7 +24,7 @@ var we = {
     }
 
     this.setElementEvents();
-    this.handlerErrorMessage();
+    //this.handlerErrorMessage();
 
     // partial page loader
     this.router.loadRoutes().then(function (r){
@@ -466,7 +466,7 @@ we.components = {
 
     table.dataTable(config);
   }
-}
+};
 
 we.message = {
   newMessage: function newMessage(status, message) {
@@ -483,17 +483,17 @@ we.message = {
     }, 3000);
   }
 };
-  
-handlerErrorMessage: function handlerErrorMessage() {
-  /**
-   * Intercept all requests error and display the messages attr
-   */
-  //$(window.document).ajaxComplete(function(e, xhr, settings)
-  $(window.document).ajaxError(function(e, xhr, settings) {
-    we.message.closeMessage(we.message.newMessage(xhr.responseJSON.messages[0].status,
-                                                  xhr.responseJSON.messages[0].message));
-  });
-}
+
+/**
+ * Intercept all requests error and display the messages attr
+ */
+//$(window.document).ajaxComplete(function(e, xhr, settings)
+$(window.document).ajaxError(function(e, xhr, settings) {
+  for(var i = 0; i < xhr.responseJSON.messages.length; i++) {
+    var msg = xhr.responseJSON.messages[i];
+    we.message.closeMessage(we.message.newMessage(msg.status, msg.message))      
+  }
+});
 
 window.we = we;
 
