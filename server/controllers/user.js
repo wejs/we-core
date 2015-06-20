@@ -51,5 +51,19 @@ module.exports = {
   destroy: function(req, res) {
     // user account delete dont are implemented
     return res.notFound();
+  },
+
+  manage: function(req, res, next) {
+    var we = req.getWe();
+
+    return we.db.models.user.findAndCountAll(res.locals.query, res.locals.queryOptions)
+    .then(function (record) {
+      if (!record) return next();
+
+      res.locals.metadata.count = record.count;
+      res.locals.record = record.rows;
+
+      return res.ok();
+    });
   }
 };

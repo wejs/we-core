@@ -144,6 +144,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             name: 'theme.themesList'
           },
           {
+            beforeText: '<i class="fa fa-users"></i>',
+            text: 'users.link',
+            afterText: '',
+            type: 'route',
+            name: 'user_manage'
+          },
+          {
             beforeText: '<i class="fa fa-unlock-alt"></i>',
             text: 'permission.link',
             afterText: '',
@@ -383,29 +390,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
 
     //
-    // -- Permissions
-    'get /admin/permission': {
-      name          : 'permission_manage',
-      controller    : 'permission',
-      action        : 'manage',
-      template      : 'admin/permission/index',
-      responseType  : 'html'
-    },
-
-    'post /admin/role/:roleName/permissions/:permissionName': {
-      controller    : 'role',
-      action        : 'addPermissionToRole',
-      model         : 'role',
-      permission    : 'manage_permissions',
-    },
-    'delete /admin/role/:roleName/permissions/:permissionName': {
-      controller    : 'role',
-      action        : 'removePermissionFromRole',
-      model         : 'role',
-      permission    : 'manage_permissions',
-    },
-
-    //
     // Widget
     //
     'get /api/v1/widget/:id([0-9]+)': {
@@ -475,6 +459,38 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'admin',
       action        : 'index',
       permission    : 'access_admin'
+    },
+
+    //
+    // -- Permissions
+    'get /admin/permission': {
+      name          : 'permission_manage',
+      controller    : 'permission',
+      action        : 'manage',
+      template      : 'admin/permission/index',
+      responseType  : 'html'
+    },
+
+    'post /admin/role/:roleName/permissions/:permissionName': {
+      controller    : 'role',
+      action        : 'addPermissionToRole',
+      model         : 'role',
+      permission    : 'manage_permissions',
+    },
+    'delete /admin/role/:roleName/permissions/:permissionName': {
+      controller    : 'role',
+      action        : 'removePermissionFromRole',
+      model         : 'role',
+      permission    : 'manage_permissions',
+    },
+
+    // admin - users
+    'get /admin/user': {
+      name          : 'user_manage',
+      controller    : 'user',
+      action        : 'manage',
+      template      : 'admin/user/index',
+      responseType  : 'html'
     },
 
     // theme routes

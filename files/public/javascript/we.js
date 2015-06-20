@@ -410,6 +410,63 @@ we.admin.permission = {
   }
 }
 
+we.components = {
+  dataTable: function dataTable(selector) {
+    var table = $(selector);
+    //var footer = table.find('tfoot');
+    var searchField = table.attr('we-search-field');
+    var url = table.attr('we-dataTable-url');
+    var isAjax = Boolean(url);
+
+    var colNames = table.find('thead th').map(function (i, e) {
+      return { 'data': $(e).attr('we-model-attr') };
+    });
+
+    var config = {
+      'processing': isAjax,
+      'serverSide': isAjax,
+      'columns': colNames,
+      // fix datable null errors
+      'aoColumns': colNames.map(function(i, colName){
+        return { 'mData': colName.data, mRender: function (data) {
+          if (data) return data;
+          return '';
+        }};
+      })
+    };
+
+    if (Boolean(url)) {
+      config.ajax = {
+        'url': url,
+        'data': function ( d ) {
+          // change order to be like we.js query api order
+          if (d.order) {
+            d.order = colNames[d.order[0].column].data + ' ' + d.order[0].dir;
+          }
+          // set where search param
+          if (d.search) {
+            d.where = {};
+            d.where[searchField] = { like: '%' + d.search.value + '%' };
+            d.where = JSON.stringify(d.where);
+            // remove default  search param
+            delete d.search;
+          }
+          // limit
+          d.limit = d.length;
+          delete d.length;
+          // offset
+          d.offset  = d.start;
+          delete d.start;
+          // we.js data table response type
+          d.responseType = 'datatable';
+        }
+      };
+    }
+
+    table.dataTable(config);
+  }
+}
+
 
 window.we = we;
 
