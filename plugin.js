@@ -133,6 +133,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       resetAllData: false
     },
     menu: {
+      main: {},
       admin: {
         class: 'nav',
         links: [

@@ -25,16 +25,18 @@ var we = {
 
     this.setElementEvents();
 
-    // partial page loader
-    this.router.loadRoutes().then(function (r){
-      if (self.isAdmin) {
-        self.router.bindPartialAdminRoutes(r);
-      } else {
-        self.router.bindPartialRoutes(r);
-      }
+    if (we.config.client.publicVars.dynamicLayout) {
+      // partial page loader
+      this.router.loadRoutes().then(function (r){
+        if (self.isAdmin) {
+          self.router.bindPartialAdminRoutes(r);
+        } else {
+          self.router.bindPartialRoutes(r);
+        }
 
-      setTimeout(function(){ page({ hashbang: false }); }, 200);
-    });
+        setTimeout(function(){ page({ hashbang: false }); }, 200);
+      });
+    }
 
     if (location.pathname.substring(0, 6) === '/admin') this.isAdmin = true;
 
