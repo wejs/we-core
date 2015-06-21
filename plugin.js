@@ -142,21 +142,24 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             text: 'theme.link',
             afterText: '',
             type: 'route',
-            name: 'theme.themesList'
+            name: 'theme.themesList',
+            roles: ['administrator']
           },
           {
             beforeText: '<i class="fa fa-users"></i>',
             text: 'users.link',
             afterText: '',
             type: 'route',
-            name: 'user_manage'
+            name: 'user_manage',
+            roles: ['administrator']
           },
           {
             beforeText: '<i class="fa fa-unlock-alt"></i>',
             text: 'permission.link',
             afterText: '',
             type: 'route',
-            name: 'permission_manage'
+            name: 'permission_manage',
+            roles: ['administrator']
           },
         ]
       }
@@ -469,7 +472,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'permission',
       action        : 'manage',
       template      : 'admin/permission/index',
-      responseType  : 'html'
+      responseType  : 'html',
+      permission    : 'manage_permissions',
     },
 
     'post /admin/role/:roleName/permissions/:permissionName': {
@@ -491,21 +495,21 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'user',
       action        : 'manage',
       template      : 'admin/user/index',
-      responseType  : 'html'
+      responseType  : 'html',
+      permission    : 'manage_users'
     },
-
     // theme routes
     'get /admin/structure/theme': {
       controller: 'theme',
       action: 'themesList',
-      permission    : 'update_theme',
+      permission    : 'manage_theme',
       template      : 'admin/structure/theme/list',
       responseType: 'html'
     },
     'get /admin/structure/theme/:themeName': {
       controller: 'theme',
       action: 'themeSettings',
-      permission    : 'update_theme',
+      permission    : 'manage_theme',
       template      : 'admin/structure/theme/index',
       responseType: 'html'
     }

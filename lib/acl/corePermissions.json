@@ -51,5 +51,22 @@
     "group": "admin",
     "title": "Access admin page",
     "description": ""
+  },
+
+  "manage_users": {
+    "group": "admin",
+    "title": "Manage users",
+    "description": ""
+  },
+  "manage_permissions": {
+    "group": "admin",
+    "title": "Manage permissions",
+    "description": ""
+  },
+  "manage_theme": {
+    "group": "admin",
+    "title": "Manage theme",
+    "description": ""
   }
+
 }
