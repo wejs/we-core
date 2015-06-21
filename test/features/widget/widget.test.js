@@ -77,6 +77,7 @@ describe('widgetFeature', function() {
         .get('/api/v1/widget/' + record.id)
         .expect(200)
         .end(function (err, res) {
+          console.log(res.text)
           if (err) throw err;
           assert(res.text.search(w.title) > -1);
           assert(res.text.search(w.configuration.html) > -1);

@@ -20,9 +20,8 @@ module.exports = {
           locals: res.locals,
           widget: record
         }, res.locals.theme);
-
         if (res.locals.responseType == 'html') {
-          return res.send(record.dataValues.html);
+          return res.send(record.dataValues.html.string);
         } else {
           res.locals.record = record;
           return res.created();
@@ -78,7 +77,7 @@ module.exports = {
       }, res.locals.theme);
 
       if (res.locals.responseType == 'html') {
-        return res.send(record.dataValues.html);
+        return res.send(record.dataValues.html.string);
       } else {
         res.locals.record = record;
         return res.ok();
@@ -132,11 +131,17 @@ module.exports = {
       res.locals.selectedRegion = req.query.regionName;
 
       res.locals.controllFields = '';
+
+      if (res.locals.type)
       res.locals.controllFields += '<input type="hidden" name="type" value="'+res.locals.type+'">';
-      res.locals.controllFields += '<input type="hidden" name="layout" value="'+res.locals.layout+'">';
-      res.locals.controllFields += '<input type="hidden" name="theme" value="'+res.locals.theme+'">';
-      res.locals.controllFields += '<input type="hidden" name="context" value="'+res.locals.context+'">';
-      res.locals.controllFields += '<input type="hidden" name="regionName" value="'+res.locals.selectedRegion+'">';
+      if (res.locals.layout)
+        res.locals.controllFields += '<input type="hidden" name="layout" value="'+res.locals.layout+'">';
+      if (res.locals.theme)
+        res.locals.controllFields += '<input type="hidden" name="theme" value="'+res.locals.theme+'">';
+      if (res.locals.context)
+        res.locals.controllFields += '<input type="hidden" name="context" value="'+res.locals.context+'">';
+      if (res.locals.selectedRegion)
+        res.locals.controllFields += '<input type="hidden" name="regionName" value="'+res.locals.selectedRegion+'">';
 
       var html = we.view.widgets[req.params.type].renderForm(res.locals, res.locals.theme);
       res.status(200);
@@ -167,11 +172,16 @@ module.exports = {
         _.merge(res.locals, widget);
 
         res.locals.controllFields = '';
-        res.locals.controllFields += '<input type="hidden" name="type" value="'+record.type+'">';
-        res.locals.controllFields += '<input type="hidden" name="layout" value="'+record.layout+'">';
-        res.locals.controllFields += '<input type="hidden" name="theme" value="'+record.theme+'">';
-        res.locals.controllFields += '<input type="hidden" name="context" value="'+record.context+'">';
-        res.locals.controllFields += '<input type="hidden" name="regionName" value="'+record.regionName+'">';
+        if (record.type)
+          res.locals.controllFields += '<input type="hidden" name="type" value="'+record.type+'">';
+        if (record.layout)
+          res.locals.controllFields += '<input type="hidden" name="layout" value="'+record.layout+'">';
+        if (record.theme)
+          res.locals.controllFields += '<input type="hidden" name="theme" value="'+record.theme+'">';
+        if (record.context)
+          res.locals.controllFields += '<input type="hidden" name="context" value="'+record.context+'">';
+        if (record.regionName)
+          res.locals.controllFields += '<input type="hidden" name="regionName" value="'+record.regionName+'">';
 
         record.dataValues.html = we.view.widgets[record.type].renderForm(res.locals, res.locals.theme);
 

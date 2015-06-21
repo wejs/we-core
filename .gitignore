@@ -36,4 +36,4 @@ npm-debug.log
 .tmp
 
 config
-
+.DS_Store
