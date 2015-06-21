@@ -23,6 +23,7 @@ var we = {
       we.structure.regions[regions[i].id] = window.$(regions[i]);
     }
 
+    this.renderComponents();
     this.setElementEvents();
 
     if (we.config.client.publicVars.dynamicLayout) {
@@ -67,42 +68,8 @@ var we = {
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(formData)
       }).then(function (r) {
+        // TODO change "widget" model name to current form model name
         we.events.emit('model-update', 'widget', r.widget);
-      });
-    });
-
-    // - create widget form
-    $('body').on('submit', 'form[name=layout-widget-selector]', function (event) {
-      event.preventDefault();
-
-      var form = $(this);
-
-      var modalForm = $('#AddWidgetFormModal');
-      if (!modalForm) return;
-      // modalForm.modal('show');
-      var url = '/api/v1/widget-form/' + form.find('input[name=theme]').val();
-      url += '/' + form.find('input[name=layout]').val();
-      url += '/' + form.find('input[name=type]').val();
-      url += '?regionName=' + form.find('select').val();
-
-      $.get(url).then(function (f) {
-        modalForm.find('.modal-body').html(f);
-        modalForm.modal('show');
-
-        modalForm.find('form').submit(function( event ) {
-          event.preventDefault();
-          var formData = {};
-
-          modalForm.find('form').serializeArray().forEach(function (d) {
-            formData[d.name] = d.value;
-          });
-
-          $.post('/api/v1/widget?responseType=json', formData).then(function () {
-            modalForm.modal('hide');
-            // reload widgets page TODO change to insert new item un widget table
-            page(location.pathname);
-          });
-        });
       });
     });
 
@@ -196,6 +163,45 @@ var we = {
 
 we.structure = {
   regions: {},
+  openWidgetForm: function openWidgetForm(event) {
+    event.preventDefault();
+
+    var form = $(event.target);
+
+    var modalForm = $('#AddWidgetFormModal');
+    if (!modalForm) return;
+
+    var url = '/api/v1/widget-form/' + form.find('input[name=theme]').val();
+    url += '/' + form.find('input[name=layout]').val();
+    url += '/' + form.find('input[name=type]').val();
+    url += '?regionName=' + form.find('select').val();
+
+    var wc = form.find('input[name=context]').val();
+    if (wc) url += '&context=' + wc;
+
+    $.get(url).then(function (f) {
+      modalForm.find('.modal-body').html(f);
+      modalForm.modal('show');
+
+      modalForm.find('form').submit(function( event ) {
+        event.preventDefault();
+        var formData = {};
+
+        modalForm.find('form').serializeArray().forEach(function (d) {
+          formData[d.name] = d.value;
+        });
+
+        var url = form.attr('we-form-widget-url');
+        if (!url) url = '/api/v1/widget';
+
+        $.post(url+'?responseType=json', formData).then(function () {
+          modalForm.modal('hide');
+          // reload widgets page TODO change to insert new item un widget table
+          location.reload();
+        });
+      });
+    });
+  },
   emptyWidgets: function emptyWidgets() {
     for (var i = 0; i < we.structure.regions.length; i++) {
       // empty all regions
@@ -333,7 +339,6 @@ we.Event.prototype = {
 // -- we.js events
 we.events = new we.Event();
 
-
 we.admin = {};
 we.admin.layouts = {
   widgetTableSorter: function widgetTableSorter (selector) {
@@ -468,6 +473,41 @@ we.components = {
     table.dataTable(config);
   }
 }
+
+we.renderComponents = function renderComponents() {
+  var components = '<div class="we-components-area">';
+
+  components += '<div id="AddWidgetFormModal" class="modal" aria-hidden="true">'+
+      '<div class="modal-dialog modal-lg">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+            '<h4 class="modal-title">Add widget</h4>'+
+          '</div>'+
+          '<div class="modal-body">'+
+            '<p>Loading ...</p>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  // updateWidgetFormModal
+  components += '<div id="updateWidgetFormModal" class="modal" aria-hidden="true">'+
+    '<div class="modal-dialog modal-lg">'+
+      '<div class="modal-content">'+
+        '<div class="modal-header">'+
+          '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+          '<h4 class="modal-title">Update widget</h4>'+
+        '</div>'+
+        '<div class="modal-body"></div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+
+  components += '</div>';
+
+  $('body').append(components);
+}
+
 
 
 window.we = we;

@@ -7,19 +7,8 @@
     <label for="widget-form-{{type}}-html">HTML</label>
     <textarea rows="10" name="html" class="form-control" id="widget-form-{{type}}-html">{{configuration.html}}</textarea>
   </div>
-{{log this.regions}}
-  <div class="form-group">
-    <label for="widget-form-{{type}}-regionName">Region</label>
-    <select name="regionName" id="widget-form-{{type}}-regionName" class="form-control">
-      {{#each regions}}
-        <option value="{{@key}}" {{#if selected}}selected{{/if}}> {{this.name}}</option>
-      {{/each}}
-    </select>
-  </div>
 
-  <input type="hidden" name="type" value="{{type}}">
-  <input type="hidden" name="layout" value="{{this.layout}}">
-  <input type="hidden" name="theme" value="{{theme}}">
+  {{{controllFields}}}
 
   {{#if id}}
     <input type="hidden" name="id" value="{{id}}">

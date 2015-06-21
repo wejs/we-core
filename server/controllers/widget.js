@@ -127,12 +127,16 @@ module.exports = {
       res.locals.layout = req.params.layout;
       res.locals.theme = req.params.theme;
       res.locals.regions = {};
+      // optional params
+      res.locals.context = req.query.context;
+      res.locals.selectedRegion = req.query.regionName;
 
-      var regions = _.cloneDeep(layoutToUpdate.regions);
-      for (var r in regions) {
-        if (r == req.query.regionName) regions[r].selected = true;
-        res.locals.regions[r] = regions[r];
-      }
+      res.locals.controllFields = '';
+      res.locals.controllFields += '<input type="hidden" name="type" value="'+res.locals.type+'">';
+      res.locals.controllFields += '<input type="hidden" name="layout" value="'+res.locals.layout+'">';
+      res.locals.controllFields += '<input type="hidden" name="theme" value="'+res.locals.theme+'">';
+      res.locals.controllFields += '<input type="hidden" name="context" value="'+res.locals.context+'">';
+      res.locals.controllFields += '<input type="hidden" name="regionName" value="'+res.locals.selectedRegion+'">';
 
       var html = we.view.widgets[req.params.type].renderForm(res.locals, res.locals.theme);
       res.status(200);
@@ -158,13 +162,16 @@ module.exports = {
 
         widget.regions = {};
 
-        var regions = _.cloneDeep(we.view.themes[widget.theme].layouts[record.layout].regions);
-        for (var r in regions) {
-          if (r == widget.regionName) regions[r].selected = true;
-          widget.regions[r] = regions[r];
-        }
+        res.locals.selectedRegion = widget.regionName;
 
         _.merge(res.locals, widget);
+
+        res.locals.controllFields = '';
+        res.locals.controllFields += '<input type="hidden" name="type" value="'+record.type+'">';
+        res.locals.controllFields += '<input type="hidden" name="layout" value="'+record.layout+'">';
+        res.locals.controllFields += '<input type="hidden" name="theme" value="'+record.theme+'">';
+        res.locals.controllFields += '<input type="hidden" name="context" value="'+record.context+'">';
+        res.locals.controllFields += '<input type="hidden" name="regionName" value="'+record.regionName+'">';
 
         record.dataValues.html = we.view.widgets[record.type].renderForm(res.locals, res.locals.theme);
 
@@ -226,6 +233,9 @@ module.exports = {
     });
   },
 
+  /**
+   * Update theme layout page
+   */
   updateThemeLayout: function updateThemeLayout(req, res) {
     var we = req.getWe();
 
@@ -239,13 +249,13 @@ module.exports = {
     we.db.models.widget.findAll({
       where: {
         theme: req.params.name,
-        layout: req.params.layout
+        layout: req.params.layout,
+        context: null
       },
       order: 'weight ASC'
     }).then(function (widgets) {
 
       res.locals.data.regions = _.cloneDeep(layoutToUpdate.regions);
-
       res.locals.data.widgets = we.view.widgets;
 
       widgets.forEach(function (w) {

@@ -11,16 +11,9 @@ module.exports = function Model(we) {
       /**
        * creator user id
        */
-      creatorId: {
-        type:  we.db.Sequelize.BIGINT
-      },
-
-      title: {
-        type:  we.db.Sequelize.STRING,
-      },
-      subtitle: {
-        type:  we.db.Sequelize.STRING,
-      },
+      creatorId: { type:  we.db.Sequelize.BIGINT },
+      title: { type:  we.db.Sequelize.STRING },
+      subtitle: { type:  we.db.Sequelize.STRING },
 
       type: {
         type:  we.db.Sequelize.STRING,
@@ -32,14 +25,11 @@ module.exports = function Model(we) {
         defaultValue: 'default'
       },
 
-      regionName: {
-        type:  we.db.Sequelize.STRING,
-      },
+      regionName: { type: we.db.Sequelize.STRING },
+      // null || group-[id] || ceonference-[id]
+      context: { type: we.db.Sequelize.STRING },
 
-      theme: {
-        type:  we.db.Sequelize.STRING,
-        allowNull: false
-      },
+      theme: { type:  we.db.Sequelize.STRING, allowNull: false },
 
       weight: {
         type:  we.db.Sequelize.FLOAT,

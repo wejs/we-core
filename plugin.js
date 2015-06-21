@@ -444,7 +444,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'get /admin/structure/theme/:name/layout/:layout': {
       controller    : 'widget',
       action        : 'updateThemeLayout',
-      template         : 'admin/structure/theme/layout',
+      template      : 'admin/structure/theme/layout',
       permission    : 'update_theme'
     },
 
