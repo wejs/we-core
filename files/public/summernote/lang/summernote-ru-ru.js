@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'ru-RU': {
+    'ru-ru': {
       font: {
         bold: 'Полужирный',
         italic: 'Курсив',

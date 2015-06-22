@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'id-ID': {
+    'id-id': {
       font: {
         bold: 'Tebal',
         italic: 'Miring',

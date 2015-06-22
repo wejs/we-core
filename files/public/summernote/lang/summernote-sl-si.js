@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'sl-SI': {
+    'sl-si': {
       font: {
         bold: 'Krepko',
         italic: 'Ležeče',

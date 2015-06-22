@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'it-IT': {
+    'it-it': {
       font: {
         bold: 'Testo in grassetto',
         italic: 'Testo in corsivo',

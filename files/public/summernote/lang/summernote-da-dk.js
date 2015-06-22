@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'da-DK': {
+    'da-dk': {
       font: {
         bold: 'Fed',
         italic: 'Kursiv',

@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'sr-RS': {
+    'sr-rs': {
       font: {
         bold: 'Подебљано',
         italic: 'Курзив',

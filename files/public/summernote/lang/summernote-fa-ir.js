@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'fa-IR': {
+    'fa-ir': {
       font: {
         bold: 'درشت',
         italic: 'خمیده',

@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'nl-NL': {
+    'nl-nl': {
       font: {
         bold: 'Vet',
         italic: 'Cursief',

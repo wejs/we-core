@@ -1,6 +1,6 @@
 (function ($) {
 	$.extend($.summernote.lang, {
-		'th-TH': {
+		'th-th': {
 			font: {
 				bold: 'ตัวหนา',
 				italic: 'ตัวเอียง',

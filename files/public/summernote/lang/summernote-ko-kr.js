@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'ko-KR': {
+    'ko-kr': {
       font: {
         bold: '굵게',
         italic: '기울임꼴',

@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'zh-TW': {
+    'zh-tw': {
       font: {
         bold: '粗體',
         italic: '斜體',

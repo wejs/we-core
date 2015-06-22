@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'sv-SE': {
+    'sv-se': {
       font: {
         bold: 'Fet',
         italic: 'Kursiv',

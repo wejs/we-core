@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'pl-PL': {
+    'pl-pl': {
       font: {
         bold: 'Pogrubienie',
         italic: 'Pochylenie',

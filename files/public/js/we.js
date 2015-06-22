@@ -473,6 +473,33 @@ we.components = {
     }
 
     table.dataTable(config);
+  },
+  editor: {
+    styles: {
+      small: [
+        ['font', ['bold', 'italic', 'underline', 'clear']]
+      ],
+      medium: [
+        ['font', ['bold', 'italic', 'underline', 'clear']],
+        ['para', [ 'ul','ol', 'paragraph' ]], ['style', ['style']],
+        ['insert', ['link', 'picture', 'video']],
+        ['misc', ['fullscreen', 'help']]
+      ]
+    },
+    init: function(selector, style) {
+      var element = $(selector);
+      var cfg = {
+        lang: we.config.locale,
+        height: element.attr('we-edior-height'),
+        focus: element.attr('we-edior-focus'),
+      };
+      // get style config from we-edior-style atribute
+      if (!style) style = (element.attr('we-edior-style') || 'medium');
+      // add editor toobar config if style not is full
+      if (style !== 'full') cfg.toolbar = we.components.editor.styles[style];
+
+      element.summernote(cfg);
+    }
   }
 };
 

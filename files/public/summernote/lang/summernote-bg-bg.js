@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'bg-BG': {
+    'bg-bg': {
       font: {
         bold: 'Удебелен',
         italic: 'Наклонен',

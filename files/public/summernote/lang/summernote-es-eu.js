@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'es-EU': {
+    'es-eu': {
       font: {
         bold: 'Lodia',
         italic: 'Etzana',

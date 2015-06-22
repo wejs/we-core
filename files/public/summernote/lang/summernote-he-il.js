@@ -1,6 +1,6 @@
 ﻿(function ($) {
   $.extend($.summernote.lang, {
-    'he-IL': {
+    'he-il': {
       font: {
         bold: 'מודגש',
         italic: 'נטוי',

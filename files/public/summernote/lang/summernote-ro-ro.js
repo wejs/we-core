@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'ro-RO': {
+    'ro-ro': {
       font: {
         bold: 'Îngroșat',
         italic: 'Înclinat',

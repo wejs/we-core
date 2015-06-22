@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'nb-NO': {
+    'nb-no': {
       font: {
         bold: 'Fet',
         italic: 'Kursiv',

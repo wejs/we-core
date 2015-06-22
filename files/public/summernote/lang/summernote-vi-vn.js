@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'vi-VN': {
+    'vi-vn': {
       font: {
         bold: 'In Đậm',
         italic: 'In Nghiên',

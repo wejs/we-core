@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'hu-HU': {
+    'hu-hu': {
       font: {
         bold: 'Félkövér',
         italic: 'Dőlt',

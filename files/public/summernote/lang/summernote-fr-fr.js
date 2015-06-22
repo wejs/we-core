@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'fr-FR': {
+    'fr-fr': {
       font: {
         bold: 'Gras',
         italic: 'Italique',

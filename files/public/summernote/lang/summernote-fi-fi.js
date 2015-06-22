@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'fi-FI': {
+    'fi-fi': {
       font: {
         bold: 'Lihavoitu',
         italic: 'Kursiivi',

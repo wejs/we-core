@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'ja-JP': {
+    'ja-jp': {
       font: {
         bold: '太字',
         italic: '斜体',

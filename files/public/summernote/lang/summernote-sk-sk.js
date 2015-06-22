@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'sk-SK': {
+    'sk-sk': {
       font: {
         bold: 'Tučné',
         italic: 'Kurzíva',

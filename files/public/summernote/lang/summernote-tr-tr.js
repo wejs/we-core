@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'tr-TR': {
+    'tr-tr': {
       font: {
         bold: 'Kalın',
         italic: 'İtalik',

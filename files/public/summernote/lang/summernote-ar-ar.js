@@ -1,6 +1,6 @@
 (function ($) {
   $.extend($.summernote.lang, {
-    'ar-AR': {
+    'ar-ar': {
       font: {
         bold: 'عريض',
         italic: 'مائل',
