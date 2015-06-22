@@ -55,7 +55,6 @@ module.exports = function Model(we) {
     options: {
       instanceMethods: {
         viewMiddleware: function viewMiddleware(req, res, next) {
-          console.log(this.type);
           if (!we.view.widgets[this.type]) {
             we.log.warn('Widget type not found in viewMiddleware: ', this.type);
             return next();

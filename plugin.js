@@ -20,9 +20,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     defaultUserAvatar: projectPath + '/node_modules/we-core/files/public/images/avatars/user-avatar.png',
 
-    log: {
-      level: 'debug'
-    },
+    log: { level: 'debug' },
 
     session: {
       secret: 'setASecreteKeyInYourAppConfig',
@@ -547,6 +545,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     html: __dirname + '/server/widgets/html',
     menu: __dirname + '/server/widgets/menu'
   });
+
+  plugin.assets.addCoreAssetsFiles(plugin);
 
   plugin.events.on('we:express:set:params', function(data) {
     // user pre-loader
