@@ -437,9 +437,14 @@ we.components = {
       'columns': colNames,
       // fix datable null errors
       'aoColumns': colNames.map(function(i, colName){
-        return { 'mData': colName.data, mRender: function (data) {
-          if (data) return data;
-          return '';
+        return { 'mData': colName.data, mRender: function (data, d,record) {
+          if (colName.data == 'weModelActions') {
+            console.log('>>', i, record.id)
+            return 'aaa';
+          } else {
+            if (data) return data;
+            return '';
+          }
         }};
       })
     };
@@ -490,11 +495,16 @@ we.components = {
       var element = $(selector);
       var cfg = {
         lang: we.config.locale,
-        height: element.attr('we-edior-height'),
-        focus: element.attr('we-edior-focus'),
+        height: element.attr('we-editor-height'),
+        minHeight: element.attr('we-editor-minheight'),
+        maxHeight: element.attr('we-editor-maxheight'),
+        focus: element.attr('we-editor-focus')
       };
-      // get style config from we-edior-style atribute
-      if (!style) style = (element.attr('we-edior-style') || 'medium');
+      // - set we-editor flag to use in form submit
+      element.attr('we-editor', 'true');
+
+      // get style config from we-editor-style atribute
+      if (!style) style = (element.attr('we-editor-style') || 'medium');
       // add editor toobar config if style not is full
       if (style !== 'full') cfg.toolbar = we.components.editor.styles[style];
 
