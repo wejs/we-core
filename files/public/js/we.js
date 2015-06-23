@@ -420,10 +420,11 @@ we.admin.permission = {
 }
 
 we.components = {
-  dataTable: function dataTable(selector) {
+  dataTable: function dataTable(selector, opts) {
     var table = $(selector);
-    //var footer = table.find('tfoot');
-    var searchField = table.attr('we-search-field');
+    if (!opts) opts = {};
+    var where = ( opts.where || {} );
+
     var url = table.attr('we-dataTable-url');
     var isAjax = Boolean(url);
 
@@ -439,8 +440,21 @@ we.components = {
       'aoColumns': colNames.map(function(i, colName){
         return { 'mData': colName.data, mRender: function (data, d,record) {
           if (colName.data == 'weModelActions') {
-            console.log('>>', i, record.id)
-            return 'aaa';
+            var tags = '';
+
+            if (table.attr('we-dt-actions-view')) {
+              tags += ' <a href="'+
+                table.attr('we-dt-actions-view').replace('|||id|||', record.id)
+                +'" text="Edit" class="btn btn-default"><i class="glyphicon glyphicon-eye-open"></i></a>';
+            }
+
+            if (table.attr('we-dt-actions-edit')) {
+              tags += ' <a href="'+
+                table.attr('we-dt-actions-edit').replace('|||id|||', record.id)
+                +'" text="Edit" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i></a>';
+            }
+
+            return tags;
           } else {
             if (data) return data;
             return '';
@@ -451,8 +465,8 @@ we.components = {
 
     if (Boolean(url)) {
       config.ajax = {
-        'url': url,
-        'data': function ( d ) {
+        url: url,
+        data: function (d) {
           // change order to be like we.js query api order
           if (d.order) {
             d.order = colNames[d.order[0].column].data + ' ' + d.order[0].dir;
@@ -460,7 +474,15 @@ we.components = {
           // set where search param
           if (d.search) {
             d.where = {};
-            d.where[searchField] = { like: '%' + d.search.value + '%' };
+            // set search field
+            if (d.search.value) {
+              d.where[table.attr('we-search-field')] = {
+                like: '%' + d.search.value + '%'
+              };
+            }
+            // use current instance where
+            $.extend(d.where, where);
+            // we.js where requires stringifyed where
             d.where = JSON.stringify(d.where);
             // remove default  search param
             delete d.search;
