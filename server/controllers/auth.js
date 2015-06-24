@@ -33,6 +33,8 @@ module.exports = {
     }
 
     var password, newUser, requireAccountActivation;
+    // --  set req.body for
+    res.locals.record = req.body
 
     async.series([
       function checkIfIsSpam(cb) {
@@ -48,11 +50,11 @@ module.exports = {
         });
       },
       function validUser(cb) {
-        // will whrow error if is invalid
         // validate user
         newUser = we.db.models.user.build(req.body);
-        newUser.validate();
-        cb();
+        newUser.validate().then(function(){
+          cb();
+        }).catch(cb);
       },
       function validPassword(cb) {
         // validate password
@@ -61,10 +63,10 @@ module.exports = {
           password: req.body.password,
           confirmPassword: req.body.confirmPassword
         });
-        password.validate();
-        cb();
+        password.validate().then(function(){
+          cb();
+        }).catch(cb);
       },
-
       function saveUser(cb) {
         // user is valid then save the record and password
         newUser.save().then(function () {
@@ -75,7 +77,6 @@ module.exports = {
           cb();
         }).catch(cb);
       },
-
       function savePassword(cb) {
         // set valid user id
         password.userId = newUser.id;

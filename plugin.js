@@ -172,8 +172,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller: 'main',
       action: 'index',
       template   : 'home/index',
+      layoutName : 'fullwidth'
     },
-
     //
     // -- config routes
     //
@@ -209,24 +209,32 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'get /signup': {
       controller: 'auth',
       action: 'signup',
-      template: 'auth/register'
+      template: 'auth/register',
+      titleHandler  : 'i18n',
+      titleI18n: 'Register'
     },
 
     'post /signup': {
       controller: 'auth',
       action: 'signup',
-      template: 'auth/register'
+      template: 'auth/register',
+      titleHandler  : 'i18n',
+      titleI18n: 'Register'
     },
 
     // form login
     'get /login': {
       controller: 'auth',
-      action: 'loginPage'
+      action: 'loginPage',
+      titleHandler  : 'i18n',
+      titleI18n: 'Login'
     },
     // form login / post
     'post /login': {
       controller: 'auth',
-      action: 'login'
+      action: 'login',
+      titleHandler  : 'i18n',
+      titleI18n: 'Login'
     },
 
     // api login
@@ -483,7 +491,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'role',
       permission    : 'manage_permissions',
     },
-
     // admin - users
     'get /admin/user': {
       name          : 'user_manage',
@@ -523,7 +530,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'template': __dirname + '/lib/view/template-helpers/template.js',
     'we-menu':  __dirname + '/lib/view/template-helpers/we-menu.js',
     'ifCond': __dirname + '/lib/view/template-helpers/ifCond.js',
-    'we-contains': __dirname + '/lib/view/template-helpers/we-contains.js'
+    'we-contains': __dirname + '/lib/view/template-helpers/we-contains.js',
+    'we-messages': __dirname + '/lib/view/template-helpers/we-messages.js'
   });
 
   plugin.setLayouts({
@@ -532,6 +540,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
   plugin.setTemplates({
     'region': __dirname + '/server/templates/region.hbs',
+    'messages': __dirname + '/server/templates/messages.hbs',
     '400': __dirname + '/server/templates/400.hbs',
     '403': __dirname + '/server/templates/403.hbs',
     '404': __dirname + '/server/templates/404.hbs',

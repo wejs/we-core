@@ -46,6 +46,14 @@ module.exports = function UserModel(we) {
             if (!userNameRegex.test(val)) {
               throw new Error('user.username.invalid ' + val);
             }
+          },
+          uniqueUsername: function(val, cb) {
+            console.log(cb);
+            return we.db.models.user.findOne({ where: { username: val }})
+            .then(function (u) {
+              if (u) return cb('auth.register.error.username.registered');
+              cb();
+            });
           }
         }
       },
