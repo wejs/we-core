@@ -6,6 +6,28 @@
  *
  */
 
+var userNameRegex = new RegExp('/^[A-Za-z0-9_-]{4,30}$/');
+
+var newEmailValidation = function(fieldName) {
+  return {
+    isEmail: true,
+    notEmptyOnCreate: function(val) {
+      if (this.isNewRecord) {
+        if (!val) {
+          throw new Error('auth.register.'+fieldName+'.required');
+        }
+      }
+    },
+    equalEmailFields: function(val) {
+      if (this.isNewRecord) {
+        if (this.getDataValue('email') != val) {
+          throw new Error('auth.email.and.confirmEmail.diferent');
+        }
+      }
+    }
+  };
+}
+
 module.exports = function UserModel(we) {
   var model = {
     definition: {
@@ -20,7 +42,11 @@ module.exports = function UserModel(we) {
         unique: true,
         allowNull: false,
         validate: {
-          is: /^[A-Za-z0-9_-]{4,30}$/,
+          userNameIsValid: function(val) {
+            if (!userNameRegex.test(val)) {
+              throw new Error('user.username.invalid');
+            }
+          }
         }
       },
 
@@ -31,7 +57,8 @@ module.exports = function UserModel(we) {
         // Email type will get validated by the ORM
         type: we.db.Sequelize.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
+        validate: newEmailValidation('email')
       },
 
       displayName: { type: we.db.Sequelize.STRING },
@@ -58,17 +85,18 @@ module.exports = function UserModel(we) {
         type: we.db.Sequelize.STRING
       },
 
-      avatarId: { type: we.db.Sequelize.BIGINT }
+      avatarId: { type: we.db.Sequelize.BIGINT },
+
+      confirmEmail: {
+        type: we.db.Sequelize.VIRTUAL,
+        set: function (val) {
+          this.setDataValue('confirmEmail', val);
+        },
+        validate: newEmailValidation('confirmEmail')
+      }
     },
 
     associations: {
-    //   inGroups: {
-    //     type: 'hasMany',
-    //     model: 'membership',
-    //     inverse: 'member',
-    //     constraints: false,
-    //     foreignKey: 'memberId'
-    //   },
       passports:  {
         type: 'belongsToMany',
         model: 'passport',
@@ -133,29 +161,29 @@ module.exports = function UserModel(we) {
             where: { userId: this.id }
           });
         },
-        verifyPassword: function(password, cb) {
-          return this.getPassword().then( function(passwordObj){
-            if (!passwordObj) return cb(null, false);
-            passwordObj.validatePassword(password, cb);
-          });
-        },
-        updatePassword: function updatePassword(newPassword, cb) {
-          var user = this;
-          return this.getPassword().then( function (password){
-            if (!password) {
-              // create one password if this user dont have one
-              return we.db.models.password.create({
-                userId: user.id,
-                password: newPassword
-              }).then(function (password) {
-                return cb(null, password);
-              })
-            }
-            // update
-            password.password = newPassword;
-            password.save().then(function(r){ cb(null, r) });
-          });
-        },
+        // verifyPassword: function verifyPassword(password, cb) {
+        //   return this.getPassword().then( function(passwordObj){
+        //     if (!passwordObj) return cb(null, false);
+        //     passwordObj.validatePassword(password, cb);
+        //   });
+        // },
+        // updatePassword: function updatePassword(newPassword, cb) {
+        //   var user = this;
+        //   return this.getPassword().then( function (password){
+        //     if (!password) {
+        //       // create one password if this user dont have one
+        //       return we.db.models.password.create({
+        //         userId: user.id,
+        //         password: newPassword
+        //       }).then(function (password) {
+        //         return cb(null, password);
+        //       })
+        //     }
+        //     // update
+        //     password.password = newPassword;
+        //     password.save().then(function(r){ cb(null, r) });
+        //   });
+        // },
         toJSON: function toJSON() {
           var req;
           if (this.getReq) req = this.getReq();

@@ -129,6 +129,46 @@ describe('authFeature', function () {
       });
     })
 
+    describe('validationErrors', function() {
+
+      it('post /signup route should return notEqual password fields', function (done) {
+
+        we.config.auth.requireAccountActivation = true;
+
+        var userStub = stubs.userStub();
+        userStub.confirmPassword = 'somethingdiferent';
+        userStub.confirmEmail = userStub.email;
+
+        request(http)
+        .post('/signup')
+        .send(userStub)
+        .expect(400)
+        .end(function (err, res) {
+          if (err) throw new Error(err, res.text);
+          // TODO check response html
+          done();
+        });
+      });
+
+      it('post /signup route should return notEqual email fields', function (done) {
+
+        we.config.auth.requireAccountActivation = true;
+
+        var userStub = stubs.userStub();
+        userStub.confirmPassword = userStub.password;
+        userStub.confirmEmail = 'somethingdiferent';
+
+        request(http)
+        .post('/signup')
+        .send(userStub)
+        .expect(400)
+        .end(function (err, res) {
+          if (err) throw new Error(err, res.text);
+          // TODO check response html
+          done();
+        });
+      });
+    });
   });
 
   describe('login', function () {

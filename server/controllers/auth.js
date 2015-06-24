@@ -1,6 +1,7 @@
 // api/controllers/AuthController.js
 
 var _ = require('lodash');
+var async = require('async');
 
 module.exports = {
   _config: {
@@ -13,130 +14,125 @@ module.exports = {
     return res.ok(req.user);
   },
 
-  // Signup method GET function
-  signupPage: function (req, res) {
-    var we = req.getWe();
-    // log out user if it access register page
-    we.auth.logOut(req, res, function(err) {
-      if(err) we.log.error(err);
-      setDefaultRegisterLocals(req, res);
-
-      res.locals.template = 'auth/register'
-      res.view();
-    });
-  },
-
-  // Signup method POST function
-  // TODO make this action simple
+  // Signup method function
   signup: function Register(req, res) {
     var we = req.getWe();
-
+    // check allowUserSignup flag how block signup
     if (!we.config.auth.allowUserSignup) return res.forbidden();
-
     // anti spam field
-    if (req.params.mel) {
-      we.log.info('Bot get mel:', req.ip, req.params.email);
+    if (req.body.mel) {
+      we.log.info('Bot get mel:', req.ip, req.body.email);
       return;
     }
 
-    we.antiSpam.checkIfIsSpamInRegister(req, res, function (err, isSpam) {
-      if (err) {
-        we.log.error('signup:Error on checkIfIsSpamInRegister', err);
-        return res.serverError();
-      }
+    if (req.method !== 'POST') {
+      return we.auth.logOut(req, res, function (err) {
+        if (err) return res.serverError(err);
+        return res.ok();
+      });
+    }
 
+    we.antiSpam.checkIfIsSpamInRegister(req, res, function (err, isSpam) {
+      if (err) return res.serverError(err);
       if (isSpam) return res.forbidden();
 
       var requireAccountActivation = we.config.auth.requireAccountActivation;
 
-      var user = req.body;
-
       // if dont need a account activation email then create a active user
-      if (!requireAccountActivation) user.active = true;
+      if (!requireAccountActivation) req.body.active = true;
 
-      var email = req.body.email;
+      var password, newUser;
 
-      var confirmPassword = req.body.confirmPassword;
-      var confirmEmail = req.body.confirmEmail;
-
-      var isValid = we.auth.validSignup(user, confirmPassword, confirmEmail, req, res);
-
-      if (!isValid) {
-        // error on data or confirm password
-        return res.badRequest();
-      }
-
-      we.db.models.user.find({ where: { email: email }}).then(function (usr) {
-        if (usr) {
-          res.addMessage('error', 'auth.register.email.exists', {
-            field: 'email',
-            rule: 'email'
+      async.series([
+        function validUser(cb) {
+          // will whrow error if is invalid
+          // validate user
+          newUser = we.db.models.user.build(req.body);
+          newUser.validate();
+          cb();
+        },
+        function validPassword(cb) {
+          // validate password
+          password = we.db.models.password.build({
+            userId: 1, // valid password with a fakeId
+            password: req.body.password,
+            confirmPassword: req.body.confirmPassword
           });
-          return res.badRequest();
+          password.validate();
+          cb();
+        },
+
+        function saveData(cb) {
+          // user is valid then save the record and password
+          newUser.save().then(function () {
+            we.log.info(
+              'Auth plugin:New user:', req.body.email , 'username:' , req.body.username , 'ID:' , newUser.id
+            );
+
+            cb();
+          }).catch(cb);
+        },
+
+        function savePassword(cb) {
+          // set valid user id
+          password.userId = newUser.id;
+          // save password
+          password.save().then(function () {
+            cb();
+          }).catch(cb);
         }
+      ], function afterCreateUserAndPassword(err) {
+        if(err) return res.queryError(err);
 
-        // user is valid then save the record and password
+        if (requireAccountActivation) {
+          return we.db.models.authtoken.create({ userId: newUser.id })
+          .then(function (token) {
+            var templateVariables = {
+              user: newUser,
+              site: {
+                name: we.config.appName
+              },
+              confirmUrl: we.config.hostname + '/user/'+ newUser.id +'/activate/' + token.token
+            };
 
-        we.db.models.user.create(user).then(function (newUser) {
-          newUser.updatePassword(user.password, function(error) {
-            if (error) {
-              we.log.error('auth:signup: Error on generate user passport');
-              return res.serverError(error);
-            }
+            var options = {
+              subject: req.__('we.email.AccontActivationEmail.subject', templateVariables),
+              to: newUser.email
+            };
 
-            we.log.info('Auth plugin:New user:', user.email , 'username:' , user.username , 'ID:' , newUser.id);
-
-            if (requireAccountActivation) {
-              return we.db.models.authtoken.create({ userId: newUser.id })
-              .then(function (token) {
-                var templateVariables = {
-                  user: newUser,
-                  site: {
-                    name: we.config.appName
-                  },
-                  confirmUrl: we.config.hostname + '/user/'+ newUser.id +'/activate/' + token.token
-                };
-
-                var options = {
-                  subject: req.__('we.email.AccontActivationEmail.subject', templateVariables),
-                  to: newUser.email
-                };
-
-                return we.email.sendEmail('AccontActivationEmail',
-                  options, templateVariables,
-                function (err) {
-                  if (err) {
-                    we.log.error('Action:Login sendAccontActivationEmail:', err);
-                    return res.serverError();
-                  }
-
-                  res.addMessage('warning', {
-                    text: 'auth.register.require.email.activation',
-                    vars: {
-                      email: newUser.email
-                    }
-                  }, {
-                    requireActivation: true,
-                    email: newUser.email
-                  });
-
-                  return res.created();
-                });
-              });
-            }
-
-            we.auth.logIn(req, res, newUser, function (err, passport) {
+            return we.email.sendEmail('AccontActivationEmail',
+              options, templateVariables,
+            function (err) {
               if (err) {
-                we.log.error('logIn error: ', err);
-                return res.negotiate(err);
+                we.log.error('Action:Login sendAccontActivationEmail:', err);
+                return res.serverError();
               }
 
-              res.created({ token: passport.token, user: newUser });
+              res.addMessage('warning', {
+                text: 'auth.register.require.email.activation',
+                vars: {
+                  email: newUser.email
+                }
+              }, {
+                requireActivation: true,
+                email: newUser.email
+              });
+
+              return res.created();
             });
           });
+        }
+
+        we.auth.logIn(req, res, newUser, function (err, passport) {
+          if (err) {
+            we.log.error('logIn error: ', err);
+            return res.negotiate(err);
+          }
+
+          res.created({ token: passport.token, user: newUser });
         });
       });
-    })
+    });
   },
 
   /**

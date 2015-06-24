@@ -7,13 +7,42 @@
  */
 var bcrypt = require('bcrypt');
 
+var newPasswordValidation = {
+  notEmptyOnCreate: function(val) {
+    if (this.isNewRecord) {
+      if (!val) {
+        throw new Error('auth.register.confirmPassword.required');
+      }
+    }
+  },
+  equalPasswordFields: function(val) {
+    if (this.isNewRecord) {
+      if (this.getDataValue('password') != val) {
+        throw new Error('auth.confirmPassword.and.newPassword.diferent');
+      }
+    }
+
+  }
+};
+
 module.exports = function Model(we) {
   // set sequelize model define and options
   var model = {
     definition: {
-      userId    : { type: we.db.Sequelize.STRING, allowNull: false },
-      password    : { type: we.db.Sequelize.TEXT },
-      active : { type: we.db.Sequelize.BOOLEAN, defaultValue: true }
+      userId : { type: we.db.Sequelize.STRING },
+      active : { type: we.db.Sequelize.BOOLEAN, defaultValue: true },
+
+      password    : {
+        type: we.db.Sequelize.TEXT,
+        validate: newPasswordValidation
+      },
+      confirmPassword: {
+        type: we.db.Sequelize.VIRTUAL,
+        set: function set(val) {
+          this.setDataValue('confirmPassword', val);
+        },
+        validate: newPasswordValidation
+      }
     },
 
     options: {
