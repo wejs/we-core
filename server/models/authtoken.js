@@ -17,17 +17,9 @@ module.exports = function Model(we) {
         allowNull: false
       },
 
-      providerUserId: {
-        type: we.db.Sequelize.STRING
-      },
-
-      tokenProviderId: {
-        type: we.db.Sequelize.STRING
-      },
-
-      tokenType: {
-        type: we.db.Sequelize.STRING
-      },
+      providerUserId: { type: we.db.Sequelize.STRING },
+      tokenProviderId: { type: we.db.Sequelize.STRING },
+      tokenType: { type: we.db.Sequelize.STRING },
 
       token: {
         type: we.db.Sequelize.STRING,
@@ -37,12 +29,12 @@ module.exports = function Model(we) {
       isValid: {
         type: we.db.Sequelize.BOOLEAN,
         defaultValue: true
-      }
+      },
+
+      redirectUrl: { type: we.db.Sequelize.STRING }
     },
 
-
     options: {
-
       classMethods: {
         /**
          * Invalid old user tokens

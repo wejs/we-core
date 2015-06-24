@@ -32,107 +32,118 @@ module.exports = {
       });
     }
 
-    we.antiSpam.checkIfIsSpamInRegister(req, res, function (err, isSpam) {
-      if (err) return res.serverError(err);
-      if (isSpam) return res.forbidden();
+    var password, newUser, requireAccountActivation;
 
-      var requireAccountActivation = we.config.auth.requireAccountActivation;
+    async.series([
+      function checkIfIsSpam(cb) {
+        we.antiSpam.checkIfIsSpamInRegister(req, res, function (err, isSpam) {
+          if (err) return cb(err);
+          if (isSpam) return res.forbidden();
 
-      // if dont need a account activation email then create a active user
-      if (!requireAccountActivation) req.body.active = true;
+          requireAccountActivation = we.config.auth.requireAccountActivation;
+          // if dont need a account activation email then create a active user
+          if (!requireAccountActivation) req.body.active = true;
 
-      var password, newUser;
-
-      async.series([
-        function validUser(cb) {
-          // will whrow error if is invalid
-          // validate user
-          newUser = we.db.models.user.build(req.body);
-          newUser.validate();
           cb();
-        },
-        function validPassword(cb) {
-          // validate password
-          password = we.db.models.password.build({
-            userId: 1, // valid password with a fakeId
-            password: req.body.password,
-            confirmPassword: req.body.confirmPassword
-          });
-          password.validate();
-          cb();
-        },
-
-        function saveData(cb) {
-          // user is valid then save the record and password
-          newUser.save().then(function () {
-            we.log.info(
-              'Auth plugin:New user:', req.body.email , 'username:' , req.body.username , 'ID:' , newUser.id
-            );
-
-            cb();
-          }).catch(cb);
-        },
-
-        function savePassword(cb) {
-          // set valid user id
-          password.userId = newUser.id;
-          // save password
-          password.save().then(function () {
-            cb();
-          }).catch(cb);
-        }
-      ], function afterCreateUserAndPassword(err) {
-        if(err) return res.queryError(err);
-
-        if (requireAccountActivation) {
-          return we.db.models.authtoken.create({ userId: newUser.id })
-          .then(function (token) {
-            var templateVariables = {
-              user: newUser,
-              site: {
-                name: we.config.appName
-              },
-              confirmUrl: we.config.hostname + '/user/'+ newUser.id +'/activate/' + token.token
-            };
-
-            var options = {
-              subject: req.__('we.email.AccontActivationEmail.subject', templateVariables),
-              to: newUser.email
-            };
-
-            return we.email.sendEmail('AccontActivationEmail',
-              options, templateVariables,
-            function (err) {
-              if (err) {
-                we.log.error('Action:Login sendAccontActivationEmail:', err);
-                return res.serverError();
-              }
-
-              res.addMessage('warning', {
-                text: 'auth.register.require.email.activation',
-                vars: {
-                  email: newUser.email
-                }
-              }, {
-                requireActivation: true,
-                email: newUser.email
-              });
-
-              return res.created();
-            });
-          });
-        }
-
-        we.auth.logIn(req, res, newUser, function (err, passport) {
-          if (err) {
-            we.log.error('logIn error: ', err);
-            return res.negotiate(err);
-          }
-
-          res.created({ token: passport.token, user: newUser });
         });
+      },
+      function validUser(cb) {
+        // will whrow error if is invalid
+        // validate user
+        newUser = we.db.models.user.build(req.body);
+        newUser.validate();
+        cb();
+      },
+      function validPassword(cb) {
+        // validate password
+        password = we.db.models.password.build({
+          userId: 1, // valid password with a fakeId
+          password: req.body.password,
+          confirmPassword: req.body.confirmPassword
+        });
+        password.validate();
+        cb();
+      },
+
+      function saveUser(cb) {
+        // user is valid then save the record and password
+        newUser.save().then(function () {
+          we.log.info(
+            'Auth plugin:New user:', req.body.email , 'username:' , req.body.username , 'ID:' , newUser.id
+          );
+
+          cb();
+        }).catch(cb);
+      },
+
+      function savePassword(cb) {
+        // set valid user id
+        password.userId = newUser.id;
+        // save password
+        password.save().then(function () {
+          cb();
+        }).catch(cb);
+      }
+    ], function afterCreateUserAndPassword(err) {
+      if(err) return res.queryError(err);
+
+      var redirectUrl = we.auth.getRedirectUrl(req, res);
+
+      if (requireAccountActivation) {
+        return we.db.models.authtoken.create({
+          userId: newUser.id, redirectUrl: redirectUrl
+        }).then(function (token) {
+          console.log('t', token.redirectUrl)
+          var templateVariables = {
+            user: newUser,
+            site: {
+              name: we.config.appName
+            },
+            confirmUrl: we.config.hostname + '/user/'+ newUser.id +'/activate/' + token.token
+          };
+
+          var options = {
+            subject: req.__('we.email.AccontActivationEmail.subject', templateVariables),
+            to: newUser.email
+          };
+
+          return we.email.sendEmail('AccontActivationEmail',
+            options, templateVariables,
+          function (err) {
+            if (err) {
+              we.log.error('Action:Login sendAccontActivationEmail:', err);
+              return res.serverError();
+            }
+
+            res.addMessage('warning', {
+              text: 'auth.register.require.email.activation',
+              vars: {
+                email: newUser.email
+              }
+            }, {
+              requireActivation: true,
+              email: newUser.email
+            });
+
+            return res.created();
+          });
+        });
+      }
+
+      we.auth.logIn(req, res, newUser, function (err, passport) {
+        if (err) {
+          we.log.error('logIn error: ', err);
+          return res.negotiate(err);
+        }
+
+        if (res.locals.responseType === 'html') {
+          return res.redirect( (redirectUrl || '/') );
+        }
+
+        res.created({ token: passport.token, user: newUser });
       });
     });
+
   },
 
   /**
@@ -243,26 +254,25 @@ module.exports = {
           // user not found
           return res.badRequest();
         }
-
         // activate user and login
         usr.active = true;
         usr.save().then(function () {
+          var rediredtUrl = ( authToken.redirectUrl || '/' );
           // destroy auth token after use
           authToken.destroy().catch(function (err) {
             if (err) we.log.error('Error on delete token', err);
           });
-
           // login and redirect the user
           we.auth.logIn(req, res, usr, function(err) {
             if (err) {
               we.log.error('logIn error:', err);
               return res.negotiate(err);
             }
-            return res.redirect('/');
 
+            return res.redirect(rediredtUrl);
           });
-        });
-      });
+        }).catch(res.queryError);
+      }).catch(res.queryError);
     });
   },
 

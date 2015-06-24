@@ -128,9 +128,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       'login': __dirname + '/server/forms/login.json',
       'register': __dirname + '/server/forms/register.json'
     },
-    database: {
-      resetAllData: false
-    },
+    database: { resetAllData: false },
     menu: {
       main: {},
       admin: {
@@ -162,7 +160,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           },
         ]
       }
-    }
+    },
+    // services register
+    // { url: '', oauthCallback: '', name: ''}
+    services: {}
   });
   // set plugin routes
   plugin.setRoutes({

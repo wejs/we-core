@@ -8,11 +8,13 @@
   "fields": {
     "username": {
       "type": "text",
-      "defaultValue": ""
+      "defaultValue": "",
+      "allowNull": false
     },
     "displayName": {
       "type": "text",
-      "defaultValue": ""
+      "defaultValue": "",
+      "allowNull": false
     },
 
     "fullName": {
@@ -22,23 +24,25 @@
 
     "password": {
       "type": "password",
-      "defaultValue": ""
+      "defaultValue": "",
+      "allowNull": false
     },
     "confirmPassword": {
       "type": "password",
-      "defaultValue": ""
+      "defaultValue": "",
+      "allowNull": false
     },
 
     "email": {
       "type": "email",
-      "defaultValue": ""
+      "defaultValue": "",
+      "allowNull": false
     },
     "confirmEmail": {
       "type": "email",
-      "defaultValue": ""
+      "defaultValue": "",
+      "allowNull": false
     },
-
-
 
     "submit": {
       "type": "submit"

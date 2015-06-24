@@ -129,6 +129,60 @@ describe('authFeature', function () {
       });
     })
 
+    describe('redirectAfterLogin', function() {
+      it('post /signup?service=conference route should register one user, '+
+        'send a confirmation email and redirect after validate the email',
+      function (done) {
+        this.slow(500);
+
+        we.config.auth.requireAccountActivation = true;
+        // TODO change to save this services in database
+        // save one fake service
+        we.config.services.conference = { url: 'http://events.wejs.org' };
+
+        // set spy to check is email is called
+        sinon.spy(we.email, 'sendEmail');
+
+        var userStub = stubs.userStub();
+        userStub.confirmPassword = userStub.password;
+        userStub.confirmEmail = userStub.email;
+
+        request(http)
+        .post('/signup?service=conference')
+        .send(userStub)
+        .expect(201)
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          if (err) throw Error(err);
+
+          assert(res.body.messages);
+          assert(res.body.messages[0].status);
+          assert(res.body.messages[0].message);
+
+          assert(we.email.sendEmail.called);
+
+          var confirmUrl = we.email.sendEmail.args[0][2].confirmUrl;
+
+          confirmUrl = confirmUrl.replace(
+            'http://localhost:' + we.config.port, ''
+          );
+
+          request(http)
+          .get(confirmUrl)
+          .send(userStub)
+          .expect(302)
+          .end(function (err, res) {
+            if (err) throw new Error(err);
+
+            assert.equal(we.config.services.conference.url, res.header.location);
+
+            we.email.sendEmail.restore();
+            done();
+          });
+        });
+      });
+    });
+
     describe('validationErrors', function() {
 
       it('post /signup route should return notEqual password fields', function (done) {
