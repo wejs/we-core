@@ -125,7 +125,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     metadata: {},
 
     forms: {
-      'login': __dirname + '/server/forms/login.json'
+      'login': __dirname + '/server/forms/login.json',
+      'register': __dirname + '/server/forms/register.json'
     },
     database: {
       resetAllData: false
@@ -206,19 +207,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     'get /signup': {
       controller: 'auth',
-      action: 'signupPage'
+      action: 'signup',
+      template: 'auth/register'
     },
 
     'post /signup': {
       controller: 'auth',
-      action: 'signup'
-      //view: 'users/signup'
-    },
-
-    'post /api/v1/signup': {
-      controller: 'auth',
-      action: 'signup'
-      //view: 'users/signup'
+      action: 'signup',
+      template: 'auth/register'
     },
 
     // form login

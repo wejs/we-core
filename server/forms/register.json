@@ -1,0 +1,47 @@
+{
+  "title": "auth.login.title",
+
+
+  "method": "post",
+  "action": "/signup",
+
+  "fields": {
+    "username": {
+      "type": "text",
+      "defaultValue": ""
+    },
+    "displayName": {
+      "type": "text",
+      "defaultValue": ""
+    },
+
+    "fullName": {
+      "type": "text",
+      "defaultValue": ""
+    },
+
+    "password": {
+      "type": "password",
+      "defaultValue": ""
+    },
+    "confirmPassword": {
+      "type": "password",
+      "defaultValue": ""
+    },
+
+    "email": {
+      "type": "email",
+      "defaultValue": ""
+    },
+    "confirmEmail": {
+      "type": "email",
+      "defaultValue": ""
+    },
+
+
+
+    "submit": {
+      "type": "submit"
+    }
+  }
+}

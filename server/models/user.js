@@ -6,7 +6,7 @@
  *
  */
 
-var userNameRegex = new RegExp('/^[A-Za-z0-9_-]{4,30}$/');
+var userNameRegex = /^[A-Za-z0-9_-]{4,30}$/;
 
 var newEmailValidation = function(fieldName) {
   return {
@@ -44,7 +44,7 @@ module.exports = function UserModel(we) {
         validate: {
           userNameIsValid: function(val) {
             if (!userNameRegex.test(val)) {
-              throw new Error('user.username.invalid');
+              throw new Error('user.username.invalid ' + val);
             }
           }
         }
