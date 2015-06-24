@@ -8,26 +8,6 @@
 
 var userNameRegex = /^[A-Za-z0-9_-]{4,30}$/;
 
-var newEmailValidation = function(fieldName) {
-  return {
-    isEmail: true,
-    notEmptyOnCreate: function(val) {
-      if (this.isNewRecord) {
-        if (!val) {
-          throw new Error('auth.register.'+fieldName+'.required');
-        }
-      }
-    },
-    equalEmailFields: function(val) {
-      if (this.isNewRecord) {
-        if (this.getDataValue('email') != val) {
-          throw new Error('auth.email.and.confirmEmail.diferent');
-        }
-      }
-    }
-  };
-}
-
 module.exports = function UserModel(we) {
   var model = {
     definition: {
@@ -48,9 +28,9 @@ module.exports = function UserModel(we) {
             }
           },
           uniqueUsername: function(val, cb) {
-            console.log(cb);
-            return we.db.models.user.findOne({ where: { username: val }})
-            .then(function (u) {
+            return we.db.models.user.findOne({
+              where: { username: val }, attributes: ['id']
+            }).then(function (u) {
               if (u) return cb('auth.register.error.username.registered');
               cb();
             });
@@ -66,7 +46,31 @@ module.exports = function UserModel(we) {
         type: we.db.Sequelize.STRING,
         allowNull: false,
         unique: true,
-        validate: newEmailValidation('email')
+        validate: {
+          isEmail: true,
+          notEmptyOnCreate: function(val) {
+            if (this.isNewRecord) {
+              if (!val) {
+                throw new Error('auth.register.email.required');
+              }
+            }
+          },
+          equalEmailFields: function(val) {
+            if (this.isNewRecord) {
+              if (this.getDataValue('email') != val) {
+                throw new Error('auth.email.and.confirmEmail.diferent');
+              }
+            }
+          },
+          uniqueEmail: function(val, cb) {
+            return we.db.models.user.findOne({
+              where: { email: val }, attributes: ['id']
+            }).then(function (u) {
+              if (u) return cb('auth.register.email.exists');
+              cb();
+            });
+          }
+        }
       },
 
       displayName: { type: we.db.Sequelize.STRING },
@@ -100,7 +104,23 @@ module.exports = function UserModel(we) {
         set: function (val) {
           this.setDataValue('confirmEmail', val);
         },
-        validate: newEmailValidation('confirmEmail')
+        validate: {
+          isEmail: true,
+          notEmptyOnCreate: function(val) {
+            if (this.isNewRecord) {
+              if (!val) {
+                throw new Error('auth.register.confirmEmail.required');
+              }
+            }
+          },
+          equalEmailFields: function(val) {
+            if (this.isNewRecord) {
+              if (this.getDataValue('email') != val) {
+                throw new Error('auth.email.and.confirmEmail.diferent');
+              }
+            }
+          }
+        }
       }
     },
 
