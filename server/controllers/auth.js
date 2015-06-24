@@ -94,7 +94,6 @@ module.exports = {
         return we.db.models.authtoken.create({
           userId: newUser.id, redirectUrl: redirectUrl
         }).then(function (token) {
-          console.log('t', token.redirectUrl)
           var templateVariables = {
             user: newUser,
             site: {
@@ -126,6 +125,9 @@ module.exports = {
               email: newUser.email
             });
 
+            res.locals.authToken = token;
+            res.locals.newUserCreated = true;
+
             return res.created();
           });
         });
@@ -140,6 +142,8 @@ module.exports = {
         if (res.locals.responseType === 'html') {
           return res.redirect( (redirectUrl || '/') );
         }
+
+        res.locals.newUserCreated = true;
 
         res.created({ token: passport.token, user: newUser });
       });
