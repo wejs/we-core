@@ -25,6 +25,9 @@ module.exports = {
       return;
     }
 
+    var redirectTo = we.auth.getRedirectUrl(req, res);
+    if (redirectTo) res.locals.redirectTo = redirectTo;
+
     if (req.method !== 'POST') {
       return we.auth.logOut(req, res, function (err) {
         if (err) return res.serverError(err);
@@ -88,11 +91,9 @@ module.exports = {
     ], function afterCreateUserAndPassword(err) {
       if(err) return res.queryError(err);
 
-      var redirectUrl = we.auth.getRedirectUrl(req, res);
-
       if (requireAccountActivation) {
         return we.db.models.authtoken.create({
-          userId: newUser.id, redirectUrl: redirectUrl
+          userId: newUser.id, redirectUrl: redirectTo
         }).then(function (token) {
           var templateVariables = {
             user: newUser,
@@ -140,7 +141,7 @@ module.exports = {
         }
 
         if (res.locals.responseType === 'html') {
-          return res.redirect( (redirectUrl || '/') );
+          return res.redirect( (redirectTo || '/') );
         }
 
         res.locals.newUserCreated = true;
