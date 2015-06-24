@@ -161,29 +161,29 @@ module.exports = function UserModel(we) {
             where: { userId: this.id }
           });
         },
-        // verifyPassword: function verifyPassword(password, cb) {
-        //   return this.getPassword().then( function(passwordObj){
-        //     if (!passwordObj) return cb(null, false);
-        //     passwordObj.validatePassword(password, cb);
-        //   });
-        // },
-        // updatePassword: function updatePassword(newPassword, cb) {
-        //   var user = this;
-        //   return this.getPassword().then( function (password){
-        //     if (!password) {
-        //       // create one password if this user dont have one
-        //       return we.db.models.password.create({
-        //         userId: user.id,
-        //         password: newPassword
-        //       }).then(function (password) {
-        //         return cb(null, password);
-        //       })
-        //     }
-        //     // update
-        //     password.password = newPassword;
-        //     password.save().then(function(r){ cb(null, r) });
-        //   });
-        // },
+        verifyPassword: function verifyPassword(password, cb) {
+          return this.getPassword().then( function(passwordObj){
+            if (!passwordObj) return cb(null, false);
+            passwordObj.validatePassword(password, cb);
+          });
+        },
+        updatePassword: function updatePassword(newPassword, cb) {
+          var user = this;
+          return this.getPassword().then( function (password){
+            if (!password) {
+              // create one password if this user dont have one
+              return we.db.models.password.create({
+                userId: user.id,
+                password: newPassword
+              }).then(function (password) {
+                return cb(null, password);
+              })
+            }
+            // update
+            password.password = newPassword;
+            password.save().then(function(r){ cb(null, r) });
+          });
+        },
         toJSON: function toJSON() {
           var req;
           if (this.getReq) req = this.getReq();
