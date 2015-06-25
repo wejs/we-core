@@ -440,21 +440,11 @@ we.components = {
       'aoColumns': colNames.map(function(i, colName){
         return { 'mData': colName.data, mRender: function (data, d,record) {
           if (colName.data == 'weModelActions') {
-            var tags = '';
-
-            if (table.attr('we-dt-actions-view')) {
-              tags += ' <a href="'+
-                table.attr('we-dt-actions-view').replace('|||id|||', record.id)
-                +'" text="Edit" class="btn btn-default"><i class="glyphicon glyphicon-eye-open"></i></a>';
+            if (opts.actionRender) {
+              return opts.actionRender(table, data, d,record);
+            } else {
+              return '';
             }
-
-            if (table.attr('we-dt-actions-edit')) {
-              tags += ' <a href="'+
-                table.attr('we-dt-actions-edit').replace('|||id|||', record.id)
-                +'" text="Edit" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i></a>';
-            }
-
-            return tags;
           } else {
             if (data) return data;
             return '';
