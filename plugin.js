@@ -163,7 +163,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     // services register
     // { url: '', oauthCallback: '', name: ''}
-    services: {}
+    services: {},
+
+    date: {
+      defaultFormat: 'YYYY-MM-DD HH:mm'
+    }
   });
   // set plugin routes
   plugin.setRoutes({
@@ -531,7 +535,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'we-menu':  __dirname + '/lib/view/template-helpers/we-menu.js',
     'ifCond': __dirname + '/lib/view/template-helpers/ifCond.js',
     'we-contains': __dirname + '/lib/view/template-helpers/we-contains.js',
-    'we-messages': __dirname + '/lib/view/template-helpers/we-messages.js'
+    'we-messages': __dirname + '/lib/view/template-helpers/we-messages.js',
+    'we-date': __dirname + '/lib/view/template-helpers/we-date.js'
   });
 
   plugin.setLayouts({
