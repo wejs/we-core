@@ -24,7 +24,7 @@ module.exports = function UserModel(we) {
         validate: {
           userNameIsValid: function(val) {
             if (!userNameRegex.test(val)) {
-              throw new Error('user.username.invalid ' + val);
+              throw new Error('user.username.invalid');
             }
           },
           uniqueUsername: function(val, cb) {
@@ -90,12 +90,8 @@ module.exports = function UserModel(we) {
         }
       },
       // estado UF
-      locationState: {
-        type: we.db.Sequelize.STRING
-      },
-      city: {
-        type: we.db.Sequelize.STRING
-      },
+      locationState: { type: we.db.Sequelize.STRING },
+      city: { type: we.db.Sequelize.STRING },
 
       avatarId: { type: we.db.Sequelize.BIGINT },
 
