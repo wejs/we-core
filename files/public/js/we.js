@@ -522,6 +522,60 @@ we.components = {
 
       element.summernote(cfg);
     }
+  },
+
+  select: {
+    init: function(selector, opts) {
+      var element = $(selector);
+      var vocabulary = element.attr('we-vocabulary');
+
+      if (!opts) opts = {};
+
+      var configs = {
+        formatResult: function(item) {
+          return item.text;
+        }
+      }
+
+      if (opts.tags) {
+        configs.tokenSeparators = [';'];
+        configs.multiple = true;
+      }
+
+      $.merge(configs, opts);
+
+      configs.ajax = {
+        url: '/term',
+        dataType: 'json',
+        delay: 400,
+        data: function (data, page) {
+          var query = {
+            where: JSON.stringify({
+              text: { like: data.term + '%' },
+              vocabularyName: vocabulary
+            }),
+            limit: 25,
+            responseType: 'json'
+          };
+          return query;
+        },
+        processResults: function (data, page) {
+          if (opts.tags) {
+            if (page.term) data.term.unshift( { text: page.term, id: page.term } );
+            return {
+              results: data.term
+            };
+          } else {
+            return {
+              results: data.term
+            };
+          }
+
+        }
+      };
+
+      element.select2(configs);
+    }
   }
 };
 
