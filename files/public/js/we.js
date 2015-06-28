@@ -527,12 +527,14 @@ we.components = {
   select: {
     init: function(selector, opts) {
       var element = $(selector);
-      var vocabulary = element.attr('we-vocabulary');
+      var url = element.attr('we-select-url');
+      var model = element.attr('we-select-model');
+      var where = (opts.where || {});
 
       if (!opts) opts = {};
 
       var configs = {
-        formatResult: function(item) {
+        formatResult: function formatResult(item) {
           return item.text;
         }
       }
@@ -540,37 +542,35 @@ we.components = {
       configs.tokenSeparators = [';'];
       configs.multiple = (element.attr('multiple') || false);
 
-      $.merge(configs, opts);
+      $.extend(configs, opts);
+      if (url) {
+        configs.ajax = {
+          url: url,
+          dataType: 'json',
+          delay: 400,
+          data: function (data, page) {
+            var qwhere = { text: { like: data.term + '%' } }
+            $.extend(qwhere, where);
 
-      configs.ajax = {
-        url: '/term',
-        dataType: 'json',
-        delay: 400,
-        data: function (data, page) {
-          var query = {
-            where: JSON.stringify({
-              text: { like: data.term + '%' },
-              vocabularyName: vocabulary
-            }),
-            limit: 25,
-            responseType: 'json'
-          };
-          return query;
-        },
-        processResults: function (data, page) {
-          if (opts.tags) {
-            if (page.term) data.term.unshift( { text: page.term, id: page.term } );
-            return {
-              results: data.term
+            var query = {
+              where: JSON.stringify(qwhere),
+              limit: 25,
+              responseType: 'json'
             };
-          } else {
-            return {
-              results: data.term
-            };
+            return query;
+          },
+          processResults: function (data, page) {
+            if (opts.tags) {
+              if (page[model]) data[model].unshift( {
+                text: page[model], id: page[model]
+              });
+              return { results: data[model] };
+            } else {
+              return { results: data[model] };
+            }
           }
-
-        }
-      };
+        };
+      }
 
       element.select2(configs);
     }
