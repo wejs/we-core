@@ -44,16 +44,15 @@
       "allowNull": false
     },
 
-
     "organization": {
       "type": "vocabulary/tag",
       "defaultValue": "",
       "vocabularyName": "Organization",
       "canCreate": true,
       "formFieldMultiple": false
-    },
-
-
+    }
+  },
+  "actions": {
     "submit": {
       "type": "submit"
     }

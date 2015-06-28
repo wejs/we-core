@@ -11,12 +11,6 @@ var userNameRegex = /^[A-Za-z0-9_-]{4,30}$/;
 module.exports = function UserModel(we) {
   var model = {
     definition: {
-      // model atributes //
-      idInProvider: {
-        type:  we.db.Sequelize.STRING,
-        unique: true
-      },
-
       username: {
         type: we.db.Sequelize.STRING,
         unique: true,
@@ -89,9 +83,12 @@ module.exports = function UserModel(we) {
           max: 6
         }
       },
-      // estado UF
-      locationState: { type: we.db.Sequelize.STRING },
+
+      country: { type: we.db.Sequelize.STRING(5) },
+      // state UF
+      locationState: { type: we.db.Sequelize.STRING(10) },
       city: { type: we.db.Sequelize.STRING },
+      address: { type: we.db.Sequelize.STRING },
 
       avatarId: { type: we.db.Sequelize.BIGINT },
 
@@ -136,6 +133,13 @@ module.exports = function UserModel(we) {
     },
 
     options: {
+      organization: {
+        vocabularyName: 'Organization',
+        canCreate: true,
+        formFieldMultiple: false,
+        onlyLowercase: false
+      },
+
       // table comment
       comment: 'We.js users table',
 

@@ -526,16 +526,33 @@ we.components = {
 
   select: {
     init: function(selector, opts) {
+      if (!opts) opts = {};
       var element = $(selector);
-      var url = element.attr('we-select-url');
+      var url = (opts.url || element.attr('we-select-url'));
       var model = element.attr('we-select-model');
       var where = (opts.where || {});
+      var searchField = (opts.searchField || 'text');
+      var limit = (opts.limit || 25);
 
       if (!opts) opts = {};
 
       var configs = {
         formatResult: function formatResult(item) {
           return item.text;
+        }
+      }
+
+      var processResults = opts.processResults;
+      if (!processResults) {
+        processResults = function (data, params) {
+          if (opts.tags) {
+            if (data[model]) data[model].unshift( {
+              text: params.term, id: params.term
+            });
+            return { results: data[model]};
+          } else {
+            return { results: data[model]};
+          }
         }
       }
 
@@ -548,27 +565,21 @@ we.components = {
           url: url,
           dataType: 'json',
           delay: 400,
-          data: function (data, page) {
-            var qwhere = { text: { like: data.term + '%' } }
+          cache: opts.cache,
+          data: function (params) {
+            var qwhere = {};
+            qwhere[searchField] = { like: params.term + '%' };
+
             $.extend(qwhere, where);
 
             var query = {
               where: JSON.stringify(qwhere),
-              limit: 25,
+              limit: limit,
               responseType: 'json'
             };
             return query;
           },
-          processResults: function (data, page) {
-            if (opts.tags) {
-              if (page[model]) data[model].unshift( {
-                text: page[model], id: page[model]
-              });
-              return { results: data[model] };
-            } else {
-              return { results: data[model] };
-            }
-          }
+          processResults: processResults
         };
       }
 
