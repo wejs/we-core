@@ -167,6 +167,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     date: {
       defaultFormat: 'YYYY-MM-DD HH:mm'
+    },
+    // cache configs
+    cache: {
+      maxage: 86400000 // one day
     }
   });
   // set plugin routes
