@@ -537,10 +537,8 @@ we.components = {
         }
       }
 
-      if (opts.tags) {
-        configs.tokenSeparators = [';'];
-        configs.multiple = true;
-      }
+      configs.tokenSeparators = [';'];
+      configs.multiple = (element.attr('multiple') || false);
 
       $.merge(configs, opts);
 
@@ -609,7 +607,7 @@ $(window.document).ajaxError(function(e, xhr) {
 
 we.renderComponents = function renderComponents() {
   var components = '<div class="we-components-area">';
-
+  // add widget modal
   components += '<div id="AddWidgetFormModal" class="modal" aria-hidden="true">'+
       '<div class="modal-dialog modal-lg">'+
         '<div class="modal-content">'+
