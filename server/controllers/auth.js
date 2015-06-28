@@ -18,7 +18,7 @@ module.exports = {
     var we = req.getWe();
     // log out user if it access register page
     we.auth.logOut(req, res, function(err) {
-      if(err) we.log.error(err);
+      if(err) we.log.error(err);  
       setDefaultRegisterLocals(req, res);
 
       res.locals.template = 'auth/register'
