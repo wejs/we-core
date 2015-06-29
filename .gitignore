@@ -37,3 +37,8 @@ npm-debug.log
 
 config
 
+# OS X
+.DS_Store
+
+# Linux
+*~
