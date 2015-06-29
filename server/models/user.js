@@ -114,6 +114,11 @@ module.exports = function UserModel(we) {
             }
           }
         }
+      },
+
+      acceptTerms: {
+        type: we.db.Sequelize.BOOLEAN,
+        equals: true
       }
     },
 

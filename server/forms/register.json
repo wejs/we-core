@@ -13,7 +13,6 @@
     },
     "displayName": {
       "type": "text",
-      "defaultValue": "",
       "allowNull": false
     },
 
@@ -24,7 +23,7 @@
 
     "gender": {
       "type": "select",
-      "defaultValue": "",
+      "allowNull": false,
       "fieldOptions": {
         "M": "Masculine",
         "F": "Feminine"
@@ -62,8 +61,14 @@
     }
   },
   "actions": {
-    "actionsSeparator": { "type": "break" },
+    "termSeparator": { "type": "break" },
+    "acceptTerms": {
+      "type": "terms-of-use",
+      "allowNull": false,
+      "defaultValue": false
+    },
 
+    "actionsSeparator": { "type": "break" },
     "submit": {
       "type": "submit"
     }
