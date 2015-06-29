@@ -22,6 +22,15 @@
       "defaultValue": ""
     },
 
+    "gender": {
+      "type": "select",
+      "defaultValue": "",
+      "fieldOptions": {
+        "M": "Masculine",
+        "F": "Feminine"
+      }
+    },
+
     "password": {
       "type": "password",
       "defaultValue": "",
