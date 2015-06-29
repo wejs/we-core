@@ -541,7 +541,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'ifCond': __dirname + '/lib/view/template-helpers/ifCond.js',
     'we-contains': __dirname + '/lib/view/template-helpers/we-contains.js',
     'we-messages': __dirname + '/lib/view/template-helpers/we-messages.js',
-    'we-date': __dirname + '/lib/view/template-helpers/we-date.js'
+    'we-date': __dirname + '/lib/view/template-helpers/we-date.js',
+    'isArray': __dirname + '/lib/view/template-helpers/isArray.js'
   });
 
   plugin.setLayouts({
