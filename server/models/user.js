@@ -138,11 +138,13 @@ module.exports = function UserModel(we) {
     },
 
     options: {
-      organization: {
-        vocabularyName: 'Organization',
-        canCreate: true,
-        formFieldMultiple: false,
-        onlyLowercase: false
+     termFields: {
+        organization: {
+          vocabularyName: 'Organization',
+          canCreate: true,
+          formFieldMultiple: false,
+          onlyLowercase: false
+        },
       },
 
       // table comment
