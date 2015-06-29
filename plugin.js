@@ -170,6 +170,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     // cache configs
     cache: {
+      //Cache-Control: public, max-age=[maxage]
       maxage: 86400000 // one day
     }
   });

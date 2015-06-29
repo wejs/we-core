@@ -32,8 +32,8 @@ bower_components
 # Debug log from npm
 npm-debug.log
 
-.sql
-.tmp
+*.sql
+*.tmp
 
 config
-.DS_Store
+*.DS_Store

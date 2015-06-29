@@ -53,6 +53,8 @@
     }
   },
   "actions": {
+    "actionsSeparator": { "type": "break" },
+
     "submit": {
       "type": "submit"
     }
