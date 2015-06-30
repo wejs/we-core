@@ -527,22 +527,22 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
   plugin.setHelpers({
-    'render-metadata-tags': __dirname + '/lib/view/template-helpers/render-metadata-tags.js',
-    'render-stylesheet-tags': __dirname + '/lib/view/template-helpers/render-stylesheet-tags.js',
-    'render-javascript-tags': __dirname + '/lib/view/template-helpers/render-javascript-tags.js',
-    'render-bootstrap-config': __dirname + '/lib/view/template-helpers/render-bootstrap-config.js',
-    't':  __dirname + '/lib/view/template-helpers/t.js',
-    'widget-wrapper': __dirname + '/lib/view/template-helpers/widget-wrapper.js',
-    'layout': __dirname + '/lib/view/template-helpers/layout.js',
-    'region': __dirname + '/lib/view/template-helpers/region.js',
-    'link-to': __dirname + '/lib/view/template-helpers/link-to.js',
-    'template': __dirname + '/lib/view/template-helpers/template.js',
-    'we-menu':  __dirname + '/lib/view/template-helpers/we-menu.js',
-    'ifCond': __dirname + '/lib/view/template-helpers/ifCond.js',
-    'we-contains': __dirname + '/lib/view/template-helpers/we-contains.js',
-    'we-messages': __dirname + '/lib/view/template-helpers/we-messages.js',
-    'we-date': __dirname + '/lib/view/template-helpers/we-date.js',
-    'isArray': __dirname + '/lib/view/template-helpers/isArray.js'
+    'render-metadata-tags': __dirname + '/server/helpers/render-metadata-tags.js',
+    'render-stylesheet-tags': __dirname + '/server/helpers/render-stylesheet-tags.js',
+    'render-javascript-tags': __dirname + '/server/helpers/render-javascript-tags.js',
+    'render-bootstrap-config': __dirname + '/server/helpers/render-bootstrap-config.js',
+    't':  __dirname + '/server/helpers/t.js',
+    'widget-wrapper': __dirname + '/server/helpers/widget-wrapper.js',
+    'layout': __dirname + '/server/helpers/layout.js',
+    'region': __dirname + '/server/helpers/region.js',
+    'link-to': __dirname + '/server/helpers/link-to.js',
+    'template': __dirname + '/server/helpers/template.js',
+    'we-menu':  __dirname + '/server/helpers/we-menu.js',
+    'ifCond': __dirname + '/server/helpers/ifCond.js',
+    'we-contains': __dirname + '/server/helpers/we-contains.js',
+    'we-messages': __dirname + '/server/helpers/we-messages.js',
+    'we-date': __dirname + '/server/helpers/we-date.js',
+    'isArray': __dirname + '/server/helpers/isArray.js'
   });
 
   plugin.setLayouts({

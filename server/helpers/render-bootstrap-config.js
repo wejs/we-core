@@ -5,7 +5,7 @@
  *
  */
 
-var getAppBootstrapConfig = require('../../staticConfig/getAppBootstrapConfig.js');
+var getAppBootstrapConfig = require('../../lib/staticConfig/getAppBootstrapConfig.js');
 
 module.exports = function(we) {
   return function renderBootstrapConfig() {
