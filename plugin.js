@@ -39,9 +39,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       requireAccountActivation: true,
       allowUserSignup: true
     },
-    acl : {
-      disabled: true
-    },
+    acl : { disabled: true },
     passport: {
       accessTokenTime: 300000000,
       cookieDomain: 'localhost:' + ( process.env.PORT || '3000' ),
@@ -234,16 +232,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // form login
     'get /login': {
       controller: 'auth',
-      action: 'loginPage',
+      action: 'login',
       titleHandler  : 'i18n',
-      titleI18n: 'Login'
+      titleI18n: 'Login',
+      template: 'auth/login'
     },
     // form login / post
     'post /login': {
       controller: 'auth',
       action: 'login',
       titleHandler  : 'i18n',
-      titleI18n: 'Login'
+      titleI18n: 'Login',
+      template: 'auth/login'
     },
 
     // api login

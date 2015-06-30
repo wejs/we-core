@@ -137,7 +137,7 @@ module.exports = {
       we.auth.logIn(req, res, newUser, function (err, passport) {
         if (err) {
           we.log.error('logIn error: ', err);
-          return res.negotiate(err);
+          return res.serverError(err);
         }
 
         if (res.locals.responseType === 'html') {
@@ -149,7 +149,6 @@ module.exports = {
         res.created({ token: passport.token, user: newUser });
       });
     });
-
   },
 
   /**
@@ -183,16 +182,27 @@ module.exports = {
    *
    * This action receives the static and JSON request
    */
-  login: function (req, res, next) {
+  login: function login(req, res, next) {
     var we = req.getWe();
 
     var email = req.body.email;
+    // save redirectTo
+    var redirectTo = we.auth.getRedirectUrl(req, res);
+    if (redirectTo) res.locals.redirectTo = redirectTo;
 
-    // TODO change this passport .authenticate to we.auth.authenticate
+    if (req.method !== 'POST') {
+      return we.auth.logOut(req, res, function (err) {
+        if (err) return res.serverError(err);
+        return res.ok();
+      });
+    }
+    // --  set req.body for error page
+    res.locals.record = req.body
+
     return we.passport.authenticate('local', function(err, user, info) {
       if (err) {
         we.log.error('AuthController:login:Error on get user ', err, email);
-        return res.serverError();
+        return res.serverError(err);
       }
 
       if (!user) {
@@ -216,12 +226,18 @@ module.exports = {
       we.auth.logIn(req, res, user, function (err, authToken) {
         if(err) return res.serverError(err);
         we.log.info('AuthController:login: user autheticated:', user.id, user.username);
-        res.send({
-          user: user,
-          token: authToken.token
-        });
-      });
 
+        if (err) {
+          we.log.error('logIn error: ', err);
+          return res.serverError(err);
+        }
+
+        res.locals.newUserCreated = true;
+        // redirect if are a html response
+        if (res.locals.responseType === 'html') return res.redirect( (redirectTo || '/') );
+
+        res.send({ user: user, token: authToken.token });
+      });
     })(req, res, next);
   },
 
@@ -272,7 +288,7 @@ module.exports = {
           we.auth.logIn(req, res, usr, function(err) {
             if (err) {
               we.log.error('logIn error:', err);
-              return res.negotiate(err);
+              return res.serverError(err);
             }
 
             return res.redirect(rediredtUrl);
