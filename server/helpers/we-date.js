@@ -7,6 +7,8 @@ var moment = require('moment');
 
 module.exports = function(we) {
   return function renderDate(date, format) {
+    if (!date) return '';
+
     if (format && typeof format === 'string') {
       return moment(date).format(format);
     } else {
