@@ -45,6 +45,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       cookieDomain: 'localhost:' + ( process.env.PORT || '3000' ),
       cookieName: 'weoauth',
       cookieSecure: false,
+      expiresTime: 900000,
 
       strategies: {
         bearer: true,
