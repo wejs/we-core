@@ -3,6 +3,12 @@
  */
 
 (function (window, page) {
+
+if ($.timepicker) {
+  $.datepicker.setDefaults($.timepicker.regional[window.WE_BOOTSTRAP_CONFIG.locale]);
+  $.timepicker.setDefaults($.timepicker.regional[window.WE_BOOTSTRAP_CONFIG.locale]);
+}
+
 var we = {
   autoInitialize: true,
   config: {},

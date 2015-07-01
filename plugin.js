@@ -1,6 +1,7 @@
 /**
  * We.js plugin config
  */
+var moment = require('moment');
 
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
@@ -164,9 +165,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // { url: '', oauthCallback: '', name: ''}
     services: {},
 
-    date: {
-      defaultFormat: 'YYYY-MM-DD HH:mm'
-    },
+    date: { defaultFormat: 'L LT' },
     // cache configs
     cache: {
       //Cache-Control: public, max-age=[maxage]
@@ -577,6 +576,27 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       });
     })
   })
+
+  /**
+   * Convert body data fields to database data tipo
+   */
+  plugin.hooks.on('we:router:request:after:load:context', function (data, next) {
+    var we = data.req.getWe();
+    var res = data.res;
+    var req = data.req;
+
+    if (data.req.method !== 'POST') return next();
+    if (!res.locale) return next();
+
+    if (res.locals.Model && req.body)  {
+      res.locals.Model._dateAttributes.forEach(function (d) {
+        if (req.body[d]) {
+          req.body[d] = moment(req.body[d], we.config.date.defaultFormat).locale('en').format('L LT');
+        }
+      });
+    }
+    next();
+  });
 
   return plugin;
 };

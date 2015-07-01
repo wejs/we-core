@@ -9,10 +9,17 @@ module.exports = function(we) {
   return function renderDate(date, format) {
     if (!date) return '';
 
+    var d = moment(date);
+    if (!d.isValid()) return '';
+
+    var req = this.req;
+    if (!req) req = this.locals.req;
+    if (req && req.user) d.locale(req.user.language);
+
     if (format && typeof format === 'string') {
-      return moment(date).format(format);
+      return d.format(format);
     } else {
-      return moment(date).format(we.config.date.defaultFormat);
+      return d.format(we.config.date.defaultFormat);
     }
   }
 }
