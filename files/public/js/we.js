@@ -594,6 +594,14 @@ we.message = {
       $(this).append('<message class="alert alert-' + status + '">' + message + '</message>');
     });
   },
+
+we.message = {
+  newMessage: function newMessage(status, message) {
+    $('form[we-submit="ajax"] > fieldset').fadeIn('slow', function() {
+      $(this).append('<message class="alert alert-' + status + '">' + message + '</message>');
+    });
+  },
+
   closeMessage: function closeMessage(obj) {
     setTimeout(function() {
        $('message').fadeOut('slow', function() {
@@ -649,6 +657,12 @@ we.renderComponents = function renderComponents() {
 
   $('body').append(components);
 }
+$(window.document).ajaxError(function(e, xhr, settings) {
+  for(var i = 0; i < xhr.responseJSON.messages.length; i++) {
+    var msg = xhr.responseJSON.messages[i];
+    we.message.closeMessage(we.message.newMessage(msg.status, msg.message))      
+  }
+});
 
 window.we = we;
 

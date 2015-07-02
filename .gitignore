@@ -36,4 +36,13 @@ npm-debug.log
 *.tmp
 
 config
+
 *.DS_Store
+
+
+# OS X
+.DS_Store
+
+# Linux
+*~
+

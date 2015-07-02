@@ -15,6 +15,21 @@ module.exports = {
   },
 
   // Signup method function
+  // Signup method GET function
+  signupPage: function (req, res) {
+    var we = req.getWe();
+    // log out user if it access register page
+    we.auth.logOut(req, res, function(err) {
+      if(err) we.log.error(err);  
+      setDefaultRegisterLocals(req, res);
+
+      res.locals.template = 'auth/register'
+      res.view();
+    });
+  },
+
+  // Signup method POST function
+  // TODO make this action simple
   signup: function Register(req, res) {
     var we = req.getWe();
     // check allowUserSignup flag how block signup
