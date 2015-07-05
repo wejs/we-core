@@ -128,6 +128,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       'login': __dirname + '/server/forms/login.json',
       'register': __dirname + '/server/forms/register.json'
     },
+    clientComponentTemplates: { 'components-core': true },
     database: { resetAllData: false },
     menu: {
       main: {},
@@ -542,7 +543,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'we-contains': __dirname + '/server/helpers/we-contains.js',
     'we-messages': __dirname + '/server/helpers/we-messages.js',
     'we-date': __dirname + '/server/helpers/we-date.js',
-    'isArray': __dirname + '/server/helpers/isArray.js'
+    'isArray': __dirname + '/server/helpers/isArray.js',
+    'render-client-component-templates': __dirname + '/server/helpers/render-client-component-templates.js'
   });
 
   plugin.setLayouts({
@@ -555,7 +557,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     '400': __dirname + '/server/templates/400.hbs',
     '403': __dirname + '/server/templates/403.hbs',
     '404': __dirname + '/server/templates/404.hbs',
-    '500': __dirname + '/server/templates/500.hbs'
+    '500': __dirname + '/server/templates/500.hbs',
+    'components-core': __dirname + '/server/templates/components-core.hbs'
   });
 
   plugin.setWidgets({
