@@ -128,7 +128,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       'login': __dirname + '/server/forms/login.json',
       'register': __dirname + '/server/forms/register.json',
       'forgot-password': __dirname + '/server/forms/forgot-password.json',
-      'new-password': __dirname + '/server/forms/new-password.json'
+      'new-password': __dirname + '/server/forms/new-password.json',
+      'change-password': __dirname + '/server/forms/change-password.json'
     },
     clientComponentTemplates: { 'components-core': true },
     database: { resetAllData: false },
@@ -289,22 +290,22 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
 
     // change password
-    'post /change-password':{
+    'post /auth/change-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.change-password',
       controller    : 'auth',
-      action        : 'changePassword'
+      action        : 'changePassword',
+      template      : 'auth/change-password'
     },
-    'get /change-password':{
+    'get /auth/change-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.change-password',
       controller    : 'auth',
-      action        : 'changePasswordPage'
+      action        : 'changePassword',
+      template      : 'auth/change-password'
     },
 
     // activate
-
-    // 'get /api/v1/auth/callback/:access_token?':{
-    //   controller    : 'auth',
-    //   action        : 'oauth2Callback'
-    // },
-
     'get /user/:id([0-9]+)/activate/:token':{
       controller    : 'auth',
       action        : 'activate'
@@ -318,14 +319,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // new password
     'get /auth/:id([0-9]+)/new-password': {
       titleHandler  : 'i18n',
-      titleI18n     : 'auth.forgot-password',
+      titleI18n     : 'auth.new-password',
       controller    : 'auth',
       action        : 'newPassword',
       template      : 'auth/new-password'
     },
     'post /auth/:id([0-9]+)/new-password': {
       titleHandler  : 'i18n',
-      titleI18n     : 'auth.forgot-password',
+      titleI18n     : 'auth.new-password',
       controller    : 'auth',
       action        : 'newPassword',
       template      : 'auth/new-password'

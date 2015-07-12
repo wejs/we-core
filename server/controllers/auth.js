@@ -545,21 +545,6 @@ module.exports = {
     }).catch(res.queryError);
   },
 
-  changePasswordPage: function(req, res) {
-    if(!req.isAuthenticated()) return res.redirect('/');
-
-    res.locals.oldPassword = req.body.password;
-    res.locals.newPassword = req.body.newPassword;
-    res.locals.rNewPassword = req.body.rNewPassword;
-    res.locals.formAction = '/change-password';
-
-    res.locals.user = req.user;
-
-    res.locals.template = 'auth/change-password';
-
-    res.view();
-  },
-
   /**
    * Change authenticated user password
    */
@@ -567,35 +552,32 @@ module.exports = {
     if(!req.isAuthenticated()) return res.redirect('/');
     var we = req.getWe();
 
+    // save redirectTo
+    var redirectTo = we.auth.getRedirectUrl(req, res);
+    if (redirectTo) res.locals.redirectTo = redirectTo;
+
+    if (req.method !== 'POST') return res.ok();
+
     var oldPassword = req.body.password;
     var newPassword = req.body.newPassword;
     var rNewPassword = req.body.rNewPassword;
-
     var userId = req.user.id;
 
-    res.locals.template = 'auth/change-password';
-
-    if(!req.isAuthenticated()) {
-      res.addMessage('error', 'auth.change-password.forbiden');
-      return res.badRequest();
-    }
+    if(!req.isAuthenticated())
+      return res.badRequest('auth.change-password.forbiden');
 
     // skip old password if have resetPassword flag in session
     if (!req.session.resetPassword) {
-      if (!oldPassword) {
-        res.addMessage('error', 'field.password.required');
-        return res.badRequest();
-      }
+      if (!oldPassword)
+        return res.badRequest('field.password.required');
     }
 
     if ( _.isEmpty(newPassword) || _.isEmpty(rNewPassword) ) {
-      res.addMessage('error', 'field.confirm-password.password.required');
-      return res.badRequest();
+      return res.badRequest('field.confirm-password.password.required');
     }
 
-    if (newPassword !== rNewPassword){
-      res.addMessage('error', 'field.password.confirm-password.diferent');
-      return res.badRequest();
+    if (newPassword !== rNewPassword) {
+      return res.badRequest('field.password.confirm-password.diferent');
     }
 
     we.db.models.user.findById(userId)
@@ -605,7 +587,7 @@ module.exports = {
         return res.badRequest();
       }
 
-      // skip password check if have resetPassord flag actives
+      // skip password check if have resetPassord flag active
       if (req.session.resetPassword) {
         return changePassword();
       } else {
@@ -621,7 +603,7 @@ module.exports = {
 
       function changePassword() {
         // set newPassword and save it for generate the password hash on update
-        user.updatePassword(newPassword, function(err) {
+        user.updatePassword(newPassword, function (err) {
           if(err) {
             we.log.error('Error on save user to update password: ', err);
             return res.serverError(err);
@@ -669,8 +651,7 @@ module.exports = {
           });
         })
       }
-
-    });
+    }).catch(res.queryError);
   }
 };
 
