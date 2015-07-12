@@ -19,7 +19,7 @@ describe('authFeature', function () {
     we = helpers.getWe();
 
     var userStub = stubs.userStub();
-    helpers.createUser(userStub, function(err, user, password) {
+    helpers.createUser(userStub, function(err, user) {
       if (err) throw err;
 
       salvedUser = user;
@@ -35,8 +35,7 @@ describe('authFeature', function () {
       })
       .expect(200)
       .set('Accept', 'application/json')
-      .end(function (err, res) {
-
+      .end(function () {
         done();
       });
     })
@@ -355,18 +354,16 @@ describe('authFeature', function () {
         // todo check tags
         done();
       });
-    })
+    });
 
-    it('post /auth/forgot-password should send AuthResetPasswordEmail pasword email and redirect', function (done) {
+    it('post /auth/forgot-password should send AuthResetPasswordEmail pasword email and return 200', function (done) {
       // set spy to check is email is called
       sinon.spy(we.email, 'sendEmail');
 
       request(http)
       .post('/auth/forgot-password')
-      .expect(302)
-      .send({
-        email: salvedUser.email
-      })
+      .expect(200)
+      .send({ email: salvedUser.email })
       .end(function (err, res) {
         if (err) throw err;
 
@@ -398,17 +395,7 @@ describe('authFeature', function () {
       });
     })
 
-    it('get /auth/:id/new-password should load newPasswordPage', function (done) {
-      authenticatedRequest.get('/auth/'+ salvedUser.id +'/new-password')
-      .expect(200)
-      .end(function (err, res) {
-        if (err) throw err;
-        // todo check tags
-        done();
-      });
-    })
-
-    it('post /auth/new-password should load newPasswordPage', function (done) {
+    it('post /auth/:userId/new-password should load newPasswordPage', function (done) {
       this.slow(300);
 
       var newPassword = 'oneNewPassword';
@@ -420,18 +407,18 @@ describe('authFeature', function () {
       }).then(function (authToken) {
         authenticatedRequest.get('/auth/'+ salvedUser.id +'/reset-password/' + authToken.token)
         .expect(302)
-        .end(function (err) {
+        .end(function (err, res) {
           if (err) throw err;
 
           // then change the password
-          authenticatedRequest.post('/auth/new-password')
+          authenticatedRequest.post('/auth/'+salvedUser.id+'/new-password')
           .send({
             newPassword: newPassword,
             rNewPassword: newPassword
           })
-          .expect(200)
+          //.expect(200)
           .set('Accept', 'application/json')
-          .end(function (err) {
+          .end(function (err, res) {
             if (err) throw err;
 
             // check if new password is valid
@@ -469,8 +456,8 @@ describe('authFeature', function () {
   });
 
   describe('changePassword', function() {
-    it('get /change-password should load change password page', function(done) {
-      authenticatedRequest.get('/change-password')
+    it('get /auth/change-password should load change password page', function(done) {
+      authenticatedRequest.get('/auth/change-password')
       .expect(200)
       .end(function (err) {
         if(err) throw err;
@@ -478,12 +465,12 @@ describe('authFeature', function () {
       });
     });
 
-    it('post /change-password should change user password', function(done) {
+    it('post /auth/change-password should change user password', function(done) {
       this.slow(300);
 
       var newPassword = 'asdmdoadaansadnsanksn';
 
-      authenticatedRequest.post('/change-password')
+      authenticatedRequest.post('/auth/change-password')
       .send({
         password: salvedUserPassword,
         newPassword: newPassword,
@@ -524,7 +511,7 @@ describe('authFeature', function () {
 
     });
 
-    it('post /change-password should return error with wront password');
+    it('post /auth/change-password should return error with wrong password');
   });
 
   describe('generateAuthToken', function () {

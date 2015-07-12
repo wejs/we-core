@@ -70,5 +70,12 @@
 	"Profile": "Profile",
 	"Logout": "Logout",
 	"form-login-persistent": "form-login-persistent",
-	"auth.forgot-password": "auth.forgot-password"
+	"auth.forgot-password": "auth.forgot-password",
+	"auth.new-password": "auth.new-password",
+	"auth.now-password.forbiden": "auth.now-password.forbiden",
+	"auth.new-password.forbiden": "auth.new-password.forbiden",
+	"not.found": "not.found",
+	"go.to": "go.to",
+	"home": "home",
+	"auth.change-password": "auth.change-password"
 }
