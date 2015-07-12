@@ -508,11 +508,9 @@ module.exports = {
     // var userId = req.param('id');
     var userId = req.user.id;
 
-    if (!req.isAuthenticated() ||
-      req.user.id != userId ||
-      !req.user.isAdmin
-    ){
-      return res.badRequest('auth.now-password.forbiden');
+    if (!req.isAuthenticated() || req.user.id != userId) {
+      if (!req.user.isAdmin)
+        return res.badRequest('auth.new-password.forbiden');
     }
 
     if ( _.isEmpty(newPassword) || _.isEmpty(rNewPassword) )
@@ -654,24 +652,6 @@ module.exports = {
     }).catch(res.queryError);
   }
 };
-
-/**
- * Default local variables for register locals
- *
- * @param {object} req express.js request
- * @param {object} res express.js response object
- */
-function setDefaultRegisterLocals(req, res){
-
-  var user = req.body;
-
-  res.locals.messages = [];
-  res.locals.user = user;
-  res.locals.formAction = '/signup';
-  res.locals.service = req.params.service;
-  res.locals.consumerId = req.params.consumerId;
-  res.locals.interests = [];
-}
 
 /**
  * Load user and auth token
