@@ -126,7 +126,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     forms: {
       'login': __dirname + '/server/forms/login.json',
-      'register': __dirname + '/server/forms/register.json'
+      'register': __dirname + '/server/forms/register.json',
+      'forgot-password': __dirname + '/server/forms/forgot-password.json',
+      'new-password': __dirname + '/server/forms/new-password.json'
     },
     clientComponentTemplates: { 'components-core': true },
     database: { resetAllData: false },
@@ -260,14 +262,19 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     // form to get one time login email
     'get /auth/forgot-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.forgot-password',
       controller    : 'auth',
-      action        : 'forgotPasswordPage'
+      action        : 'forgotPassword',
+      template      : 'auth/forgot-password'
     },
-
     // post for get new password link
     'post /auth/forgot-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.forgot-password',
       controller    : 'auth',
-      action        : 'forgotPassword'
+      action        : 'forgotPassword',
+      template      : 'auth/forgot-password'
     },
 
     'get /auth/:id([0-9]+)/reset-password/:token': {
@@ -309,13 +316,19 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
 
     // new password
-    'post /auth/new-password':{
+    'get /auth/:id([0-9]+)/new-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.forgot-password',
       controller    : 'auth',
-      action        : 'newPassword'
+      action        : 'newPassword',
+      template      : 'auth/new-password'
     },
-    'get /auth/:id([0-9]+)/new-password':{
+    'post /auth/:id([0-9]+)/new-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.forgot-password',
       controller    : 'auth',
-      action        : 'newPasswordPage'
+      action        : 'newPassword',
+      template      : 'auth/new-password'
     },
 
     //
@@ -558,7 +571,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     '403': __dirname + '/server/templates/403.hbs',
     '404': __dirname + '/server/templates/404.hbs',
     '500': __dirname + '/server/templates/500.hbs',
-    'components-core': __dirname + '/server/templates/components-core.hbs'
+    'components-core': __dirname + '/server/templates/components-core.hbs',
+
+    'auth/register': __dirname + '/server/templates/auth/register.hbs',
+    'auth/change-password': __dirname + '/server/templates/auth/change-password.hbs',
+    'auth/login': __dirname + '/server/templates/auth/login.hbs',
+    'auth/forgot-password': __dirname + '/server/templates/auth/forgot-password.hbs',
+    'auth/new-password': __dirname + '/server/templates/auth/new-password.hbs'
   });
 
   plugin.setWidgets({

@@ -69,5 +69,6 @@
 	"form-helper-login-password": "form-helper-login-password",
 	"Profile": "Profile",
 	"Logout": "Logout",
-	"form-login-persistent": "form-login-persistent"
+	"form-login-persistent": "form-login-persistent",
+	"auth.forgot-password": "auth.forgot-password"
 }
