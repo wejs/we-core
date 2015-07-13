@@ -491,6 +491,9 @@ we.components = {
 
     table.dataTable(config);
   },
+  tableDrag: function tableDrag(selector){
+    $(selector).tableDrag();
+  },
   editor: {
     styles: {
       small: [
@@ -587,13 +590,6 @@ we.components = {
     }
   }
 };
-
-we.message = {
-  newMessage: function newMessage(status, message) {
-    $('form[we-submit="ajax"] > fieldset').fadeIn('slow', function() {
-      $(this).append('<message class="alert alert-' + status + '">' + message + '</message>');
-    });
-  },
 
 we.message = {
   newMessage: function newMessage(status, message) {
