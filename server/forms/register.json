@@ -11,10 +11,6 @@
       "defaultValue": "",
       "allowNull": false
     },
-    "displayName": {
-      "type": "text",
-      "allowNull": false
-    },
 
     "fullName": {
       "type": "text",
