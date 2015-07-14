@@ -1,21 +1,23 @@
 {
   "title": "auth.login.title",
 
-  "requestType": "json",
-  "actionType": "ajax",
   "method": "post",
   "action": "/login",
 
   "fields": {
     "email": {
       "type": "email",
-      "defaultValue": ""
+      "allowNull": false
     },
     "password": {
       "type": "password",
-      "defaultValue": ""
+      "allowNull": false
     },
-
+    "persistent": {
+      "type": "boolean"
+    }
+  },
+  "actions": {
     "submit": {
       "type": "submit"
     }

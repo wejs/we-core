@@ -1,6 +1,7 @@
 /**
  * We.js plugin config
  */
+var moment = require('moment');
 
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
@@ -39,14 +40,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       requireAccountActivation: true,
       allowUserSignup: true
     },
-    acl : {
-      disabled: true
-    },
+    acl : { disabled: true },
     passport: {
       accessTokenTime: 300000000,
       cookieDomain: 'localhost:' + ( process.env.PORT || '3000' ),
       cookieName: 'weoauth',
       cookieSecure: false,
+      expiresTime: 900000,
 
       strategies: {
         bearer: true,
@@ -126,8 +126,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     forms: {
       'login': __dirname + '/server/forms/login.json',
-      'register': __dirname + '/server/forms/register.json'
+      'register': __dirname + '/server/forms/register.json',
+      'forgot-password': __dirname + '/server/forms/forgot-password.json',
+      'new-password': __dirname + '/server/forms/new-password.json',
+      'change-password': __dirname + '/server/forms/change-password.json'
     },
+    clientComponentTemplates: { 'components-core': true },
     database: { resetAllData: false },
     menu: {
       main: {},
@@ -165,9 +169,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // { url: '', oauthCallback: '', name: ''}
     services: {},
 
-    date: {
-      defaultFormat: 'YYYY-MM-DD HH:mm'
-    },
+    date: { defaultFormat: 'L LT' },
     // cache configs
     cache: {
       //Cache-Control: public, max-age=[maxage]
@@ -234,16 +236,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // form login
     'get /login': {
       controller: 'auth',
-      action: 'loginPage',
+      action: 'login',
       titleHandler  : 'i18n',
-      titleI18n: 'Login'
+      titleI18n: 'Login',
+      template: 'auth/login'
     },
     // form login / post
     'post /login': {
       controller: 'auth',
       action: 'login',
       titleHandler  : 'i18n',
-      titleI18n: 'Login'
+      titleI18n: 'Login',
+      template: 'auth/login'
     },
 
     // api login
@@ -259,14 +263,19 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
     // form to get one time login email
     'get /auth/forgot-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.forgot-password',
       controller    : 'auth',
-      action        : 'forgotPasswordPage'
+      action        : 'forgotPassword',
+      template      : 'auth/forgot-password'
     },
-
     // post for get new password link
     'post /auth/forgot-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.forgot-password',
       controller    : 'auth',
-      action        : 'forgotPassword'
+      action        : 'forgotPassword',
+      template      : 'auth/forgot-password'
     },
 
     'get /auth/:id([0-9]+)/reset-password/:token': {
@@ -281,22 +290,22 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
 
     // change password
-    'post /change-password':{
+    'post /auth/change-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.change-password',
       controller    : 'auth',
-      action        : 'changePassword'
+      action        : 'changePassword',
+      template      : 'auth/change-password'
     },
-    'get /change-password':{
+    'get /auth/change-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.change-password',
       controller    : 'auth',
-      action        : 'changePasswordPage'
+      action        : 'changePassword',
+      template      : 'auth/change-password'
     },
 
     // activate
-
-    // 'get /api/v1/auth/callback/:access_token?':{
-    //   controller    : 'auth',
-    //   action        : 'oauth2Callback'
-    // },
-
     'get /user/:id([0-9]+)/activate/:token':{
       controller    : 'auth',
       action        : 'activate'
@@ -308,24 +317,30 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
 
     // new password
-    'post /auth/new-password':{
+    'get /auth/:id([0-9]+)/new-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.new-password',
       controller    : 'auth',
-      action        : 'newPassword'
+      action        : 'newPassword',
+      template      : 'auth/new-password'
     },
-    'get /auth/:id([0-9]+)/new-password':{
+    'post /auth/:id([0-9]+)/new-password': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'auth.new-password',
       controller    : 'auth',
-      action        : 'newPasswordPage'
+      action        : 'newPassword',
+      template      : 'auth/new-password'
     },
 
     //
     // -- User routes
     //
-    'get /user/:username?': {
-      controller    : 'user',
-      action        : 'findOneByUsername',
-      model         : 'user',
-      permission    : 'find_user'
-    },
+    // 'get /user/:username?': {
+    //   controller    : 'user',
+    //   action        : 'findOneByUsername',
+    //   model         : 'user',
+    //   permission    : 'find_user'
+    // },
     'get /user': {
       controller    : 'user',
       action        : 'find',
@@ -345,13 +360,19 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'user',
       permission    : 'create_user'
     },
-    'put /user/:id([0-9]+)': {
+    'get /user/:userId([0-9]+)/edit': {
       controller    : 'user',
-      action        : 'update',
+      action        : 'editPage',
       model         : 'user',
       permission    : 'update_user'
     },
-    'delete /user/:id([0-9]+)': {
+    'post /user/:userId([0-9]+)/edit': {
+      controller    : 'user',
+      action        : 'editPage',
+      model         : 'user',
+      permission    : 'update_user'
+    },
+    'delete /user/:userId([0-9]+)': {
       controller    : 'user',
       action        : 'destroy',
       model         : 'user',
@@ -527,35 +548,29 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
   plugin.setHelpers({
-    'render-metadata-tags': __dirname + '/lib/view/template-helpers/render-metadata-tags.js',
-    'render-stylesheet-tags': __dirname + '/lib/view/template-helpers/render-stylesheet-tags.js',
-    'render-javascript-tags': __dirname + '/lib/view/template-helpers/render-javascript-tags.js',
-    'render-bootstrap-config': __dirname + '/lib/view/template-helpers/render-bootstrap-config.js',
-    't':  __dirname + '/lib/view/template-helpers/t.js',
-    'widget-wrapper': __dirname + '/lib/view/template-helpers/widget-wrapper.js',
-    'layout': __dirname + '/lib/view/template-helpers/layout.js',
-    'region': __dirname + '/lib/view/template-helpers/region.js',
-    'link-to': __dirname + '/lib/view/template-helpers/link-to.js',
-    'template': __dirname + '/lib/view/template-helpers/template.js',
-    'we-menu':  __dirname + '/lib/view/template-helpers/we-menu.js',
-    'ifCond': __dirname + '/lib/view/template-helpers/ifCond.js',
-    'we-contains': __dirname + '/lib/view/template-helpers/we-contains.js',
-    'we-messages': __dirname + '/lib/view/template-helpers/we-messages.js',
-    'we-date': __dirname + '/lib/view/template-helpers/we-date.js',
-    'isArray': __dirname + '/lib/view/template-helpers/isArray.js'
+    'render-metadata-tags': __dirname + '/server/helpers/render-metadata-tags.js',
+    'render-stylesheet-tags': __dirname + '/server/helpers/render-stylesheet-tags.js',
+    'render-javascript-tags': __dirname + '/server/helpers/render-javascript-tags.js',
+    'render-bootstrap-config': __dirname + '/server/helpers/render-bootstrap-config.js',
+    't':  __dirname + '/server/helpers/t.js',
+    'widget-wrapper': __dirname + '/server/helpers/widget-wrapper.js',
+    'layout': __dirname + '/server/helpers/layout.js',
+    'region': __dirname + '/server/helpers/region.js',
+    'link-to': __dirname + '/server/helpers/link-to.js',
+    'template': __dirname + '/server/helpers/template.js',
+    'we-menu':  __dirname + '/server/helpers/we-menu.js',
+    'we-user-menu':  __dirname + '/server/helpers/we-user-menu.js',
+    'ifCond': __dirname + '/server/helpers/ifCond.js',
+    'we-contains': __dirname + '/server/helpers/we-contains.js',
+    'we-messages': __dirname + '/server/helpers/we-messages.js',
+    'we-date': __dirname + '/server/helpers/we-date.js',
+    'isArray': __dirname + '/server/helpers/isArray.js',
+    'render-client-component-templates': __dirname + '/server/helpers/render-client-component-templates.js'
   });
 
   plugin.setLayouts({
-    default: __dirname + '/server/templates/default-layout.hbs'
-  });
-
-  plugin.setTemplates({
-    'region': __dirname + '/server/templates/region.hbs',
-    'messages': __dirname + '/server/templates/messages.hbs',
-    '400': __dirname + '/server/templates/400.hbs',
-    '403': __dirname + '/server/templates/403.hbs',
-    '404': __dirname + '/server/templates/404.hbs',
-    '500': __dirname + '/server/templates/500.hbs'
+    default: __dirname + '/server/templates/default-layout.hbs',
+    'user/layout': __dirname + '/server/templates/user/layout.hbs'
   });
 
   plugin.setWidgets({
@@ -576,6 +591,27 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       });
     })
   })
+
+  /**
+   * Convert body data fields to database data tipo
+   */
+  plugin.hooks.on('we:router:request:after:load:context', function (data, next) {
+    var we = data.req.getWe();
+    var res = data.res;
+    var req = data.req;
+
+    if (data.req.method !== 'POST') return next();
+    if (!res.locale) return next();
+
+    if (res.locals.Model && req.body)  {
+      res.locals.Model._dateAttributes.forEach(function (d) {
+        if (req.body[d]) {
+          req.body[d] = moment(req.body[d], we.config.date.defaultFormat).locale('en').format('L LT');
+        }
+      });
+    }
+    next();
+  });
 
   return plugin;
 };

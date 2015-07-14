@@ -1,15 +1,15 @@
-// api/controllers/AuthController.js
+/**
+ * Authentication controller
+ */
 
 var _ = require('lodash');
 var async = require('async');
 
 module.exports = {
-  _config: {
-    acl: false
-  },
+  _config: { acl: false },
 
   // getter for current logged in user
-  current: function (req, res) {
+  current: function current(req, res) {
     if (!req.isAuthenticated() ) return res.send({});
     return res.ok(req.user);
   },
@@ -152,7 +152,7 @@ module.exports = {
       we.auth.logIn(req, res, newUser, function (err, passport) {
         if (err) {
           we.log.error('logIn error: ', err);
-          return res.negotiate(err);
+          return res.serverError(err);
         }
 
         if (res.locals.responseType === 'html') {
@@ -164,7 +164,6 @@ module.exports = {
         res.created({ token: passport.token, user: newUser });
       });
     });
-
   },
 
   /**
@@ -198,16 +197,27 @@ module.exports = {
    *
    * This action receives the static and JSON request
    */
-  login: function (req, res, next) {
+  login: function login(req, res, next) {
     var we = req.getWe();
 
     var email = req.body.email;
+    // save redirectTo
+    var redirectTo = we.auth.getRedirectUrl(req, res);
+    if (redirectTo) res.locals.redirectTo = redirectTo;
 
-    // TODO change this passport .authenticate to we.auth.authenticate
+    if (req.method !== 'POST') {
+      return we.auth.logOut(req, res, function (err) {
+        if (err) return res.serverError(err);
+        return res.ok();
+      });
+    }
+    // --  set req.body for error page
+    res.locals.record = req.body
+
     return we.passport.authenticate('local', function(err, user, info) {
       if (err) {
         we.log.error('AuthController:login:Error on get user ', err, email);
-        return res.serverError();
+        return res.serverError(err);
       }
 
       if (!user) {
@@ -231,12 +241,18 @@ module.exports = {
       we.auth.logIn(req, res, user, function (err, authToken) {
         if(err) return res.serverError(err);
         we.log.info('AuthController:login: user autheticated:', user.id, user.username);
-        res.send({
-          user: user,
-          token: authToken.token
-        });
-      });
 
+        if (err) {
+          we.log.error('logIn error: ', err);
+          return res.serverError(err);
+        }
+
+        res.locals.newUserCreated = true;
+        // redirect if are a html response
+        if (res.locals.responseType === 'html') return res.redirect( (redirectTo || '/') );
+
+        res.send({ user: user, token: authToken.token });
+      });
     })(req, res, next);
   },
 
@@ -287,7 +303,7 @@ module.exports = {
           we.auth.logIn(req, res, usr, function(err) {
             if (err) {
               we.log.error('logIn error:', err);
-              return res.negotiate(err);
+              return res.serverError(err);
             }
 
             return res.redirect(rediredtUrl);
@@ -295,20 +311,6 @@ module.exports = {
         }).catch(res.queryError);
       }).catch(res.queryError);
     });
-  },
-
-  forgotPasswordPage: function(req, res) {
-    res.locals.emailSend = false;
-
-    res.locals.messages = [];
-    res.locals.user = req.params.user;
-    if (!res.locals.user) res.locals.user = {};
-    res.locals.formAction = '/auth/forgot-password';
-
-    res.locals.template = 'auth/forgot-password';
-
-    // return home page and let emeberJs mount the page
-    res.view();
   },
 
   /**
@@ -324,31 +326,30 @@ module.exports = {
     res.locals.messages = [];
     res.locals.user = req.body.user;
 
+    // save redirectTo
+    var redirectTo = we.auth.getRedirectUrl(req, res);
+    if (redirectTo) res.locals.redirectTo = redirectTo;
+
+    if (req.method !== 'POST') return res.ok();
+
     if (!res.locals.user) res.locals.user = {};
     res.locals.formAction = '/auth/forgot-password';
 
     if (!email) {
-      res.addMessage('warning', 'auth.forgot-password.field.email.required');
-      return res.badRequest();
+      return res.badRequest('auth.forgot-password.field.email.required');
     }
 
     we.db.models.user.find({ where: {email: email }})
     .then(function (user) {
-      if (!user) {
-        we.log.warn('AuthController:forgotPassword: User not found', email);
-        res.addMessage('error', 'auth.forgot-password.user.not-found');
-        return res.badRequest();
-      }
+      if (!user)
+        return res.badRequest('auth.forgot-password.user.not-found');
 
       we.db.models.authtoken.create({
-        userId: user.id,
-        tokenType: 'resetPassword'
+        userId: user.id, tokenType: 'resetPassword'
       }).then(function (token) {
-        var appName = we.config.appName;
-
         var options = {
           email: user.email,
-          subject: appName + ' - ' + req.__('auth.forgot-password.reset-password'),
+          subject: we.config.appName + ' - ' + req.__('auth.forgot-password.reset-password'),
           from: we.config.email.siteEmail
         };
 
@@ -364,8 +365,7 @@ module.exports = {
             displayName: user.displayName
           },
           site: {
-            name: appName,
-            slogan: 'MIMI one slogan here',
+            name: we.config.appName,
             url: we.config.hostname
           },
           resetPasswordUrl: token.getResetUrl()
@@ -379,25 +379,14 @@ module.exports = {
 
           we.log.info('AuthResetPasswordEmail: Email resp:', emailResp);
 
-          if (res.locals.responseType == 'json') {
-            res.addMessage('success', 'auth.forgot-password.email.send');
-            return res.ok();
-          }
-
+          res.addMessage('success', 'auth.forgot-password.email.send');
           res.locals.emailSend = true;
-          req.flash('messages',[{
-            type: 'email_send',
-            status: 'success',
-            message: req.__('auth.forgot-password.email.send', {
-              displayName: user.displayName,
-              email: email,
-            })
-          }]);
 
-          res.redirect('/');
+          if (res.locals.responseType == 'json') return res.ok();
+          return res.ok();
         });
-      });
-    });
+      }).catch(res.queryError);
+    }).catch(res.queryError);
   },
 
   /**
@@ -511,60 +500,39 @@ module.exports = {
     });
   },
 
-  newPasswordPage: function newPasswordPage(req, res, next) {
-    if(!req.isAuthenticated()) return res.redirect('/');
-
-    var userId = req.params.id;
-
-    if (!userId) return next();
-
-    if (userId != req.user.id) return res.redirect('/auth/forgot-password');
-
-    // res.locals.oldPassword = req.param('password');
-    // res.locals.newPassword = req.param('newPassword');
-    // res.locals.rNewPassword = req.param('rNewPassword');
-    res.locals.formAction = '/auth/' + req.user.id + '/new-password';
-    res.locals.user = req.user;
-    res.locals.template = 'auth/new-password';
-
-    res.view();
-  },
-
+  /**
+   * newPassword page
+   * Page to set new user password after click in new password link
+   */
   newPassword: function newPasswordAction(req, res) {
-    if(!req.isAuthenticated()) return res.redirect('/');
-    if (!req.user.isAdmin && !req.session.resetPassword) return res.forbidden();
+    if (!req.isAuthenticated()) return res.redirect('/');
+
+    if (!req.user.isAdmin && !req.session.resetPassword)
+      return res.redirect('/auth/forgot-password');
 
     var we = req.getWe();
+
+    // save redirectTo
+    var redirectTo = we.auth.getRedirectUrl(req, res);
+    if (redirectTo) res.locals.redirectTo = redirectTo;
+
+    if (req.method !== 'POST') return res.ok();
 
     var newPassword = req.body.newPassword;
     var rNewPassword = req.body.rNewPassword;
     // var userId = req.param('id');
     var userId = req.user.id;
 
-    // TODO move this access check to one policy
-    if(!req.isAuthenticated() || req.user.id != userId) {
-      res.addMessage('error', 'auth.fochange-password.forbiden');
-      return res.badRequest();
+    if (!req.isAuthenticated() || req.user.id != userId) {
+      if (!req.user.isAdmin)
+        return res.badRequest('auth.new-password.forbiden');
     }
 
-    var hasError = false;
+    if ( _.isEmpty(newPassword) || _.isEmpty(rNewPassword) )
+      return res.badRequest('auth.confirmPassword.and.password.required');
 
-    //we.log.info('newPassword:' , newPassword , '| rNewPassword:' , rNewPassword);
-
-    if( _.isEmpty(newPassword) || _.isEmpty(rNewPassword) ){
-      res.addMessage('error', 'auth.confirmPassword.and.password.required');
-      hasError = true;
-    }
-
-    if(newPassword !== rNewPassword) {
-      res.addMessage('error', 'auth.newPassword.and.password.diferent');
-      hasError = true;
-    }
-
-    if( hasError ) {
-      // error on data or confirm password
-      return res.badRequest();
-    }
+    if (newPassword !== rNewPassword)
+      return res.badRequest('auth.newPassword.and.password.diferent');
 
     we.db.models.user.findById(userId)
     .then(function (user) {
@@ -572,12 +540,8 @@ module.exports = {
         we.log.info('newPassword: User not found', user);
         return res.serverError();
       }
-      user.updatePassword(newPassword, function(err) {
-        if (err) {
-          we.log.error('newPassword: Error on update user password', err);
-          return res.serverError();
-        }
-
+      user.updatePassword(newPassword, function (err) {
+        if (err) return res.serverError(err);
         // Reset req.session.resetPassword to indicate that the operation has been completed
         delete req.session.resetPassword;
 
@@ -585,32 +549,13 @@ module.exports = {
           return res.status(200).send({messages: res.locals.messages});
         }
 
-        req.flash('messages',[{
-          status: 'success',
-          type: 'updated',
-          message: req.__('New password set successfully')
-        }]);
+        res.addMessage('success', 'auth.new-password.set.successfully');
+        res.locals.successfully = true;
 
-        return res.redirect('/account');
-
+        if (res.locals.responseType == 'json') return res.ok();
+        return res.ok();
       });
-
-    });
-  },
-
-  changePasswordPage: function(req, res) {
-    if(!req.isAuthenticated()) return res.redirect('/');
-
-    res.locals.oldPassword = req.body.password;
-    res.locals.newPassword = req.body.newPassword;
-    res.locals.rNewPassword = req.body.rNewPassword;
-    res.locals.formAction = '/change-password';
-
-    res.locals.user = req.user;
-
-    res.locals.template = 'auth/change-password';
-
-    res.view();
+    }).catch(res.queryError);
   },
 
   /**
@@ -620,35 +565,32 @@ module.exports = {
     if(!req.isAuthenticated()) return res.redirect('/');
     var we = req.getWe();
 
+    // save redirectTo
+    var redirectTo = we.auth.getRedirectUrl(req, res);
+    if (redirectTo) res.locals.redirectTo = redirectTo;
+
+    if (req.method !== 'POST') return res.ok();
+
     var oldPassword = req.body.password;
     var newPassword = req.body.newPassword;
     var rNewPassword = req.body.rNewPassword;
-
     var userId = req.user.id;
 
-    res.locals.template = 'auth/change-password';
-
-    if(!req.isAuthenticated()) {
-      res.addMessage('error', 'auth.change-password.forbiden');
-      return res.badRequest();
-    }
+    if(!req.isAuthenticated())
+      return res.badRequest('auth.change-password.forbiden');
 
     // skip old password if have resetPassword flag in session
     if (!req.session.resetPassword) {
-      if (!oldPassword) {
-        res.addMessage('error', 'field.password.required');
-        return res.badRequest();
-      }
+      if (!oldPassword)
+        return res.badRequest('field.password.required');
     }
 
     if ( _.isEmpty(newPassword) || _.isEmpty(rNewPassword) ) {
-      res.addMessage('error', 'field.confirm-password.password.required');
-      return res.badRequest();
+      return res.badRequest('field.confirm-password.password.required');
     }
 
-    if (newPassword !== rNewPassword){
-      res.addMessage('error', 'field.password.confirm-password.diferent');
-      return res.badRequest();
+    if (newPassword !== rNewPassword) {
+      return res.badRequest('field.password.confirm-password.diferent');
     }
 
     we.db.models.user.findById(userId)
@@ -658,7 +600,7 @@ module.exports = {
         return res.badRequest();
       }
 
-      // skip password check if have resetPassord flag actives
+      // skip password check if have resetPassord flag active
       if (req.session.resetPassword) {
         return changePassword();
       } else {
@@ -674,7 +616,7 @@ module.exports = {
 
       function changePassword() {
         // set newPassword and save it for generate the password hash on update
-        user.updatePassword(newPassword, function(err) {
+        user.updatePassword(newPassword, function (err) {
           if(err) {
             we.log.error('Error on save user to update password: ', err);
             return res.serverError(err);
@@ -722,28 +664,9 @@ module.exports = {
           });
         })
       }
-
-    });
+    }).catch(res.queryError);
   }
 };
-
-/**
- * Default local variables for register locals
- *
- * @param {object} req express.js request
- * @param {object} res express.js response object
- */
-function setDefaultRegisterLocals(req, res){
-
-  var user = req.body;
-
-  res.locals.messages = [];
-  res.locals.user = user;
-  res.locals.formAction = '/signup';
-  res.locals.service = req.params.service;
-  res.locals.consumerId = req.params.consumerId;
-  res.locals.interests = [];
-}
 
 /**
  * Load user and auth token

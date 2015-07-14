@@ -32,14 +32,27 @@ module.exports = function UserModel(we) {
         }
       },
 
-      biography: { type: we.db.Sequelize.TEXT },
-      gender: { type: we.db.Sequelize.STRING },
+      displayName: { type: we.db.Sequelize.STRING },
+      fullname: { type: we.db.Sequelize.TEXT, formFieldType: 'text' },
+
+      biography: {
+        type: we.db.Sequelize.TEXT,
+        formFieldType: 'html',
+        formFieldHeight: 200
+      },
+
+      gender: {
+        type: we.db.Sequelize.STRING,
+        formFieldType: 'select' ,
+        fieldOptions: { M: 'Masculine', F: 'Feminine' }
+      },
 
       email: {
         // Email type will get validated by the ORM
         type: we.db.Sequelize.STRING,
         allowNull: false,
         unique: true,
+        formFieldType: 'static-text',
         validate: {
           isEmail: true,
           notEmptyOnCreate: function(val) {
@@ -67,13 +80,10 @@ module.exports = function UserModel(we) {
         }
       },
 
-      displayName: { type: we.db.Sequelize.STRING },
-
-      fullname: { type: we.db.Sequelize.TEXT },
-
       active: {
         type: we.db.Sequelize.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
+        formFieldType: null
       },
 
       language: {
@@ -81,19 +91,13 @@ module.exports = function UserModel(we) {
         defaultValue: 'pt-br',
         validations: {
           max: 6
-        }
+        },
+        formFieldType: null // TODO
       },
-
-      country: { type: we.db.Sequelize.STRING(5) },
-      // state UF
-      locationState: { type: we.db.Sequelize.STRING(10) },
-      city: { type: we.db.Sequelize.STRING },
-      address: { type: we.db.Sequelize.STRING },
-
-      avatarId: { type: we.db.Sequelize.BIGINT },
 
       confirmEmail: {
         type: we.db.Sequelize.VIRTUAL,
+        formFieldType: null,
         set: function (val) {
           this.setDataValue('confirmEmail', val);
         },
@@ -118,7 +122,8 @@ module.exports = function UserModel(we) {
 
       acceptTerms: {
         type: we.db.Sequelize.BOOLEAN,
-        equals: true
+        equals: true,
+        formFieldType: null
       }
     },
 
@@ -145,6 +150,10 @@ module.exports = function UserModel(we) {
           formFieldMultiple: false,
           onlyLowercase: false
         },
+      },
+      imageFields: {
+        avatar: { formFieldMultiple: false },
+        banner: { formFieldMultiple: false }
       },
 
       // table comment
@@ -258,6 +267,8 @@ module.exports = function UserModel(we) {
         },
         // Lifecycle Callbacks
         beforeCreate: function(user, options, next) {
+          // set default displayName as username
+          if (!user.displayName) user.displayName = user.username;
           // never save consumers on create
           delete user.consumers;
           // dont allow to set admin and moderator flags
@@ -269,6 +280,10 @@ module.exports = function UserModel(we) {
           next(null, user);
         },
         beforeUpdate: function(user, options, next) {
+          // set default displayName as username
+          if (!user.displayName) user.displayName = user.username;
+          // dont change user acceptTerms in update
+          user.acceptTerms = true;
           // sanitize attrs
           we.sanitizer.sanitizeAllAttr(user);
           return next(null, user);

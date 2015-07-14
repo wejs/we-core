@@ -3,6 +3,12 @@
  */
 
 (function (window, page) {
+
+if ($.timepicker) {
+  $.datepicker.setDefaults($.timepicker.regional[window.WE_BOOTSTRAP_CONFIG.locale]);
+  $.timepicker.setDefaults($.timepicker.regional[window.WE_BOOTSTRAP_CONFIG.locale]);
+}
+
 var we = {
   autoInitialize: true,
   config: {},
@@ -24,7 +30,6 @@ var we = {
       we.structure.regions[regions[i].id] = window.$(regions[i]);
     }
 
-    this.renderComponents();
     this.setElementEvents();
     //this.handlerErrorMessage();
 
@@ -321,8 +326,7 @@ we.Event.prototype = {
     if (this._listeners[event.type] instanceof Array) {
       var listeners = this._listeners[event.type];
       for (var i=0, len=listeners.length; i < len; i++){
-
-          listeners[i].apply(this, arguments);
+        listeners[i].apply(this, arguments);
       }
     }
   },
@@ -594,7 +598,10 @@ we.components = {
 we.message = {
   newMessage: function newMessage(status, message) {
     $('form[we-submit="ajax"] > fieldset').fadeIn('slow', function() {
-      $(this).append('<message class="alert alert-' + status + '">' + message + '</message>');
+      $(this).append('<div data-dismiss="alert" aria-label="Close" class="alert alert-' + status + '">'+
+        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+
+        message + '</div>'
+      );
     });
   },
 
@@ -617,46 +624,6 @@ $(window.document).ajaxError(function(e, xhr) {
       var msg = xhr.responseJSON.messages[i];
       we.message.closeMessage(we.message.newMessage(msg.status, msg.message))
     }
-  }
-});
-
-we.renderComponents = function renderComponents() {
-  var components = '<div class="we-components-area">';
-  // add widget modal
-  components += '<div id="AddWidgetFormModal" class="modal" aria-hidden="true">'+
-      '<div class="modal-dialog modal-lg">'+
-        '<div class="modal-content">'+
-          '<div class="modal-header">'+
-            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
-            '<h4 class="modal-title">Add widget</h4>'+
-          '</div>'+
-          '<div class="modal-body">'+
-            '<p>Loading ...</p>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-  // updateWidgetFormModal
-  components += '<div id="updateWidgetFormModal" class="modal" aria-hidden="true">'+
-    '<div class="modal-dialog modal-lg">'+
-      '<div class="modal-content">'+
-        '<div class="modal-header">'+
-          '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
-          '<h4 class="modal-title">Update widget</h4>'+
-        '</div>'+
-        '<div class="modal-body"></div>'+
-      '</div>'+
-    '</div>'+
-  '</div>';
-
-  components += '</div>';
-
-  $('body').append(components);
-}
-$(window.document).ajaxError(function(e, xhr, settings) {
-  for(var i = 0; i < xhr.responseJSON.messages.length; i++) {
-    var msg = xhr.responseJSON.messages[i];
-    we.message.closeMessage(we.message.newMessage(msg.status, msg.message))      
   }
 });
 
