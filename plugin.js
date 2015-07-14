@@ -335,12 +335,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //
     // -- User routes
     //
-    'get /user/:username?': {
-      controller    : 'user',
-      action        : 'findOneByUsername',
-      model         : 'user',
-      permission    : 'find_user'
-    },
+    // 'get /user/:username?': {
+    //   controller    : 'user',
+    //   action        : 'findOneByUsername',
+    //   model         : 'user',
+    //   permission    : 'find_user'
+    // },
     'get /user': {
       controller    : 'user',
       action        : 'find',
@@ -360,13 +360,19 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'user',
       permission    : 'create_user'
     },
-    'put /user/:id([0-9]+)': {
+    'get /user/:userId([0-9]+)/edit': {
       controller    : 'user',
-      action        : 'update',
+      action        : 'editPage',
       model         : 'user',
       permission    : 'update_user'
     },
-    'delete /user/:id([0-9]+)': {
+    'post /user/:userId([0-9]+)/edit': {
+      controller    : 'user',
+      action        : 'editPage',
+      model         : 'user',
+      permission    : 'update_user'
+    },
+    'delete /user/:userId([0-9]+)': {
       controller    : 'user',
       action        : 'destroy',
       model         : 'user',
@@ -553,6 +559,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     'link-to': __dirname + '/server/helpers/link-to.js',
     'template': __dirname + '/server/helpers/template.js',
     'we-menu':  __dirname + '/server/helpers/we-menu.js',
+    'we-user-menu':  __dirname + '/server/helpers/we-user-menu.js',
     'ifCond': __dirname + '/server/helpers/ifCond.js',
     'we-contains': __dirname + '/server/helpers/we-contains.js',
     'we-messages': __dirname + '/server/helpers/we-messages.js',
@@ -562,23 +569,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
   plugin.setLayouts({
-    default: __dirname + '/server/templates/default-layout.hbs'
-  });
-
-  plugin.setTemplates({
-    'region': __dirname + '/server/templates/region.hbs',
-    'messages': __dirname + '/server/templates/messages.hbs',
-    '400': __dirname + '/server/templates/400.hbs',
-    '403': __dirname + '/server/templates/403.hbs',
-    '404': __dirname + '/server/templates/404.hbs',
-    '500': __dirname + '/server/templates/500.hbs',
-    'components-core': __dirname + '/server/templates/components-core.hbs',
-
-    'auth/register': __dirname + '/server/templates/auth/register.hbs',
-    'auth/change-password': __dirname + '/server/templates/auth/change-password.hbs',
-    'auth/login': __dirname + '/server/templates/auth/login.hbs',
-    'auth/forgot-password': __dirname + '/server/templates/auth/forgot-password.hbs',
-    'auth/new-password': __dirname + '/server/templates/auth/new-password.hbs'
+    default: __dirname + '/server/templates/default-layout.hbs',
+    'user/layout': __dirname + '/server/templates/user/layout.hbs'
   });
 
   plugin.setWidgets({
