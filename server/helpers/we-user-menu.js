@@ -17,13 +17,27 @@ module.exports = function(we) {
           '<span class="caret"></span>'+
         '</a><ul class="dropdown-menu">';
 
+      html += '<li><a href="/user/'+this.req.user.id+'">'+
+        '<i class="glyphicon glyphicon-user"></i> '+
+        this.req.__('user.profile.view') +
+      '</a></li>';
+      html += '<li><a href="/user/'+this.req.user.id+'/edit">'+
+        '<i class="glyphicon glyphicon-pencil text-primary"></i> '+
+        this.req.__('user.profile.edit') +
+      '</a></li>';
+      html += '<li class="divider"></li>'+
+      '<li><a href="/auth/change-password">'+
+        '<i class="glyphicon glyphicon-lock text-warning"></i> '+
+        this.req.__('auth.change-password') +
+      '</a></li>';
+
       we.events.emit('we:render:user:menu:authenticated', {
         html: html, we: we, context: this
       });
 
       html += '<li class="divider"></li>'+
       '<li><a href="/auth/logout">'+
-        '<i class="glyphicon glyphicon-log-out"></i> Logout'+
+        '<i class="glyphicon glyphicon-log-out text-danger"></i> Logout'+
       '</a></li></ul></li>';
     } else {
 
