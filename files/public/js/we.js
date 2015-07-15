@@ -495,9 +495,22 @@ we.components = {
 
     table.dataTable(config);
   },
-  tableDrag: function tableDrag(selector){
-    $(selector).tableDrag();
+  tableDrag: function tableDrag(selector, options) {
+    if (!options) options =  {
+      weight: {fieldClass: 'row-weight', hidden: true },
+      parent: {
+        fieldClass: 'row-parent',
+        sourceFieldClass: 'id',
+        hidden: true
+      },
+      group: {
+        fieldClass: 'row-depth',
+        depthLimit: 3
+      }
+    };
+    $(selector).tableDrag(options);
   },
+
   editor: {
     styles: {
       small: [
