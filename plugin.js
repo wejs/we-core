@@ -88,7 +88,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // authMethod: '',
       // tls: ''
     },
-
+    // external services API keys
+    apiKeys: {},
     // node-i18n configs
     i18n: {
       // setup some locales - other locales default to en silently
