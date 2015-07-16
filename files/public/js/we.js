@@ -139,7 +139,7 @@ var we = {
 
   },
   handleWeElementEvent: function (e) {
-    event.preventDefault();
+    e.preventDefault();
 
     var element = $(e.target);
     var weEvent = element.attr('event');
