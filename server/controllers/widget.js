@@ -132,6 +132,8 @@ module.exports = {
 
       res.locals.controllFields = '';
 
+      setFormControllerAndModelVars(res, we);
+
       if (res.locals.type)
       res.locals.controllFields += '<input type="hidden" name="type" value="'+res.locals.type+'">';
       if (res.locals.layout)
@@ -172,6 +174,9 @@ module.exports = {
         _.merge(res.locals, widget);
 
         res.locals.controllFields = '';
+
+        setFormControllerAndModelVars(res, we);
+
         if (record.type)
           res.locals.controllFields += '<input type="hidden" name="type" value="'+record.type+'">';
         if (record.layout)
@@ -291,3 +296,24 @@ module.exports = {
     });
   }
 };
+
+function setFormControllerAndModelVars(res, we) {
+  res.locals.controllFields += '<div>';
+  // controller area
+  res.locals.controllFields += '<div class="form-group">';
+  res.locals.controllFields += '<label class="col-sm-4 control-label">Controller</label>';
+  res.locals.controllFields += '<div class="col-sm-8"><select name="controller" class="form-control"><option></option>';
+  for (var controllerName in we.controllers) {
+    res.locals.controllFields += '<option value="'+controllerName+'">'+controllerName+'</option>';
+  }
+  res.locals.controllFields += '</select></div></div>';
+  // model area
+  res.locals.controllFields += '<div class="form-group">';
+  res.locals.controllFields += '<label class="col-sm-4 control-label">Model</label>';
+  res.locals.controllFields += '<div class="col-sm-8"><select name="model" class="form-control"><option></option>';
+  for (var modelName in we.db.models) {
+    res.locals.controllFields += '<option value="'+modelName+'">'+modelName+'</option>';
+  }
+  res.locals.controllFields += '</select></div></div>';
+  res.locals.controllFields += '</div>';
+}

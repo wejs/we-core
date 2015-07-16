@@ -20,7 +20,6 @@ module.exports = function() {
     w += '<widget-content class="widget-content">';
       w += options.fn(this);
     w += '</widget-content>';
-
     w += '</widget>';
 
     return new hbs.SafeString(w);

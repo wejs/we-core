@@ -19,6 +19,9 @@ module.exports = function Model(we) {
         type:  we.db.Sequelize.STRING,
         allowNull: false
       },
+      // show only in this controller or action
+      controller: { type: we.db.Sequelize.STRING, },
+      action: { type: we.db.Sequelize.STRING },
 
       layout: {
         type:  we.db.Sequelize.STRING,
