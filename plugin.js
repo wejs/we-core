@@ -49,11 +49,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       expiresTime: 900000,
 
       strategies: {
-        bearer: true,
         // session
         local: {
           usernameField: 'email',
-          passwordField: 'password'
+          passwordField: 'password',
+          session: true
         }
       }
     },

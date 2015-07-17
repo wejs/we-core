@@ -20,7 +20,7 @@ module.exports = {
     var we = req.getWe();
     // log out user if it access register page
     we.auth.logOut(req, res, function(err) {
-      if(err) we.log.error(err);  
+      if(err) we.log.error(err);
       setDefaultRegisterLocals(req, res);
 
       res.locals.template = 'auth/register'
@@ -149,7 +149,7 @@ module.exports = {
         });
       }
 
-      we.auth.logIn(req, res, newUser, function (err, passport) {
+      we.auth.logIn(req, res, newUser, function (err) {
         if (err) {
           we.log.error('logIn error: ', err);
           return res.serverError(err);
@@ -161,7 +161,7 @@ module.exports = {
 
         res.locals.newUserCreated = true;
 
-        res.created({ token: passport.token, user: newUser });
+        res.created({ user: newUser });
       });
     });
   },
@@ -238,8 +238,8 @@ module.exports = {
         return res.badRequest();
       }
 
-      we.auth.logIn(req, res, user, function (err, authToken) {
-        if(err) return res.serverError(err);
+      we.auth.logIn(req, res, user, function (err) {
+        if (err) return res.serverError(err);
         we.log.info('AuthController:login: user autheticated:', user.id, user.username);
 
         if (err) {
@@ -251,7 +251,7 @@ module.exports = {
         // redirect if are a html response
         if (res.locals.responseType === 'html') return res.redirect( (redirectTo || '/') );
 
-        res.send({ user: user, token: authToken.token });
+        res.send({ user: user});
       });
     })(req, res, next);
   },

@@ -91,8 +91,6 @@ describe('authFeature', function () {
         assert.equal(res.body.user.biography, userStub.biography);
         assert.equal(res.body.user.language, userStub.language);
 
-        assert(res.body.token);
-
         // use setTime out to skip supertest error
         // see: https://github.com/visionmedia/superagent/commit/04a04e22a4126bd64adf85b1f41f2962352203d1
         setTimeout(function() {
@@ -254,8 +252,6 @@ describe('authFeature', function () {
         assert.equal(res.body.user.displayName, salvedUser.displayName);
         assert.equal(res.body.user.id, salvedUser.id);
         assert.equal(res.body.user.username, salvedUser.username);
-
-        assert(res.body.token);
 
         // todo add a static login form
         done();
@@ -442,8 +438,6 @@ describe('authFeature', function () {
               assert.equal(res.body.user.id, salvedUser.id);
               assert.equal(res.body.user.username, salvedUser.username);
 
-              assert(res.body.token);
-
               // todo add a static login form
               done();
             });
@@ -501,9 +495,6 @@ describe('authFeature', function () {
           assert.equal(res.body.user.displayName, salvedUser.displayName);
           assert.equal(res.body.user.id, salvedUser.id);
           assert.equal(res.body.user.username, salvedUser.username);
-
-          assert(res.body.token);
-
           // todo add a static login form
           done();
         });
