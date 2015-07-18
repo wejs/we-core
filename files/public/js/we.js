@@ -510,6 +510,12 @@ we.components = {
     };
     $(selector).tableDrag(options);
   },
+  metisMenu: function metisMenu(selector, options) {
+    if (!options)
+      options = {};
+    
+    $(selector).metisMenu(options);
+  },
 
   editor: {
     styles: {
