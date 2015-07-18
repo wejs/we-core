@@ -22,7 +22,6 @@ module.exports = function(we) {
     if (link.roles && !we.config.acl.disabled) {
       if (!haveAccess(ctx.userRoleNames, link.roles)) return '';
     }
-
     switch (link.type) {
       case 'route':
         return '<li class="'+(link.class || '')+'"><a href="'+we.router.urlTo(link.name, link.params, we)+'" '+
@@ -52,7 +51,7 @@ module.exports = function(we) {
     var ctx = ( options.data.root.req || options.data.root.locals.req );
 
     var __ = (this.__ || we.i18n.__);
-
+    
     if (!we.config.menu[name]) {
       we.log.verbose('Menu not found with name:', name);
       return '';
