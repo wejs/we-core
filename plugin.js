@@ -363,13 +363,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     'get /user/:userId([0-9]+)/edit': {
       controller    : 'user',
-      action        : 'editPage',
+      action        : 'edit',
       model         : 'user',
       permission    : 'update_user'
     },
     'post /user/:userId([0-9]+)/edit': {
       controller    : 'user',
-      action        : 'editPage',
+      action        : 'edit',
       model         : 'user',
       permission    : 'update_user'
     },
