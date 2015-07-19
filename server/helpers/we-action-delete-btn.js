@@ -1,7 +1,7 @@
 /**
- * Model action edit btn
+ * Model action delete btn
  *
- * {{we-action-edit-btn modelName record [params...] req}}
+ * {{we-action-delete-btn modelName record [params...] req}}
  *
  */
 var _ = require('lodash');
@@ -20,15 +20,15 @@ module.exports = function(we) {
       }
     }
 
-    if (we.acl.canStatic('update_' + modelName, roles)) {
+    if (we.acl.canStatic('delete_' + modelName, roles)) {
       var params = [];
       for (var i = 3; i < arguments.length-1; i++) {
         params.push(arguments[i]);
       }
 
-      return new we.hbs.SafeString(we.view.renderTemplate('model/edit-btn', req.res.locals.theme, {
-        url: we.router.urlTo(modelName + '.edit', params),
-        text: req.__('Edit')
+      return new we.hbs.SafeString(we.view.renderTemplate('model/delete-btn', req.res.locals.theme, {
+        url: we.router.urlTo(modelName + '.delete', params),
+        text: req.__('Delete')
       }));
     } else {
       return '';
