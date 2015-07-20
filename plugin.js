@@ -46,7 +46,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       cookieDomain: 'localhost:' + ( process.env.PORT || '3000' ),
       cookieName: 'weoauth',
       cookieSecure: false,
-      expiresTime: 900000,
+      expiresTime: 900000, // time to expires token and session
 
       strategies: {
         // session
@@ -363,13 +363,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     'get /user/:userId([0-9]+)/edit': {
       controller    : 'user',
-      action        : 'editPage',
+      action        : 'edit',
       model         : 'user',
       permission    : 'update_user'
     },
     'post /user/:userId([0-9]+)/edit': {
       controller    : 'user',
-      action        : 'editPage',
+      action        : 'edit',
       model         : 'user',
       permission    : 'update_user'
     },
@@ -548,35 +548,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
   });
 
-  plugin.setHelpers({
-    'render-metadata-tags': __dirname + '/server/helpers/render-metadata-tags.js',
-    'render-stylesheet-tags': __dirname + '/server/helpers/render-stylesheet-tags.js',
-    'render-javascript-tags': __dirname + '/server/helpers/render-javascript-tags.js',
-    'render-bootstrap-config': __dirname + '/server/helpers/render-bootstrap-config.js',
-    't':  __dirname + '/server/helpers/t.js',
-    'widget-wrapper': __dirname + '/server/helpers/widget-wrapper.js',
-    'layout': __dirname + '/server/helpers/layout.js',
-    'region': __dirname + '/server/helpers/region.js',
-    'link-to': __dirname + '/server/helpers/link-to.js',
-    'template': __dirname + '/server/helpers/template.js',
-    'we-menu':  __dirname + '/server/helpers/we-menu.js',
-    'we-user-menu':  __dirname + '/server/helpers/we-user-menu.js',
-    'ifCond': __dirname + '/server/helpers/ifCond.js',
-    'we-contains': __dirname + '/server/helpers/we-contains.js',
-    'we-messages': __dirname + '/server/helpers/we-messages.js',
-    'we-date': __dirname + '/server/helpers/we-date.js',
-    'isArray': __dirname + '/server/helpers/isArray.js',
-    'render-client-component-templates': __dirname + '/server/helpers/render-client-component-templates.js'
-  });
-
   plugin.setLayouts({
     default: __dirname + '/server/templates/default-layout.hbs',
     'user/layout': __dirname + '/server/templates/user/layout.hbs'
-  });
-
-  plugin.setWidgets({
-    html: __dirname + '/server/widgets/html',
-    menu: __dirname + '/server/widgets/menu'
   });
 
   plugin.assets.addCoreAssetsFiles(plugin);

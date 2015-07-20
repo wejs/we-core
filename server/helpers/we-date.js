@@ -13,8 +13,12 @@ module.exports = function(we) {
     var d = moment(date);
     if (!d.isValid()) return '';
 
-    var req = options.data.root.req;
-    if (!req) req = this.locals.req;
+    var req;
+    if (options.data.root.req) {
+      req = options.data.root.req;
+    }
+
+    if (!req) req = options.data.root.locals.req;
     if (req && req.user) d.locale(req.user.language);
 
     if (format && typeof format === 'string') {

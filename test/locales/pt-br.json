@@ -77,5 +77,7 @@
 	"not.found": "not.found",
 	"go.to": "go.to",
 	"home": "home",
-	"auth.change-password": "auth.change-password"
+	"auth.change-password": "auth.change-password",
+	"yes": "yes",
+	"no": "no"
 }

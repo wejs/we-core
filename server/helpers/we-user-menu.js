@@ -41,9 +41,18 @@ module.exports = function(we) {
       '</a></li></ul></li>';
     } else {
 
+      html+= '<li><a href="/login">'+this.req.__('Login')+'</a></li>';
+
       we.events.emit('we:render:user:menu:unAuthenticated', {
         html: html, we: we, context: this
       });
+
+      html+= '<li class="dropdown">'+
+        '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>'+
+        '<ul class="dropdown-menu">'+
+          '<li><a href="/signup">'+this.req.__('Register')+'</a></li>'+
+        '</ul>'+
+      '</li>';
     }
 
     return new we.hbs.SafeString(html);
