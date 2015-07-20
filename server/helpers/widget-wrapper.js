@@ -7,6 +7,9 @@ var hbs = require('hbs');
 
 module.exports = function() {
   return function renderWidgetBlock(record, options) {
+    // flag to hide this widget
+    if (record.hide) return '';
+
     var w = '<widget data-widget-type="'+record.type+
     '" model-widget="'+record.id+'" class="widget widget-'+record.type+'">';
 
