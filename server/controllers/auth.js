@@ -26,9 +26,6 @@ module.exports = {
       return;
     }
 
-    var redirectTo = we.auth.getRedirectUrl(req, res);
-    if (redirectTo) res.locals.redirectTo = redirectTo;
-
     if (req.method !== 'POST') {
       return we.auth.logOut(req, res, function (err) {
         if (err) return res.serverError(err);
@@ -94,7 +91,7 @@ module.exports = {
 
       if (requireAccountActivation) {
         return we.db.models.authtoken.create({
-          userId: newUser.id, redirectUrl: redirectTo
+          userId: newUser.id, redirectUrl: res.locals.redirectTo
         }).then(function (token) {
           var templateVariables = {
             user: newUser,
@@ -142,7 +139,7 @@ module.exports = {
         }
 
         if (res.locals.responseType === 'html') {
-          return res.redirect( (redirectTo || '/') );
+          return res.redirect( (res.locals.redirectTo || '/') );
         }
 
         res.locals.newUserCreated = true;
@@ -187,9 +184,6 @@ module.exports = {
     var we = req.getWe();
 
     var email = req.body.email;
-    // save redirectTo
-    var redirectTo = we.auth.getRedirectUrl(req, res);
-    if (redirectTo) res.locals.redirectTo = redirectTo;
 
     if (req.method !== 'POST') {
       return we.auth.logOut(req, res, function (err) {
@@ -235,7 +229,7 @@ module.exports = {
 
         res.locals.newUserCreated = true;
         // redirect if are a html response
-        if (res.locals.responseType === 'html') return res.redirect( (redirectTo || '/') );
+        if (res.locals.responseType === 'html') return res.redirect( (res.locals.redirectTo || '/') );
 
         res.send({ user: user});
       });
@@ -311,10 +305,6 @@ module.exports = {
     res.locals.emailSend = false;
     res.locals.messages = [];
     res.locals.user = req.body.user;
-
-    // save redirectTo
-    var redirectTo = we.auth.getRedirectUrl(req, res);
-    if (redirectTo) res.locals.redirectTo = redirectTo;
 
     if (req.method !== 'POST') return res.ok();
 
@@ -498,10 +488,6 @@ module.exports = {
 
     var we = req.getWe();
 
-    // save redirectTo
-    var redirectTo = we.auth.getRedirectUrl(req, res);
-    if (redirectTo) res.locals.redirectTo = redirectTo;
-
     if (req.method !== 'POST') return res.ok();
 
     var newPassword = req.body.newPassword;
@@ -550,10 +536,6 @@ module.exports = {
   changePassword: function (req, res) {
     if(!req.isAuthenticated()) return res.redirect('/');
     var we = req.getWe();
-
-    // save redirectTo
-    var redirectTo = we.auth.getRedirectUrl(req, res);
-    if (redirectTo) res.locals.redirectTo = redirectTo;
 
     if (req.method !== 'POST') return res.ok();
 
