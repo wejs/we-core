@@ -10,8 +10,8 @@ module.exports = function(we) {
   return function renderWidget(modelName, req) {
     var roles = _.clone(req.userRoleNames);
     var options = arguments[arguments.length-1];
-    var redirectTo = req.url;
 
+    var redirectTo = req.url;
     if (options.hash.redirectTo) redirectTo = options.hash.redirectTo;
 
     if (we.acl.canStatic('create_' + modelName, roles)) {
