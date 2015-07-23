@@ -18,11 +18,11 @@ module.exports = function(we) {
 
     for (var i = 0; i < items.length; i++) {
       if (rowInit) {
-        html += '<div class="row">';
+        html += '<div class="row we-grid-row">';
         rowInit = false;
       }
 
-      html += '<div class="col col-md-'+ bsColSize +'">';
+      html += '<div class="we-grid-col col col-md-'+ bsColSize +'">';
         html += options.fn(items[i]);
       html += '</div>';
 
@@ -33,6 +33,8 @@ module.exports = function(we) {
         html += '</div>';
       }
     }
+
+    if (!rowInit) html += '</div>';
 
     return new we.hbs.SafeString(html);
   }
