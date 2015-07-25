@@ -1,29 +1,26 @@
 /**
- * We menu helper
+ * We messages helper
  *
- * render one menu from app configs
+ * render all messages
  *
- * usage:  {{#we-menu 'manuName'}} {{/we-menu}}
+ * usage:  {{we-messages}}
  */
-var hbs = require('hbs');
 
 module.exports = function(we) {
   return function renderMessages() {
     var options = arguments[arguments.length-1];
-    var messages = [];
     var html = '';
+    var locals = options.data.root;
 
-    var theme = options.data.root.theme;
+    var messages = locals.req.res.getMessages();
+
+    var theme = locals.theme;
     if (!theme) theme = we.view.appTheme;
-
-    if (options.data.root && options.data.root.messages) {
-      messages = options.data.root.messages;
-    }
 
     html += we.view.renderTemplate('messages', theme, {
       messages: messages
     });
 
-    return new hbs.SafeString(html);
+    return new we.hbs.SafeString(html);
   }
 }
