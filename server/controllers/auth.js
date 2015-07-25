@@ -127,6 +127,8 @@ module.exports = {
             res.locals.authToken = token;
             res.locals.newUserCreated = true;
 
+            res.locals.skipRedirect = true;
+
             return res.created();
           });
         });
