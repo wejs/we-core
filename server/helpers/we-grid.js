@@ -8,6 +8,7 @@ module.exports = function(we) {
     var options = arguments[arguments.length-1];
     var items = options.hash.items;
     var cols = options.hash.cols || 3;
+    var colsPerRow = cols;
     // bootstrap col size
     var bsColSize = (parseInt(12/cols));
 
@@ -27,9 +28,8 @@ module.exports = function(we) {
       html += '</div>';
 
       if (i == (cols-1) ) {
-        cols = cols*2;
+        cols = cols + colsPerRow;
         rowInit = true;
-
         html += '</div>';
       }
     }
