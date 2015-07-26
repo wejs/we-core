@@ -1,0 +1,29 @@
+we-region {
+  display: block;
+}
+.we-region-actions {
+  display: none;
+  padding: 4px;
+  background-color: gold;
+  border: 2px outset salmon;
+}
+
+
+.we-region-widget-actions {
+  display: none;
+  padding: 4px;
+  background-color: lightblue;
+  border: 2px outset chocolate;
+}
+
+.we-layout-edit-btn {
+  display: block;
+  position: fixed;
+  bottom: 0px;
+  margin-left: 2px;
+}
+
+body.we-editing-layout .we-region-actions,
+body.we-editing-layout .we-region-widget-actions {
+  display: block;
+}

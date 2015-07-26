@@ -442,6 +442,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'widget',
       permission    : 'update_widget'
     },
+
+    'get /api/v1/widget-types': {
+      controller    : 'widget',
+      action        : 'getSelectWidgetTypes',
+      model         : 'widget',
+      permission    : 'create_widget',
+      responseType  : 'json'
+    },
+
     'get /api/v1/widget-form/:theme/:layout/:type': {
       controller    : 'widget',
       action        : 'getCreateForm',

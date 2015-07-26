@@ -108,6 +108,17 @@ module.exports = {
     });
   },
 
+  getSelectWidgetTypes: function getSelectWidgetTypes(req, res) {
+    var we = req.getWe();
+    res.locals.layout = null;
+    res.locals.widgetContext = req.query.widgetContext;
+
+    res.locals.widgetTypes = Object.keys(we.view.widgets);
+
+    // var html = we.view.renderTemplate('widget/selectWidgetTypeForm', res.locals.theme, res.locals);
+    return res.send({ widget: res.locals.widgetTypes});
+  },
+
   getCreateForm: function getCreateForm(req, res) {
     var we = req.getWe();
 

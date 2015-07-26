@@ -1,1 +1,7 @@
-<we-region id="{{name}}" class="{{attrs.class}}">{{{widgets}}}</we-region>
+<we-region id="region-{{name}}" class="{{attrs.class}}">
+  <div class="we-region-actions">
+    {{name}}:
+      <button onclick="we.structure.openAddWidgetForm('{{name}}');" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button>
+  </div>
+  {{{widgets}}}
+</we-region>

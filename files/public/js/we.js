@@ -131,12 +131,10 @@ var we = {
           $('[model-widget='+id+']').remove();
         });
       }
-
     });
 
     we.events.on('model-update', self.model.liveUpdate);
     we.events.on('model-delete', self.model.liveDelete);
-
   },
   handleWeElementEvent: function (e) {
     e.preventDefault();
@@ -169,7 +167,52 @@ var we = {
 };
 
 we.structure = {
+  addWidgetModalFormId: '#AddWidgetFormModal',
+
+  showLayoutEditor: function showLayoutEditor() {
+    $('#we-layout-start-edit-btn').hide();
+    $('#we-layout-stop-edit-btn').show();
+
+    $('body').addClass('we-editing-layout');
+  },
+  hideLayoutEditor: function hideLayoutEditor() {
+    $('#we-layout-start-edit-btn').show();
+    $('#we-layout-stop-edit-btn').hide();
+    $('body').removeClass('we-editing-layout');
+  },
   regions: {},
+
+  newWidgetObj: {},
+  openAddWidgetForm: function openAddWidgetForm(regionName) {
+    var modal = $(we.structure.addWidgetModalFormId);
+    if (!modal) throw new Error('Add widget modal not found!', we.structure.addWidgetModalFormId);
+
+    this.newWidgetObj = {
+      theme: '',
+      layout: $('layout').attr('data-we-layout'),
+      type: '',
+      regionName: regionName,
+      context: $('layout').attr('data-we-widgetcontext')
+    };
+
+    $.get('/api/v1/widget-types').then(function(r){
+
+      $('#AddWidgetFormModal-select-type').select2({
+        data: r.widget.map(function (name){
+          return { id : name, text: name };
+        })
+      });
+    });
+
+
+
+    // 1 selecionar tipo de widget
+    // 2
+
+    // var url = '/api/v1/widget-form/' + form.find('input[name=theme]').val();
+      modal.modal('show');
+  },
+
   openWidgetForm: function openWidgetForm(event) {
     event.preventDefault();
 
@@ -513,7 +556,7 @@ we.components = {
   metisMenu: function metisMenu(selector, options) {
     if (!options)
       options = {};
-    
+
     $(selector).metisMenu(options);
   },
 
