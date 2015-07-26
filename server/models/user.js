@@ -6,7 +6,7 @@
  *
  */
 
-var userNameRegex = /^[A-Za-z0-9_-]{4,30}$/;
+var userNameRegex = /^[A-Za-z0-9_-]{2,30}$/;
 
 module.exports = function UserModel(we) {
   var model = {
@@ -123,6 +123,7 @@ module.exports = function UserModel(we) {
       acceptTerms: {
         type: we.db.Sequelize.BOOLEAN,
         equals: true,
+        allowNull: false,
         formFieldType: null
       }
     },
@@ -291,48 +292,6 @@ module.exports = function UserModel(we) {
       }
     }
   };
-
-  // // wejs provider id
-
-
-  // attributes: {
-
-
-  //   birthDate: 'date',
-
-  //   // avatar: {
-  //   //   model: 'images'
-  //   // },
-
-  //   active: {
-  //     type: 'boolean',
-  //     defaultsTo: false
-  //   },
-
-  //   isAdmin: {
-  //     type: 'boolean',
-  //     defaultsTo: false
-  //   },
-
-  //   isModerator: {
-  //     type: 'boolean',
-  //     defaultsTo: false
-  //   },
-
-
-  //   // instant | daily | semanal
-  //   emailNotificationFrequency: {
-  //     type: 'string',
-  //     defaultsTo: 'instant'
-  //   },
-
-  //   // // * @param  {boolean} preserve    true to preserve database data
-  //   // roles: {
-  //   //   collection: 'role',
-  //   //   via: 'users'
-  //   // }
-  // },
-
 
   return model;
 };
