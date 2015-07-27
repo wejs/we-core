@@ -79,5 +79,8 @@
 	"home": "home",
 	"auth.change-password": "auth.change-password",
 	"yes": "yes",
-	"no": "no"
+	"no": "no",
+	"Widget": "Widget",
+	"Edit": "Edit",
+	"Delete": "Delete"
 }
