@@ -105,32 +105,30 @@ module.exports = {
             subject: req.__('we.email.AccontActivationEmail.subject', templateVariables),
             to: newUser.email
           };
-
-          return we.email.sendEmail('AccontActivationEmail',
+          // send email in async
+          we.email.sendEmail('AccontActivationEmail',
             options, templateVariables,
           function (err) {
             if (err) {
               we.log.error('Action:Login sendAccontActivationEmail:', err);
               return res.serverError();
             }
-
-            res.addMessage('warning', {
-              text: 'auth.register.require.email.activation',
-              vars: {
-                email: newUser.email
-              }
-            }, {
-              requireActivation: true,
-              email: newUser.email
-            });
-
-            res.locals.authToken = token;
-            res.locals.newUserCreated = true;
-
-            res.locals.skipRedirect = true;
-
-            return res.created();
           });
+
+          res.addMessage('warning', {
+            text: 'auth.register.require.email.activation',
+            vars: {
+              email: newUser.email
+            }
+          }, {
+            requireActivation: true,
+            email: newUser.email
+          });
+
+          res.locals.authToken = token;
+          res.locals.newUserCreated = true;
+          res.locals.skipRedirect = true;
+          return res.created();
         });
       }
 
@@ -354,15 +352,13 @@ module.exports = {
             we.log.error('Error on send email AuthResetPasswordEmail', err, emailResp);
             return res.serverError();
           }
-
-          we.log.info('AuthResetPasswordEmail: Email resp:', emailResp);
-
-          res.addMessage('success', 'auth.forgot-password.email.send');
-          res.locals.emailSend = true;
-
-          if (res.locals.responseType == 'json') return res.ok();
-          return res.ok();
+          we.log.verbose('AuthResetPasswordEmail: Email resp:', emailResp);
         });
+
+        res.addMessage('success', 'auth.forgot-password.email.send');
+        res.locals.emailSend = true;
+        if (res.locals.responseType == 'json') return res.ok();
+        return res.ok();
       }).catch(res.queryError);
     }).catch(res.queryError);
   },
