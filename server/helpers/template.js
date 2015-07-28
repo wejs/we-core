@@ -10,10 +10,11 @@ module.exports = function(we) {
     // find context to get theme name
     if (this.theme) {
       ctx = this;
-    } else if (this.locals.theme) {
+    } else if (this.locals && this.locals.theme) {
       ctx = this.locals;
     } else {
       we.log.warn('we-core:helper:locals not found');
+      return '';
     }
     var theme = ctx.theme;
     // if not find the theme name get default themes
