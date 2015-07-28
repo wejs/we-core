@@ -275,9 +275,6 @@ module.exports = function UserModel(we) {
           // dont allow to set admin and moderator flags
           delete user.isAdmin;
           delete user.isModerator;
-          // sanitize
-          we.sanitizer.sanitizeAllAttr(user);
-
           next(null, user);
         },
         beforeUpdate: function(user, options, next) {
@@ -285,8 +282,6 @@ module.exports = function UserModel(we) {
           if (!user.displayName) user.displayName = user.username;
           // dont change user acceptTerms in update
           user.acceptTerms = true;
-          // sanitize attrs
-          we.sanitizer.sanitizeAllAttr(user);
           return next(null, user);
         }
       }
