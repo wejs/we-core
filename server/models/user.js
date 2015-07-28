@@ -263,7 +263,6 @@ module.exports = function UserModel(we) {
             user.dataValues.password = null;
             user.dataValues.passwordId = null;
           }
-
           next(null, user);
         },
         // Lifecycle Callbacks
