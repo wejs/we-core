@@ -33,7 +33,7 @@ module.exports = function UserModel(we) {
       },
 
       displayName: { type: we.db.Sequelize.STRING },
-      fullname: { type: we.db.Sequelize.TEXT, formFieldType: 'text' },
+      fullName: { type: we.db.Sequelize.TEXT, formFieldType: 'text' },
 
       biography: {
         type: we.db.Sequelize.TEXT,
