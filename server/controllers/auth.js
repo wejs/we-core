@@ -139,7 +139,7 @@ module.exports = {
         }
 
         if (res.locals.responseType === 'html') {
-          return res.redirect( (res.locals.redirectTo || '/') );
+          return res.goTo( (res.locals.redirectTo || '/') );
         }
 
         res.locals.newUserCreated = true;
@@ -159,22 +159,9 @@ module.exports = {
     we.auth.logOut(req, res, function (err) {
       if (err)
       we.log.error('Error on logout user', req.id, req.cookie);
-      res.redirect('/');
+      res.goTo('/');
     })
   },
-
-  // get login page
-  loginPage: function loginPage(req, res) {
-    if (req.isAuthenticated()) return res.redirect('/');
-
-    res.locals.messages = [];
-    res.locals.user = {};
-
-    res.locals.template = 'auth/login';
-
-    res.view();
-  },
-
   /**
    * Login API
    *
@@ -229,7 +216,7 @@ module.exports = {
 
         res.locals.newUserCreated = true;
         // redirect if are a html response
-        if (res.locals.responseType === 'html') return res.redirect( (res.locals.redirectTo || '/') );
+        if (res.locals.responseType === 'html') return res.goTo( (res.locals.redirectTo || '/') );
 
         res.send({ user: user});
       });
@@ -248,7 +235,7 @@ module.exports = {
 
     var responseForbiden = function responseForbiden() {
       res.addMessage('warning', 'auth.access.invalid.token');
-      return res.badRequest();
+      return res.goTo('/login');
     };
 
     we.db.models.authtoken.validAuthToken(user.id, token, function (err, result, authToken) {
@@ -286,7 +273,7 @@ module.exports = {
               return res.serverError(err);
             }
 
-            return res.redirect(rediredtUrl);
+            return res.goTo(rediredtUrl);
           });
         }).catch(res.queryError);
       }).catch(res.queryError);
@@ -435,7 +422,7 @@ module.exports = {
           type: 'updated',
           message: req.__('auth.consumeForgotPasswordToken.token.invalid')
         }]);
-        return res.redirect('/auth/forgot-password');
+        return res.goTo('/auth/forgot-password');
       }
 
       if (user.active) {
@@ -464,7 +451,7 @@ module.exports = {
               return res.status(200).send();
             }
 
-            res.redirect( '/auth/' + user.id + '/new-password/');
+            res.goTo( '/auth/' + user.id + '/new-password/');
           }).catch(function(err) {
             if (err) we.log.error('auth:consumeForgotPasswordToken: Error on dstroy token:', err);
           });
@@ -479,10 +466,10 @@ module.exports = {
    * Page to set new user password after click in new password link
    */
   newPassword: function newPasswordAction(req, res) {
-    if (!req.isAuthenticated()) return res.redirect('/');
+    if (!req.isAuthenticated()) return res.goTo('/');
 
     if (!req.user.isAdmin && !req.session.resetPassword)
-      return res.redirect('/auth/forgot-password');
+      return res.goTo('/auth/forgot-password');
 
     var we = req.getWe();
 
@@ -532,7 +519,7 @@ module.exports = {
    * Change authenticated user password
    */
   changePassword: function (req, res) {
-    if(!req.isAuthenticated()) return res.redirect('/');
+    if(!req.isAuthenticated()) return res.goTo('/');
     var we = req.getWe();
 
     if (req.method !== 'POST') return res.ok();
