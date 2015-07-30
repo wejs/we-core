@@ -476,7 +476,10 @@ we.components = {
     var isAjax = Boolean(url);
 
     var colNames = table.find('thead th').map(function (i, e) {
-      return { 'data': $(e).attr('we-model-attr') };
+      return {
+        'data': $(e).attr('we-model-attr'),
+        'type': $(e).attr('data-type')
+      };
     });
 
     var config = {
@@ -493,7 +496,13 @@ we.components = {
               return '';
             }
           } else {
-            if (data) return data;
+            if (data) {
+              if (colName.type == 'date') {
+                data = window.moment(data).format('L hh:mm');
+              }
+
+              return data;
+            }
             return '';
           }
         }};
