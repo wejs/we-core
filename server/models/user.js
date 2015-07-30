@@ -22,6 +22,7 @@ module.exports = function UserModel(we) {
             }
           },
           uniqueUsername: function(val, cb) {
+            if(!val) return cb();
             return we.db.models.user.findOne({
               where: { username: val }, attributes: ['id']
             }).then(function (u) {
