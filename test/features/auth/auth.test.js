@@ -315,7 +315,7 @@ describe('authFeature', function () {
 
       request(http)
       .get('/user/'+ salvedUser.id +'/activate/aninvalidtoken')
-      .expect(400)
+      .expect(302)
       .end(function (err, res) {
         if (err) throw err;
 
@@ -330,7 +330,7 @@ describe('authFeature', function () {
       salvedUser.save().then(function () {
         request(http)
         .get('/user/10/activate/aninvalidtoken')
-        .expect(400)
+        .expect(302)
         .end(function (err, res) {
           if (err) throw err;
 
