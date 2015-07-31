@@ -5,8 +5,6 @@
  * @description	:: Contains logic for handling requests.
  */
 var fs = require('fs');
-var converter = require('../../lib/database/converter');
-var staticModels;
 
 module.exports = {
   /**
@@ -94,25 +92,6 @@ module.exports = {
       }
 
     });
-
-  },
-
-  /**
-   * Get all sails models converted to ember.js model
-   *
-   * TODO check if user is admin
-   */
-  getAllModelsAsEmberModel: function(req, res) {
-    var we = req.getWe();
-
-    // cache it in a static variable
-    if ( !staticModels) {
-      staticModels = converter.convertMultipleToEmberJSFile( we.db.modelsConfigs );
-    }
-
-    res.set('Content-Type', 'application/javascript');
-
-    res.send(staticModels);
   },
 
   getRoutes: function(req, res) {

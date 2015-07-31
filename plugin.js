@@ -201,14 +201,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       responseType  : 'json',
       permission    : true
     },
-
-    // ember.js models generated from sails.js models
-    'get /api/v1/models/emberjs': {
-      controller: 'main',
-      action: 'getAllModelsAsEmberModel',
-      responseType  : 'json'
-    },
-
     //
     // - Auth routes
     //
