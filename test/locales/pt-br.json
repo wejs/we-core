@@ -82,5 +82,6 @@
 	"no": "no",
 	"Widget": "Widget",
 	"Edit": "Edit",
-	"Delete": "Delete"
+	"Delete": "Delete",
+	"widget.delete.confirm.msg": "widget.delete.confirm.msg"
 }

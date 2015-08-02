@@ -2,7 +2,6 @@ var assert = require('assert');
 var request = require('supertest');
 var helpers = require('we-test-tools').helpers;
 var stubs = require('we-test-tools').stubs;
-var _ = require('lodash');
 var http;
 var we;
 
@@ -38,13 +37,13 @@ describe('widgetFeature', function() {
   describe('CRUD', function() {
     it('post /api/v1/widget should create one widget and return it as HTML', function (done) {
       var w = widgetStub();
+      w.html =':) a html <strong>text</strong>';
       request(http)
       .post('/api/v1/widget')
       .send(w)
       .expect(201)
       .end(function (err, res) {
         if (err) throw err;
-        //console.log('>>>', res.text);
         assert(res.text);
         done();
       });
@@ -64,7 +63,6 @@ describe('widgetFeature', function() {
         assert(res.body.widget[0].html);
         assert.equal(res.body.widget[0].title, w.title);
         assert.equal(res.body.widget[0].regionName, w.regionName);
-//        assert.equal(res.body.widget[0].configuration.html, w.configuration.html);
         done();
       });
     });
@@ -77,7 +75,6 @@ describe('widgetFeature', function() {
         .get('/api/v1/widget/' + record.id)
         .expect(200)
         .end(function (err, res) {
-          console.log(res.text)
           if (err) throw err;
           assert(res.text.search(w.title) > -1);
           assert(res.text.search(w.configuration.html) > -1);
@@ -102,14 +99,12 @@ describe('widgetFeature', function() {
         .end(function (err, res) {
           console.log('repsonse1', res.text);
           if (err) throw err;
-
           we.db.models.widget.findAll({
             where: { theme: 'app' }, order: 'weight ASC'
           }).then(function (widgets) {
             for (var i = 0; i < widgets.length; i++) {
               assert.equal(widgets[i].weight, i);
             }
-
             done();
           });
         });
@@ -118,7 +113,6 @@ describe('widgetFeature', function() {
     });
 
     it('get /api/v1/widget should return the widget list with suport to filter by region', function (done) {
-
       var ws = [ widgetStub(), widgetStub(), widgetStub() ];
       we.db.models.widget.bulkCreate(ws).then(function () {
         request(http)
@@ -130,13 +124,12 @@ describe('widgetFeature', function() {
           assert(res.body);
           assert(res.body.widget);
           assert(res.body.widget[0].html);
-
           done();
         });
       });
     });
 
-    it('put /api/v1/widget/:id should update widget configuration', function (done) {
+    it('post /api/v1/widget/:id should update widget configuration', function (done) {
       var w = widgetStub();
       we.db.models.widget.create(w).then(function (record) {
         var w = {
@@ -146,7 +139,7 @@ describe('widgetFeature', function() {
           }
         };
         request(http)
-        .put('/api/v1/widget/' + record.id)
+        .post('/api/v1/widget/'+record.id)
         .send(w)
         .expect(200)
         .end(function (err, res) {
@@ -158,12 +151,12 @@ describe('widgetFeature', function() {
       });
     });
 
-    it('remove /api/v1/widget/:id should delete one widget', function (done) {
+    it('post /api/v1/widget/:id/delete should delete one widget', function (done) {
       var w = widgetStub();
       we.db.models.widget.create(w).then(function (record) {
         request(http)
-        .delete('/api/v1/widget/' + record.id)
-        .expect(204)
+        .post('/api/v1/widget/'+record.id+'/delete')
+        .expect(302)
         .end(function (err, res) {
           if (err) throw err;
           done();
