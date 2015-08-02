@@ -140,14 +140,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         class: 'nav',
         links: [
           {
-            beforeText: '<i class="fa fa-picture-o"></i>',
-            text: 'theme.link',
-            afterText: '',
-            type: 'route',
-            name: 'theme.themesList',
-            roles: ['administrator']
-          },
-          {
             beforeText: '<i class="fa fa-users"></i>',
             text: 'users.link',
             afterText: '',
@@ -422,19 +414,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //
     // Widget
     //
-    'get /api/v1/widget/:id([0-9]+)': {
-      controller    : 'widget',
-      action        : 'findOne',
-      model         : 'widget',
-      permission    : true
-    },
     'get /api/v1/widget/:id([0-9]+)/form': {
       controller    : 'widget',
       action        : 'getForm',
       model         : 'widget',
       permission    : 'update_widget'
     },
-
     'get /api/v1/widget-types': {
       controller    : 'widget',
       action        : 'getSelectWidgetTypes',
@@ -442,18 +427,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       permission    : 'create_widget',
       responseType  : 'json'
     },
-
     'get /api/v1/widget-form/:theme/:layout/:type': {
       controller    : 'widget',
       action        : 'getCreateForm',
       model         : 'widget',
       permission    : 'create_widget'
-    },
-    'get /api/v1/widget': {
-      controller    : 'widget',
-      action        : 'find',
-      model         : 'widget',
-      permission    : true
     },
     'post /api/v1/widget-sort': {
       controller    : 'widget',
@@ -461,45 +439,49 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'widget',
       permission    : 'update_widget'
     },
+
+    'get /api/v1/widget': {
+      controller    : 'widget',
+      action        : 'find',
+      model         : 'widget',
+      permission    : true
+    },
     'post /api/v1/widget': {
       controller    : 'widget',
       action        : 'create',
       model         : 'widget',
       permission    : 'create_widget'
     },
-    'put /api/v1/widget/:id([0-9]+)': {
+    'get /api/v1/widget/:id([0-9]+)': {
+      controller    : 'widget',
+      action        : 'findOne',
+      model         : 'widget',
+      permission    : true
+    },
+    'post /api/v1/widget/:id([0-9]+)': {
       controller    : 'widget',
       action        : 'update',
       model         : 'widget',
       permission    : 'update_widget'
     },
-    'delete /api/v1/widget/:id([0-9]+)': {
+    'post /api/v1/widget/:id([0-9]+)/delete': {
       controller    : 'widget',
       action        : 'destroy',
       model         : 'widget',
       permission    : 'delete_widget'
     },
-    'get /admin/structure/theme/:name/layout/:layout': {
-      controller    : 'widget',
-      action        : 'updateThemeLayout',
-      template      : 'admin/structure/theme/layout',
-      permission    : 'update_theme'
-    },
-
     'get /api/v1/routes': {
       controller: 'main',
       action: 'getRoutes',
       permission    : true,
       responseType: 'json'
     },
-
     // - admin
     'get /admin': {
       controller    : 'admin',
       action        : 'index',
       permission    : 'access_admin'
     },
-
     //
     // -- Permissions
     'get /admin/permission': {
@@ -531,21 +513,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       template      : 'admin/user/index',
       responseType  : 'html',
       permission    : 'manage_users'
-    },
-    // theme routes
-    'get /admin/structure/theme': {
-      controller: 'theme',
-      action: 'themesList',
-      permission    : 'manage_theme',
-      template      : 'admin/structure/theme/list',
-      responseType: 'html'
-    },
-    'get /admin/structure/theme/:themeName': {
-      controller: 'theme',
-      action: 'themeSettings',
-      permission    : 'manage_theme',
-      template      : 'admin/structure/theme/index',
-      responseType: 'html'
     }
   });
 

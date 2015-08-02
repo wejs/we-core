@@ -12,21 +12,20 @@ module.exports = {
     we.view.widgets[type].afterSave(req, res, function() {
       res.locals.Model.create(req.body)
       .then(function (record) {
-
         res.locals.template = record.type + '/wiew';
-        res.status(201);
-
-        record.dataValues.html = we.view.widgets[record.type].render({
-          locals: res.locals,
-          widget: record
-        }, res.locals.theme);
-        if (res.locals.responseType == 'html') {
-          return res.send(record.dataValues.html.string);
-        } else {
-          res.locals.record = record;
-          return res.created();
-        }
-
+        // run view middleware for load widget view data
+        record.viewMiddleware(req, res, function() {
+          record.dataValues.html = we.view.widgets[record.type].render({
+            locals: res.locals,
+            widget: record
+          }, res.locals.theme);
+          if (res.locals.responseType == 'html') {
+            return res.status(201).send(record.dataValues.html);
+          } else {
+            res.locals.record = record;
+            return res.created();
+          }
+        });
       });
     });
   },
@@ -57,27 +56,25 @@ module.exports = {
     })
   },
 
-  findOne: function findOne(req, res, next) {
+  findOne: function findOne(req, res) {
     var we = req.getWe();
-    var id = req.params.id;
 
     res.locals.layout = false;
 
-    res.locals.Model.find({
-      where: { id: id}
-    }).then(function (record) {
-      if (!record) return next();
+    if (!res.locals.record) return res.notFound();
+    var record = res.locals.record;
 
+    record.viewMiddleware(req, res, function() {
       res.locals.template = record.type + '/wiew';
       res.status(200);
 
-      record.dataValues.html = we.view.widgets[record.type].render({
+      record.dataValues.html = we.view.widgets[record.type]
+      .render({
         locals: res.locals,
         widget: record
       }, res.locals.theme);
-
       if (res.locals.responseType == 'html') {
-        return res.send(record.dataValues.html.string);
+        return res.send(record.dataValues.html);
       } else {
         res.locals.record = record;
         return res.ok();
@@ -186,7 +183,7 @@ module.exports = {
 
         res.locals.controllFields = '';
 
-        setFormControllerAndModelVars(res, we);
+        setFormControllerAndModelVars(res, we, record);
 
         if (record.type)
           res.locals.controllFields += '<input type="hidden" name="type" value="'+record.type+'">';
@@ -211,120 +208,99 @@ module.exports = {
     });
   },
 
+  /**
+   * Update one widget action
+   */
   update: function update(req, res) {
     var we = req.getWe();
 
-    var id = req.params.id;
-
+    var id = res.locals.id;
+    // never update widget context in update action
+    delete req.body.context;
+    // remove layout for this response
     res.locals.layout = false;
-
+    // check if the widget exists
     res.locals.Model.findById(id)
     .then(function (record) {
       if (!record) return res.notFound();
-
       var type = record.type;
       we.view.widgets[type].afterSave(req, res, function() {
-
+        // update in db
         record.updateAttributes(req.body)
         .then(function() {
           res.locals.template = record.type + '/wiew';
           res.status(200);
+          // run view middleware for load widget view data
+          record.viewMiddleware(req, res, function() {
+            record.dataValues.html = we.view.widgets[record.type].render({
+              locals: res.locals,
+              widget: record
+            }, res.locals.theme);
 
-          record.dataValues.html = we.view.widgets[record.type].render({
-            locals: res.locals,
-            widget: record
-          }, res.locals.theme);
-
-          if (res.locals.responseType == 'html') {
-            return res.send(record.dataValues.html);
-          } else {
-            res.locals.record = record;
-            return res.ok();
-          }
+            if (res.locals.responseType == 'html') {
+              return res.send(record.dataValues.html);
+            } else {
+              res.locals.record = record;
+              return res.ok();
+            }
+          });
         });
       });
-    });
-  },
-
-  destroy: function destroy(req, res) {
-    var id = req.params.id;
-
-    res.locals.Model.findById(id)
-    .then(function (record) {
-      if (!record) return res.notFound();
-      record.destroy(req.body)
-      .then(function() {
-        return res.status(204).send();
-      });
-    });
-  },
-
-  /**
-   * Update theme layout page
-   */
-  updateThemeLayout: function updateThemeLayout(req, res) {
-    var we = req.getWe();
-
-    if (!we.view.themes[req.params.name]) return res.notFound();
-
-    var layoutToUpdate = we.view.themes[req.params.name].layouts[req.params.layout];
-    if (!layoutToUpdate)  return res.notFound();
-
-    if (!res.locals.data) res.locals.data = {};
-
-    we.db.models.widget.findAll({
-      where: {
-        theme: req.params.name,
-        layout: req.params.layout,
-        context: null
-      },
-      order: 'weight ASC'
-    }).then(function (widgets) {
-
-      res.locals.data.regions = _.cloneDeep(layoutToUpdate.regions);
-      res.locals.data.widgets = we.view.widgets;
-
-      widgets.forEach(function (w) {
-        var regionName = w.regionName;
-        if (!regionName) regionName = 'No region';
-
-        if (!res.locals.data.regions[regionName]) res.locals.data.regions[regionName] = {
-          name: regionName,
-          widgets: []
-        };
-        if (!res.locals.data.regions[regionName].widgets)
-          res.locals.data.regions[regionName].widgets = [];
-
-        res.locals.data.regions[regionName].widgets.push(w);
-      });
-
-      res.locals.data.layout = req.params.layout;
-      res.locals.data.currentTheme = we.view.themes[req.params.name];
-      res.locals.data.themeName = req.params.name;
-
-      //res.locals.template = 'structure/theme/layout';
-      res.view();
     });
   }
 };
 
-function setFormControllerAndModelVars(res, we) {
-  res.locals.controllFields += '<div>';
-  // controller area
-  res.locals.controllFields += '<div class="form-group">';
-  res.locals.controllFields += '<label class="col-sm-4 control-label">Controller</label>';
-  res.locals.controllFields += '<div class="col-sm-8"><select name="controller" class="form-control"><option></option>';
-  for (var controllerName in we.controllers) {
-    res.locals.controllFields += '<option value="'+controllerName+'">'+controllerName+'</option>';
+function setFormControllerAndModelVars(res, we, widget) {
+  var context = false;
+
+  if (widget) {
+    context = widget.context;
+  } else if(res.locals.widgetContext) {
+    context = res.locals.widgetContext;
+  } else if (res.req.query.context){
+    context = res.req.query.context;
   }
-  res.locals.controllFields += '</select></div></div>';
-  // model area
-  res.locals.controllFields += '<div class="form-group">';
-  res.locals.controllFields += '<label class="col-sm-4 control-label">Model</label>';
-  res.locals.controllFields += '<div class="col-sm-8"><select name="model" class="form-control"><option></option>';
-  for (var modelName in we.db.models) {
-    res.locals.controllFields += '<option value="'+modelName+'">'+modelName+'</option>';
+
+  // context field
+  if (context) {
+    res.locals.controllFields += '<hr><div class="form-group">' +
+      '<strong>'+res.locals.__('widget.context')+':</strong> '+
+      context+
+    '</div>';
   }
-  res.locals.controllFields += '</select></div></div>';
-  res.locals.controllFields += '</div>';
+
+  // set selected attr
+  var vrq = {
+    'in-portal': '',
+    'in-context': '',
+    'in-session': '',
+    'in-page': '',
+  };
+
+  if (widget && widget.visibility) {
+    vrq[widget.visibility] = ' selected="selected" ';
+  }
+
+  // visibility field
+  res.locals.controllFields += '<div class="form-group"><div class="row">' +
+    '<label class="col-sm-4 control-label">'+
+    res.locals.__('widget.visibility') + '</label>'+
+    '<div class="col-sm-8"><select name="visibility" class="form-control">';
+  if (context) {
+    res.locals.controllFields +=
+    '<option value="in-context"'+vrq['in-context']+'>'+
+      res.locals.__('widget.in-context')+
+    '</option>';
+  } else {
+    res.locals.controllFields +=
+    '<option value="in-portal"'+vrq['in-portal']+'>'+
+      res.locals.__('widget.in-portal')+
+    '</option>';
+  }
+
+  res.locals.controllFields +=
+    '<option value="in-session"'+vrq['in-session']+'>'+res.locals.__('widget.in-session')+'</option>'+
+    '<option value="in-page"'+vrq['in-page']+'>'+res.locals.__('widget.in-page')+'</option>'+
+    '</select></div></div>'+
+  '</div><hr>';
 }

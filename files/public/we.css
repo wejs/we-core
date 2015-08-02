@@ -1,4 +1,5 @@
-we-region {
+we-region,
+widget {
   display: block;
 }
 .we-region-actions {
@@ -13,7 +14,6 @@ we-region {
   display: none;
   padding: 4px;
   background-color: lightblue;
-  border: 2px outset chocolate;
 }
 
 .we-layout-edit-btn {
@@ -26,4 +26,14 @@ we-region {
 body.we-editing-layout .we-region-actions,
 body.we-editing-layout .we-region-widget-actions {
   display: block;
+}
+
+
+body.we-editing-layout .widget {
+  border: 2px dashed transparent;
+  display: block;
+}
+
+body.we-editing-layout .widget:hover{
+  border-color: chocolate;
 }

@@ -19,28 +19,25 @@ module.exports = function Model(we) {
         type:  we.db.Sequelize.STRING,
         allowNull: false
       },
-      // show only in this controller or action
-      controller: { type: we.db.Sequelize.STRING, },
-      action: { type: we.db.Sequelize.STRING },
+      // show only in this model
+      modelName: { type: we.db.Sequelize.STRING, },
+      modelId: { type: we.db.Sequelize.BIGINT },
 
       layout: {
         type:  we.db.Sequelize.STRING,
         defaultValue: 'default'
       },
-
       regionName: { type: we.db.Sequelize.STRING },
       // null || group-[id] || ceonference-[id]
       context: { type: we.db.Sequelize.STRING },
-
       theme: { type:  we.db.Sequelize.STRING, allowNull: false },
-
       weight: {
         type:  we.db.Sequelize.FLOAT,
         defaultValue: 0
       },
-
       configuration: {
         type:  we.db.Sequelize.TEXT,
+        skipSanitizer: true,
         get: function()  {
           if (this.getDataValue('configuration'))
             return JSON.parse( this.getDataValue('configuration') );
@@ -52,6 +49,23 @@ module.exports = function Model(we) {
           } else {
             throw new Error('invalid error in widget configuration value: ', object);
           }
+        }
+      },
+
+      visibility: {
+        type: we.db.Sequelize.VIRTUAL,
+        allowNull: true,
+        get: function() {
+          if (this.getDataValue('modelName')) {
+            if (this.getDataValue('modelId')) {
+              return 'in-page';
+            } else {
+              return 'in-session';
+            }
+          } else if (this.getDataValue('context')) {
+            return 'in-context';
+          }
+          return 'in-portal';
         }
       }
     },
