@@ -14,7 +14,6 @@ module.exports = function UserModel(we) {
       username: {
         type: we.db.Sequelize.STRING,
         unique: true,
-        allowNull: false,
         validate: {
           userNameIsValid: function(val) {
             if (!userNameRegex.test(val)) {
@@ -269,7 +268,14 @@ module.exports = function UserModel(we) {
         // Lifecycle Callbacks
         beforeCreate: function(user, options, next) {
           // set default displayName as username
-          if (!user.displayName) user.displayName = user.username;
+          if (!user.displayName) {
+            if (user.fullName && user.fullName.trim()) {
+              user.displayName = user.fullName.split(' ')[0];
+            } else if (user.username) {
+              user.displayName = user.username;
+            }
+          }
+
           // never save consumers on create
           delete user.consumers;
           // dont allow to set admin and moderator flags
@@ -279,7 +285,14 @@ module.exports = function UserModel(we) {
         },
         beforeUpdate: function(user, options, next) {
           // set default displayName as username
-          if (!user.displayName) user.displayName = user.username;
+          if (!user.displayName) {
+            if (user.fullName && user.fullName.trim()) {
+              user.displayName = user.fullName.split(' ')[0];
+            } else if (user.username) {
+              user.displayName = user.username;
+            }
+          }
+
           // dont change user acceptTerms in update
           user.acceptTerms = true;
           return next(null, user);
