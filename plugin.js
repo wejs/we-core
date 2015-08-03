@@ -8,7 +8,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
   // set plugin configs
   plugin.setConfigs({
-    queryDefaultLimit: 2,
+    queryDefaultLimit: 25,
     queryMaxLimit: 300,
     // default app permissions
     permissions: require('./lib/acl/corePermissions.json'),
@@ -406,26 +406,26 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'widget',
       action        : 'getForm',
       model         : 'widget',
-      permission    : 'update_widget'
+      permission    : 'manage_widget'
     },
     'get /api/v1/widget-types': {
       controller    : 'widget',
       action        : 'getSelectWidgetTypes',
       model         : 'widget',
-      permission    : 'create_widget',
+      permission    : 'manage_widget',
       responseType  : 'json'
     },
     'get /api/v1/widget-form/:theme/:layout/:type': {
       controller    : 'widget',
       action        : 'getCreateForm',
       model         : 'widget',
-      permission    : 'create_widget'
+      permission    : 'manage_widget'
     },
     'post /api/v1/widget-sort': {
       controller    : 'widget',
       action        : 'sortWidgets',
       model         : 'widget',
-      permission    : 'update_widget'
+      permission    : 'manage_widget'
     },
 
     'get /api/v1/widget': {
@@ -438,7 +438,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'widget',
       action        : 'create',
       model         : 'widget',
-      permission    : 'create_widget'
+      permission    : 'manage_widget'
     },
     'get /api/v1/widget/:id([0-9]+)': {
       controller    : 'widget',
@@ -450,13 +450,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'widget',
       action        : 'update',
       model         : 'widget',
-      permission    : 'update_widget'
+      permission    : 'manage_widget'
     },
     'post /api/v1/widget/:id([0-9]+)/delete': {
       controller    : 'widget',
       action        : 'destroy',
       model         : 'widget',
-      permission    : 'delete_widget'
+      permission    : 'manage_widget'
     },
     'get /api/v1/routes': {
       controller: 'main',

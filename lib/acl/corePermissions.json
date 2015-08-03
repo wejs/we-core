@@ -67,6 +67,11 @@
     "group": "admin",
     "title": "Manage theme",
     "description": ""
+  },
+  "manage_widget": {
+    "group": "admin",
+    "title": "Manage widget",
+    "description": "Create, update and delete widgets"
   }
 
 }
