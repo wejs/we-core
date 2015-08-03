@@ -144,6 +144,7 @@ module.exports = function UserModel(we) {
     },
 
     options: {
+      titleField: 'displayName',
      termFields: {
         organization: {
           vocabularyName: 'Organization',

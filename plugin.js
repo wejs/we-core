@@ -8,6 +8,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
   // set plugin configs
   plugin.setConfigs({
+    queryDefaultLimit: 2,
+    queryMaxLimit: 300,
     // default app permissions
     permissions: require('./lib/acl/corePermissions.json'),
 
@@ -114,17 +116,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // enable object notation
       objectNotation: false
     },
-
     clientside: {
       // client side logs
-      log: {
-
-      },
+      log: {},
       // publivars
       publicVars: {}
     },
     metadata: {},
-
     forms: {
       'login': __dirname + '/server/forms/login.json',
       'register': __dirname + '/server/forms/register.json',
@@ -144,7 +142,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             text: 'users.link',
             afterText: '',
             type: 'route',
-            name: 'user_manage',
+            name: 'admin.user.find',
             roles: ['administrator']
           },
           {
@@ -169,6 +167,21 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       maxage: 86400000 // one day
     }
   });
+
+  plugin.setResource({
+    namePrefix: 'admin.',
+    name: 'role',
+    namespace: '/admin/permission',
+    templateFolderPrefix: 'admin/'
+  });
+
+  plugin.setResource({
+    namePrefix: 'admin.',
+    name: 'user',
+    namespace: '/admin',
+    templateFolderPrefix: 'admin/'
+  });
+
   // set plugin routes
   plugin.setRoutes({
     // homepage | default home page
@@ -367,50 +380,25 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //
     // -- ROLES
     //
-
-    'get /role/:id([0-9]+)': {
-      controller    : 'role',
-      action        : 'findOne',
-      model         : 'role'
-    },
-    'get /role': {
-      controller    : 'role',
-      action        : 'find',
-      model         : 'role'
-    },
-    'post /role': {
-      controller    : 'role',
-      action        : 'create',
-      model         : 'role',
-      permission    : 'manage_role'
-    },
-    'put /role/:id([0-9]+)': {
-      controller    : 'role',
-      action        : 'update',
-      model         : 'role',
-      permission    : 'manage_role'
-    },
-    'delete /role/:id([0-9]+)': {
-      controller    : 'role',
-      action        : 'destroy',
-      model         : 'role',
-      permission    : 'manage_role'
-    },
     // add user role
-    'post /user/:id([0-9]+)/role': {
+    'get /admin/user/:userId([0-9]+)/roles': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'admin.user.roles',
       controller    : 'role',
-      action        : 'addRoleToUser',
+      action        : 'updateUserRoles',
       model         : 'user',
-      permission    : 'manage_role'
+      permission    : 'manage_role',
+      template      : 'admin/role/updateUserRoles'
     },
-    // remove role in user
-    'delete /user/:id([0-9]+)/role': {
+    'post /admin/user/:userId([0-9]+)/roles': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'admin.user.roles',
       controller    : 'role',
-      action        : 'removeRoleFromUser',
+      action        : 'updateUserRoles',
       model         : 'user',
-      permission    : 'manage_role'
+      permission    : 'manage_role',
+      template      : 'admin/role/updateUserRoles'
     },
-
     //
     // Widget
     //
@@ -485,6 +473,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     //
     // -- Permissions
     'get /admin/permission': {
+      titleHandler  : 'i18n',
+      titleI18n     : 'permission_manage',
       name          : 'permission_manage',
       controller    : 'permission',
       action        : 'manage',
@@ -504,15 +494,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'removePermissionFromRole',
       model         : 'role',
       permission    : 'manage_permissions',
-    },
-    // admin - users
-    'get /admin/user': {
-      name          : 'user_manage',
-      controller    : 'user',
-      action        : 'manage',
-      template      : 'admin/user/index',
-      responseType  : 'html',
-      permission    : 'manage_users'
     }
   });
 

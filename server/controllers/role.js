@@ -12,113 +12,91 @@ module.exports = {
     var name = req.body.name;
     var description = req.body.description;
 
-    we.acl.createRole(we, {
-      name: name,
-      description: description
-    }, function(err, role) {
-      if (err) {
-        we.log.error('role:create: error on create role', err);
-        return res.serverError();
-      }
+    if (req.method == 'POST') {
+      we.acl.createRole(we, {
+        name: name,
+        description: description
+      }, function(err, role) {
+        if (err) {
+          we.log.error('role:create: error on create role', err);
+          return res.serverError();
+        }
 
-      return res.created(role);
-    });
+        return res.created(role);
+      });
+    } else {
+      res.ok();
+    }
   },
 
   update: function update(req, res, next) {
     var we = req.getWe();
-    var id = req.params.id;
 
-    res.locals.Model.findById(id)
-    .then(function(record) {
-      if (!record) return next();
+    if (!res.locals.record) return res.notFound();
+
+    if (req.method == 'POST') {
+      if (!res.locals.record) return next();
       // check if this role are in roles cache
-      if (we.acl.roles[!record.name]) return res.notFound();
+      if (we.acl.roles[!res.locals.record.name]) return res.notFound();
 
-      record.updateAttributes(req.body)
+      res.locals.record.updateAttributes(req.body)
       .then(function() {
-        res.locals.record = record;
+        res.locals.record = res.locals.record;
         // update role in running app cache
-        we.acl.roles[record.name] = record;
+        we.acl.roles[res.locals.record.name] = res.locals.record;
 
         return res.ok();
       });
-    });
+    } else {
+      res.ok();
+    }
   },
 
-  addRoleToUser: function(req, res) {
+  updateUserRoles: function updateUserRoles(req, res) {
     var we = req.getWe();
 
-    var roleName = req.body.roleName;
+    we.db.models.user.findOne({
+      where: { id: req.params.userId },
+      include: [{ model: we.db.models.role , as: 'roles' }]
+    }).then(function(u){
+      if (!u) return res.notFound();
 
-    if (!roleName) {
-      res.addMessage('warn', 'role.addRoleToUser.param.roleName.required');
-      return res.badRequest();
-    }
+      res.locals.record = u;
 
-    res.locals.Model.findById(req.params.id)
-    .then(function (user) {
-      if (!user) {
-        res.addMessage('warn', 'role.addRoleToUser.user.not.found');
-        return res.notFound();
-      }
+      if (req.method == 'POST') {
+        var rolesToSave = [];
+        var rn;
 
-      // check if the role exists
-      we.db.models.role.find({ where:
-        { name: roleName }
-      }).then(function (role){
-        if (!role) {
-          res.addMessage('warn', 'role.addRoleToUser.role.not.found');
-          return res.badRequest();
+        // get role object related to id and skip invalid ids
+        if (we.utils._.isArray(req.body.userRoles)) {
+          // multiple roles
+          for (rn in we.acl.roles) {
+            if (req.body.userRoles.indexOf( String(we.acl.roles[rn].id) ) > -1) {
+              rolesToSave.push(we.acl.roles[rn]);
+            }
+          }
+        } else {
+          // single role
+          for (rn in we.acl.roles) {
+            if (req.body.userRoles == we.acl.roles[rn].id) {
+              rolesToSave.push(we.acl.roles[rn]);
+              break;
+            }
+          }
         }
 
-        user.addRole(role).then(function () {
-          res.addMessage('success', 'role.addRoleToUser.success');
-          return res.ok();
-        });
-      });
-    });
-  },
+        res.locals.rolesTable = buildUserRolesVar(res, u, we);
 
-  removeRoleFromUser: function (req, res) {
-    var we = req.getWe();
-
-    var roleName = req.body.roleName;
-
-    if (!roleName) {
-      res.addMessage('warn', 'role.removeRoleFromUser.param.roleName.required');
-      return res.badRequest();
-    }
-
-    res.locals.Model.find({
-      where: { id: req.params.id },
-      include: [ { model: we.db.models.role, as: 'roles'} ]
-    }).then(function (user) {
-      if (!user) {
-        res.addMessage('warn', 'role.removeRoleFromUser.user.not.found');
-        return res.notFound();
+        u.setRoles(rolesToSave).then(function () {
+          res.addMessage('success', 'role.updateUserRoles.success');
+          res.goTo(req.url);
+        }).catch(req.queryError);
+      } else {
+        res.locals.roles = we.acl.roles;
+        res.locals.rolesTable = buildUserRolesVar(res, u, we);
+        res.ok();
       }
-
-      var roleToDelete = null;
-
-      for (var i = user.roles.length - 1; i >= 0; i--) {
-        if (user.roles[i].name == roleName ) {
-          roleToDelete = user.roles[i];
-          break;
-        }
-      }
-
-      if (!roleToDelete) {
-        // this user dont have the role with name roleName
-        res.addMessage('success', 'role.removeRoleFromUser.success');
-        return res.ok();
-      }
-
-      user.removeRole(roleToDelete).then(function() {
-        res.addMessage('success', 'role.removeRoleFromUser.success');
-        return res.ok();
-      });
-    });
+    }).catch(res.queryError);
   },
 
   /**
@@ -156,13 +134,10 @@ module.exports = {
     });
   },
 
-
-  destroy: function (req, res) {
+  destroy: function destroy(req, res) {
     var we = req.getWe();
 
-    var id = req.params.id;
-
-    we.acl.deleteRole(we, id, function(err, role) {
+    we.acl.deleteRole(we, res.locals.id, function(err, role) {
       if (err) {
         we.log.error('role:delete: error on delete role', err);
         return res.serverError();
@@ -170,8 +145,28 @@ module.exports = {
 
       return res.status(200).send(role);
     });
-  },
-
-  add: function (req, res) { return res.notFound(); },
-  remove: function (req, res) { return res.notFound(); }
+  }
 };
+
+
+function buildUserRolesVar(res, u, we) {
+  var checked, rolesTable = [];
+
+  for (var roleName in we.acl.roles) {
+    checked = false;
+    for (var i = 0; i < u.roles.length; i++) {
+      if (u.roles[i].name === roleName) {
+        checked = true;
+        break;
+      }
+    }
+
+    rolesTable.push({
+      id: we.acl.roles[roleName].id,
+      name: roleName,
+      checked: checked
+    });
+  }
+
+  return rolesTable;
+}
