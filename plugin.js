@@ -412,20 +412,31 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'widget',
       action        : 'getSelectWidgetTypes',
       model         : 'widget',
-      permission    : 'manage_widget',
+      permission    : true,// widget type list is public
       responseType  : 'json'
     },
     'get /api/v1/widget-form/:theme/:layout/:type': {
       controller    : 'widget',
       action        : 'getCreateForm',
       model         : 'widget',
-      permission    : 'manage_widget'
+      permission    : true,// public
+    },
+    // sort widget API
+    'get /api/v1/widget-sort/:theme/:layout/:regionName': {
+      controller    : 'widget',
+      action        : 'sortWidgets',
+      model         : 'widget',
+      permission    : 'manage_widget',
+      template      : 'widget/sortWidgets',
+      skipWidgets   : true
     },
     'post /api/v1/widget-sort': {
       controller    : 'widget',
       action        : 'sortWidgets',
       model         : 'widget',
-      permission    : 'manage_widget'
+      permission    : 'manage_widget',
+      template      : 'widget/sortWidgets',
+      skipWidgets   : true
     },
 
     'get /api/v1/widget': {

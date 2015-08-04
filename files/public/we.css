@@ -37,3 +37,8 @@ body.we-editing-layout .widget {
 body.we-editing-layout .widget:hover{
   border-color: chocolate;
 }
+
+.modal-body .container {
+  display: block;
+  width: auto;
+}

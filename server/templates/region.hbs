@@ -2,6 +2,8 @@
   <div class="we-region-actions">
     {{name}}:
       <button onclick="we.structure.openAddWidgetForm('{{name}}');" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button>
+
+      <button onclick="we.structure.sortRegionWidgetsForm('{{name}}');" type="button" class="btn btn-default"><i class="glyphicon glyphicon-align-justify"></i></button>
   </div>
-  {{{widgets}}}
+  <widgets>{{{widgets}}}</widgets>
 </we-region>

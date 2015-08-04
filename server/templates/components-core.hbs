@@ -1,4 +1,7 @@
 {{#can permission='manage_widget' roleNames=req.userRoleNames}}
+{{!-- sort widget modal --}}
+<div aria-hidden="true" class="modal" id="sortWidgetFormModal"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h4 class="modal-title">{{t 'widget.sort'}}</h4></div><div class="modal-body"></div></div></div></div>
+{{!-- update widget modal --}}
 <div aria-hidden="true" class="modal" id="updateWidgetFormModal"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h4 class="modal-title">{{t 'widget.update'}}</h4></div><div class="modal-body"></div></div></div></div>
 {{!-- add widget form modal --}}
 <div aria-hidden="true" class="modal" id="AddWidgetFormModal">

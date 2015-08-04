@@ -116,6 +116,7 @@ var we = {
 we.structure = {
   addWidgetModalFormId: '#AddWidgetFormModal',
   updateWidgetModalFormId: '#updateWidgetFormModal',
+  sortWidgetModalFormId: '#sortWidgetFormModal',
 
   showLayoutEditor: function showLayoutEditor() {
     $('#we-layout-start-edit-btn').hide();
@@ -214,8 +215,7 @@ we.structure = {
         $.post(url, formData)
         .then(function (r) {
           // insert after regions actions
-          regionTag.find('.we-region-actions')
-          .after(r.widget[0].html);
+          regionTag.find('widgets').prepend(r.widget[0].html);
         }).always(function(){
           modal.modal('hide');
         });
@@ -230,7 +230,11 @@ we.structure = {
     var widgetTag = $('widget[model-widget='+id+']');
     modalForm.modal('show');
 
-    var url = '/api/v1/widget/'+id+'/form';
+    var url = '/api/v1/widget/';
+    if (we.config.structure.widgetEditFormUrl)
+      url = we.config.structure.widgetEditFormUrl
+    url += id+'/form';
+
     $.get(url).then(function (f) {
       modalForm.find('.modal-body').html(f);
 
@@ -300,47 +304,21 @@ we.structure = {
     }
   },
 
-  emptyWidgets: function emptyWidgets() {
-    for (var i = 0; i < we.structure.regions.length; i++) {
-      // empty all regions
-      we.structure.regions[i].html('');
-    }
-  },
-  reloadWidgets: function reloadWidgets(ctx) {
-    var region;
-    we.structure.emptyWidgets();
+  sortRegionWidgetsForm: function sortRegionWidgetsForm(regionName) {
+    var modal = $(we.structure.sortWidgetModalFormId);
+    if (!modal) throw new Error('sort widget modal not found!', we.structure.sortWidgetModalFormId);
+   modal.modal('show');
 
-    if (ctx.data && ctx.data.meta && ctx.data.meta.layout && ctx.data.meta.layout.regions) {
-      for (var regionName in ctx.data.meta.layout.regions) {
-        if (!we.structure.regions[regionName]) continue;
+    var url = '/api/v1/widget-sort/';
+    if (we.config.structure.widgetSortUrl)
+      url = we.config.structure.widgetSortUrl;
 
-        var regionElement = we.structure.regions[regionName];
-
-        region = ctx.data.meta.layout.regions[regionName];
-        for (var i = 0; i < region.widgets.length; i++) {
-          regionElement.append( we.structure.buildWidget(region.widgets[i]) );
-        }
-      }
-    }
-  },
-  buildWidget: function buildWidget(widget) {
-    var html = '<' +widget.component;
-    if (widget.attributes) {
-      html += we.structure.buildWidgetAttributes(widget.attributes)
-    }
-    html += '>';
-    if (widget.content) {
-      html += widget.content;
-    }
-    html += '</' +widget.component+ '>';
-    return html;
-  },
-  buildWidgetAttributes: function buildWidgetAttributes(attrs) {
-    var text = '';
-    for(var attr in attrs) {
-      text += ' ' + attr + '="' +attrs[attr]+ '" ';
-    }
-    return text;
+    url += we.config.theme + '/'+
+      $('layout').attr('data-we-layout')+
+      '/'+regionName  + '?skipHTML=true';
+    $.get(url).then(function (f) {
+      modal.find('.modal-body').html(f);
+    });
   }
 };
 
@@ -438,14 +416,14 @@ we.events = new we.Event();
 
 we.admin = {};
 we.admin.layouts = {
-  widgetTableSorter: function widgetTableSorter (selector) {
+  widgetTableSorter: function widgetTableSorter (selector, regionName) {
     if (!selector) selector = '.sorted_table > tbody';
 
     var sortableList = $(selector);
     // Sortable rows
     sortableList.sortable({
       update: function( event, ui ) {
-        saveOrder(this)
+        saveOrder(this);
       }
     });
     function saveOrder(tbody) {
@@ -460,14 +438,35 @@ we.admin.layouts = {
         $(list[i]).attr('data-weight', i);
       }
 
+      var url = '/api/v1/widget-sort/';
+      if (we.config.structure.widgetSortUrl)
+        url = we.config.structure.widgetSortUrl;
+
+      url += we.config.theme + '/'+
+        $('layout').attr('data-we-layout')+
+        '/'+regionName + '?skipHTML=true&responseType=JSON';
+
       $.ajax({
-        url: '/api/v1/widget-sort?responseType=json',
+        url: url,
         method: 'POST',
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify({ widgets: widgets })
       }).done(function(r) {
-        console.log('Done sort widgets', r);
+        var region = $('#region-'+regionName);
+        var widget;
+        var lastWidget = null;
+        for (var i = 0; i < r.widget.length; i++) {
+          widget = region.find('widgets > widget[model-widget='+r.widget[i].id+']');
+          if (lastWidget) {
+            widget.insertAfter(lastWidget);
+          } else {
+            region.find('widgets').prepend(widget);
+          }
+          lastWidget = widget;
+        }
+
+        // console.log('Done sort widgets', r);
       });
     }
   }

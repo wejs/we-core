@@ -40,26 +40,66 @@ module.exports = {
   sortWidgets: function sortWidgets(req, res) {
     var we = req.getWe();
 
-    if (!req.body.widgets)
-      return res.badRequest('widgets body params is required');
+    res.locals.regionName = req.params.regionName;
+    res.locals.layoutName = req.params.layout;
 
-    async.each(req.body.widgets, function (w, next) {
-      // only update weight field
-      we.db.models.widget.update(w, {
-        where: { id: w.id }, fields: ['weight']})
-      .then(function () {
-        next();
-      }).catch(next);
-    }, function (err) {
-      if (err) return res.serverError(err);
-      res.send();
-    })
+    if (req.method == 'POST') {
+      if (!req.body.widgets)
+        return res.badRequest('widgets body params is required');
+
+      we.utils.async.each(req.body.widgets, function (w, next) {
+        // start in 1 for sorted widgets
+        w.weight = w.weight+1;
+        // only update weight field
+        we.db.models.widget.update(w, {
+          where: {
+            theme: req.params.theme,
+            regionName: req.params.regionName,
+            layout: req.params.layout,
+            context: res.locals.widgetContext || null,
+            id: w.id
+          }, fields: ['weight']})
+        .then(function () {
+          next();
+        }).catch(next);
+      }, function (err) {
+        if (err) return res.serverError(err);
+        // find all in order
+        we.db.models.widget.findAll({
+          where: {
+            theme: req.params.theme,
+            regionName: req.params.regionName,
+            layout: req.params.layout,
+            context: res.locals.widgetContext || null,
+          }, order: [ ['weight', 'ASC'], ['createdAt', 'DESC']]
+        }).then(function (widgets) {
+          res.locals.record = widgets;
+          // send the sort widget table
+          res.ok();
+        }).catch(res.queryError);
+      });
+    } else {
+      we.db.models.widget.findAll({
+        where: {
+          theme: req.params.theme,
+          regionName: req.params.regionName,
+          layout: req.params.layout,
+          context: res.locals.widgetContext || null,
+        },
+        order: [ ['weight', 'ASC'], ['createdAt', 'DESC']]
+      }).then(function (widgets) {
+        res.locals.record = widgets;
+        // send the sort widget table
+        res.ok();
+      }).catch(res.queryError);
+    }
   },
 
   findOne: function findOne(req, res) {
     var we = req.getWe();
 
     res.locals.layout = false;
+    res.locals.regionName = req.params.regionName;
 
     if (!res.locals.record) return res.notFound();
     var record = res.locals.record;
