@@ -50,41 +50,27 @@ module.exports = {
           cb();
         });
       },
-      function validUser(cb) {
-        // validate user
-        newUser = we.db.models.user.build(req.body);
-        newUser.validate().then(function(){
+      // save the user and password with transaction
+      function saveUserAndPassword(cb) {
+        we.db.defaultConnection.transaction(function (t) {
+          // create the user
+          return we.db.models.user.create(
+            req.body, { transaction: t }
+          ).then(function (u) {
+            newUser = u;
+            // save password
+            return we.db.models.password.create({
+              userId: u.id,
+              password: req.body.password,
+              confirmPassword: req.body.confirmPassword
+            }, { transaction: t });
+          });
+        }).then(function () {
+          we.log.info( 'Auth plugin:New user:', req.body.email , 'username:' , req.body.username , 'ID:' , newUser.id );
           cb();
-        }).catch(cb);
-      },
-      function validPassword(cb) {
-        // validate password
-        password = we.db.models.password.build({
-          userId: 1, // valid password with a fakeId
-          password: req.body.password,
-          confirmPassword: req.body.confirmPassword
+        }).catch(function (err) {
+          cb(err);
         });
-        password.validate().then(function(){
-          cb();
-        }).catch(cb);
-      },
-      function saveUser(cb) {
-        // user is valid then save the record and password
-        newUser.save().then(function () {
-          we.log.info(
-            'Auth plugin:New user:', req.body.email , 'username:' , req.body.username , 'ID:' , newUser.id
-          );
-
-          cb();
-        }).catch(cb);
-      },
-      function savePassword(cb) {
-        // set valid user id
-        password.userId = newUser.id;
-        // save password
-        password.save().then(function () {
-          cb();
-        }).catch(cb);
       }
     ], function afterCreateUserAndPassword(err) {
       if(err) return res.queryError(err);
