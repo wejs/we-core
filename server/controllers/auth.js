@@ -33,7 +33,7 @@ module.exports = {
       });
     }
 
-    var password, newUser, requireAccountActivation;
+    var newUser, requireAccountActivation;
     // --  set req.body for handle db errors
     res.locals.record = req.body;
 
