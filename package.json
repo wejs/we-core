@@ -24,17 +24,17 @@
   "dependencies": {
     "async": "^1.2.0",
     "bcrypt": "^0.8.3",
-    "body-parser": "~1.12.4",
+    "body-parser": "~1.13.3",
     "compression": "^1.4.4",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.3.5",
     "cors": "^2.7.1",
     "debug": "~2.2.0",
     "email-templates": "^1.2.1",
-    "express": "~4.12.4",
+    "express": "~4.13.3",
     "express-mysql-session": "^0.4.0",
     "express-session": "^1.11.2",
-    "fs-extra": "^0.18.4",
+    "fs-extra": "^0.22.1",
     "handlebars": "^3.0.3",
     "hbs": "^3.0.1",
     "i18n": "^0.5.0",
@@ -42,8 +42,8 @@
     "mime": "^1.3.4",
     "mkdirp": "^0.5.1",
     "moment": "^2.10.3",
-    "morgan": "~1.5.3",
-    "multer": "^0.1.8",
+    "morgan": "~1.6.1",
+    "multer": "^1.0.1",
     "mv": "^2.0.3",
     "mysql": "^2.7.0",
     "node-uuid": "^1.4.3",
@@ -58,11 +58,11 @@
     "require-all": "^1.1.0",
     "rimraf": "^2.3.4",
     "sanitize-html": "^1.7.0",
-    "sequelize": "3.2.0",
-    "serve-favicon": "~2.2.1",
+    "sequelize": "3.5.1",
+    "serve-favicon": "~2.3.0",
     "socket.io": "^1.3.5",
     "string": "^3.2.0",
-    "winston": "1.0.0"
+    "winston": "1.0.1"
   },
   "devDependencies": {
     "jshint": "^2.8.0",
@@ -71,7 +71,7 @@
     "supertest": "^1.0.1",
     "we-plugin-form": "wejs/we-plugin-form",
     "we-test-tools": "wejs/we-test-tools",
-    "we-theme-admin-default": "^0.3.2",
-    "we-theme-site-wejs": "^0.3.12"
+    "we-theme-admin-default": "wejs/we-theme-admin-default",
+    "we-theme-site-wejs": "wejs/we-theme-site-wejs"
   }
 }
