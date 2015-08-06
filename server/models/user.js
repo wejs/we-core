@@ -52,7 +52,7 @@ module.exports = function UserModel(we) {
         type: we.db.Sequelize.STRING,
         allowNull: false,
         unique: true,
-        formFieldType: 'static-text',
+        formFieldType: 'user-email',
         validate: {
           isEmail: true,
           notEmptyOnCreate: function(val) {
@@ -145,7 +145,7 @@ module.exports = function UserModel(we) {
 
     options: {
       titleField: 'displayName',
-     termFields: {
+      termFields: {
         organization: {
           vocabularyName: 'Organization',
           canCreate: true,
