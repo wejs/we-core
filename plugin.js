@@ -406,7 +406,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'widget',
       action        : 'getForm',
       model         : 'widget',
-      permission    : 'manage_widget'
+      permission    : 'manage_widget',
+      responseType  : 'modal'
     },
     'get /api/v1/widget-types': {
       controller    : 'widget',
@@ -428,7 +429,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'widget',
       permission    : 'manage_widget',
       template      : 'widget/sortWidgets',
-      skipWidgets   : true
+      responseType  : 'modal'
     },
     'post /api/v1/widget-sort': {
       controller    : 'widget',
@@ -436,31 +437,35 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'widget',
       permission    : 'manage_widget',
       template      : 'widget/sortWidgets',
-      skipWidgets   : true
+      responseType  : 'modal'
     },
 
     'get /api/v1/widget': {
       controller    : 'widget',
       action        : 'find',
       model         : 'widget',
+      skipWidgets   : true,
       permission    : true
     },
     'post /api/v1/widget': {
       controller    : 'widget',
       action        : 'create',
       model         : 'widget',
+      skipWidgets   : true,
       permission    : 'manage_widget'
     },
     'get /api/v1/widget/:id([0-9]+)': {
       controller    : 'widget',
       action        : 'findOne',
       model         : 'widget',
+      skipWidgets   : true,
       permission    : true
     },
     'post /api/v1/widget/:id([0-9]+)': {
       controller    : 'widget',
       action        : 'update',
       model         : 'widget',
+      skipWidgets   : true,
       permission    : 'manage_widget'
     },
     'post /api/v1/widget/:id([0-9]+)/delete': {

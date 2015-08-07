@@ -1,6 +1,3 @@
-var _ = require('lodash');
-var async = require('async');
-
 module.exports = {
   create: function create(req, res) {
     var we = req.getWe();
@@ -64,35 +61,27 @@ module.exports = {
         }).catch(next);
       }, function (err) {
         if (err) return res.serverError(err);
-        // find all in order
-        we.db.models.widget.findAll({
-          where: {
-            theme: req.params.theme,
-            regionName: req.params.regionName,
-            layout: req.params.layout,
-            context: res.locals.widgetContext || null,
-          }, order: [ ['weight', 'ASC'], ['createdAt', 'DESC']]
-        }).then(function (widgets) {
-          res.locals.record = widgets;
-          // send the sort widget table
-          res.ok();
-        }).catch(res.queryError);
+        we.controllers.widget.sortWidgetsList(req, res);
       });
     } else {
-      we.db.models.widget.findAll({
-        where: {
-          theme: req.params.theme,
-          regionName: req.params.regionName,
-          layout: req.params.layout,
-          context: res.locals.widgetContext || null,
-        },
-        order: [ ['weight', 'ASC'], ['createdAt', 'DESC']]
-      }).then(function (widgets) {
-        res.locals.record = widgets;
-        // send the sort widget table
-        res.ok();
-      }).catch(res.queryError);
+      we.controllers.widget.sortWidgetsList(req, res);
     }
+  },
+  sortWidgetsList: function sortWidgetsList(req, res) {
+    var we = req.getWe();
+
+    we.db.models.widget.findAll({
+      where: {
+        theme: req.params.theme,
+        regionName: req.params.regionName,
+        layout: req.params.layout,
+        context: res.locals.widgetContext || null,
+      }, order: [ ['weight', 'ASC'], ['createdAt', 'DESC']]
+    }).then(function (widgets) {
+      res.locals.record = widgets;
+      // send the sort widget table
+      res.ok();
+    }).catch(res.queryError);
   },
 
   findOne: function findOne(req, res) {
@@ -219,7 +208,7 @@ module.exports = {
 
         res.locals.selectedRegion = widget.regionName;
 
-        _.merge(res.locals, widget);
+        we.utils._.merge(res.locals, widget);
 
         res.locals.controllFields = '';
 
