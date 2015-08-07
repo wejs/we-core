@@ -1,3 +1,8 @@
+{{#unless hideSumary}}
+  <div class="paginate-sumary">
+    {{t 'paginate.sumary' recordsLength=recordsLength count=count}}
+  </div>
+{{/unless}}
 <nav>
   <ul class="pagination">
     {{#if previus}}

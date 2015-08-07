@@ -1,5 +1,7 @@
 /**
  * We.js paginate helper to build pagination for lists
+ *
+ * {{paginate count=metadata.count limit=query.limit currentPage=query.page req=req}}
  */
 
 module.exports = function(we) {
@@ -27,24 +29,29 @@ module.exports = function(we) {
       links: [],
       last: {},
       next: false,
-      haveMoreAfter: false
+      haveMoreAfter: false,
+      hideSumary: options.hash.hideSumary,
+      count: Number(options.hash.count) || 0,
+      limit: Number(options.hash.limit) || 0,
+      maxLinks: Number(options.hash.maxLinks) || 2,
+      currentPage: Number(options.hash.currentPage) || 0,
+      locals: options.hash.req.res.locals
     };
-    var count = Number(options.hash.count) || 0;
-    var limit = Number(options.hash.limit) || 0;
-    var maxLinks = Number(options.hash.maxLinks) || 2;
-    var currentPage = Number(options.hash.currentPage) || 0;
 
-    var pageCount = Math.ceil(count/limit);
+    if (options.hash.req.res.locals.record)
+      pagger.recordsLength = options.hash.req.res.locals.record.length;
+
+    var pageCount = Math.ceil(pagger.count/pagger.limit);
     if (!pageCount || pageCount == 1) return '';
 
     var startInPage = 1;
     var endInPage = pageCount;
-    var totalLinks = (maxLinks*2) +1;
+    var totalLinks = (pagger.maxLinks*2) +1;
 
     if ( totalLinks < pageCount ) {
       // check if have more before
-      if ((maxLinks+2) < currentPage) {
-        startInPage = currentPage - maxLinks;
+      if ((pagger.maxLinks+2) < pagger.currentPage) {
+        startInPage = pagger.currentPage - pagger.maxLinks;
         pagger.first = {
           p: '?page='+1+params,
           n: 1
@@ -52,8 +59,8 @@ module.exports = function(we) {
         pagger.haveMoreBefore = true;
       }
 
-      if ( (maxLinks+currentPage+1) < pageCount ) {
-        endInPage = maxLinks+currentPage;
+      if ( (pagger.maxLinks+pagger.currentPage+1) < pageCount ) {
+        endInPage = pagger.maxLinks+pagger.currentPage;
         pagger.last = {
           p: '?page='+pageCount+params,
           n: pageCount
@@ -67,21 +74,21 @@ module.exports = function(we) {
       pagger.links.push({
         p: '?page='+i+params,
         n: i,
-        active: ( i == currentPage )
+        active: ( i == pagger.currentPage )
       });
     }
 
-    if (currentPage > 1) {
+    if (pagger.currentPage > 1) {
       pagger.previus = {
-        p: '?page='+(currentPage-1)+params,
-        n: (currentPage-1),
+        p: '?page='+(pagger.currentPage-1)+params,
+        n: (pagger.currentPage-1),
       }
     }
 
-    if (currentPage < pageCount) {
+    if (pagger.currentPage < pageCount) {
       pagger.next = {
-        p: '?page='+(currentPage+1)+params,
-        n: (currentPage+1),
+        p: '?page='+(pagger.currentPage+1)+params,
+        n: (pagger.currentPage+1),
       }
     }
 
