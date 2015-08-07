@@ -20,7 +20,6 @@ module.exports = function(we) {
       __ = options.data.root.locals.__;
     } else {
         we.log.verbose('helper:t: this.__ not found, i will use we.i18n__');
-        console.log('>>', this)
       __ = we.i18n.__;
     }
 
