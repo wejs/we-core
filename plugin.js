@@ -407,7 +407,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'getForm',
       model         : 'widget',
       permission    : 'manage_widget',
-      responseType  : 'modal'
+      skipWidgets   : true,
     },
     'get /api/v1/widget-types': {
       controller    : 'widget',
