@@ -154,6 +154,75 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             roles: ['administrator']
           },
         ]
+      },
+      authenticatedUserMenu: function(req) {
+        return {
+          class: 'nav navbar-nav navbar-right',
+          links: [{
+            id: 'user',
+            href: '/user/' + req.user.id,
+            text: req.user.displayName || '#'+req.user.id,
+            class: null,
+            weight: 3
+          },
+          {
+            id: 'userProfileView',
+            href: '/user/' + req.user.id,
+            text: '<i class="glyphicon glyphicon-user"></i> '+
+              req.__('user.profile.view'),
+            class: null,
+            weight: 3,
+            parent: 'user'
+          },
+          {
+            id: 'userProfileView',
+            href: '/user/' + req.user.id + '/edit',
+            text: '<i class="glyphicon glyphicon-pencil text-primary"></i> '+
+              req.__('user.profile.edit'),
+            class: null,
+            weight: 5,
+            parent: 'user'
+          },
+          {
+            id: 'userChangePassword',
+            href: '/auth/change-password',
+            text: '<i class="glyphicon glyphicon-lock text-warning"></i> '+
+              req.__('auth.change-password'),
+            class: null,
+            weight: 7,
+            parent: 'user',
+            dividerAfter: true
+          },
+          {
+            id: 'logout',
+            href: '/auth/logout',
+            text: '<i class="glyphicon glyphicon-log-out text-danger"></i> '+
+              req.__('Logout'),
+            class: null,
+            weight: 9,
+            parent: 'user',
+            dividerAfter: true
+          }
+          ]
+        }
+      },
+      unAuthenticatedUserMenu: function(req) {
+        return {
+          class: 'nav navbar-nav navbar-right',
+          links: [{
+            id: 'login',
+            href: '/login',
+            text: req.__('Login'),
+            class: null,
+            weight: 4
+          }, {
+            id: 'register',
+            href: '/signup',
+            text: req.__('Register'),
+            class: null,
+            weight: 5
+          }]
+        }
       }
     },
     // services register
