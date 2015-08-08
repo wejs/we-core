@@ -42,3 +42,8 @@ body.we-editing-layout .widget:hover{
   display: block;
   width: auto;
 }
+
+a.tabledrag-handle .handle {
+  height: 25px !important;
+  width: 25px !important;
+}

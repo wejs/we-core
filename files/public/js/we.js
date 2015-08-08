@@ -75,7 +75,6 @@ var we = {
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(formData)
       }).then(function (r) {
-        // TODO change "widget" model name to current form model name
         we.events.emit('model-update', 'widget', r.widget);
       });
     });
@@ -603,7 +602,7 @@ we.components = {
       },
       group: {
         fieldClass: 'row-depth',
-        depthLimit: 3
+        depthLimit: 1
       }
     };
     $(selector).tableDrag(options);
