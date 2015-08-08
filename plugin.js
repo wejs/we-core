@@ -133,7 +133,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     clientComponentTemplates: { 'components-core': true },
     database: { resetAllData: false },
     menu: {
-      main: {},
       admin: {
         class: 'nav',
         links: [
