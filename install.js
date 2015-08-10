@@ -44,12 +44,30 @@ module.exports = {
    */
   updates: function updates(we) {
     return [
-      // {
-      //   version: '',
-      //   update: function(we, done) {
+      {
+        version: '0.3.63',
+        update: function(we, done) {
+          console.log('didi test update')
 
-      //   }
-      // }
+          done();
+        }
+      },
+      {
+        version: '0.3.64',
+        update: function(we, done) {
+          console.log('didi 64 test update')
+
+          done();
+        }
+      },
+      {
+        version: '0.3.65',
+        update: function(we, done) {
+          console.log('didi 65 test update')
+
+          done();
+        }
+      }
     ];
   }
 };
