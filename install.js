@@ -43,31 +43,6 @@ module.exports = {
    * @return {Array}    a list of update objects
    */
   updates: function updates(we) {
-    return [
-      {
-        version: '0.3.63',
-        update: function(we, done) {
-          console.log('didi test update')
-
-          done();
-        }
-      },
-      {
-        version: '0.3.64',
-        update: function(we, done) {
-          console.log('didi 64 test update')
-
-          done();
-        }
-      },
-      {
-        version: '0.3.65',
-        update: function(we, done) {
-          console.log('didi 65 test update')
-
-          done();
-        }
-      }
-    ];
+    return [];
   }
 };
