@@ -83,5 +83,7 @@
 	"Widget": "Widget",
 	"Edit": "Edit",
 	"Delete": "Delete",
-	"widget.delete.confirm.msg": "widget.delete.confirm.msg"
+	"widget.delete.confirm.msg": "widget.delete.confirm.msg",
+	"user.profile.view": "user.profile.view",
+	"user.profile.edit": "user.profile.edit"
 }

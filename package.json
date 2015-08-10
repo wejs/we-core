@@ -69,7 +69,6 @@
     "mocha": "^2.2.5",
     "sinon": "^1.14.0",
     "supertest": "^1.0.1",
-    "we-plugin-form": "wejs/we-plugin-form",
     "we-test-tools": "wejs/we-test-tools",
     "we-theme-admin-default": "wejs/we-theme-admin-default",
     "we-theme-site-wejs": "wejs/we-theme-site-wejs"

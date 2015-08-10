@@ -15,24 +15,29 @@ before(function(callback) {
 
     testTools.init({}, we);
 
-    we.bootstrap({
-      i18n: {
-        directory: path.join(__dirname, 'locales'),
-        updateFiles: true
-      }
-    } , function(err, we) {
-      if (err) return console.error(err);
+    testTools.helpers.resetDatabase(we, function(err) {
+      if(err) return callback(err);
 
-      we.startServer(function(err) {
+      we.bootstrap({
+        i18n: {
+          directory: path.join(__dirname, 'locales'),
+          updateFiles: true
+        }
+      }, function (err, we) {
         if (err) return console.error(err);
-        callback();
-      })
-    })
-  })
-})
+        we.startServer(function (err) {
+          if (err) return console.error(err);
+          callback();
+        });
+      });
+    });
+  });
+});
 
 //after all tests
 after(function (callback) {
+
+
   we.db.defaultConnection.close();
 
   var tempFolders = [
@@ -54,6 +59,5 @@ after(function (callback) {
   }, function(err) {
     if (err) throw new Error(err);
     callback();
-  })
-
+  });
 })

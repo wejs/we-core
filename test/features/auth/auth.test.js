@@ -190,6 +190,7 @@ describe('authFeature', function () {
 
         request(http)
         .post('/signup')
+        .set('Accept', 'application/json')
         .send(userStub)
         .expect(400)
         .end(function (err, res) {
@@ -209,6 +210,7 @@ describe('authFeature', function () {
 
         request(http)
         .post('/signup')
+        .set('Accept', 'application/json')
         .send(userStub)
         .expect(400)
         .end(function (err, res) {

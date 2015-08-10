@@ -2,7 +2,6 @@ var assert = require('assert');
 var request = require('supertest');
 var helpers = require('we-test-tools').helpers;
 var stubs = require('we-test-tools').stubs;
-var _ = require('lodash');
 var http;
 var we;
 var agent;
@@ -61,7 +60,6 @@ describe('ACLFeature', function() {
         assert.equal(role.name, roleNameStrig);
         assert.equal( we.acl.roles[roleNameStrig].id,  role.id);
         assert.equal( we.acl.roles[roleNameStrig].name,  role.name);
-
         done();
       });
     });
