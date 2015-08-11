@@ -133,26 +133,28 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     clientComponentTemplates: { 'components-core': true },
     database: { resetAllData: false },
     menu: {
-      admin: {
-        class: 'nav',
-        links: [
-          {
-            beforeText: '<i class="fa fa-users"></i>',
-            text: 'users.link',
-            afterText: '',
-            type: 'route',
-            name: 'admin.user.find',
-            roles: ['administrator']
-          },
-          {
-            beforeText: '<i class="fa fa-unlock-alt"></i>',
-            text: 'permission.link',
-            afterText: '',
-            type: 'route',
-            name: 'permission_manage',
-            roles: ['administrator']
-          },
-        ]
+      adminMenu: function(req) {
+        return {
+          class: 'nav',
+          permission: 'access_admin',
+          links: [
+            {
+              id: 'adminUser',
+              text: '<i class="fa fa-users"></i> '+req.__('users.link'),
+              href: '/admin/user',
+              class: null,
+              weight: 3,
+              name: 'admin.user.find'
+            },
+            {
+              id: 'adminPermissions',
+              text: '<i class="fa fa-unlock-alt"></i> '+req.__('permission.link'),
+              href: '/admin/permission',
+              class: null,
+              weight: 5
+            },
+          ]
+        };
       },
       authenticatedUserMenu: function(req) {
         return {
@@ -174,7 +176,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             parent: 'user'
           },
           {
-            id: 'userProfileView',
+            id: 'userProfileEdit',
             href: '/user/' + req.user.id + '/edit',
             text: '<i class="glyphicon glyphicon-pencil text-primary"></i> '+
               req.__('user.profile.edit'),
