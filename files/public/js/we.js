@@ -616,13 +616,15 @@ we.components = {
   editor: {
     styles: {
       small: [
-        ['font', ['bold', 'italic', 'underline', 'clear']]
+        ['font', ['bold', 'italic', 'underline', 'clear']],
+        ['help', ['help']]
       ],
       medium: [
         ['font', ['bold', 'italic', 'underline', 'clear']],
         ['para', [ 'ul','ol', 'paragraph' ]], ['style', ['style']],
-        ['insert', ['link', 'picture', 'video', 'table']],
-        ['misc', ['fullscreen', 'help']]
+        ['insert', ['link', 'picture', 'video']],
+        ['misc', ['fullscreen','codeview', 'help']],
+        ['help', ['help']]
       ]
     },
     init: function(selector, style) {
@@ -660,8 +662,6 @@ we.components = {
       if (!style) style = (element.attr('we-editor-style') || 'medium');
       // add editor toobar config if style not is full
       cfg.toolbar = we.components.editor.styles[style];
-console.log('>>', style, cfg)
-
       element.summernote(cfg);
     }
   },
