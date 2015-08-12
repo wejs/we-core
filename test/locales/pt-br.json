@@ -85,5 +85,7 @@
 	"Delete": "Delete",
 	"widget.delete.confirm.msg": "widget.delete.confirm.msg",
 	"user.profile.view": "user.profile.view",
-	"user.profile.edit": "user.profile.edit"
+	"user.profile.edit": "user.profile.edit",
+	"users.link": "users.link",
+	"permission.link": "permission.link"
 }
