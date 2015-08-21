@@ -452,10 +452,14 @@ module.exports = {
    * Page to set new user password after click in new password link
    */
   newPassword: function newPasswordAction(req, res) {
-    if (!req.isAuthenticated()) return res.goTo('/');
-
-    if (!req.user.isAdmin && !req.session.resetPassword)
+    // check access
+    if (req.session.resetPassword && (req.params.id != req.user.id)) {
       return res.goTo('/auth/forgot-password');
+    } else if (req.we.acl.canStatic('manage_users', req.userRoleNames)) {
+      // can manage users then can change others users password
+    } else {
+      return res.goTo('/auth/forgot-password');
+    }
 
     var we = req.getWe();
 
@@ -463,13 +467,8 @@ module.exports = {
 
     var newPassword = req.body.newPassword;
     var rNewPassword = req.body.rNewPassword;
-    // var userId = req.param('id');
-    var userId = req.user.id;
 
-    if (!req.isAuthenticated() || req.user.id != userId) {
-      if (!req.user.isAdmin)
-        return res.badRequest('auth.new-password.forbiden');
-    }
+    var userId = req.params.id;
 
     if ( _.isEmpty(newPassword) || _.isEmpty(rNewPassword) )
       return res.badRequest('auth.confirmPassword.and.password.required');
