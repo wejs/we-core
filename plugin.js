@@ -155,7 +155,34 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     namePrefix: 'admin.',
     name: 'user',
     namespace: '/admin',
-    templateFolderPrefix: 'admin/'
+    templateFolderPrefix: 'admin/',
+    findAll: {
+      search: {
+        id:  {
+          parser: 'equal',
+          target: {
+            type: 'field',
+            field: 'id'
+          }
+        },
+        email:  {
+          parser: 'equal',
+          target: {
+            type: 'field',
+            model: 'user',
+            field: 'email'
+          }
+        },
+        fullName:  {
+          parser: 'contains',
+          target: {
+            type: 'field',
+            model: 'user',
+            field: 'fullName'
+          }
+        }
+      }
+    }
   });
 
   // set plugin routes
