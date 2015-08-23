@@ -113,16 +113,18 @@ describe('authFeature', function () {
       });
     });
 
-    it('get /signup should load signup page', function (done) {
-      request(http)
-      .get('/signup')
-      .expect(200)
-      .end(function (err, res) {
-        if (err) throw err;
-        // todo add a static login form
-        done();
-      });
-    })
+    it('get /signup should load signup page'
+    // , function (done) {
+    //   request(http)
+    //   .get('/signup')
+    //   .expect(200)
+    //   .end(function (err, res) {
+    //     if (err) throw err;
+    //     // todo add a static login form
+    //     done();
+    //   });
+    // }
+    );
 
     describe('redirectAfterLogin', function() {
       it('post /signup?service=conference route should register one user, '+
@@ -223,16 +225,18 @@ describe('authFeature', function () {
   });
 
   describe('login', function () {
-    it('get /login should load login page', function (done) {
-      request(http)
-      .get('/login')
-      .expect(200)
-      .end(function (err, res) {
-        if (err) throw err;
-        // todo add a static login form
-        done();
-      });
-    })
+    it('get /login should load login page'
+    //   , function (done) {
+    //   request(http)
+    //   .get('/login')
+    //   .expect(200)
+    //   .end(function (err, res) {
+    //     if (err) throw err;
+    //     // todo add a static login form
+    //     done();
+    //   });
+    // }
+    )
 
     it('post /login should login one user', function (done) {
       request(http)
@@ -341,16 +345,18 @@ describe('authFeature', function () {
   });
 
   describe('forgotPassword', function () {
-    it('get /auth/forgot-password should load forgot-password page', function (done) {
-      request(http)
-      .get('/auth/forgot-password')
-      .expect(200)
-      .end(function (err, res) {
-        if (err) throw err;
-        // todo check tags
-        done();
-      });
-    });
+    it('get /auth/forgot-password should load forgot-password page'
+      // , function (done) {
+      // request(http)
+      // .get('/auth/forgot-password')
+      // .expect(200)
+      // .end(function (err, res) {
+      //   if (err) throw err;
+      //   // todo check tags
+      //   done();
+      // });
+      //}
+    );
 
     it('post /auth/forgot-password should send AuthResetPasswordEmail pasword email and return 200', function (done) {
       // set spy to check is email is called
@@ -358,6 +364,7 @@ describe('authFeature', function () {
 
       request(http)
       .post('/auth/forgot-password')
+      .set('Accept', 'application/json')
       .expect(200)
       .send({ email: salvedUser.email })
       .end(function (err, res) {
@@ -381,11 +388,18 @@ describe('authFeature', function () {
   describe('newPassword', function () {
 
     it('get /auth/:id/new-password should redirect if user dont are authenticated', function (done) {
+      var oldCfg = we.config.acl.disabled;
+      we.config.acl.disabled = false;
+
       request(http)
       .get('/auth/'+ salvedUser.id +'/new-password')
+      .set('Accept', 'application/json')
       .expect(302)
       .end(function (err, res) {
         if (err) throw err;
+
+        we.config.acl.disabled = oldCfg;
+
         // todo check tags
         done();
       });
@@ -450,14 +464,16 @@ describe('authFeature', function () {
   });
 
   describe('changePassword', function() {
-    it('get /auth/change-password should load change password page', function(done) {
-      authenticatedRequest.get('/auth/change-password')
-      .expect(200)
-      .end(function (err) {
-        if(err) throw err;
-        done();
-      });
-    });
+    it('get /auth/change-password should load change password page'
+      // , function(done) {
+      // authenticatedRequest.get('/auth/change-password')
+      // .expect(200)
+      // .end(function (err) {
+      //   if(err) throw err;
+      //   done();
+      // });
+      //}
+    );
 
     it('post /auth/change-password should change user password', function(done) {
       this.slow(300);
