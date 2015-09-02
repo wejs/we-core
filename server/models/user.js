@@ -122,6 +122,7 @@ module.exports = function UserModel(we) {
 
       acceptTerms: {
         type: we.db.Sequelize.BOOLEAN,
+        defaultValue: true,
         equals: true,
         allowNull: false,
         formFieldType: null
