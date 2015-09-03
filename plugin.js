@@ -95,9 +95,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // node-i18n configs
     i18n: {
       // setup some locales - other locales default to en silently
-      locales:['en-us', 'pt-br'],
+      locales:[],
       // you may alter a site wide default locale
-      defaultLocale: 'pt-br',
+      defaultLocale: 'en-us',
       // sets a custom cookie name to parse locale settings from  - defaults to NULL
       cookie: 'weLocale',
       // where to store json files - defaults to './locales' relative to modules directory
