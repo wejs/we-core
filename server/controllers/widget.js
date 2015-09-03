@@ -303,6 +303,7 @@ function setFormControllerAndModelVars(res, we, widget) {
     'in-portal': '',
     'in-context': '',
     'in-session': '',
+    'in-session-record': '',
     'in-page': '',
   };
 
@@ -314,7 +315,8 @@ function setFormControllerAndModelVars(res, we, widget) {
   res.locals.controllFields += '<div class="form-group"><div class="row">' +
     '<label class="col-sm-4 control-label">'+
     res.locals.__('widget.visibility') + '</label>'+
-    '<div class="col-sm-8"><select name="visibility" class="form-control">';
+  '<div class="col-sm-8"><select name="visibility" class="form-control">';
+
   if (context) {
     res.locals.controllFields +=
     '<option value="in-context"'+vrq['in-context']+'>'+
@@ -328,8 +330,18 @@ function setFormControllerAndModelVars(res, we, widget) {
   }
 
   res.locals.controllFields +=
-    '<option value="in-session"'+vrq['in-session']+'>'+res.locals.__('widget.in-session')+'</option>'+
-    '<option value="in-page"'+vrq['in-page']+'>'+res.locals.__('widget.in-page')+'</option>'+
-    '</select></div></div>'+
+    '<option value="in-session"'+vrq['in-session']+'>'
+      +res.locals.__('widget.in-session')+
+    '</option>'+
+    // - in-session-record
+    '<option value="in-session-record"'+vrq['in-session-record']+'>'+
+      res.locals.__('widget.in-session-record')+
+    '</option>'+
+    // - in-page
+    '<option value="in-page"'+vrq['in-page']+'>'+
+      res.locals.__('widget.in-page')+
+    '</option>'+
+
+  '</select></div></div>'+
   '</div><hr>';
 }

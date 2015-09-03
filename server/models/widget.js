@@ -21,7 +21,13 @@ module.exports = function Model(we) {
       },
       // show only in this model
       modelName: { type: we.db.Sequelize.STRING, },
-      modelId: { type: we.db.Sequelize.BIGINT },
+      modelId: { type: we.db.Sequelize.BIGINT, allowNull: true },
+      // only show in record
+      inRecord: {
+        type: we.db.Sequelize.BOOLEAN,
+        defaultValue: null,
+        allowNull: true
+      },
 
       layout: {
         type:  we.db.Sequelize.STRING,
@@ -60,7 +66,11 @@ module.exports = function Model(we) {
             if (this.getDataValue('modelId')) {
               return 'in-page';
             } else {
-              return 'in-session';
+              if (this.getDataValue('inRecord')) {
+                return 'in-session-record';
+              } else {
+                return 'in-session';
+              }
             }
           } else if (this.getDataValue('context')) {
             return 'in-context';

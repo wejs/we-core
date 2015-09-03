@@ -131,6 +131,26 @@ we.structure = {
   regions: {},
 
   newWidgetObj: {},
+  setForDataValuesWithVisibility: function(formData) {
+    switch(formData.visibility) {
+      case 'in-page':
+        formData.modelName = we.config.modelName;
+        formData.modelId = we.config.modelId;
+        break;
+      case 'in-session':
+        formData.modelName = we.config.modelName;
+        formData.modelId = null;
+        break;
+      case 'in-session-record':
+        formData.modelName = we.config.modelName;
+        formData.modelId = null;
+        formData.inRecord = true;
+        break;
+      default:
+        formData.modelName = null;
+        formData.modelId = null;
+    }
+  },
   openAddWidgetForm: function openAddWidgetForm(regionName) {
     var modal = $(we.structure.addWidgetModalFormId);
     if (!modal) throw new Error('Add widget modal not found!', we.structure.addWidgetModalFormId);
@@ -197,19 +217,7 @@ we.structure = {
         if (!url) url = '/api/v1/widget';
         url+='?responseType=json';
 
-        switch(formData.visibility) {
-          case 'in-page':
-            formData.modelName = we.config.modelName;
-            formData.modelId = we.config.modelId;
-            break;
-          case 'in-session':
-            formData.modelName = we.config.modelName;
-            formData.modelId = null;
-            break;
-          default:
-            formData.modelName = null;
-            formData.modelId = null;
-        }
+        we.structure.setForDataValuesWithVisibility(formData);
 
         $.post(url, formData)
         .then(function (r) {
@@ -250,19 +258,7 @@ we.structure = {
           url = we.config.structure.widgetUpdateUrl+id+'?responseType=json'
         }
 
-        switch(formData.visibility) {
-          case 'in-page':
-            formData.modelName = we.config.modelName;
-            formData.modelId = we.config.modelId;
-            break;
-          case 'in-session':
-            formData.modelName = we.config.modelName;
-            formData.modelId = null;
-            break;
-          default:
-            formData.modelName = null;
-            formData.modelId = null;
-        }
+        we.structure.setForDataValuesWithVisibility(formData);
 
         $.ajax({
           url: url,

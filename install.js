@@ -43,6 +43,15 @@ module.exports = {
    * @return {Array}    a list of update objects
    */
   updates: function updates(we) {
-    return [];
+    return [{
+      version: '0.3.69', // your plugin version
+      update: function update0369(we, done) {
+        var sql = 'ALTER TABLE `widgets` ADD '+
+          ' COLUMN `inRecord` TINYINT(1) DEFAULT NULL;';
+        we.db.defaultConnection.query(sql).then(function() {
+          done();
+        }).catch(done);
+      }
+    }];
   }
 };
