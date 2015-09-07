@@ -225,6 +225,8 @@ we.structure = {
           regionTag.find('widgets').prepend(r.widget[0].html);
         }).always(function(){
           modal.modal('hide');
+
+          modal.find('form').off( event );
         });
       });
     });
