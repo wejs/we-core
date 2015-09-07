@@ -130,6 +130,15 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       'new-password': __dirname + '/server/forms/new-password.json',
       'change-password': __dirname + '/server/forms/change-password.json'
     },
+    // // theme configs
+    themes: {
+      // list of all enabled themes how will be load in bootstrap
+      enabled: [],
+      // default app theme
+      app: null,
+      // default admin theme
+      admin: null
+    },
     clientComponentTemplates: { 'components-core': true },
     database: { resetAllData: false },
     // services register
