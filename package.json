@@ -1,6 +1,6 @@
 {
   "name": "we-core",
-  "version": "0.3.69",
+  "version": "0.3.70",
   "main": "./lib/index.js",
   "scripts": {
     "lint": "./node_modules/.bin/jshint .",
