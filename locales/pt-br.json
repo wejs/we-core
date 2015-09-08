@@ -95,7 +95,7 @@
   "form-register-email": "Email",
   "form-placeholder-register-email": " ",
   "form-helper-register-email": " ",
-  "form-register-confirmEmail": "Repetir a senha",
+  "form-register-confirmEmail": "Repetir o email",
   "form-placeholder-register-confirmEmail": " ",
   "form-helper-register-confirmEmail": " ",
   "form-register-organization": "Organização",
@@ -106,5 +106,17 @@
   "form-forgot-password-email": "Email",
   "form-placeholder-forgot-password-email": " ",
   "form-helper-forgot-password-email": "Seu email do sistema",
-  "form-forgot-password-submit": "Enviar"
+  "form-forgot-password-submit": "Enviar",
+
+  "form-new-password-email": "Nova senha",
+  "form-new-password-newPassword": "Nova senha",
+  "form-new-password-password": "Senha",
+  "form-new-password-rNewPassword": "Repetir a nova senha",
+  "form-new-password-submit": "Enviar",
+  "form-placeholder-new-password-confirmPassword": " ",
+  "form-placeholder-new-password-newPassword": "Digite a nova senha aqui ...",
+  "form-placeholder-new-password-rNewPassword": "Digite a nova senha aqui ...",
+  "form-helper-new-password-confirmPassword": " ",
+  "form-helper-new-password-newPassword": " ",
+  "form-helper-new-password-rNewPassword": " "
 }
