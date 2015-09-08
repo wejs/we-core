@@ -103,7 +103,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // where to store json files - defaults to './locales' relative to modules directory
       directory: projectPath + '/config/locales',
       // whether to write new locale information to disk - defaults to true
-      updateFiles: true,
+      updateFiles: false,
       // what to use as the indentation unit - defaults to "\t"
       indent: '\t',
       // setting extension of json files - defaults to '.json'
