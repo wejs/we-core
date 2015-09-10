@@ -42,7 +42,7 @@ module.exports = function Model(we) {
         defaultValue: 0
       },
       configuration: {
-        type:  we.db.Sequelize.TEXT,
+        type:  we.db.Sequelize.TEXT('medium'),
         skipSanitizer: true,
         get: function()  {
           if (this.getDataValue('configuration'))
