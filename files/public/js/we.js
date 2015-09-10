@@ -337,7 +337,15 @@ we.router = {
     if (we.router.firstRoute) {
       we.router.firstRoute = false; return;
     }
-    $('layout').load(ctx.path + '?skipHTML=true', function(){
+    var url;
+    // set skipHTML query param
+    if (ctx.path.indexOf('?') > -1) {
+      url = ctx.path + '&skipHTML=true';
+    } else {
+      url = ctx.path + '?skipHTML=true';
+    }
+
+    $('layout').load(url, function(){
       $('html, body').animate({ scrollTop: 0 }, 0);
     });
   },
