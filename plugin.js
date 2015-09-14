@@ -38,6 +38,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         maxAge: null
       }
     },
+    // body parser settings to use in bodyParser.json()
+    bodyParser: { limit: 20000000 },
+    // auth settings
     auth : {
       requireAccountActivation: true,
       allowUserSignup: true
