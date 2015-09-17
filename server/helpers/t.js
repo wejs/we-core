@@ -6,11 +6,11 @@
  * @return {string}
  */
 module.exports = function(we) {
-  return function t(string) {
+  return function tHelper(string) {
     var options = arguments[arguments.length-1];
     var attr, __;
 
-    if (arguments.length == 3) attr = arguments[2];
+    if (arguments.length == 3) attr = arguments[1];
 
     if (this.__) {
       __ = this.__;
@@ -19,7 +19,7 @@ module.exports = function(we) {
     } else if (options.data.root.locals && options.data.root.locals.__) {
       __ = options.data.root.locals.__;
     } else {
-        we.log.verbose('helper:t: this.__ not found, i will use we.i18n__');
+        we.log.verbose('helper:t: this.__ not found, i will use we.i18n__')
       __ = we.i18n.__;
     }
 
