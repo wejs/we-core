@@ -16,7 +16,9 @@ module.exports = function(we) {
     configs.theme = this.theme;
     // get delete widget msg
     configs.structure.deleteWidgetConfirm = this.__('widget.delete.confirm.msg');
-
+    // set widget context
+    configs.widgetContext = this.widgetContext;
+    // set current modelName and modelId
     configs.modelName = this.model;
     configs.modelId = this.id;
     // event to allow changes in configs from others plugins
