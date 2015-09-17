@@ -50,26 +50,3 @@ module.exports = {
     res.send(getRoutes);
   }
 };
-
-/**
- * Search for one locale file folder
- *
- * @param  {Object}   we       we.js
- * @param  {String}   locale   locale to search for
- * @param  {Function} callback
- */
-function getTranslationFilePath (we, locale, callback) {
-  var localePath = null;
-  // check if exists in project
-  localePath = we.projectPath + '/config/locales/' + locale + '.json';
-  fs.exists (localePath, function (exists) {
-    if (exists) {
-      return callback(localePath);
-    }
-
-    we.log.info('Localization file not found in project', locale);
-
-    callback();
-  });
-}
-
