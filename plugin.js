@@ -510,7 +510,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'permission',
       action        : 'manage',
       template      : 'admin/permission/index',
-      responseType  : 'html',
       permission    : 'manage_permissions',
     },
 

@@ -23,7 +23,12 @@ module.exports = {
     }).then(function (roles){
       res.locals.metadata.count = permissions.length;
       res.locals.roles = roles;
-      return res.ok();
+
+      if (res.locals.responseType == 'json') {
+        res.send({ role: res.locals.roles });
+      } else {
+        res.ok();
+      }
     });
   }
 };
