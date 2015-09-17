@@ -64,6 +64,7 @@
     "winston": "1.0.1"
   },
   "devDependencies": {
+    "istanbul": "^0.3.20",
     "jshint": "^2.8.0",
     "mocha": "^2.2.5",
     "sinon": "^1.14.0",
