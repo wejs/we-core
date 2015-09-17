@@ -214,13 +214,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action: 'getConfigsJS',
       responseType  : 'json'
     },
-
-    'get /api/v1/translations.js': {
-      controller: 'main',
-      action: 'getTranslations',
-      responseType  : 'json',
-      permission    : true
-    },
     //
     // - Auth routes
     //

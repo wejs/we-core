@@ -35,65 +35,6 @@ module.exports = {
     return res.send(configs);
   },
 
-  getTranslations: function (req, res) {
-    var we = req.getWe();
-    var localeParam = req.params.locale;
-    var locale;
-
-    if (localeParam) {
-      // check if the locale are in avaible we.js locales
-      // TODO add suport to search in subprojects
-      for (var i = we.config.i18n.locales.length - 1; i >= 0; i--) {
-        if ( we.config.i18n.locales[i] === localeParam ) {
-          locale = localeParam;
-        }
-      }
-    }
-
-    // TODO change to use res.locals.locale
-    if ( req.isAuthenticated()) {
-      locale = req.user.language;
-    }
-
-    if (!locale) {
-      locale = we.config.i18n.defaultLocale;
-    }
-
-    var translationResponse = '';
-
-    translationResponse += 'if(typeof Ember === "undefined"){' +
-      'Ember = {};' +
-      'Ember.I18n = {};' +
-    '}\n';
-
-    translationResponse += 'if(!Ember.I18n.translations){' +
-      'Ember.I18n.translations = {};' +
-    '}\n';
-
-    getTranslationFilePath(we, locale , function (path) {
-      if (path) {
-        fs.readFile(path, 'utf8', function (err, data) {
-          if (err) {
-            we.log.error('Error: ' + err);
-            return res.serverError();
-          }
-
-          translationResponse += 'Ember.I18n.translations = ';
-          translationResponse+= data;
-          translationResponse += ';';
-
-          res.contentType('application/javascript');
-          res.ok( translationResponse );
-        });
-      } else {
-        we.log.debug('getTranslations:Locale not found:', locale, localeParam);
-        res.contentType('application/javascript');
-        res.ok( translationResponse );
-      }
-
-    });
-  },
-
   getRoutes: function(req, res) {
     var we = req.getWe();
     var getRoutes = {};
