@@ -9,8 +9,9 @@
  */
 
 module.exports = function() {
-  return function renderWidget(array, value, options) {
-    if (!array) return options.inverse(this);
+  return function containsHelper(array, value, options) {
+    if (!array || !array.indexOf || (!value))
+      return options.inverse(this);
     if (array.indexOf(value) >-1) {
       return options.fn(this);
     }
