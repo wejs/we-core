@@ -260,7 +260,32 @@ describe('authFeature', function () {
         // todo add a static login form
         done();
       });
-    })
+    });
+
+    it('post /login should login one user with persistent', function (done) {
+      request(http)
+      .post('/login')
+      .set('Accept', 'application/json')
+      .send({
+        email: salvedUser.email,
+        password: salvedUserPassword,
+        persistent: true
+      })
+      .expect(200)
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) throw err;
+
+        assert(res.headers['set-cookie'])
+        assert(res.body.user.id);
+        assert.equal(res.body.user.displayName, salvedUser.displayName);
+        assert.equal(res.body.user.id, salvedUser.id);
+        assert.equal(res.body.user.username, salvedUser.username);
+
+        // todo add a static login form
+        done();
+      });
+    });
 
     it('post /login should return error with wrong password', function (done) {
       this.slow(300); // route with brypt
