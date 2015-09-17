@@ -287,6 +287,45 @@ describe('authFeature', function () {
     })
   });
 
+  describe('logout', function () {
+    it('get /auth/logout should log out', function (done) {
+      // login user and save the browser
+      var ar = request.agent(http);
+      ar.post('/login')
+      .send({
+        email: salvedUser.email,
+        password: salvedUserPassword
+      })
+      .expect(200)
+      .set('Accept', 'application/json')
+      .end(function () {
+        // check if is authenticated
+        ar.get('/account')
+        .expect(200)
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          if (err) throw err;
+          assert.equal(salvedUser.id, res.body.user[0].id);
+          // should logout
+          ar.get('/auth/logout')
+          .expect(302)
+          .set('Accept', 'application/json')
+          .end(function (err) {
+            if (err) throw err;
+            ar.get('/account')
+            .expect(200)
+            .set('Accept', 'application/json')
+            .end(function (err, res) {
+              if (err) throw err;
+              assert(!res.body.user);
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+
   describe('activate', function () {
     it('get /user/:id/activate/:token activate one user', function (done) {
 
@@ -381,12 +420,9 @@ describe('authFeature', function () {
         done();
       });
     });
-
   });
 
-
   describe('newPassword', function () {
-
     it('get /auth/:id/new-password should redirect if user dont are authenticated', function (done) {
       var oldCfg = we.config.acl.disabled;
       we.config.acl.disabled = false;
