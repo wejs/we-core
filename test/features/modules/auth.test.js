@@ -1,13 +1,19 @@
 var assert = require('assert');
 var helpers = require('we-test-tools').helpers;
+var stubs = require('we-test-tools').stubs;
 
 describe('moduleAuth', function () {
-  var auth, we, token = 'asdasdasdjasldkjakldalsjdaldjlj';
+  var auth, user, we, token = 'asdasdasdjasldkjakldalsjdaldjlj';
 
   before(function (done) {
     auth = require('../../../lib/auth');
     we = helpers.getWe();
-    done();
+    var userStub = stubs.userStub();
+    helpers.createUser(userStub, function(err, u) {
+      if(err) throw err;
+      user = u;
+      done();
+    });
   });
 
   describe('auth.util.parseToken', function () {
