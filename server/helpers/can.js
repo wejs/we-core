@@ -1,5 +1,5 @@
 /**
- * can helper
+ * can helper, check if user can do something
  *
   {{#can permission=permissionName roles=req.userRoleNames}}
     can
@@ -9,12 +9,9 @@
  */
 
 module.exports = function(we) {
-  return function renderWidget() {
+  return function canHelper() {
     var options = arguments[arguments.length-1];
-    var permission = options.hash.permission;
-    var roles = options.hash.roleNames;
-
-    if (we.acl.canStatic(permission, roles)){
+    if (we.acl.canStatic(options.hash.permission, options.hash.roleNames)){
       return options.fn(this);
     } else {
       return options.inverse(this);
