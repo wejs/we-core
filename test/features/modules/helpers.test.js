@@ -34,7 +34,7 @@ describe('coreHelpers', function () {
       });
     });
 
-    it('canHelper should should run inverse if user done have access to permission', function (done) {
+    it('canHelper should run inverse if user done have access to permission', function (done) {
       we.config.acl.disabled = false;
       helper.bind({
         context: 'ctx'
@@ -47,6 +47,37 @@ describe('coreHelpers', function () {
           assert(ctx);
           assert.equal('ctx', ctx.context);
           we.config.acl.disabled = true;
+          done();
+        }
+      });
+    });
+  });
+
+  describe('ifCondHelper', function () {
+    var helper;
+
+    before(function (done) {
+      helper = require('../../../server/helpers/ifCond.js')(we);
+      done();
+    });
+
+    it('ifCondHelper should should run fn if v1 === v2 ', function (done) {
+      helper.bind({
+        context: 'ctx'
+      })(1, 1, {
+        fn: function(ctx) {
+          assert.equal('ctx', ctx.context);
+          done();
+        }
+      });
+    });
+
+    it('ifCondHelper should run inverse v1 !== v2', function (done) {
+      helper.bind({
+        context: 'ctx'
+      })(1, 2, {
+        inverse: function(ctx) {
+          assert.equal('ctx', ctx.context);
           done();
         }
       });

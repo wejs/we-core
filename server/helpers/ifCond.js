@@ -9,7 +9,7 @@
  */
 
 module.exports = function() {
-  return function renderWidget(v1, v2, options) {
+  return function ifCondHelper(v1, v2, options) {
     if (v1 === v2) {
       return options.fn(this);
     }
