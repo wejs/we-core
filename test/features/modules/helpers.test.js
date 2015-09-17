@@ -1,9 +1,10 @@
 var assert = require('assert');
 var helpers = require('we-test-tools').helpers;
 var sinon = require('sinon');
+var moment = require('moment');
+var we;
 
 describe('coreHelpers', function () {
-  var we;
 
   before(function (done) {
     we = helpers.getWe();
@@ -530,8 +531,10 @@ describe('coreHelpers', function () {
   });
 
   describe('dateHelper', function () {
-   var helper, date = new Date('Thu Sep 17 2015 16:08:20 GMT-0300 (BRT)');
+   var helper, dateF, date = new Date('Thu Sep 17 2015 16:08:20 GMT-0300 (BRT)');
+
     before(function (done) {
+      dateF = moment(date).format(we.config.date.defaultFormat);
       helper = require('../../../server/helpers/we-date.js')(we);
       done();
     });
@@ -540,7 +543,7 @@ describe('coreHelpers', function () {
         data: { root: { req: {} }}
       });
 
-      assert.equal('09/17/2015 4:08 PM', text);
+      assert.equal(dateF, text);
 
       done();
     });
@@ -550,7 +553,7 @@ describe('coreHelpers', function () {
           user: { language: 'en-us' }
         }}}
       });
-      assert.equal('09/17/2015 4:08 PM', text);
+      assert.equal(dateF, text);
       done();
     });
     it('we-date should format and return one date with user from locals', function (done) {
@@ -559,7 +562,7 @@ describe('coreHelpers', function () {
           user: { language: 'en-us' }
         }}}}
       });
-      assert.equal('09/17/2015 4:08 PM', text);
+      assert.equal(dateF, text);
       done();
     });
     it('we-date should format and return one date with custom format', function (done) {
