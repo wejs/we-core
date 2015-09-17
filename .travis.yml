@@ -8,8 +8,11 @@ node_js:
 services:
   - mysql
 
+addons:
+  code_climate:
+    repo_token: '8d07bda4536211d4af2ef9dce3edda45dff1f892a2abdb062ab1c2ffd0a637f2'
+
 env:
-  CODECLIMATE_REPO_TOKEN: '8d07bda4536211d4af2ef9dce3edda45dff1f892a2abdb062ab1c2ffd0a637f2'
   NODE_ENV: 'test'
 
 before_script:
@@ -21,7 +24,7 @@ before_script:
 
 after_success:
   - NODE_ENV=test LOG_LV=info istanbul cover _mocha -- -R spec test/bootstrap.js test/**/*.test.js --timeout 20000
-  - codeclimate < ./coverage/lcov.info
+  - codeclimate-test-reporter < lcov.info
 
 notifications:
   email:

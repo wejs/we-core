@@ -5,3 +5,4 @@ exclude_paths:
   - client/shared/beforeAll/*
   - client/shared/libs/*
   - files/public/*
+  - test/*
