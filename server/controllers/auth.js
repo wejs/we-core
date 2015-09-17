@@ -159,10 +159,10 @@ module.exports = {
     var email = req.body.email;
 
     if (req.method !== 'POST') {
-      return we.auth.logOut(req, res, function (err) {
-        if (err) return res.serverError(err);
-        return res.ok();
-      });
+      // redirect do home if is authenticated
+      if (req.isAuthenticated()) return res.redirect('/');
+      // else show login page
+      return res.ok();
     }
     // --  set req.body for error page
     res.locals.record = req.body
