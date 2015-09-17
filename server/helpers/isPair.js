@@ -8,7 +8,7 @@
   {{/isPair}}
  */
 module.exports = function() {
-  return function renderWidget(index) {
+  return function isPairHelper(index) {
     var options = arguments[arguments.length-1];
     if ( (index % 2) === 0) {
       return options.fn(this);

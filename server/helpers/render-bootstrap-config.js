@@ -31,6 +31,6 @@ module.exports = function(we) {
     var tags = '<script type="text/javascript"> window.WE_BOOTSTRAP_CONFIG=';
     tags += JSON.stringify(configs);
     tags += '</script>';
-    return tags;
+    return new we.hbs.SafeString(tags);
   }
 }

@@ -1,6 +1,8 @@
 /**
  * Layout helper
  *
+ * DEPRECATED !
+ *
  * usage:  {{#layout 'name'}} {{/layout}}
  */
 module.exports = function(we) {

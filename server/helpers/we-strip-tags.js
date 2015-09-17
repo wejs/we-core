@@ -5,7 +5,7 @@
  */
 
 module.exports = function(we) {
-  return function renderHelper() {
+  return function weStripTagsHelper() {
     var options = arguments[arguments.length-1];
     if (!options.hash.text) return '';
 

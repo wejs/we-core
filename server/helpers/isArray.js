@@ -1,5 +1,5 @@
 /**
- * Check if one variable is array
+ * Check if variable is array
  *
   {{#isArray array}}
       is array

@@ -5,7 +5,7 @@
  */
 
 module.exports = function(we) {
-  return function() {
+  return function paginateHelper() {
     var options = arguments[arguments.length-1];
     var theme = options.hash.theme || options.data.root.theme;
     var reqQuery, params;
