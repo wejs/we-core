@@ -13,7 +13,7 @@ module.exports = function(we) {
     } else if (this.locals && this.locals.theme) {
       ctx = this.locals;
     } else {
-      we.log.warn('we-core:helper:locals not found');
+      we.log.verbose('we-core:helper:locals not found');
       return '';
     }
     var theme = ctx.theme;
