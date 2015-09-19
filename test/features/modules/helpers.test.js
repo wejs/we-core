@@ -576,6 +576,54 @@ describe('coreHelpers', function () {
     });
   });
 
+  describe('eventHelper', function () {
+   var helper;
+    before(function (done) {
+      helper = require('../../../server/helpers/we-event.js')(we);
+      done();
+    });
+    it('eventHelper should return a html from events', function (done) {
+
+      we.events.on('we-html-body-start', function (data){
+        data.html.text += 'One <i>html</i> from event';
+      });
+      we.events.on('we-html-body-start', function (data){
+        data.html.text += '2 <i>html</i> from event';
+      });
+      we.events.on('we-html-body-start', function (data){
+        data.html.text += '3 <i>html</i> from event';
+      });
+      we.events.on('we-html-body-start', function (data){
+        data.html.text += '4 <i>html</i> from event';
+      });
+
+      var opts = {
+        hash: { event: 'we-html-body-start' }
+      }
+      var text = helper.bind({})(opts);
+
+      assert(text.string);
+      assert(text.string.indexOf('One <i>html</i> from event') >-1 );
+      assert(text.string.indexOf('2 <i>html</i> from event') >-1 );
+      assert(text.string.indexOf('3 <i>html</i> from event') >-1 );
+      assert(text.string.indexOf('4 <i>html</i> from event') >-1 );
+
+      done();
+    });
+    it('eventHelper should return a empty string if dont pass the event', function (done) {
+
+      we.events.on('we-html-body-start', function (data){
+        data.html.text += 'One <i>html</i> from event';
+      });
+
+      var opts = { hash: { } }
+      var text = helper.bind({})(opts);
+
+      assert.equal('',text);
+      done();
+    });
+  });
+
   describe('gridHelper', function () {
    var helper;
     before(function (done) {
