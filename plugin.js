@@ -439,7 +439,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       template      : 'widget/sortWidgets',
       responseType  : 'modal'
     },
-    'post /api/v1/widget-sort': {
+    'post /api/v1/widget-sort/:theme/:layout/:regionName': {
       controller    : 'widget',
       action        : 'sortWidgets',
       model         : 'widget',

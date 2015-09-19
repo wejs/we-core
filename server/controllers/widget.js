@@ -78,9 +78,12 @@ module.exports = {
         context: res.locals.widgetContext || null,
       }, order: [ ['weight', 'ASC'], ['createdAt', 'DESC']]
     }).then(function (widgets) {
-      res.locals.record = widgets;
-      // send the sort widget table
-      res.ok();
+      if (req.method == 'POST') {
+        res.send({ widget: widgets });
+      } else {
+        res.locals.record = widgets;
+        res.ok();
+      }
     }).catch(res.queryError);
   },
 
