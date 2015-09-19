@@ -204,7 +204,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller: 'main',
       action: 'index',
       template   : 'home/index',
-      layoutName : 'fullwidth'
+      layoutName : 'home'
     },
     //
     // -- config routes
