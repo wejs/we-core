@@ -5,7 +5,7 @@
  * @description :: Model used to store user passwords
  *
  */
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 var newPasswordValidation = {
   notEmptyOnCreate: function(val) {
