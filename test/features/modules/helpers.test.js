@@ -443,7 +443,7 @@ describe('coreHelpers', function () {
 
       var text = helper.bind({
         theme: 'app'
-      })('400');
+      })('400', {hash: {}});
 
       assert.equal(text, '400.hbs\n');
       assert(we.view.renderTemplate.called);
@@ -456,9 +456,11 @@ describe('coreHelpers', function () {
       // set spy to check if renderTemplate is called
       sinon.spy(we.view, 'renderTemplate');
 
-      var text = helper.bind({ locals: {
-        theme: 'app'
-      }})('400');
+      var text = helper.bind({
+        locals: {
+          theme: 'app'
+        }
+      })('400', {hash: {}});
 
       assert.equal(text, '400.hbs\n');
       assert(we.view.renderTemplate.called);
@@ -471,7 +473,7 @@ describe('coreHelpers', function () {
       // set spy to check if renderTemplate is called
       sinon.spy(we.view, 'renderTemplate');
 
-      var text = helper.bind({})('400');
+      var text = helper.bind({})('400', {hash: {}});
 
       assert.equal(text, '');
       assert(!we.view.renderTemplate.called);

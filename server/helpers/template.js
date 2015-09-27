@@ -9,7 +9,7 @@ module.exports = function(we) {
     var opts = arguments[arguments.length-1];
     var ctx;
     // find context to get theme name
-    if (opts.hash.locals) {
+    if (opts.hash && opts.hash.locals) {
       ctx = opts.hash.locals;
     } else if (this.theme) {
       ctx = this;
