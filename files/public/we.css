@@ -47,3 +47,8 @@ a.tabledrag-handle .handle {
   height: 25px !important;
   width: 25px !important;
 }
+
+.li-submenu ul {
+  border-left: 10px solid #ddd;
+  padding-left: 3px;
+}
