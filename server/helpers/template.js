@@ -1,14 +1,17 @@
 /**
  *  Render one template
  *
- * {{{template 'templateHName'}}}
+ * {{{template 'templateHName' locals=this}}}
  */
 
 module.exports = function(we) {
   return function rendertemplate(name) {
+    var opts = arguments[arguments.length-1];
     var ctx;
     // find context to get theme name
-    if (this.theme) {
+    if (opts.hash.locals) {
+      ctx = opts.hash.locals;
+    } else if (this.theme) {
       ctx = this;
     } else if (this.locals && this.locals.theme) {
       ctx = this.locals;
@@ -16,7 +19,7 @@ module.exports = function(we) {
       we.log.verbose('we-core:helper:locals not found');
       return '';
     }
-    var theme = ctx.theme;
+    var theme = (opts.hash.theme || ctx.theme);
     // if not find the theme name get default themes
     if (!theme) theme = we.view.themes[we.view.appTheme];
     // render the template
