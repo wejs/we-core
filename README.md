@@ -41,6 +41,12 @@ npm test
 NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b -g 'userFeature'
 ```
 
+##### For run the code coverage 
+
+```sh
+npm run coverage
+```
+
 ##### For run the javascript linter
 
 ```sh
