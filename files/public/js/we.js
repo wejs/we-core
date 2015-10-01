@@ -671,6 +671,7 @@ we.components = {
       element.summernote(cfg);
     }
   },
+  // select with query.where params
   select: {
     init: function(selector, opts) {
       if (!opts) opts = {};
@@ -729,7 +730,64 @@ we.components = {
           processResults: processResults
         };
       }
+      element.select2(configs);
+    }
+  },
+  // select with query params
+  selectQuery: {
+    init: function(selector, opts) {
+      if (!opts) opts = {};
+      var element = $(selector);
+      var url = (opts.url || element.attr('we-select-url'));
+      var model = element.attr('we-select-model');
+      var searchField = (opts.searchField || 'text');
+      var limit = (opts.limit || 25);
 
+      if (!opts) opts = {};
+
+      var configs = {
+        formatResult: function formatResult(item) {
+          return item.text;
+        },
+        minimumInputLength: (opts.minimumInputLength || 3)
+      }
+
+      var processResults = opts.processResults;
+      if (!processResults) {
+        processResults = function (data, params) {
+          if (opts.tags) {
+            if (data[model]) data[model].unshift( {
+              text: params.term, id: params.term
+            });
+            return { results: data[model]};
+          } else {
+            return { results: data[model]};
+          }
+        }
+      }
+
+      configs.tokenSeparators = [';'];
+      configs.multiple = (element.attr('multiple') || false);
+
+      $.extend(configs, opts);
+      if (url) {
+        configs.ajax = {
+          url: url,
+          dataType: 'json',
+          delay: 400,
+          cache: opts.cache,
+          data: function (params) {
+            var query = {
+              limit: limit,
+              responseType: 'json'
+            };
+
+            query[searchField] = params.term;
+            return query;
+          },
+          processResults: processResults
+        };
+      }
       element.select2(configs);
     }
   }
