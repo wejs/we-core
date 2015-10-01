@@ -197,6 +197,69 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
   });
 
+  plugin.setResource({
+    name: 'user',
+    findAll: {
+      search: {
+        q: {
+          parser: 'userSearchQuery',
+          target: {
+            type: 'field',
+            field: 'id'
+          }
+        }
+      }
+    }
+  });
+
+    // //
+    // // -- User routes
+    // //
+    // // 'get /user/:username?': {
+    // //   controller    : 'user',
+    // //   action        : 'findOneByUsername',
+    // //   model         : 'user',
+    // //   permission    : 'find_user'
+    // // },
+    // 'get /user': {
+    //   controller    : 'user',
+    //   action        : 'find',
+    //   model         : 'user',
+    //   permission    : 'find_user'
+    // },
+
+    // 'get /user/:id([0-9]+)': {
+    //   controller    : 'user',
+    //   action        : 'findOne',
+    //   model         : 'user',
+    //   permission    : 'find_user'
+    // },
+    // 'post /user': {
+    //   controller    : 'user',
+    //   action        : 'create',
+    //   model         : 'user',
+    //   permission    : 'create_user'
+    // },
+    // 'get /user/:userId([0-9]+)/edit': {
+    //   controller    : 'user',
+    //   action        : 'edit',
+    //   model         : 'user',
+    //   permission    : 'update_user'
+    // },
+    // 'post /user/:userId([0-9]+)/edit': {
+    //   controller    : 'user',
+    //   action        : 'edit',
+    //   model         : 'user',
+    //   permission    : 'update_user'
+    // },
+    // 'delete /user/:userId([0-9]+)': {
+    //   controller    : 'user',
+    //   action        : 'destroy',
+    //   model         : 'user',
+    //   permission    : 'delete_user'
+    // },
+
+
   // set plugin routes
   plugin.setRoutes({
     // homepage | default home page
@@ -336,53 +399,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'auth',
       action        : 'newPassword',
       template      : 'auth/new-password'
-    },
-
-    //
-    // -- User routes
-    //
-    // 'get /user/:username?': {
-    //   controller    : 'user',
-    //   action        : 'findOneByUsername',
-    //   model         : 'user',
-    //   permission    : 'find_user'
-    // },
-    'get /user': {
-      controller    : 'user',
-      action        : 'find',
-      model         : 'user',
-      permission    : 'find_user'
-    },
-
-    'get /user/:id([0-9]+)': {
-      controller    : 'user',
-      action        : 'findOne',
-      model         : 'user',
-      permission    : 'find_user'
-    },
-    'post /user': {
-      controller    : 'user',
-      action        : 'create',
-      model         : 'user',
-      permission    : 'create_user'
-    },
-    'get /user/:userId([0-9]+)/edit': {
-      controller    : 'user',
-      action        : 'edit',
-      model         : 'user',
-      permission    : 'update_user'
-    },
-    'post /user/:userId([0-9]+)/edit': {
-      controller    : 'user',
-      action        : 'edit',
-      model         : 'user',
-      permission    : 'update_user'
-    },
-    'delete /user/:userId([0-9]+)': {
-      controller    : 'user',
-      action        : 'destroy',
-      model         : 'user',
-      permission    : 'delete_user'
     },
 
     //
