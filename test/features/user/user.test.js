@@ -12,7 +12,7 @@ describe('userFeature', function () {
     http = helpers.getHttp();
     // after all create one user
     request(http)
-    .post('/user')
+    .post('/admin/user/create')
     .set('Accept', 'application/json')
     .expect(201)
     .send( stubs.userStub() )
@@ -40,12 +40,12 @@ describe('userFeature', function () {
 
   describe('create', function () {
 
-    it('post /user create one user record', function (done) {
+    it('post /admin/user/create create one user record', function (done) {
       this.slow(300);
       var userStub = stubs.userStub();
 
       request(http)
-      .post('/user')
+      .post('/admin/user/create')
       .set('Accept', 'application/json')
       .send(userStub)
       .end(function (err, res) {

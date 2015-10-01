@@ -12,7 +12,7 @@ describe('adminUserFeature', function () {
     http = helpers.getHttp();
     // after all create one user
     request(http)
-    .post('/user')
+    .post('/admin/user/create')
     .set('Accept', 'application/json')
     .expect(201)
     .send( stubs.userStub() )
