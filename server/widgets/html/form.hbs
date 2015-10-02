@@ -5,7 +5,12 @@
   </div>
   <div class="form-group">
     <label for="widget-form-{{type}}-html">HTML</label>
-    <textarea rows="10" name="html" class="form-control" id="widget-form-{{type}}-html">{{configuration.html}}</textarea>
+    <textarea rows="10" name="html" class="form-control" id="widget-form-{{type}}-html" we-editor-height="300">{{configuration.html}}</textarea>
+
+    <script>$(document).ready(function() {
+    we.components.editor.init('#widget-form-{{type}}-html');
+    });</script>
+
   </div>
 
   {{{controllFields}}}
