@@ -5,11 +5,12 @@ var moment = require('moment');
 
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
-
   // set plugin configs
   plugin.setConfigs({
     queryDefaultLimit: 25,
     queryMaxLimit: 300,
+    // map reponseType response types
+    responseTypes: ['html', 'json'],
     // default app permissions
     permissions: require('./lib/acl/corePermissions.json'),
 
