@@ -1,0 +1,6 @@
+{
+  "namePrefix": "admin.",
+  "name": "role",
+  "namespace": "/admin/permission",
+  "templateFolderPrefix": "admin/"
+}

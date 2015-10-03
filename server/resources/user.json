@@ -1,0 +1,14 @@
+{
+  "name": "user",
+  "findAll": {
+    "search": {
+      "q": {
+        "parser": "userSearchQuery",
+        "target": {
+          "type": "field",
+          "field": "id"
+        }
+      }
+    }
+  }
+}
