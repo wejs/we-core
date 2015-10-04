@@ -48,6 +48,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     acl : { disabled: true },
     passport: {
+      // session is required for local strategy
+      enableSession: true,
+
       accessTokenTime: 300000000,
       cookieDomain: 'localhost:' + ( process.env.PORT || '3000' ),
       cookieName: 'weoauth',
@@ -57,9 +60,36 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       strategies: {
         // session
         local: {
+          module: require('passport-local'),
           usernameField: 'email',
           passwordField: 'password',
-          session: true
+          session: true,
+          findUser: function findUserAndValidPassword(email, password, done) {
+            var we = this.we;
+            // build the find user query
+            var query = { where: {} };
+            query.where[we.config.passport.strategies.local.usernameField] = email;
+            // find user in DB
+            we.db.models.user.find(query).then (function (user) {
+              if (!user) {
+                return done(null, false, { message: 'auth.login.wrong.email.or.password' });
+              }
+              // get the user password
+              user.getPassword().then(function (passwordObj) {
+                if (!passwordObj)
+                  return done(null, false, { message: 'auth.login.user.dont.have.password' });
+
+                passwordObj.validatePassword(password, function (err, isValid) {
+                  if (err) return done(err);
+                  if (!isValid) {
+                    return done(null, false, { message: 'auth.login.user.incorrect.password.or.email' });
+                  } else {
+                    return done(null, user);
+                  }
+                });
+              })
+            });
+          }
         }
       }
     },

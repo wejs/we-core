@@ -149,12 +149,16 @@ module.exports = {
     })
   },
   /**
-   * Login API
+   * Login API with session and passport-local strategy
    *
    * This action receives the static and JSON request
    */
   login: function login(req, res, next) {
     var we = req.getWe();
+
+    if (!we.config.passport || !we.config.passport.strategies || !we.config.passport.strategies.local) {
+      return res.notFound();
+    }
 
     var email = req.body.email;
 
@@ -165,7 +169,7 @@ module.exports = {
       return res.ok();
     }
     // --  set req.body for error page
-    res.locals.data = req.body
+    res.locals.data = req.body;
 
     return we.passport.authenticate('local', function(err, user, info) {
       if (err) {
