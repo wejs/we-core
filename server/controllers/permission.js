@@ -15,7 +15,7 @@ module.exports = {
       permissions.push( we.config.permissions[pN] );
     });
 
-    res.locals.record = permissions;
+    res.locals.data = permissions;
     res.locals.permissions = permissions;
 
     we.db.models.role.findAll({

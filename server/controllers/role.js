@@ -32,18 +32,18 @@ module.exports = {
   update: function update(req, res, next) {
     var we = req.getWe();
 
-    if (!res.locals.record) return res.notFound();
+    if (!res.locals.data) return res.notFound();
 
     if (req.method == 'POST') {
-      if (!res.locals.record) return next();
+      if (!res.locals.data) return next();
       // check if this role are in roles cache
-      if (we.acl.roles[!res.locals.record.name]) return res.notFound();
+      if (we.acl.roles[!res.locals.data.name]) return res.notFound();
 
-      res.locals.record.updateAttributes(req.body)
+      res.locals.data.updateAttributes(req.body)
       .then(function() {
-        res.locals.record = res.locals.record;
+        res.locals.data = res.locals.data;
         // update role in running app cache
-        we.acl.roles[res.locals.record.name] = res.locals.record;
+        we.acl.roles[res.locals.data.name] = res.locals.data;
 
         return res.ok();
       });
@@ -61,7 +61,7 @@ module.exports = {
     }).then(function(u){
       if (!u) return res.notFound();
 
-      res.locals.record = u;
+      res.locals.data = u;
 
       if (req.method == 'POST') {
         var rolesToSave = [];

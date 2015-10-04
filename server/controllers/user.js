@@ -23,9 +23,9 @@ module.exports = {
     var we = req.getWe();
     if (!res.locals.template) res.locals.template = res.locals.model + '/' + 'create';
 
-    if (!res.locals.record) res.locals.record = {};
+    if (!res.locals.data) res.locals.data = {};
 
-     we.utils._.merge(res.locals.record, req.query);
+     we.utils._.merge(res.locals.data, req.query);
 
     if (req.method === 'POST') {
       if (req.isAuthenticated()) req.body.creatorId = req.user.id;
@@ -33,16 +33,16 @@ module.exports = {
       req.body.acceptTerms = true;
 
       // set temp record for use in validation errors
-      res.locals.record = req.query;
-      we.utils._.merge(res.locals.record, req.body);
+      res.locals.data = req.query;
+      we.utils._.merge(res.locals.data, req.body);
 
       return res.locals.Model.create(req.body)
       .then(function (record) {
-        res.locals.record = record;
+        res.locals.data = record;
         res.created();
       }).catch(res.queryError);
     } else {
-      res.locals.record = req.query;
+      res.locals.data = req.query;
       res.ok();
     }
   },
@@ -55,7 +55,7 @@ module.exports = {
       delete req.body.active;
     }
 
-    res.locals.record.updateAttributes(req.body)
+    res.locals.data.updateAttributes(req.body)
     .then(function () {
       return res.ok();
     }).catch(function(err) {
@@ -74,14 +74,14 @@ module.exports = {
       delete req.body.active;
     }
 
-    var record = res.locals.record;
+    var record = res.locals.data;
 
     if (req.method === 'POST') {
       if (!record) return res.notFound();
 
       record.updateAttributes(req.body)
       .then(function() {
-        res.locals.record = record;
+        res.locals.data = record;
         return res.updated();
       }).catch(res.queryError);
     } else {
@@ -97,7 +97,7 @@ module.exports = {
       if (!record) return next();
 
       res.locals.metadata.count = record.count;
-      res.locals.record = record.rows;
+      res.locals.data = record.rows;
 
       return res.ok();
     });

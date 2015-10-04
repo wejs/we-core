@@ -38,8 +38,8 @@ module.exports = function(we) {
       locals: options.hash.req.res.locals
     };
 
-    if (options.hash.req.res.locals.record)
-      pagger.recordsLength = options.hash.req.res.locals.record.length;
+    if (options.hash.req.res.locals.data)
+      pagger.recordsLength = options.hash.req.res.locals.data.length;
 
     var pageCount = Math.ceil(pagger.count/pagger.limit);
     if (!pageCount || pageCount == 1) return '';

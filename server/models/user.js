@@ -191,7 +191,7 @@ module.exports = function UserModel(we) {
 
           this.findById(res.locals.id)
           .then(function (record) {
-             res.locals.record = record;
+             res.locals.data = record;
 
             if (record && record.id && req.isAuthenticated()) {
               // ser role owner

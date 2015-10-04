@@ -35,7 +35,7 @@ module.exports = {
 
     var newUser, requireAccountActivation;
     // --  set req.body for handle db errors
-    res.locals.record = req.body;
+    res.locals.data = req.body;
 
     async.series([
       function checkIfIsSpam(cb) {
@@ -165,7 +165,7 @@ module.exports = {
       return res.ok();
     }
     // --  set req.body for error page
-    res.locals.record = req.body
+    res.locals.data = req.body
 
     return we.passport.authenticate('local', function(err, user, info) {
       if (err) {
