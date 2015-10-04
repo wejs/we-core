@@ -12,6 +12,8 @@ before(function(callback) {
 
   testTools.copyLocalConfigIfNotExitst(projectPath, function() {
     we = require('../lib');
+    // skyp warnings
+    we.log.warn = function(){};
 
     testTools.init({}, we);
 
