@@ -194,7 +194,7 @@
   },
   "post /api/v1/widget/:id([0-9]+)/delete": {
     "controller"    : "widget",
-    "action"        : "destroy",
+    "action"        : "delete",
     "model"         : "widget",
     "permission"    : "manage_widget"
   },
