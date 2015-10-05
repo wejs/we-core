@@ -1,18 +1,18 @@
-<widget data-widget-type="{{data.type}}" model-widget="{{data.id}}" class="widget widget-{{data.type}}">
+<widget record-widget-type="{{record.type}}" model-widget="{{record.id}}" class="widget widget-{{record.type}}">
   <div class="we-region-widget-actions">
-    {{t 'Widget'}}: {{data.title}} {{data.id}}:
-    <button onclick="we.structure.updateWidget({{data.id}});" type="button" class="btn btn-default">
+    {{t 'Widget'}}: {{record.title}} {{record.id}}:
+    <button onclick="we.structure.updateWidget({{record.id}});" type="button" class="btn btn-default">
       <i class="glyphicon glyphicon-pencil"></i> {{t 'Edit'}}
     </button>
 
-    <button onclick="we.structure.deleteWidget({{data.id}});" type="button" class="btn btn-default">
+    <button onclick="we.structure.deleteWidget({{record.id}});" type="button" class="btn btn-default">
       <i class="glyphicon glyphicon glyphicon-remove text-danger"></i> {{t 'Delete'}}
     </button>
   </div>
 
   <widget-header class="widget-header">
-    {{#if data.title}}
-      <h3><bind-html {{attrTitle}}>{{data.title}}</bind-html></h3>
+    {{#if record.title}}
+      <h3><bind-html {{attrTitle}}>{{record.title}}</bind-html></h3>
     {{/if}}
   </widget-header>
   <widget-content class="widget-content">{{{widgetContent}}}</widget-content>
