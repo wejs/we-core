@@ -60,7 +60,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       strategies: {
         // session
         local: {
-          module: require('passport-local'),
+          Strategy: require('passport-local').Strategy,
+          // url to image icon
+          icon: '/public/plugin/we-core/files/images/login.png',
+          authUrl: '/login',
+
           usernameField: 'email',
           passwordField: 'password',
           session: true,
