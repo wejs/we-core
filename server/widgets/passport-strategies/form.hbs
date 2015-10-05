@@ -1,0 +1,19 @@
+<form name="widget-form-{{type}}">
+  <div class="form-group">
+    <label for="widget-form-{{type}}-title">{{t 'title'}}</label>
+    <input name="title" value="{{title}}" type="text" class="form-control" id="widget-form-{{type}}-title" placeholder="{{t 'widget.title'}}">
+  </div>
+
+  {{!-- add your custom form fields here... --}}
+
+  {{{controllFields}}}
+
+  {{#if id}}
+    <input type="hidden" name="id" value="{{id}}">
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="submit" data-dismiss="modal" class="btn btn-default">Cancel</button>
+  {{else}}
+    <button type="submit" class="btn btn-primary">Add</button>
+    <button type="submit" data-dismiss="modal" class="btn btn-default">Cancel</button>
+  {{/if}}
+</form>
