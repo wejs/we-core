@@ -1,5 +1,3 @@
-{{#unless locals.req.user}}
-  {{#each widget.strategies}}
-    <a href="{{authUrl}}"><img width="70" src="{{icon}}"></a>
-  {{/each}}
-{{/unless}}
+{{#each widget.strategies}}
+  <a href="{{authUrl}}"><img width="70" src="{{icon}}"></a>
+{{/each}}

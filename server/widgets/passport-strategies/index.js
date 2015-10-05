@@ -9,6 +9,8 @@ module.exports = function passportStrategiesWidget(projectPath, Widget) {
 
   widget.viewMiddleware = function viewMiddleware(widget, req, res, next) {
     if (!req.we.config.passport) return next();
+    // skip if area authenticated
+    if (req.isAuthenticated()) return next();
 
     widget.strategies = req.we.config.passport.strategies;
 
