@@ -1,17 +1,8 @@
 /**
- * AccessToken
+ * accessToken
  *
  * @module      :: Model
- * @description :: Auth Token model for create login, password and activate account tokens
- *
- */
-var crypto = require('crypto');
-
-/**
- * AuthToken
- *
- * @module      :: Model
- * @description :: Auth Token model for create login, password and activate account tokens
+ * @description :: Token model for bearer token access
  *
  */
 var crypto = require('crypto');
@@ -100,9 +91,6 @@ module.exports = function Model(we) {
       },
 
       instanceMethods: {
-        getResetUrl: function() {
-          return we.config.hostname + '/auth/'+ this.userId +'/reset-password/' + this.token;
-        },
         toJSON: function() {
           if (!this.get) {
             console.trace()
