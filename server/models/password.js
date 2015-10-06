@@ -29,7 +29,7 @@ module.exports = function Model(we) {
   // set sequelize model define and options
   var model = {
     definition: {
-      userId : { type: we.db.Sequelize.STRING },
+      userId : { type: we.db.Sequelize.BIGINT },
       active : { type: we.db.Sequelize.BOOLEAN, defaultValue: true },
 
       password    : {

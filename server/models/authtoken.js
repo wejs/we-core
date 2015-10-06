@@ -13,11 +13,11 @@ module.exports = function Model(we) {
     definition: {
 
       userId: {
-        type: we.db.Sequelize.STRING,
+        type: we.db.Sequelize.BIGINT,
         allowNull: false
       },
 
-      providerUserId: { type: we.db.Sequelize.STRING },
+      providerUserId: { type: we.db.Sequelize.BIGINT },
       tokenProviderId: { type: we.db.Sequelize.STRING },
       tokenType: { type: we.db.Sequelize.STRING },
 

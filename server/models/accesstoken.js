@@ -13,7 +13,7 @@ module.exports = function Model(we) {
     definition: {
 
       userId: {
-        type: we.db.Sequelize.STRING,
+        type: we.db.Sequelize.BIGINT,
         allowNull: false
       },
 
