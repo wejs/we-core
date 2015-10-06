@@ -187,7 +187,7 @@
   },
   "post /api/v1/widget/:id([0-9]+)": {
     "controller"    : "widget",
-    "action"        : "update",
+    "action"        : "edit",
     "model"         : "widget",
     "skipWidgets"   : true,
     "permission"    : "manage_widget"

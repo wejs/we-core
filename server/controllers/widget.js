@@ -243,7 +243,7 @@ module.exports = {
   /**
    * Update one widget action
    */
-  update: function update(req, res) {
+  edit: function update(req, res) {
     var we = req.getWe();
 
     var id = res.locals.id;
