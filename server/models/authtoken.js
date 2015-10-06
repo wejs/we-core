@@ -57,7 +57,7 @@ module.exports = function Model(we) {
         */
         validAuthToken: function (userId, token, cb) {
           // then get user token form db
-          we.db.models.authtoken.find({ where: {
+          we.db.models.authtoken.findOne({ where: {
             token: token,
             userId: userId
           }}).then(function (authToken) {
@@ -67,7 +67,7 @@ module.exports = function Model(we) {
               return cb(null, false, null);
             }
             // user id how wons the auth token is invalid then return false
-            if(authToken.userId !== userId || !authToken.isValid){
+            if(authToken.userId != userId || !authToken.isValid){
               return cb(null, false,{
                 result: 'invalid',
                 message: 'Invalid token'
