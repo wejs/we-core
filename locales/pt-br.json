@@ -123,5 +123,6 @@
   "form-placeholder-new-password-rNewPassword": "Digite a nova senha aqui ...",
   "form-helper-new-password-confirmPassword": " ",
   "form-helper-new-password-newPassword": " ",
-  "form-helper-new-password-rNewPassword": " "
+  "form-helper-new-password-rNewPassword": " ",
+  "paginate.sumary": "Exibindo {{recordsLength}} de {{count}}"
 }

@@ -110,5 +110,97 @@
   "form-forgot-password-email": "Email",
   "form-placeholder-forgot-password-email": " ",
   "form-helper-forgot-password-email": "Your account email",
-  "form-forgot-password-submit": "Submit"
+  "form-forgot-password-submit": "Submit",
+  "paginate.sumary": "{{recordsLength}} of {{count}}",
+  "select.option.text": "Select one option ...",
+
+  "menu.find": "Menus",
+  "menu.create": "Create menu",
+
+  "form-menu-name": "Name",
+  "form-placeholder-menu-name": " ",
+  "form-helper-menu-name": " ",
+
+  "form-menu-class": "Class",
+  "form-placeholder-menu-class": " ",
+  "form-helper-menu-class": " ",
+
+  "link.create": "Criar link",
+
+  "form-link-href": "HREF",
+  "form-placeholder-link-href": " ",
+  "form-helper-link-href": "Link url",
+
+  "form-link-text": "Text",
+  "form-placeholder-link-text": " ",
+  "form-helper-link-text": " ",
+
+  "form-link-title": "Title",
+  "form-placeholder-link-title": " ",
+  "form-helper-link-title": " ",
+
+  "form-link-class": "Class",
+  "form-placeholder-link-class": " ",
+  "form-helper-link-class": " ",
+
+  "form-link-style": "Style",
+  "form-placeholder-link-style": " ",
+  "form-helper-link-style": " ",
+
+  "form-link-target": "Target",
+  "form-placeholder-link-target": " ",
+  "form-helper-link-target": " ",
+
+  "form-link-rel": "Rel",
+  "form-placeholder-link-rel": " ",
+  "form-helper-link-rel": " ",
+
+  "form-link-key": "Key",
+  "form-placeholder-link-key": " ",
+  "form-helper-link-key": " ",
+
+  "form-link-depth": "Depth",
+  "form-placeholder-link-depth": " ",
+  "form-helper-link-depth": " ",
+
+  "form-link-weight": "Weight",
+  "form-placeholder-link-weight": " ",
+  "form-helper-link-weight": " ",
+
+  "form-link-parent": "Parent",
+  "form-placeholder-link-parent": " ",
+  "form-helper-link-parent": " ",
+
+  "user.find": "Users",
+  "role.find": "Roles",
+  "permission_manage": "Permissions",
+
+  "form-user-country": "Country",
+  "form-placeholder-user-country": " ",
+  "form-helper-user-country": " ",
+
+  "form-user-locationState": "State",
+  "form-placeholder-user-locationState": " ",
+  "form-helper-user-locationState": " ",
+
+  "form-user-city": "City",
+  "form-placeholder-user-city": " ",
+  "form-helper-user-city": " ",
+
+  "admin.user.roles": "Roles",
+
+  "role.create": "Create role",
+  "role.edit": "Edit role",
+
+  "form-role-name": "Name",
+  "form-placeholder-role-name": " ",
+  "form-helper-role-name": " ",
+
+  "form-role-description": "Description",
+  "form-placeholder-role-description": " ",
+  "form-helper-role-description": " ",
+
+  "form-role-permissions": "Permissions",
+  "form-placeholder-role-permissions": " ",
+  "form-helper-role-permissions": " "
 }

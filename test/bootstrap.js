@@ -22,7 +22,7 @@ before(function(callback) {
 
       we.bootstrap({
         i18n: {
-          directory: path.resolve(__dirname, '..', 'config/locales'),
+          directory: path.resolve('locales'),
           updateFiles: true
         }
       }, function (err, we) {
