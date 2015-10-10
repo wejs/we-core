@@ -2,7 +2,6 @@ var assert = require('assert');
 var helpers = require('we-test-tools').helpers;
 var stubs = require('we-test-tools').stubs;
 var sinon = require('sinon');
-var moment = require('moment');
 var we;
 
 describe('coreReponses', function () {
