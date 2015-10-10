@@ -14,10 +14,11 @@ module.exports = {
     return res.ok(req.user);
   },
 
-  // Signup method POST function
-  // TODO make this action simple
+  /**
+   * Signup action for POST and GET methods
+   */
   signup: function Register(req, res) {
-    var we = req.getWe();
+    var we = req.we;
     // check allowUserSignup flag how block signup
     if (!we.config.auth.allowUserSignup) return res.forbidden();
     // anti spam field
@@ -27,8 +28,7 @@ module.exports = {
     }
 
     if (req.method !== 'POST') {
-      return we.auth.logOut(req, res, function (err) {
-        if (err) return res.serverError(err);
+      return we.auth.logOut(req, res, function () {
         return res.ok();
       });
     }
@@ -473,7 +473,7 @@ module.exports = {
       return res.goTo('/auth/forgot-password');
     }
 
-    var we = req.getWe();
+    var we = req.we;
 
     if (req.method !== 'POST') return res.ok();
 

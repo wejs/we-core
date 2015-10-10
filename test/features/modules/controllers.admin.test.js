@@ -3,7 +3,7 @@ var helpers = require('we-test-tools').helpers;
 var sinon = require('sinon');
 var controller, we;
 
-describe('adminController', function () {
+describe('controllers.admin', function () {
   before(function (done) {
     controller = require('../../../server/controllers/admin.js');
     we = helpers.getWe();
