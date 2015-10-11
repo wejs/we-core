@@ -1,18 +1,16 @@
 module.exports = {
   create: function create(req, res) {
-    var we = req.getWe();
-
     res.locals.layout = false;
     if (req.user) req.body.creatorId = req.user.id;
 
     var type = req.body.type;
-    we.view.widgets[type].afterSave(req, res, function() {
+    req.we.view.widgets[type].afterSave(req, res, function() {
       res.locals.Model.create(req.body)
       .then(function (record) {
         res.locals.template = record.type + '/wiew';
         // run view middleware for load widget view data
         record.viewMiddleware(req, res, function() {
-          record.dataValues.html = we.view.widgets[record.type].render({
+          record.dataValues.html = req.we.view.widgets[record.type].render({
             locals: res.locals,
             widget: record
           }, res.locals.theme);
@@ -35,7 +33,7 @@ module.exports = {
    * @param  {Function} next callback
    */
   sortWidgets: function sortWidgets(req, res) {
-    var we = req.getWe();
+    var we = req.we;
 
     res.locals.regionName = req.params.regionName;
     res.locals.layoutName = req.params.layout;
@@ -68,7 +66,7 @@ module.exports = {
     }
   },
   sortWidgetsList: function sortWidgetsList(req, res) {
-    var we = req.getWe();
+    var we = req.we;
 
     we.db.models.widget.findAll({
       where: {
