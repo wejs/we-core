@@ -1,5 +1,5 @@
 /**
- * UsersController
+ * user controller
  *
  * @module    :: Controller
  * @description :: Contains logic for handling requests.
@@ -7,28 +7,26 @@
 
 module.exports = {
   findOneByUsername: function findOneByUsername (req, res, next) {
-    var username = req.params.username;
-    if(!username) return next();
+    if(!req.params.username) return next();
 
-    res.locals.Model.find({
-      where: { username: username }
-    })
-    .then(function found(user) {
+    res.locals.Model.findOne({
+      where: { username: req.params.username }
+    }).then(function (user) {
       if(!user) return next();
       return res.ok(user);
     });
   },
 
   create: function create(req, res) {
-    var we = req.getWe();
+    var we = req.we;
+
     if (!res.locals.template) res.locals.template = res.locals.model + '/' + 'create';
 
     if (!res.locals.data) res.locals.data = {};
 
-     we.utils._.merge(res.locals.data, req.query);
+    we.utils._.merge(res.locals.data, req.query);
 
     if (req.method === 'POST') {
-      if (req.isAuthenticated()) req.body.creatorId = req.user.id;
       // auto accept terms in register user
       req.body.acceptTerms = true;
 
@@ -47,29 +45,13 @@ module.exports = {
     }
   },
 
-  update: function updateRecord(req, res) {
-    var we = req.getWe();
+  edit: function edit(req, res, next) {
+    var we = req.we;
 
-    if (! we.acl.canStatic('manage_users', req.userRoleNames)) {
-      delete req.body.email;
-      delete req.body.active;
-    }
+    if (!res.locals.template)
+      res.locals.template = res.locals.model + '/' + 'edit';
 
-    res.locals.data.updateAttributes(req.body)
-    .then(function () {
-      return res.ok();
-    }).catch(function(err) {
-      we.log.error('Error on update user', req.body, err);
-      return res.serverError();
-    })
-  },
-
-  edit: function edit(req, res) {
-    var we = req.getWe();
-
-    if (!res.locals.template) res.locals.template = res.local.model + '/' + 'edit';
-
-    if (! we.acl.canStatic('manage_users', req.userRoleNames)) {
+    if (!we.acl.canStatic('manage_users', req.userRoleNames)) {
       delete req.body.email;
       delete req.body.active;
     }
@@ -77,7 +59,7 @@ module.exports = {
     var record = res.locals.data;
 
     if (req.method === 'POST') {
-      if (!record) return res.notFound();
+      if (!record) return next();
 
       record.updateAttributes(req.body)
       .then(function() {
@@ -87,19 +69,5 @@ module.exports = {
     } else {
       res.ok();
     }
-  },
-
-  manage: function(req, res, next) {
-    var we = req.getWe();
-
-    return we.db.models.user.findAndCountAll(res.locals.query, res.locals.queryOptions)
-    .then(function (record) {
-      if (!record) return next();
-
-      res.locals.metadata.count = record.count;
-      res.locals.data = record.rows;
-
-      return res.ok();
-    });
   }
 };
