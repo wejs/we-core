@@ -8,7 +8,7 @@ services:
 
 addons:
   code_climate:
-    repo_token: '8d07bda4536211d4af2ef9dce3edda45dff1f892a2abdb062ab1c2ffd0a637f2'
+    repo_token: 8d07bda4536211d4af2ef9dce3edda45dff1f892a2abdb062ab1c2ffd0a637f2
   apt:
     packages:
     - graphicsmagick
