@@ -98,7 +98,7 @@
 	"form-register-email": "Email",
 	"form-placeholder-register-email": " ",
 	"form-helper-register-email": " ",
-	"form-register-confirmEmail": "Repeat the password",
+	"form-register-confirmEmail": "Repeat the email",
 	"form-placeholder-register-confirmEmail": " ",
 	"form-helper-register-confirmEmail": " ",
 	"form-register-organization": "Organization",
