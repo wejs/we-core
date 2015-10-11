@@ -85,13 +85,13 @@ module.exports = {
     }).catch(res.queryError);
   },
 
-  findOne: function findOne(req, res) {
-    var we = req.getWe();
+  findOne: function findOne(req, res, next) {
+    var we = req.we;
 
     res.locals.layout = false;
     res.locals.regionName = req.params.regionName;
 
-    if (!res.locals.data) return res.notFound();
+    if (!res.locals.data) return next();
     var record = res.locals.data;
 
     record.viewMiddleware(req, res, function() {
@@ -112,31 +112,29 @@ module.exports = {
     });
   },
 
-  find: function findAll(req, res, next) {
-    var we = req.getWe();
-
+  find: function findAll(req, res) {
     return res.locals.Model.findAndCountAll(res.locals.query, res.locals.queryOptions)
     .then(function (result) {
-      if (!result) return next();
 
-      if (result.rows)  {
+      if (result && result.rows)  {
         result.rows.forEach(function (record) {
-          record.dataValues.html =  we.view.widgets[record.type].render({
+          record.dataValues.html =  req.we.view.widgets[record.type].render({
             locals: res.locals,
             widget: record
           }, res.locals.theme);
         });
-      }
 
-      res.locals.metadata.count = result.count;
-      res.locals.data = result.rows;
+        res.locals.metadata.count = result.count;
+        res.locals.data = result.rows;
+      }
 
       return res.ok();
     });
   },
 
   getSelectWidgetTypes: function getSelectWidgetTypes(req, res) {
-    var we = req.getWe();
+    var we = req.we;
+
     res.locals.layout = null;
     res.locals.widgetContext = req.query.widgetContext;
 
@@ -146,14 +144,16 @@ module.exports = {
     return res.send({ widget: res.locals.widgetTypes});
   },
 
-  getCreateForm: function getCreateForm(req, res) {
-    var we = req.getWe();
+  getCreateForm: function getCreateForm(req, res, next) {
+    var we = req.we;
 
-    if (!we.view.widgets[req.params.type]) return res.notFound();
-    if (!we.view.themes[req.params.theme]) return res.notFound();
+    if (
+      !we.view.widgets[req.params.type] ||
+      !we.view.themes[req.params.theme]
+    ) return next();
 
     var layoutToUpdate = we.view.themes[req.params.theme].layouts[req.params.layout];
-    if (!layoutToUpdate) return res.notFound();
+    if (!layoutToUpdate) return next();
 
     we.view.widgets[req.params.type].formMiddleware(req, res, function (err) {
       if (err) return res.serverError(err);
@@ -190,10 +190,10 @@ module.exports = {
   },
 
   getForm: function getForm(req, res, next) {
-    var we = req.getWe();
+    var we = req.we;
     var id = req.params.id;
 
-    res.locals.Model.find({
+    res.locals.Model.findOne({
       where: {id: id}
     }).then(function (record) {
       if (!record) return next();
@@ -229,10 +229,10 @@ module.exports = {
         record.dataValues.html = we.view.widgets[record.type].renderForm(res.locals, res.locals.theme);
 
         if (res.locals.responseType == 'html') {
-          return res.send(record.dataValues.html);
+          res.send(record.dataValues.html);
         } else {
           res.locals.data = record;
-          return res.ok();
+          res.ok();
         }
       });
     });
@@ -242,7 +242,7 @@ module.exports = {
    * Update one widget action
    */
   edit: function update(req, res) {
-    var we = req.getWe();
+    var we = req.we;
 
     var id = res.locals.id;
     // never update widget context in update action
