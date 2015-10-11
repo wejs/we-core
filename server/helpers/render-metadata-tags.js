@@ -21,10 +21,6 @@ module.exports = function(we) {
         metatags += '<meta name="keywords" content="'+ we.config.appKeywords +'">';
       }
 
-      if (we.config.metadata.hideGenerator) {
-        metatags += '<meta property="generator" content="We.js">';
-      }
-
       if (this.metadata.description) {
         metatags += '<meta name="description" content="'+ this.metadata.description +'">';
         metatags += '<meta property="og:description" content="'+ this.metadata.description +'">';
