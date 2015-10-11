@@ -19,7 +19,7 @@ describe('coreHelpers', function () {
       done();
     });
 
-    it('canHelper should should run fn if user has access to permission', function (done) {
+    it('canHelper should run fn if user has access to permission', function (done) {
       helper.bind({
         context: 'ctx'
       })({

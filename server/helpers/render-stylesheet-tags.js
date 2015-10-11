@@ -1,5 +1,5 @@
 /**
- * Render theme stylescheets
+ * Render theme stylesheet
  *
  * usage: {{{render-stylesheet-tags}}}
  *
@@ -9,7 +9,7 @@ module.exports = function(we, view) {
   return function renderStylesheetTags(location) {
     var tags = '';
 
-    if (!location || typeof location || 'string') {
+    if (!location || (typeof location != 'string') ) {
       location = 'header';
     }
 
