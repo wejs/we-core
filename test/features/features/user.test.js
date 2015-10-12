@@ -23,13 +23,29 @@ describe('userFeature', function () {
     });
   });
 
+  describe('resourceCache', function () {
+    it('get /user route should return 304 with empty body for not modified resource', function (done) {
+      request(http)
+      .get('/user/'+salvedUser.id)
+      .set('Accept', 'application/json')
+      .set('If-Modified-Since', new Date(salvedUser.updatedAt).toUTCString())
+      .expect(304)
+      .end(function (err, res) {
+        if (err) throw err;
+        assert(_.isEmpty(res.body));
+        done();
+      });
+    });
+  });
+
   describe('find', function () {
     it('get /user route should return user list', function (done) {
       request(http)
       .get('/user')
       .set('Accept', 'application/json')
+      .expect(200)
       .end(function (err, res) {
-        assert.equal(200, res.status);
+        if (err) throw err;
         assert(res.body.user);
         assert( _.isArray(res.body.user) , 'user not is array');
         assert(res.body.meta);

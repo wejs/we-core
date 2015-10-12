@@ -186,8 +186,22 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     date: { defaultFormat: 'L LT' },
     // cache configs
     cache: {
+      // resource cache, Last-Modified cache
+      resourceCacheActions: 'findOne',
+      skipResourceCache: false,
       //Cache-Control: public, max-age=[maxage]
       maxage: 86400000 // one day
+    },
+    security: {
+      // see https://github.com/expressjs/cors#configuration-options for configuration options
+      // This may be override by every route configs
+      CORS: {
+        // block all CORS requests by default
+        origin: function(origin, cb){ cb(null, false) },
+        // default methods
+        methods: ['GET', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+      }
     }
   });
 
