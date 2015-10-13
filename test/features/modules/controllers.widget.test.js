@@ -136,9 +136,9 @@ describe('controllers.widget', function () {
           }
         }
       }
-
-      var c=0;
+      var c = 0;
       var req = {
+        __: we.i18n.__,
         method: 'POST',
         we: we,
         user: user,
@@ -198,6 +198,7 @@ describe('controllers.widget', function () {
   describe('controllers.widget.getSelectWidgetTypes', function () {
     it('getSelectWidgetTypes should return widget types', function (done) {
       var req = {
+        __: we.i18n.__,
         query: {},
         method: 'GET', we: we, params: {}
       };

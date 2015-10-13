@@ -138,7 +138,12 @@ module.exports = {
     res.locals.layout = null;
     res.locals.widgetContext = req.query.widgetContext;
 
-    res.locals.widgetTypes = Object.keys(we.view.widgets);
+    res.locals.widgetTypes = Object.keys(we.view.widgets).map(function (wt){
+      return {
+        type: wt,
+        label: req.__('widget.'+wt+'.label')
+      }
+    });
 
     // var html = we.view.renderTemplate('widget/selectWidgetTypeForm', res.locals.theme, res.locals);
     return res.send({ widget: res.locals.widgetTypes});

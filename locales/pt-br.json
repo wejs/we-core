@@ -124,5 +124,7 @@
   "form-helper-new-password-confirmPassword": " ",
   "form-helper-new-password-newPassword": " ",
   "form-helper-new-password-rNewPassword": " ",
-  "paginate.sumary": "Exibindo {{recordsLength}} de {{count}}"
+  "paginate.sumary": "Exibindo {{recordsLength}} de {{count}}",
+  "widget-html-label": "Texto ou HTML customizado",
+  "widget-passport-strategies-label": "Opções de autenticação"
 }

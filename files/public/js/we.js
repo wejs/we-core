@@ -165,8 +165,11 @@ we.structure = {
 
     $.get('/api/v1/widget-types').then(function(r){
       $('#AddWidgetFormModal-select-type').select2({
-        data: r.widget.map(function (name){
-          return { id : name, text: name };
+        data: r.widget.map(function (w){
+          return {
+            id : w.type,
+            text: w.label+' ('+w.type+')'
+          };
         })
       });
     });
