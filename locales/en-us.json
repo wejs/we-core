@@ -179,6 +179,6 @@
 	"form-placeholder-role-permissions": " ",
 	"form-helper-role-permissions": " ",
 	"user.create": "Create user",
-	"widget-html-label": "HTML or text widget",
-	"widget-passport-strategies-label": "Authentication options"
+	"widget.html.label": "HTML or text block",
+	"widget.passport-strategies.label": "Authentication options block"
 }
