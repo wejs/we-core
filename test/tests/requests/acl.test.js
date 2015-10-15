@@ -46,7 +46,7 @@ describe('ACLFeature', function() {
     it('we.acl.init should create default roles on init', function(done) {
       we.db.models.role.findAll().then(function(roles) {
         assert(roles);
-        assert.equal(4, roles.length);
+        assert.equal(Object.keys(we.acl.roles).length, roles.length);
         done();
       });
     })

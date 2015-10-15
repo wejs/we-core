@@ -311,18 +311,25 @@ describe('controllers.role', function () {
   });
   describe('controllers.role.delete', function () {
     it('delete action should run res.send for valid data', function (done) {
-      var res = { locals: { id: we.acl.roles.administrator.id },
-      status: function() { return this },
-      send: function() {
-        assert(res.status.called);
-        assert(res.send.called);
-        // called
-        done();
-      }};
-      var req = { we: we, body: {}};
-      sinon.spy(res, 'send');
-      sinon.spy(res, 'status');
-      controller.delete(req, res);
+      we.acl.createRole(we, {
+        name: 'monster'
+      }, function(err){
+        if (err) throw err;
+
+        var res = { locals: { id: we.acl.roles.monster.id },
+        status: function() { return this },
+        send: function() {
+          assert(res.status.called);
+          assert(res.send.called);
+          // called
+          done();
+        }};
+        var req = { we: we, body: {}};
+        sinon.spy(res, 'send');
+        sinon.spy(res, 'status');
+        controller.delete(req, res);
+      });
+
     });
 
     it('delete action should run res.serverError if deleteRole return error', function (done) {
