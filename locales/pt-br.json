@@ -126,5 +126,7 @@
   "form-helper-new-password-rNewPassword": " ",
   "paginate.sumary": "Exibindo {{recordsLength}} de {{count}}",
   "widget.html.label": "Texto ou HTML customizado",
-  "widget.passport-strategies.label": "Opções de autenticação"
+  "widget.passport-strategies.label": "Opções de autenticação",
+  "permission.link": "Permissões",
+  "users.link": "Usuários"
 }

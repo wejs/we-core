@@ -180,5 +180,7 @@
 	"form-helper-role-permissions": " ",
 	"user.create": "Create user",
 	"widget.html.label": "HTML or text block",
-	"widget.passport-strategies.label": "Authentication options block"
+	"widget.passport-strategies.label": "Authentication options block",
+	"permission.link": "Permissions",
+	"users.link": "Users"
 }
