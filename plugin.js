@@ -7,6 +7,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
   // set plugin configs
   plugin.setConfigs({
+    updateMethods: ['POST', 'PUT', 'PATCH'],
+
     queryDefaultLimit: 25,
     queryMaxLimit: 300,
     // map reponseType response types
