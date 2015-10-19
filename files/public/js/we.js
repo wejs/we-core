@@ -225,7 +225,7 @@ we.structure = {
         $.post(url, formData)
         .then(function (r) {
           // insert after regions actions
-          regionTag.find('widgets').prepend(r.widget[0].html);
+          regionTag.find('widgets').prepend(r.widget.html);
         }).always(function(){
           modal.modal('hide');
 
@@ -273,7 +273,7 @@ we.structure = {
           data: JSON.stringify(formData)
         }).then(function (r) {
           we.events.emit('model-update', 'widget', r.widget);
-          widgetTag.after(r.widget[0].html);
+          widgetTag.after(r.widget.html);
           widgetTag.remove();
         }).always(function(){
           modalForm.modal('hide');
@@ -659,8 +659,8 @@ we.components = {
             processData: false,
             success: function(r) {
               var img =  $('<img>');
-              img.attr('src', r.image[0].urls.large);
-              element.summernote('insertNode', img[0]);
+              img.attr('src', r.image.urls.large);
+              element.summernote('insertNode', img);
             }
           });
         }
