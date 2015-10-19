@@ -13,6 +13,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     queryMaxLimit: 300,
     // map reponseType response types
     responseTypes: ['html', 'json'],
+    // send nested models in response
+    sendNestedModels: true,
     // default app permissions
     permissions: require('./lib/acl/corePermissions.json'),
 
