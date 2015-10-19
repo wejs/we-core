@@ -53,7 +53,7 @@ describe('adminUserFeature', function () {
         assert.equal(201, res.status);
         assert(res.body.user);
 
-        var user = res.body.user[0];
+        var user = res.body.user;
         // check user attrs
         assert.equal(user.username, userStub.username);
         assert.equal(user.displayName, userStub.displayName);

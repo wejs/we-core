@@ -158,7 +158,7 @@ describe('ACLFeature', function() {
       .end(function (err, res) {
         if (err) throw err;
         assert(res.body.user);
-        assert.equal(res.body.user[0].id, salvedUser.id);
+        assert.equal(res.body.user.id, salvedUser.id);
         we.config.acl.disabled = true;
         done();
       });

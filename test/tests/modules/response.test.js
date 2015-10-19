@@ -40,9 +40,9 @@ describe('coreReponses', function () {
       })(user);
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 200);
-      assert.equal(res.send.firstCall.args[0].user[0].id, user.id);
-      assert.equal(res.send.firstCall.args[0].user[0].displayName, user.displayName);
-      assert.equal(res.send.firstCall.args[0].user[0].fullName, user.fullName);
+      assert.equal(res.send.firstCall.args[0].user.id, user.id);
+      assert.equal(res.send.firstCall.args[0].user.displayName, user.displayName);
+      assert.equal(res.send.firstCall.args[0].user.fullName, user.fullName);
       assert(res.send.called);
       done();
     });
@@ -322,8 +322,8 @@ describe('coreReponses', function () {
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 200);
       assert(res.send.called);
-      assert.equal(res.send.firstCall.args[0].user[0].id, user.id);
-      assert.equal(res.send.firstCall.args[0].user[0].displayName, user.displayName);
+      assert.equal(res.send.firstCall.args[0].user.id, user.id);
+      assert.equal(res.send.firstCall.args[0].user.displayName, user.displayName);
       done();
     });
   });

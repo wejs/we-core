@@ -18,7 +18,7 @@ describe('userFeature', function () {
     .send( stubs.userStub() )
     .end(function (err, res) {
       if (err) return done(err);
-      salvedUser = res.body.user[0];
+      salvedUser = res.body.user;
       done();
     });
   });
@@ -69,7 +69,7 @@ describe('userFeature', function () {
         assert.equal(201, res.status);
         assert(res.body.user);
 
-        var user = res.body.user[0];
+        var user = res.body.user;
         // check user attrs
         assert.equal(user.username, userStub.username);
         assert.equal(user.displayName, userStub.displayName);
@@ -94,12 +94,7 @@ describe('userFeature', function () {
         if (err) console.error(err);
         assert.equal(200, res.status);
         assert(res.body.user);
-
-        assert( _.isArray(res.body.user) , 'res.body.user not is array');
-        assert.equal(1, res.body.user.length);
-
-        var user = res.body.user[0];
-
+        var user = res.body.user;
         // check user attrs
         assert.equal(user.id, salvedUser.id);
         assert.equal(user.username, salvedUser.username);

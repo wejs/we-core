@@ -98,12 +98,12 @@ describe('authFeature', function () {
           .expect(200)
           .end(function (err, res) {
 
-            assert(res.body.user[0].id);
-            assert.equal(res.body.user[0].displayName, userStub.displayName);
-            assert.equal(res.body.user[0].gender, userStub.gender);
-            assert.equal(res.body.user[0].username, userStub.username);
-            assert.equal(res.body.user[0].biography, userStub.biography);
-            assert.equal(res.body.user[0].language, userStub.language);
+            assert(res.body.user.id);
+            assert.equal(res.body.user.displayName, userStub.displayName);
+            assert.equal(res.body.user.gender, userStub.gender);
+            assert.equal(res.body.user.username, userStub.username);
+            assert.equal(res.body.user.biography, userStub.biography);
+            assert.equal(res.body.user.language, userStub.language);
 
             done();
           });
@@ -330,7 +330,7 @@ describe('authFeature', function () {
         .set('Accept', 'application/json')
         .end(function (err, res) {
           if (err) throw err;
-          assert.equal(salvedUser.id, res.body.user[0].id);
+          assert.equal(salvedUser.id, res.body.user.id);
           // should logout
           ar.get('/auth/logout')
           .expect(302)

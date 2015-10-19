@@ -60,9 +60,9 @@ describe('widgetFeature', function() {
         if (err) throw err;
         assert(res.body);
         assert(res.body.widget);
-        assert(res.body.widget[0].html);
-        assert.equal(res.body.widget[0].title, w.title);
-        assert.equal(res.body.widget[0].regionName, w.regionName);
+        assert(res.body.widget.html);
+        assert.equal(res.body.widget.title, w.title);
+        assert.equal(res.body.widget.regionName, w.regionName);
         done();
       });
     });
