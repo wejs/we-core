@@ -97,7 +97,6 @@ module.exports = {
           function (err) {
             if (err) {
               we.log.error('Action:Login sendAccontActivationEmail:', err);
-              return res.serverError();
             }
           });
 
