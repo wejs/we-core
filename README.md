@@ -53,6 +53,6 @@ npm run coverage
 npm run lint
 ```
 
-#Copyright and license
+## License
 
-Copyright 2013-2014 Alberto Souza <contato@albertosouza.net> and [contributors](https://github.com/wejs/we-core/graphs/contributors) , under [the MIT license](LICENSE).
+[the MIT license](LICENSE).
