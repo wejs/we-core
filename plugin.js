@@ -7,8 +7,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
   // set plugin configs
   plugin.setConfigs({
+    // enable suport to parse req.query.where to sequelize query
+    enableQueryWhere: false,
+    // update route methods
     updateMethods: ['POST', 'PUT', 'PATCH'],
-
+    // default find limit
     queryDefaultLimit: 25,
     queryMaxLimit: 300,
     // map reponseType response types
