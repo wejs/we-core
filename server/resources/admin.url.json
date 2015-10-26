@@ -1,0 +1,24 @@
+{
+  "namePrefix": "admin.",
+  "name": "urlAlias",
+  "namespace": "/admin",
+  "templateFolderPrefix": "admin/",
+  "findAll": {
+    "search": {
+      "alias": {
+        "parser": "contains",
+        "target": {
+          "type": "field",
+          "field": "alias"
+        }
+      },
+      "target": {
+        "parser": "contains",
+        "target": {
+          "type": "field",
+          "field": "target"
+        }
+      }
+    }
+  }
+}

@@ -128,5 +128,15 @@
   "widget.html.label": "Texto ou HTML customizado",
   "widget.passport-strategies.label": "Opções de autenticação",
   "permission.link": "Permissões",
-  "users.link": "Usuários"
+  "users.link": "Usuários",
+  "urlAlias.find": "Urls alias",
+  "urlAlias.create": "Add url alias",
+  "form-urlAlias-alias": "Url de acesso",
+  "form-helper-urlAlias-alias": "Essa url que o usuário vai usar para acessar a página original por exemplo /meu-artigo-legal",
+  "form-placeholder-urlAlias-alias": " ",
+  "form-urlAlias-target": "Url original",
+  "form-helper-urlAlias-target": "ANormalmente um link permanente por exemplo: /user/1",
+  "form-placeholder-urlAlias-target": " ",
+  "urlAlias.delete": "Deleter a url alias",
+  "urlAlias.delete.confirm.msg": "Você tem certeza que deseja deletar essa url?"
 }

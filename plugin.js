@@ -32,6 +32,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     defaultUserAvatar: projectPath + '/node_modules/we-core/files/public/images/avatars/user-avatar.png',
 
     log: { level: 'debug' },
+    // we.js rul slug feature
+    enableUrlSlug: true,
 
     session: {
       secret: 'setASecreteKeyInYourAppConfig',
@@ -208,6 +210,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         // default methods
         methods: ['GET', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+      }
+    },
+    router: {
+      alias: {
+        // dont load alias for this routes
+        excludePaths: [ '/public', '/favicon.ico', '/admin' ]
       }
     }
   });
