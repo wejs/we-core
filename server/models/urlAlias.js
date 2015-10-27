@@ -8,16 +8,14 @@ module.exports = function UrlSlugModel(we) {
   return {
     definition: {
       alias: {
-        type: we.db.Sequelize.STRING(760),
+        type: we.db.Sequelize.TEXT,
         allowNull: false,
-        formFieldType: 'text',
-        unique: true
+        formFieldType: 'text'
       },
       target: {
-        type: we.db.Sequelize.STRING(760),
+        type: we.db.Sequelize.TEXT,
         allowNull: false,
-        formFieldType: 'text',
-        unique: true
+        formFieldType: 'text'
       },
       locale: {
         type: we.db.Sequelize.STRING,
