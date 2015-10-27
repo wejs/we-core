@@ -10,12 +10,30 @@ module.exports = function UrlSlugModel(we) {
       alias: {
         type: we.db.Sequelize.TEXT,
         allowNull: false,
-        formFieldType: 'text'
+        formFieldType: 'text',
+        uniqueAliasName: function (val, cb) {
+          if(!val) return cb();
+          return we.db.models.urlAlias.findOne({
+            where: { alias: val }, attributes: ['id']
+          }).then(function (r) {
+            if (r) return cb('urlAlias.alias.not-unique');
+            cb();
+          }).catch(cb);
+        }
       },
       target: {
         type: we.db.Sequelize.TEXT,
         allowNull: false,
-        formFieldType: 'text'
+        formFieldType: 'text',
+        uniqueTargetName: function (val, cb) {
+          if(!val) return cb();
+          return we.db.models.urlAlias.findOne({
+            where: { target: val }, attributes: ['id']
+          }).then(function (r) {
+            if (r) return cb('urlAlias.target.not-unique');
+            cb();
+          }).catch(cb);
+        }
       },
       locale: {
         type: we.db.Sequelize.STRING,
