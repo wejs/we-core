@@ -32,6 +32,9 @@ module.exports = function(we) {
 
     if (route.map && route.map.length && !href) href = '/';
 
+    // suport to route alias
+    href = we.router.alias.resolvePath(href);
+
     var attributes = [];
     // pass helper attributes to link element
     for (var attributeName in options.hash) {
