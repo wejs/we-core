@@ -16,7 +16,8 @@ module.exports = function UrlSlugModel(we) {
       target: {
         type: we.db.Sequelize.STRING(760),
         allowNull: false,
-        formFieldType: 'text'
+        formFieldType: 'text',
+        unique: true
       },
       locale: {
         type: we.db.Sequelize.STRING,
