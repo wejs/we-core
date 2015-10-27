@@ -200,6 +200,15 @@ module.exports = function UserModel(we) {
             }
             return done();
           });
+        },
+
+        // returns an url alias
+        urlAlias: function urlAlias(record) {
+          return {
+            alias: '/'+ we.i18n.__('user') +'/' + record.id + '-'+  we.utils
+              .string( record.username || record.displayName ).slugify().s,
+            target: '/user/' + record.id,
+          }
         }
       },
       instanceMethods: {

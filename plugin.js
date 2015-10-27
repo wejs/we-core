@@ -7,6 +7,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
   // set plugin configs
   plugin.setConfigs({
+    // // flag to skip project and plugin install methods
+    // skipInstall: false,
+
     // enable suport to parse req.query.where to sequelize query
     enableQueryWhere: false,
     // update route methods
@@ -32,8 +35,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     defaultUserAvatar: projectPath + '/node_modules/we-core/files/public/images/avatars/user-avatar.png',
 
     log: { level: 'debug' },
-    // we.js rul slug feature
-    enableUrlSlug: true,
+    // we.js url alias feature
+    enableUrlAlias: true,
 
     session: {
       secret: 'setASecreteKeyInYourAppConfig',

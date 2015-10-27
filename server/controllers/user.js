@@ -58,7 +58,7 @@ module.exports = {
 
     var record = res.locals.data;
 
-    if (req.method === 'POST') {
+    if (we.config.updateMethods.indexOf(req.method) >-1) {
       if (!record) return next();
 
       record.updateAttributes(req.body)

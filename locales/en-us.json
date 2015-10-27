@@ -192,5 +192,6 @@
   "form-helper-urlAlias-target": "The target and permanet path like: /user/1",
   "form-placeholder-urlAlias-target": " ",
   "urlAlias.delete": "Delete a url alias",
-  "urlAlias.delete.confirm.msg": "Are you sure you want to delete this url alias?"
+  "urlAlias.delete.confirm.msg": "Are you sure you want to delete this url alias?",
+  "url.alias.user": "users"
 }

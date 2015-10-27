@@ -138,5 +138,6 @@
   "form-helper-urlAlias-target": "ANormalmente um link permanente por exemplo: /user/1",
   "form-placeholder-urlAlias-target": " ",
   "urlAlias.delete": "Deleter a url alias",
-  "urlAlias.delete.confirm.msg": "Você tem certeza que deseja deletar essa url?"
+  "urlAlias.delete.confirm.msg": "Você tem certeza que deseja deletar essa url?",
+  "url.alias.user": "usuarios"
 }
