@@ -10,15 +10,14 @@ describe('router.alias', function () {
 
   it('should load and cache all alias in initialize', function (done) {
     we.db.models.urlAlias.create({
-      alias: '/my',
-      target: '/user/1'
+      alias: '/friends',
+      target: '/user'
     }).then(function (alias){
       assert(alias);
       we.router.alias.initialize(we, function (err){
         if (err) throw err;
-        assert(we.router.alias.cache['/user/1']);
-        assert.equal(we.router.alias.cache['/user/1'].id, alias.id);
-
+        assert(we.router.alias.cache['/user']);
+        assert.equal(we.router.alias.cache['/user'].id, alias.id);
         done();
       });
     }).catch(done);
