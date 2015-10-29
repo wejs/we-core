@@ -44,6 +44,13 @@ module.exports = function(we) {
 
     }
 
-    return metatags;
+    var evCTx = {
+      we: we,
+      metatags: metatags,
+      locals: this
+    };
+    we.events.emit('we-html-metadata', evCTx);
+
+    return evCTx.metatags;
   }
 }
