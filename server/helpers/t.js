@@ -12,7 +12,9 @@ module.exports = function(we) {
 
     if (arguments.length == 3) attr = arguments[1];
 
-    if (this.__) {
+    if (options.hash.locals) {
+      __ = options.hash.locals.__;
+    } else if (this.__) {
       __ = this.__;
     } else if (this.locals && this.locals.__) {
       __ = this.locals.__;

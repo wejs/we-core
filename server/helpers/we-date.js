@@ -1,7 +1,7 @@
 /**
  * We date formater helper
  *
- * usage:  {{we-date date format}}
+ * usage:  {{we-date date format locals=locals}}
  */
 var moment = require('moment');
 
@@ -10,11 +10,15 @@ module.exports = function(we) {
     if (!date) return '';
     var options = arguments[arguments.length-1];
 
+
     var d = moment(date);
     if (!d.isValid()) return '';
 
     var req;
-    if (options.data.root.req) {
+
+    if (options.hash.locals) {
+      req = options.hash.locals.req;
+    } else if (options.data.root.req) {
       req = options.data.root.req;
     } else {
       req = options.data.root.locals.req;

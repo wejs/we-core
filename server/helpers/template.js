@@ -23,6 +23,6 @@ module.exports = function(we) {
     // if not find the theme name get default themes
     if (!theme) theme = we.view.themes[we.view.appTheme];
     // render the template
-    return we.view.renderTemplate(name, theme, ctx);
+    return new we.hbs.SafeString(we.view.renderTemplate(name, theme, ctx));
   }
 }
