@@ -718,16 +718,15 @@ we.components = {
           delay: 400,
           cache: opts.cache,
           data: function (params) {
-            var qwhere = {};
-            qwhere[searchField] = { like: params.term + '%' };
-
-            $.extend(qwhere, where);
+            where[searchField] = params.term;
 
             var query = {
-              where: JSON.stringify(qwhere),
               limit: limit,
               responseType: 'json'
             };
+
+            $.extend(query, where);
+
             return query;
           },
           processResults: processResults
