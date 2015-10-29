@@ -16,7 +16,7 @@ module.exports = function(we) {
 
     var req;
 
-    if (options.hash.locals) {
+    if (options.hash && options.hash.locals) {
       req = options.hash.locals.req;
     } else if (options.data.root.req) {
       req = options.data.root.req;
