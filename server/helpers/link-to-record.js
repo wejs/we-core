@@ -3,7 +3,6 @@
  *
  * usage:  {{#link-to-record record=record class="btn btn-default"}}Text inside the link{{/link-to-record}}
  */
-var hbs = require('hbs');
 
 module.exports = function(we) {
   return function linkTo() {
@@ -23,6 +22,6 @@ module.exports = function(we) {
       l += options.fn(this);
     l += '</a>';
 
-    return new hbs.SafeString(l);
+    return new we.hbs.SafeString(l);
   }
 }
