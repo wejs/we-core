@@ -24,7 +24,7 @@ var we = {
 
     this.element = $('body');
 
-    var regions = document.querySelectorAll('we-region');
+    var regions = document.querySelectorAll('div[data-we-region]');
 
     for (var i = 0; i < regions.length; i++) {
       we.structure.regions[regions[i].id] = window.$(regions[i]);
@@ -120,7 +120,6 @@ we.structure = {
   showLayoutEditor: function showLayoutEditor() {
     $('#we-layout-start-edit-btn').hide();
     $('#we-layout-stop-edit-btn').show();
-
     $('body').addClass('we-editing-layout');
   },
   hideLayoutEditor: function hideLayoutEditor() {
@@ -157,10 +156,10 @@ we.structure = {
 
     this.newWidgetObj = {
       theme: we.config.theme,
-      layout: $('layout').attr('data-we-layout'),
+      layout: $('#we-layout').attr('data-we-layout'),
       type: '',
       regionName: regionName,
-      context: $('layout').attr('data-we-widgetcontext')
+      context: $('#we-layout').attr('data-we-widgetcontext')
     };
 
     $.get('/api/v1/widget-types').then(function(r){
@@ -187,7 +186,7 @@ we.structure = {
   },
   goToStep2: function goToStep2() {
     var modal = $(we.structure.addWidgetModalFormId);
-    var regionTag = $('#region-'+ this.newWidgetObj.regionName);
+    var regionWidgetsTag = $('#region-'+ this.newWidgetObj.regionName +'-widgets');
 
     this.newWidgetObj.type = $('#AddWidgetFormModal-select-type').val();
     // type is required for step 2
@@ -225,7 +224,7 @@ we.structure = {
         $.post(url, formData)
         .then(function (r) {
           // insert after regions actions
-          regionTag.find('widgets').prepend(r.widget.html);
+          regionWidgetsTag.prepend(r.widget.html);
         }).always(function(){
           modal.modal('hide');
 
@@ -239,7 +238,7 @@ we.structure = {
 
     if (!id) return console.warn('data-id attribute is required for updateWidget');
 
-    var widgetTag = $('widget[model-widget='+id+']');
+    var widgetTag = $('#widget-'+id);
     modalForm.modal('show');
 
     var url = '/api/v1/widget/';
@@ -299,7 +298,7 @@ we.structure = {
         contentType: 'application/json; charset=utf-8'
       }).then(function (r) {
         we.events.emit('model-update-after', 'widget', r);
-        $('[model-widget='+id+']').remove();
+        $('#widget-'+id).remove();
       });
     }
   },
@@ -314,7 +313,7 @@ we.structure = {
       url = we.config.structure.widgetSortUrl;
 
     url += we.config.theme + '/'+
-      $('layout').attr('data-we-layout')+
+      $('#we-layout').attr('data-we-layout')+
       '/'+regionName  + '?skipHTML=true';
     $.get(url).then(function (f) {
       modal.find('.modal-body').html(f);
@@ -348,7 +347,7 @@ we.router = {
       url = ctx.path + '?skipHTML=true';
     }
 
-    $('layout').load(url, function(){
+    $('#we-layout').load(url, function(){
       $('html, body').animate({ scrollTop: 0 }, 0);
     });
   },
@@ -451,7 +450,7 @@ we.admin.layouts = {
         url = we.config.structure.widgetSortUrl;
 
       url += we.config.theme + '/'+
-        $('layout').attr('data-we-layout')+
+        $('#we-layout').attr('data-we-layout')+
         '/'+regionName + '?skipHTML=true&responseType=JSON';
 
       $.ajax({
@@ -465,7 +464,7 @@ we.admin.layouts = {
         var widget;
         var lastWidget = null;
         for (var i = 0; i < r.widget.length; i++) {
-          widget = region.find('widgets > widget[model-widget='+r.widget[i].id+']');
+          widget = region.find('#widget-'+r.widget[i].id);
           if (lastWidget) {
             widget.insertAfter(lastWidget);
           } else {
