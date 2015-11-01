@@ -34,15 +34,9 @@ var we = {
     //this.handlerErrorMessage();
 
     if (we.config.client.publicVars.dynamicLayout) {
-      // partial page loader
-      this.router.loadRoutes().then(function (r){
-        if (self.isAdmin) {
-          self.router.bindPartialAdminRoutes(r);
-        } else {
-          self.router.bindPartialRoutes(r);
-        }
-
-        setTimeout(function(){ page({ hashbang: false }); }, 200);
+      page(we.router.bindPartialRoute);
+      page.start({
+        dispatch: false
       });
     }
 
@@ -324,21 +318,10 @@ we.structure = {
 we.router = {
   currentRoute: null,
   firstRoute: true,
-  loadRoutes: function() {
-    return $.get('/api/v1/routes');
-  },
-  bindPartialRoutes: function(routes) {
-    for (var url in routes) {
-      if (url.substring(0, 6) !== '/admin') {
-        routes[url].url = url;
-        page(url, we.router.bindPartialRoute.bind(routes[url]));
-      }
-    }
-  },
   bindPartialRoute: function (ctx) {
-    if (we.router.firstRoute) {
-      we.router.firstRoute = false; return;
-    }
+
+    console.log('ctx>', ctx);
+
     var url;
     // set skipHTML query param
     if (ctx.path.indexOf('?') > -1) {
@@ -350,14 +333,6 @@ we.router = {
     $('#we-layout').load(url, function(){
       $('html, body').animate({ scrollTop: 0 }, 0);
     });
-  },
-  bindPartialAdminRoutes: function(routes) {
-    for(var url in routes) {
-      if (url.substring(0, 6) === '/admin') {
-        routes[url].url = url;
-        page(url, we.router.bindPartialRoute.bind(routes[url]));
-      }
-    }
   }
 };
 

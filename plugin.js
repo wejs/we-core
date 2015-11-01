@@ -170,7 +170,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // client side logs
       log: {},
       // publivars
-      publicVars: {}
+      publicVars: {
+        // set to true to enable the page.js partial loader
+        dynamicLayout: false
+      }
     },
     metadata: {},
     forms: {
