@@ -4,7 +4,7 @@ module.exports = {
     if (req.user) req.body.creatorId = req.user.id;
 
     var type = req.body.type;
-    req.we.view.widgets[type].afterSave(req, res, function() {
+    req.we.view.widgets[type].beforeSave(req, res, function() {
       res.locals.Model.create(req.body)
       .then(function (record) {
         res.locals.template = record.type + '/wiew';
@@ -259,7 +259,7 @@ module.exports = {
     .then(function (record) {
       if (!record) return res.notFound();
       var type = record.type;
-      we.view.widgets[type].afterSave(req, res, function() {
+      we.view.widgets[type].beforeSave(req, res, function() {
         // update in db
         record.updateAttributes(req.body)
         .then(function() {
