@@ -53,6 +53,9 @@ npm run coverage
 npm run lint
 ```
 
+## NPM Info:
+[![NPM](https://nodei.co/npm/we-core.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/we-core/)
+
 ## License
 
-[the MIT license](LICENSE).
+[the MIT license](LICENSE.md).
