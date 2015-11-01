@@ -139,5 +139,7 @@
   "form-placeholder-urlAlias-target": " ",
   "urlAlias.delete": "Deleter a url alias",
   "urlAlias.delete.confirm.msg": "Você tem certeza que deseja deletar essa url?",
-  "url.alias.user": "usuarios"
+  "url.alias.user": "usuarios",
+  "widget.update": "Atualizar widget",
+  "widget.create": "Criar widget"
 }
