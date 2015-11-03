@@ -1,7 +1,8 @@
 /**
  * Link to record helper for generate record links
  *
- * usage:  {{#link-to-record record=record class="btn btn-default"}}Text inside the link{{/link-to-record}}
+ * usage:
+     {{#link-to-record record=record class="btn btn-default"}}Text inside the link{{/link-to-record}}
  */
 
 module.exports = function(we) {
@@ -12,13 +13,9 @@ module.exports = function(we) {
 
     var href = options.hash.record.getUrlPathAlias();
 
-    var attributes = [];
-    // pass helper attributes to link element
-    for (var attributeName in options.hash) {
-      attributes.push(attributeName + '="' + options.hash[attributeName] + '"');
-    }
+    var attributes = we.utils.helper.parseAttributes(options);
 
-    var l = '<a href="' + href + '" ' + attributes.join(' ') + ' >';
+    var l = '<a href="' + href + '" ' + attributes + ' >';
       l += options.fn(this);
     l += '</a>';
 

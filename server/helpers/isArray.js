@@ -7,12 +7,11 @@
       not array
   {{/isArray}}
  */
-var _ = require('lodash');
 
-module.exports = function() {
+module.exports = function(we) {
   return function renderWidget(v1) {
     var options = arguments[arguments.length-1];
-    if (_.isArray(v1)) {
+    if (we.utils._.isArray(v1)) {
       return options.fn(this);
     }
     return options.inverse(this);

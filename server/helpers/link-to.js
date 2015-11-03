@@ -1,7 +1,8 @@
 /**
  * Link to helper
  *
- * usage:  {{#link-to 'routeName' class="btn btn-default"}}Text inside the link{{/link-to}}
+ * usage:
+     {{#link-to 'routeName' class="btn btn-default"}}Text inside the link{{/link-to}}
  */
 var hbs = require('hbs');
 
@@ -35,13 +36,9 @@ module.exports = function(we) {
     // suport to route alias
     href = we.router.alias.resolvePath(href);
 
-    var attributes = [];
-    // pass helper attributes to link element
-    for (var attributeName in options.hash) {
-      attributes.push(attributeName + '="' + options.hash[attributeName] + '"');
-    }
+    var attributes = we.utils.helper.parseAttributes(options);
 
-    var l = '<a href="' + href + '" ' + attributes.join(' ') + ' >';
+    var l = '<a href="' + href + '" ' + attributes + ' >';
       l += options.fn(this);
     l += '</a>';
 
