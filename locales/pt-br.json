@@ -27,6 +27,7 @@
 	"Edit": "Editar",
 	"Delete": "Deletar",
 	"widget.add": "Adicionar widget",
+  "widget.context": "Contexto do widget",
   "widget.visibility": "Exibir o widget: ",
   "widget.in-context": "No contexto atual",
   "widget.in-portal": "Em todas as páginas",
