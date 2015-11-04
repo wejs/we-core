@@ -237,12 +237,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // user pre-loader
     data.express.param('userId', function (req, res, next, id) {
       if (!/^\d+$/.exec(String(id))) return res.notFound();
-      data.we.db.models.user.findById(id).then(function (user) {
+      data.we.db.models.user.findById(id)
+      .then(function (user) {
         if (!user) return res.notFound();
         res.locals.user = user;
+        // set user context if userId is the first param
+        if (Object.keys(req.params)[0] == 'userId'){
+          res.locals.widgetContext = 'user-' + id;
+        }
+
         next();
       });
-    })
+    });
   })
 
   /**
