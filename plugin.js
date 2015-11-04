@@ -141,7 +141,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // tls: ''
     },
     // external services API keys
-    apiKeys: {},
+    apiKeys: {
+      // add google recaptcha key and secret in project config/local.js file for enable this feature
+      // Requires cliend side recaptcha implementation in registration form how is avaible in we-plugin-form
+      recaptcha: {
+        key: null,
+        secret: null
+      }
+    },
     // node-i18n configs
     i18n: {
       // setup some locales - other locales default to en silently

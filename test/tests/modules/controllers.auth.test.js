@@ -10,7 +10,7 @@ describe('controllers.auth', function () {
     controller = require('../../../server/controllers/auth.js');
     we = helpers.getWe();
     var userStub = stubs.userStub();
-    helpers.createUser(userStub, function(err, u) {
+    helpers.createUser(userStub, function (err, u) {
       if(err) throw err;
       user = u;
       done();
@@ -29,7 +29,7 @@ describe('controllers.auth', function () {
     });
 
     it('signup action should run  we.log.info and return nothing if req.body.mel is set', function (done) {
-      var res = { locals: {} };
+      var res = { locals: {} ,forbidden: function(){}};
       sinon.spy(we.log, 'info');
       controller.signup({ we: we, body: { mel: 'test' } }, res);
       assert(we.log.info.called);

@@ -21,10 +21,10 @@ module.exports = {
     var we = req.we;
     // check allowUserSignup flag how block signup
     if (!we.config.auth.allowUserSignup) return res.forbidden();
-    // anti spam field
+    // anti spam honeypot field
     if (req.body.mel) {
       we.log.info('Bot get mel:', req.ip, req.body.email);
-      return;
+      return res.forbidden();
     }
 
     if (req.method !== 'POST') {
@@ -39,9 +39,18 @@ module.exports = {
 
     async.series([
       function checkIfIsSpam(cb) {
-        we.antiSpam.checkIfIsSpamInRegister(req, res, function (err, isSpam) {
+        we.antiSpam.recaptcha.verify(req, res, function (err, isSpam) {
           if (err) return cb(err);
-          if (isSpam) return res.forbidden();
+          if (isSpam) {
+            we.log.warn('auth.signup: spambot found in recaptcha verify: ', req.ip, req.body.email);
+
+            res.addMessage('warning', {
+              text: 'auth.register.spam',
+              vars: { email: req.body.email }
+            });
+
+            return res.forbidden();
+          }
 
           requireAccountActivation = we.config.auth.requireAccountActivation;
           // if dont need a account activation email then create a active user

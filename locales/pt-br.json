@@ -142,5 +142,6 @@
   "urlAlias.delete.confirm.msg": "Você tem certeza que deseja deletar essa url?",
   "url.alias.user": "usuarios",
   "widget.update": "Atualizar widget",
-  "widget.create": "Criar widget"
+  "widget.create": "Criar widget",
+  "auth.register.spam": "O seu email {{email}} está marcado como spam pelo google recaptcha"
 }

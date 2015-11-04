@@ -197,5 +197,6 @@
   "urlAlias.delete.confirm.msg": "Are you sure you want to delete this url alias?",
   "url.alias.user": "users",
   "widget.update": "Update widget",
-  "widget.create": "Create widget"
+  "widget.create": "Create widget",
+  "auth.register.spam": "You email {{email}} is marked as span by google recaptcha"
 }
