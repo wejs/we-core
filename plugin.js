@@ -55,8 +55,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     bodyParser: { limit: 20000000 },
     // auth settings
     auth : {
-      requireAccountActivation: true,
-      allowUserSignup: true
+      // flags to enable or disable the login and register
+      allowLogin: true,
+      allowRegister: true,
+
+      requireAccountActivation: true
     },
     acl : { disabled: true },
     passport: {

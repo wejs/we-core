@@ -19,18 +19,16 @@ module.exports = {
    */
   signup: function Register(req, res) {
     var we = req.we;
-    // check allowUserSignup flag how block signup
-    if (!we.config.auth.allowUserSignup) return res.forbidden();
+    // check allowRegister flag how block signup
+    if (!we.config.auth.allowRegister) return res.forbidden();
     // anti spam honeypot field
     if (req.body.mel) {
       we.log.info('Bot get mel:', req.ip, req.body.email);
       return res.forbidden();
     }
 
-    if (req.method !== 'POST') {
-      return we.auth.logOut(req, res, function () {
-        return res.ok();
-      });
+    if (req.method !== 'POST' || req.isAuthenticated()) {
+      return res.ok();
     }
 
     var newUser, requireAccountActivation;
@@ -162,7 +160,7 @@ module.exports = {
    * This action receives the static and JSON request
    */
   login: function login(req, res, next) {
-    var we = req.getWe();
+    var we = req.we;
 
     if (!we.config.passport || !we.config.passport.strategies || !we.config.passport.strategies.local) {
       return res.notFound();
@@ -170,9 +168,7 @@ module.exports = {
 
     var email = req.body.email;
 
-    if (req.method !== 'POST') {
-      // redirect do home if is authenticated
-      if (req.isAuthenticated()) return res.redirect('/');
+    if (req.method !== 'POST' || req.isAuthenticated()) {
       // else show login page
       return res.ok();
     }

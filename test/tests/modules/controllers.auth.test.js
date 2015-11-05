@@ -18,13 +18,13 @@ describe('controllers.auth', function () {
   });
 
   describe('controllers.auth.signup', function () {
-    it('signup action should run res.forbidden if we.config.auth.allowUserSignup is false', function (done) {
+    it('signup action should run res.forbidden if we.config.auth.allowRegister is false', function (done) {
       var res = { locals: {}, forbidden: function(){}};
       sinon.spy(res, 'forbidden');
-      we.config.auth.allowUserSignup = false;
+      we.config.auth.allowRegister = false;
       controller.signup({ we: we }, res);
       assert(res.forbidden.called);
-      we.config.auth.allowUserSignup = true;
+      we.config.auth.allowRegister = true;
       done();
     });
 

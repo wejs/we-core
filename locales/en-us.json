@@ -198,5 +198,6 @@
   "url.alias.user": "users",
   "widget.update": "Update widget",
   "widget.create": "Create widget",
-  "auth.register.spam": "You email {{email}} is marked as span by google recaptcha"
+  "auth.register.spam": "You email {{email}} is marked as span by google recaptcha",
+   "auth.login.authenticated.msg": "You are authenticated, <a href='/auth/logout'>click here</a> to logout"
 }
