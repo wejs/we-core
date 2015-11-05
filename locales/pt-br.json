@@ -144,5 +144,6 @@
   "widget.update": "Atualizar widget",
   "widget.create": "Criar widget",
   "auth.register.spam": "O seu email {{email}} está marcado como spam pelo google recaptcha",
-  "auth.login.authenticated.msg": "Você está autenticado, <a href='/auth/logout'>clique aqui</a> para sair do sistema"
+  "auth.login.authenticated.msg": "Você está autenticado, <a href='/auth/logout'>clique aqui</a> para sair do sistema",
+  "Home": "Início"
 }
