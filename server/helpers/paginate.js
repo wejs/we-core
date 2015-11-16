@@ -91,7 +91,7 @@ module.exports = function(we) {
         n: (pagger.currentPage+1),
       }
     }
-
+console.log('>>', we.view.renderTemplate('paginate', theme, pagger))
     return new we.hbs.SafeString(
       we.view.renderTemplate('paginate', theme, pagger)
     );

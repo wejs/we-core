@@ -233,6 +233,8 @@ describe('coreHelpers', function () {
           root: { theme: 'app' }}
       });
 
+      console.log(text)
+
       assert(text.string);
       assert(text.string.indexOf('<span>10</span>') >-1 );
       assert(text.string.indexOf('href="?page=1"') >-1 );
