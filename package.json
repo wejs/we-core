@@ -1,6 +1,6 @@
 {
   "name": "we-core",
-  "version": "0.3.103",
+  "version": "0.3.104",
   "main": "./lib/index.js",
   "scripts": {
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
@@ -70,7 +70,7 @@
     "sinon": "^1.17.2",
     "supertest": "^1.0.1",
     "we-plugin-form": "^0.3.23",
-    "we-test-tools": "^0.3.7",
+    "we-test-tools": "^0.3.10",
     "we-theme-admin-default": "^0.3.10",
     "we-theme-site-wejs": "^0.3.30"
   }
