@@ -558,7 +558,6 @@ describe('coreReponses', function () {
     });
 
     it('we.responses.methods.notFound should run res.send if responseType!=html', function (done) {
-      we.env = 'dev';
       var req = { method: 'GET', we: we };
       var res = {
         locals: {
@@ -589,7 +588,6 @@ describe('coreReponses', function () {
       assert.equal(res.send.firstCall.args[0].messages, 'hi');
 
       assert.equal(res.send.firstCall.args[0].id, user.id);
-      we.env = 'test';
       done();
     });
   });
@@ -666,7 +664,6 @@ describe('coreReponses', function () {
     before(function (done) { done(); });
 
     it('we.responses.methods.badRequest should run res.view if responseType=html', function (done) {
-      we.env = 'dev';
       var req = { method: 'POST', we: we };
       var res = {
         locals: {
@@ -693,8 +690,6 @@ describe('coreReponses', function () {
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 400);
       assert(!res.send.called);
-
-      we.env = 'test';
       done();
     });
 

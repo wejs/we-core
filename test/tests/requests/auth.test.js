@@ -143,6 +143,9 @@ describe('authFeature', function () {
         var userStub = stubs.userStub();
         userStub.confirmPassword = userStub.password;
         userStub.confirmEmail = userStub.email;
+        // hide email log
+        var showDebugEmail = we.email.showDebugEmail;
+        we.email.showDebugEmail = function() {};
 
         request(http)
         .post('/signup?service=conference')
@@ -174,6 +177,9 @@ describe('authFeature', function () {
             assert.equal(we.config.services.conference.url, res.header.location);
 
             we.email.sendEmail.restore();
+
+            we.email.showDebugEmail = showDebugEmail;
+
             done();
           });
         });
@@ -476,6 +482,10 @@ describe('authFeature', function () {
         userId: salvedUser.id,
         tokenType: 'resetPassword'
       }).then(function (authToken) {
+        // hide email debug log
+        var showDebugEmail = we.email.showDebugEmail;
+        we.email.showDebugEmail = function() {};
+
         authenticatedRequest.get('/auth/'+ salvedUser.id +'/reset-password/' + authToken.token)
         .expect(302)
         .end(function (err, res) {
@@ -514,6 +524,8 @@ describe('authFeature', function () {
               assert.equal(res.body.user.username, salvedUser.username);
 
               // todo add a static login form
+              we.email.showDebugEmail = showDebugEmail;
+
               done();
             });
           });
