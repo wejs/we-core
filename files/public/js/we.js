@@ -634,7 +634,7 @@ we.components = {
             success: function(r) {
               var img =  $('<img>');
               img.attr('src', r.image.urls.large);
-              element.summernote('insertNode', img);
+              element.summernote('insertNode', img[0]);
             }
           });
         }
