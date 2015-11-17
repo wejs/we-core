@@ -3,7 +3,6 @@
   "version": "0.3.103",
   "main": "./lib/index.js",
   "scripts": {
-    "lint": "./node_modules/.bin/jshint .",
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
     "verbose-test": "NODE_ENV=test LOG_LV=verbose ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
     "coverage": "NODE_ENV=test LOG_LV=info node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -u exports -R spec test/bootstrap.js test/**/*.test.js"
@@ -44,7 +43,7 @@
     "mkdirp": "^0.5.1",
     "moment": "^2.10.3",
     "morgan": "~1.6.1",
-    "multer": "^0.1.8",
+    "multer": "^1.1.0",
     "mv": "^2.0.3",
     "mysql": "^2.7.0",
     "node-uuid": "^1.4.7",
@@ -67,7 +66,6 @@
   },
   "devDependencies": {
     "istanbul": "^0.4.0",
-    "jshint": "^2.8.0",
     "mocha": "^2.3.4",
     "sinon": "^1.17.2",
     "supertest": "^1.0.1",
