@@ -1,5 +1,8 @@
 {
   "name": "user",
+  "findOne": {
+    "metatagHandler": "userFindOne"
+  },
   "findAll": {
     "search": {
       "q": {
