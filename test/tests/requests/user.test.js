@@ -3,12 +3,13 @@ var request = require('supertest');
 var helpers = require('we-test-tools').helpers;
 var stubs = require('we-test-tools').stubs;
 var _ = require('lodash');
-var http;
+var http, we;
 
 describe('userFeature', function () {
   var salvedUser;
 
   before(function (done) {
+    we = helpers.getWe();
     http = helpers.getHttp();
     // after all create one user
     request(http)
@@ -103,6 +104,34 @@ describe('userFeature', function () {
         assert.equal(user.biography, salvedUser.biography);
         assert.equal(user.language, salvedUser.language);
         assert.equal(user.gender, salvedUser.gender);
+
+        done();
+      });
+    });
+
+    it('get /user/:id should return one user with we.config.sendNestedModels=false', function (done) {
+
+      we.config.sendNestedModels = false;
+
+      request(http)
+      .get('/user/' + salvedUser.id)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .end(function (err, res) {
+        if (err) console.error(err);
+        assert.equal(200, res.status);
+        assert(res.body.user);
+        var user = res.body.user;
+        // check user attrs
+        assert.equal(user.id, salvedUser.id);
+        assert.equal(user.username, salvedUser.username);
+        assert.equal(user.displayName, salvedUser.displayName);
+        //assert.equal(user.fullName, userStub.fullName);
+        assert.equal(user.biography, salvedUser.biography);
+        assert.equal(user.language, salvedUser.language);
+        assert.equal(user.gender, salvedUser.gender);
+
+        we.config.sendNestedModels = true;
 
         done();
       });

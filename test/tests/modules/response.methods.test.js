@@ -4,7 +4,7 @@ var stubs = require('we-test-tools').stubs;
 var sinon = require('sinon');
 var we;
 
-describe('coreReponses', function () {
+describe('we.responses.methods', function () {
   var user;
   before(function (done) {
     we = helpers.getWe();

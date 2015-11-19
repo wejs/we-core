@@ -6,6 +6,6 @@
 
 module.exports = function() {
   return function renderMetadataTags() {
-    return '<meta charset="UTF-8">'+this.metatag;
+    return '<meta charset="UTF-8">'+ (this.metatag || '');
   }
 }
