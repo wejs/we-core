@@ -4,8 +4,8 @@
  * usage:  {{{we-breadcrumb}}}
  */
 
-module.exports = function() {
+module.exports = function(we) {
   return function breadcrumbHelper() {
-    return this.breadcrumb || '';
+    return new we.hbs.SafeString(this.breadcrumb || '');
   }
 }
