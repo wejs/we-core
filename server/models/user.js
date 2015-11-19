@@ -44,7 +44,7 @@ module.exports = function UserModel(we) {
       gender: {
         type: we.db.Sequelize.STRING,
         formFieldType: 'select' ,
-        fieldOptions: { M: 'Masculine', F: 'Feminine' }
+        fieldOptions: { M: 'Male', F: 'Female' }
       },
 
       email: {
