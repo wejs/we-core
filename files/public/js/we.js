@@ -16,7 +16,6 @@ var we = {
   isAdmin: false,
   initialize: function initialize(cb) {
     if (!cb) cb = function(){};
-    var self =  this;
 
     if (window.WE_BOOTSTRAP_CONFIG) {
       this.config = window.WE_BOOTSTRAP_CONFIG;
@@ -634,6 +633,7 @@ we.components = {
             success: function(r) {
               var img =  $('<img>');
               img.attr('src', r.image.urls.large);
+              img.attr('alt', r.image.description);
               element.summernote('insertNode', img[0]);
             }
           });
