@@ -15,7 +15,7 @@ describe('helpers.render-javascript-tags', function () {
       hash: {}
     });
     assert(html)
-    assert(html.indexOf('<script src="/public/plugin/we-core/files/js/jquery.js') === 0);
+    assert(html.indexOf('<script src="/public/plugin/we-core/files/vendor/jquery.js') === 0);
     done();
   });
 

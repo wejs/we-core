@@ -42,7 +42,7 @@ module.exports = {
    * @param  {Object} we we.js object
    * @return {Array}    a list of update objects
    */
-  updates: function updates(we) {
+  updates: function updates() {
     return [{
       version: '0.3.69', // your plugin version
       update: function update0369(we, done) {

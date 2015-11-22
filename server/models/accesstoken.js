@@ -83,7 +83,7 @@ module.exports = function Model(we) {
                 return cb(null, true, accessToken);
               }).catch(cb);
             } else {
-              // Access token not fount
+              // Access token not found
               return cb('Access token not found', false, null);
             }
           });

@@ -30,10 +30,10 @@ module.exports = function(we, view) {
 
       // render core assets locatization files based in current locale
       if (this.locale && this.locale.substr(0,2) !== 'en') {
-        files.push('/public/plugin/we-core/files/summernote/lang/summernote-'+this.locale+'.js');
-        files.push('/public/plugin/we-core/files/select2/dist/js/i18n/'+this.locale+'.js');
-        files.push('/public/plugin/we-core/files/jquery.validate/dist/localization/messages_'+this.locale+'.js');
-        files.push('/public/plugin/we-core/files/jquery-ui/i18n/datepicker-'+this.locale+'.js');
+        files.push('/public/plugin/we-core/files/vendor/summernote/lang/summernote-'+this.locale+'.js');
+        files.push('/public/plugin/we-core/files/vendor/select2/dist/js/i18n/'+this.locale+'.js');
+        files.push('/public/plugin/we-core/files/vendor/jquery.validate/dist/localization/messages_'+this.locale+'.js');
+        files.push('/public/plugin/we-core/files/vendor/jquery-ui/i18n/datepicker-'+this.locale+'.js');
       }
 
       for (var i = 0; i < files.length; i++) {
