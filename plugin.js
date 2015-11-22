@@ -24,8 +24,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // default app permissions
     permissions: require('./lib/acl/corePermissions.json'),
 
-    port: process.env.PORT || '3000',
-    hostname: 'http://localhost:' + ( process.env.PORT || '3000' ),
+    port: process.env.PORT || '4000',
+    hostname: 'http://localhost:' + ( process.env.PORT || '4000' ),
     // default favicon, change in your project config/local.js
     favicon: __dirname + '/files/public/core-favicon.ico',
 
