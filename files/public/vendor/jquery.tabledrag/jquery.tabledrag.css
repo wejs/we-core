@@ -20,7 +20,7 @@ a.tabledrag-handle:hover {
   text-decoration: none;
 }
 a.tabledrag-handle .handle {
-  background: url(/public/plugin/we-core/files/jquery.tabledrag/images/draggable.png) no-repeat 6px 9px;
+  background: url(/public/plugin/we-core/files/vendor/jquery.tabledrag/images/draggable.png) no-repeat 6px 9px;
   height: 13px;
   margin: -0.4em 0.5em; /* LTR */
   padding: 0.42em 0.5em; /* LTR */
@@ -37,13 +37,13 @@ div.indentation {
   width: 20px;
 }
 div.tree-child {
-  background: url(/public/plugin/we-core/files/jquery.tabledrag/images/tree.png) no-repeat 11px center; /* LTR */
+  background: url(/public/plugin/we-core/files/vendor/jquery.tabledrag/images/tree.png) no-repeat 11px center; /* LTR */
 }
 div.tree-child-last {
-  background: url(/public/plugin/we-core/files/jquery.tabledrag/images/tree-bottom.png) no-repeat 11px center; /* LTR */
+  background: url(/public/plugin/we-core/files/vendor/jquery.tabledrag/images/tree-bottom.png) no-repeat 11px center; /* LTR */
 }
 div.tree-child-horizontal {
-  background: url(/public/plugin/we-core/files/jquery.tabledrag/images/tree.png) no-repeat -11px center;
+  background: url(/public/plugin/we-core/files/vendor/jquery.tabledrag/images/tree.png) no-repeat -11px center;
 }
 .tabledrag-toggle-weight-wrapper {
   text-align: right; /* LTR */
