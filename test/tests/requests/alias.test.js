@@ -37,10 +37,13 @@ describe('routerAliasFeature', function() {
       });
     });
 
-    it('put /user/:id should user user and user alias', function (done) {
+    it('put /user/:id should create a user and dont change alias on update', function (done) {
       var userStub = stubs.userStub();
       we.db.models.user.create(userStub)
       .then(function (u){
+
+        var oldAlias = we.router.alias.forPath('/user/'+u.id);
+
         request(http)
         .put('/user/'+u.id)
         .send({
@@ -53,14 +56,13 @@ describe('routerAliasFeature', function() {
 
           assert(res.body.user);
           assert.equal(res.body.user.linkPermanent,'/user/'+res.body.user.id);
-          assert.equal(res.body.user.urlPath, '/user/'+res.body.user.id + '-wananingo');
+          assert.equal(res.body.user.urlPath, oldAlias);
           done();
         });
       }).catch(done);
     });
 
-
-    it('delete /user/:id should delete one user and user alias', function (done) {
+    it('delete /user/:id should delete one user delete user alias alias', function (done) {
       var userStub = stubs.userStub();
       we.db.models.user.create(userStub)
       .then(function (u){
