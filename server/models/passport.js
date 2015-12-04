@@ -33,15 +33,7 @@ module.exports = function Model(we) {
 
       SALT_WORK_FACTOR: 10,
 
-      classMethods: {
-
-      },
-
-      instanceMethods: {
-
-      },
-      hooks: {
-      }
+      enableAlias: false
     }
   }
 

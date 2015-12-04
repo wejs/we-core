@@ -80,6 +80,7 @@ module.exports = function Model(we) {
       }
     },
     options: {
+      enableAlias: false,
       instanceMethods: {
         viewMiddleware: function viewMiddleware(req, res, next) {
           if (!we.view.widgets[this.type]) {

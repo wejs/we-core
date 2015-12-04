@@ -11,6 +11,7 @@ module.exports = function UrlSlugModel(we) {
         type: we.db.Sequelize.TEXT,
         allowNull: false,
         formFieldType: 'text',
+        isURL: true,
         uniqueAliasName: function (val, cb) {
           if(!val) return cb();
           return we.db.models.urlAlias.findOne({
@@ -25,6 +26,7 @@ module.exports = function UrlSlugModel(we) {
         type: we.db.Sequelize.TEXT,
         allowNull: false,
         formFieldType: 'text',
+        isURL: true,
         uniqueTargetName: function (val, cb) {
           if(!val) return cb();
           return we.db.models.urlAlias.findOne({
@@ -44,6 +46,8 @@ module.exports = function UrlSlugModel(we) {
     options: {
       // Model tableName will be the same as the model name
       freezeTableName: true,
+
+      enableAlias: false,
 
       hooks: {
         afterCreate: function(record, opts, done) {

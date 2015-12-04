@@ -72,6 +72,10 @@
     "group": "admin",
     "title": "Manage widget",
     "description": "Create, update and delete widgets"
+  },
+  "setAlias": {
+    "group": "router",
+    "title": "Set url alias in form",
+    "description": "Can set model alias"
   }
-
 }

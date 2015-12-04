@@ -42,6 +42,7 @@ module.exports = function Model(we) {
 
     options: {
 
+      enableAlias: false,
       classMethods: {
         /**
          * Invalid old user tokens

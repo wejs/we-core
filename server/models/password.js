@@ -49,6 +49,7 @@ module.exports = function Model(we) {
 
       SALT_WORK_FACTOR: 10,
 
+      enableAlias: false,
       classMethods: {
         /**
          * async password generation

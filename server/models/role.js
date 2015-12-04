@@ -38,7 +38,7 @@ module.exports = function Model(we) {
       }
     },
     options: {
-      classMethods: {},
+      enableAlias: false,
       instanceMethods: {
         addPermission: function(permissionName) {
           var p = this.permissions;
@@ -63,8 +63,7 @@ module.exports = function Model(we) {
           if (p.indexOf(permissionName) > -1) return true;
           return false;
         }
-      },
-      hooks: {}
+      }
     }
   }
   return model;

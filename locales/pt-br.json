@@ -147,5 +147,11 @@
   "auth.login.authenticated.msg": "Você está autenticado, <a href='/auth/logout'>clique aqui para sair do sistema</a>.",
   "Home": "Início",
   "Male": "Masculino",
-  "Female": "Feminino"
+  "Female": "Feminino",
+  "form-article-setAlias": "URL do conteúdo",
+  "form-placeholder-article-setAlias": " ",
+  "form-helper-article-setAlias": "Digite uma url interna para acessar o seu conteúdo ou deixe o campo vazio para usar a url padrão. Exemplo: /incrivel-conteudo",
+  "form-user-setAlias": "URL do perfil",
+  "form-placeholder-user-setAlias": " ",
+  "form-helper-user-setAlias": "Digite uma url interna para acessar o seu perfil ou deixe o campo vazio para usar a url padrão. Exemplo: /batman"
 }
