@@ -201,9 +201,6 @@
   "auth.register.spam": "You email {{email}} is marked as span by Google Recaptcha",
   "auth.login.authenticated.msg": "You are authenticated, <a href='/auth/logout'>click here to logout</a>",
   "Home": "Home",
-  "form-article-setAlias": "URL alias",
-  "form-placeholder-article-setAlias": " ",
-  "form-helper-article-setAlias": "Write an internal path for your record or leave empty for use default urls. Example: /awesome/url",
   "form-user-setAlias": "Profile URL alias",
   "form-placeholder-user-setAlias": " ",
   "form-helper-user-setAlias": "Write an internal path for your profile or leave empty for use default urls. Example: /batman"
