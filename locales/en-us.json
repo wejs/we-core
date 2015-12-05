@@ -205,5 +205,11 @@
   "form-placeholder-user-setAlias": " ",
   "form-helper-user-setAlias": "Write an internal path for your profile or leave empty for use default urls. Example: /batman",
   "updatedAt": "Updated at",
-  "createdAt": "Created at"
+  "createdAt": "Created at",
+  "form-user-updatedAt": "Updated at:",
+  "form-helper-user-updatedAt": " ",
+  "form-placeholder-user-updatedAt": " ",
+  "form-user-createdAt ": "Created at:",
+  "form-helper-user-createdAt ": " ",
+  "form-placeholder-user-createdAt ": " "
 }
