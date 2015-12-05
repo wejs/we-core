@@ -150,5 +150,7 @@
   "Female": "Feminino",
   "form-user-setAlias": "URL do perfil",
   "form-placeholder-user-setAlias": " ",
-  "form-helper-user-setAlias": "Digite uma url interna para acessar o seu perfil ou deixe o campo vazio para usar a url padrão. Exemplo: /batman"
+  "form-helper-user-setAlias": "Digite uma url interna para acessar o seu perfil ou deixe o campo vazio para usar a url padrão. Exemplo: /batman",
+  "updatedAt": "Atualizado em",
+  "createdAt": "Criado em"
 }

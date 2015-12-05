@@ -203,5 +203,7 @@
   "Home": "Home",
   "form-user-setAlias": "Profile URL alias",
   "form-placeholder-user-setAlias": " ",
-  "form-helper-user-setAlias": "Write an internal path for your profile or leave empty for use default urls. Example: /batman"
+  "form-helper-user-setAlias": "Write an internal path for your profile or leave empty for use default urls. Example: /batman",
+  "updatedAt": "Updated at",
+  "createdAt": "Created at"
 }
