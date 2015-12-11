@@ -9,7 +9,7 @@
 
 Site: [http://wejs.org](wejs.org)
 
-***In active developement***
+Status:  **maintained**
 
 ## Install for develop we.js core:
 
@@ -44,12 +44,6 @@ NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.
 
 ```sh
 npm run coverage
-```
-
-##### For run the javascript linter
-
-```sh
-npm run lint
 ```
 
 ## NPM Info:
