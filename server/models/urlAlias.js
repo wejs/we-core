@@ -7,6 +7,7 @@
 module.exports = function UrlSlugModel(we) {
   return {
     definition: {
+      // url to
       alias: {
         type: we.db.Sequelize.TEXT,
         allowNull: false,
@@ -22,6 +23,7 @@ module.exports = function UrlSlugModel(we) {
           }).catch(cb);
         }
       },
+      // url from
       target: {
         type: we.db.Sequelize.TEXT,
         allowNull: false,
