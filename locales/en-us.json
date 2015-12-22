@@ -211,5 +211,6 @@
   "form-placeholder-user-updatedAt": " ",
   "form-user-createdAt ": "Created at:",
   "form-helper-user-createdAt ": " ",
-  "form-placeholder-user-createdAt ": " "
+  "form-placeholder-user-createdAt ": " ",
+  "passport.strategy.local": "Login with system email and password"
 }
