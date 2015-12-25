@@ -7,7 +7,7 @@
     "verbose-test": "NODE_ENV=test LOG_LV=verbose ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
     "coverage": "NODE_ENV=test LOG_LV=info node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -u exports -R spec test/bootstrap.js test/**/*.test.js",
     "preversion": "npm test",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push"
   },
   "keywords": [
     "we.js",
