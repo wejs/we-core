@@ -307,7 +307,8 @@ we.structure = {
 
     url += we.config.theme + '/'+
       $('#we-layout').attr('data-we-layout')+
-      '/'+regionName  + '?skipHTML=true';
+      '/'+regionName  + '?skipHTML=true&context='+
+      $('#we-layout').attr('data-we-widgetcontext');
     $.get(url).then(function (f) {
       modal.find('.modal-body').html(f);
     });
@@ -318,9 +319,6 @@ we.router = {
   currentRoute: null,
   firstRoute: true,
   bindPartialRoute: function (ctx) {
-
-    console.log('ctx>', ctx);
-
     var url;
     // set skipHTML query param
     if (ctx.path.indexOf('?') > -1) {
@@ -425,7 +423,7 @@ we.admin.layouts = {
 
       url += we.config.theme + '/'+
         $('#we-layout').attr('data-we-layout')+
-        '/'+regionName + '?skipHTML=true&responseType=JSON';
+        '/'+regionName + '?skipHTML=true&responseType=JSON&context='+$('#we-layout').attr('data-we-widgetcontext');
 
       $.ajax({
         url: url,

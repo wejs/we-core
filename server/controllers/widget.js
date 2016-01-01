@@ -51,7 +51,7 @@ module.exports = {
             theme: req.params.theme,
             regionName: req.params.regionName,
             layout: req.params.layout,
-            context: res.locals.widgetContext || null,
+            context: (res.locals.widgetContext || req.query.context || null),
             id: w.id
           }, fields: ['weight']})
         .then(function () {
@@ -71,9 +71,9 @@ module.exports = {
     we.db.models.widget.findAll({
       where: {
         theme: req.params.theme,
-        regionName: req.params.regionName,
         layout: req.params.layout,
-        context: res.locals.widgetContext || null,
+        context: (res.locals.widgetContext || req.query.context || null),
+        regionName: req.params.regionName,
       }, order: [ ['weight', 'ASC'], ['createdAt', 'DESC']]
     }).then(function (widgets) {
       if (req.method == 'POST') {
