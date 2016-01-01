@@ -70,7 +70,8 @@ describe('controllers.widget', function () {
         we: we,
         user: user,
         params: {},
-        body: {}
+        body: {},
+        query: {}
       };
       var res = { locals: { }, ok: function(){
         assert(we.controllers.widget.sortWidgetsList.called);
@@ -105,6 +106,7 @@ describe('controllers.widget', function () {
           regionName: 'sidebar',
           layout: 'home'
         },
+        query:{},
         body: {
           widgets: widgets.map(function (w) {
             c++;
@@ -147,6 +149,7 @@ describe('controllers.widget', function () {
           regionName: 'sidebar',
           layout: 'home'
         },
+        query: {},
         body: {
           widgets: widgets.map(function (w) {
             c++;
