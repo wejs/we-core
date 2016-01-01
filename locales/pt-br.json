@@ -154,5 +154,6 @@
   "updatedAt": "Atualizado em",
   "createdAt": "Criado em",
   "passport.strategy.local": "Se autenticar usando o email e senha criados no sistema",
-  "Create": "Criar"
+  "Create": "Criar",
+  "user.find": "Usuários"
 }
