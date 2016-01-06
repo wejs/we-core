@@ -2,7 +2,7 @@
  * We.js client side lib
  */
 
-(function (window, page) {
+(function (window) {
 
 if ($.timepicker) {
   $.datepicker.setDefaults($.timepicker.regional[window.WE_BOOTSTRAP_CONFIG.locale]);
@@ -31,13 +31,6 @@ var we = {
 
     this.setElementEvents();
     //this.handlerErrorMessage();
-
-    if (we.config.client.publicVars.dynamicLayout) {
-      page(we.router.bindPartialRoute);
-      page.start({
-        dispatch: false
-      });
-    }
 
     if (location.pathname.substring(0, 6) === '/admin') this.isAdmin = true;
 
@@ -805,5 +798,5 @@ $(function(){
   if(we.autoInitialize) we.initialize();
 });
 
-})(window, window.page);
+})(window);
 
