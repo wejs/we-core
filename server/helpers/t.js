@@ -12,6 +12,7 @@ module.exports = function(we) {
 
     if (arguments.length == 3) attr = arguments[1];
 
+    // get express locals
     if (options.hash && options.hash.locals) {
       __ = options.hash.locals.__;
     } else if (this.__) {
@@ -26,8 +27,8 @@ module.exports = function(we) {
     }
 
     if (!string) return '';
-    if (typeof string === 'string') {
-      return __(string, options.hash);
+    if (we.utils._.isString(string)) {
+      return __(string.toString(), options.hash);
     } else {
       return __(string[attr], options.hash);
     }
