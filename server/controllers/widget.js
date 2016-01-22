@@ -21,7 +21,7 @@ module.exports = {
             return res.created();
           }
         });
-      });
+      }).catch(res.queryError)
     });
   },
 
