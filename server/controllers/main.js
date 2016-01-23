@@ -12,7 +12,8 @@ module.exports = {
   index: function(req, res) {
     var we = req.getWe();
 
-    res.locals.template = 'home/index';
+    if (!res.locals.template) res.locals.template = 'home/index';
+
     res.view({ title: we.config.appName });
   },
 
