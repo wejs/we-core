@@ -1,6 +1,6 @@
 {
   "name": "we-core",
-  "version": "0.3.114",
+  "version": "0.3.115",
   "dependencies": {
     "async": {
       "version": "1.5.0",
