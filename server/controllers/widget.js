@@ -175,6 +175,16 @@ module.exports = {
 
       res.locals.title = null;
 
+      var context = false;
+
+      if(res.locals.widgetContext) {
+        context = res.locals.widgetContext;
+      } else if (req.query.context) {
+        context = req.query.context;
+      }
+
+      var widgetType = we.view.widgets[req.params.type];
+
       res.locals.type = req.params.type;
       res.locals.layout = req.params.layout;
       res.locals.theme = req.params.theme;
@@ -185,8 +195,8 @@ module.exports = {
 
       res.locals.controllFields = '';
 
-      setFormControllerAndModelVars(res, we);
-
+      res.locals.controllFields += widgetType.rederContextField(null, context, req, res);
+      res.locals.controllFields += widgetType.renderVisibilityField(null, context, req, res);
       if (res.locals.type)
       res.locals.controllFields += '<input type="hidden" name="type" value="'+res.locals.type+'">';
       if (res.locals.layout)
@@ -209,13 +219,17 @@ module.exports = {
     var id = req.params.id;
 
     res.locals.Model.findOne({
-      where: {id: id}
+      where: { id: id }
     }).then(function (record) {
       if (!record) return next();
 
       res.status(200);
 
-      we.view.widgets[record.type].formMiddleware(req, res, function (err) {
+      var context = record.context || false;
+
+      var widgetType = we.view.widgets[record.type];
+
+      widgetType.formMiddleware(req, res, function (err) {
         if (err) return res.serverError(err);
 
         var widget = record.toJSON();
@@ -228,7 +242,8 @@ module.exports = {
 
         res.locals.controllFields = '';
 
-        setFormControllerAndModelVars(res, we, record);
+        res.locals.controllFields += widgetType.rederContextField(record, context, req, res);
+        res.locals.controllFields += widgetType.renderVisibilityField(record, context, req, res);
 
         if (record.type)
           res.locals.controllFields += '<input type="hidden" name="type" value="'+record.type+'">';
@@ -250,7 +265,7 @@ module.exports = {
           res.ok();
         }
       });
-    });
+    }).catch(res.queryError);
   },
 
   /**
@@ -295,70 +310,3 @@ module.exports = {
     });
   }
 };
-
-function setFormControllerAndModelVars(res, we, widget) {
-  var context = false;
-
-  if (widget) {
-    context = widget.context;
-  } else if(res.locals.widgetContext) {
-    context = res.locals.widgetContext;
-  } else if (res.req.query.context){
-    context = res.req.query.context;
-  }
-
-  // context field
-  if (context) {
-    res.locals.controllFields += '<hr><div class="form-group">' +
-      '<strong>'+res.locals.__('widget.context')+':</strong> '+
-      context+
-    '</div>';
-  }
-
-  // set selected attr
-  var vrq = {
-    'in-portal': '',
-    'in-context': '',
-    'in-session': '',
-    'in-session-record': '',
-    'in-page': '',
-  };
-
-  if (widget && widget.visibility) {
-    vrq[widget.visibility] = ' selected="selected" ';
-  }
-
-  // visibility field
-  res.locals.controllFields += '<div class="form-group"><div class="row">' +
-    '<label class="col-sm-4 control-label">'+
-    res.locals.__('widget.visibility') + '</label>'+
-  '<div class="col-sm-8"><select name="visibility" class="form-control">';
-
-  if (context) {
-    res.locals.controllFields +=
-    '<option value="in-context"'+vrq['in-context']+'>'+
-      res.locals.__('widget.in-context')+
-    '</option>';
-  } else {
-    res.locals.controllFields +=
-    '<option value="in-portal"'+vrq['in-portal']+'>'+
-      res.locals.__('widget.in-portal')+
-    '</option>';
-  }
-
-  res.locals.controllFields +=
-    '<option value="in-session"'+vrq['in-session']+'>'
-      +res.locals.__('widget.in-session')+
-    '</option>'+
-    // - in-session-record
-    '<option value="in-session-record"'+vrq['in-session-record']+'>'+
-      res.locals.__('widget.in-session-record')+
-    '</option>'+
-    // - in-page
-    '<option value="in-page"'+vrq['in-page']+'>'+
-      res.locals.__('widget.in-page')+
-    '</option>'+
-
-  '</select></div></div>'+
-  '</div><hr>';
-}
