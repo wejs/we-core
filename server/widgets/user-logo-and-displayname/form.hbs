@@ -1,0 +1,17 @@
+<form name="widget-form-{{type}}">
+  <div class="form-group">
+    <label for="widget-form-{{type}}-title">{{t 'title'}}</label>
+    <input name="title" value="{{title}}" type="text" class="form-control" id="widget-form-{{type}}-title" placeholder="{{t 'widget.title'}}">
+  </div>
+
+  {{{controllFields}}}
+
+  {{#if id}}
+    <input type="hidden" name="id" value="{{id}}">
+    <button type="submit" class="btn btn-primary">{{t 'Save'}}</button>
+    <button type="submit" data-dismiss="modal" class="btn btn-default">{{t 'Cancel'}}</button>
+  {{else}}
+    <button type="submit" class="btn btn-primary">{{t 'Add'}}</button>
+    <button type="submit" data-dismiss="modal" class="btn btn-default">{{t 'Cancel'}}</button>
+  {{/if}}
+</form>

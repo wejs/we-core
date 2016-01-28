@@ -1,0 +1,10 @@
+{{#if locals.user}}
+<div class="user-data">
+  {{{we-image locals.user.avatar 'thumbnail' class="img-thumbnail"}}}
+  <div>
+    <h1 class="user-displayName">{{locals.user.displayName}}</h1>
+    <p>{{#each locals.user.organization}}{{this}}{{/each}}</p>
+  </div>
+</div>
+<div class="clearfix"></div>
+{{/if}}
