@@ -212,5 +212,6 @@
   "form-user-createdAt ": "Created at:",
   "form-helper-user-createdAt ": " ",
   "form-placeholder-user-createdAt ": " ",
-  "passport.strategy.local": "Login with system email and password"
+  "passport.strategy.local": "Login with system email and password",
+  "widget.invalid.context": "Invalid widget context"
 }

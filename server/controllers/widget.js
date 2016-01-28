@@ -4,7 +4,9 @@ module.exports = {
     if (req.user) req.body.creatorId = req.user.id;
 
     var type = req.body.type;
-    req.we.view.widgets[type].beforeSave(req, res, function() {
+    req.we.view.widgets[type].beforeSave(req, res, function (err) {
+      if (err) return res.queryError(err);
+
       res.locals.Model.create(req.body)
       .then(function (record) {
         res.locals.template = record.type + '/wiew';
@@ -132,18 +134,26 @@ module.exports = {
     });
   },
 
+  /**
+   * action to return widget options avaible for selection
+   *
+   * @param  {Object} req express.js request
+   * @param  {Object} res express.js response
+   */
   getSelectWidgetTypes: function getSelectWidgetTypes(req, res) {
     var we = req.we;
 
-    res.locals.layout = null;
     res.locals.widgetContext = req.query.widgetContext;
+    res.locals.widgetTypes = [];
 
-    res.locals.widgetTypes = Object.keys(we.view.widgets).map(function (wt){
-      return {
-        type: wt,
-        label: req.__('widget.'+wt+'.label')
+    for (var type in we.view.widgets) {
+      if (we.view.widgets[type].isAvaibleForSelection(req, res)) {
+        res.locals.widgetTypes.push({
+          type: type,
+          label: req.__('widget.'+type+'.label')
+        })
       }
-    });
+    }
 
     // var html = we.view.renderTemplate('widget/selectWidgetTypeForm', res.locals.theme, res.locals);
     return res.send({ widget: res.locals.widgetTypes});
@@ -259,7 +269,8 @@ module.exports = {
     .then(function (record) {
       if (!record) return res.notFound();
       var type = record.type;
-      we.view.widgets[type].beforeSave(req, res, function() {
+      we.view.widgets[type].beforeSave(req, res, function (err) {
+        if (err) return res.queryError(err);
         // update in db
         record.updateAttributes(req.body)
         .then(function() {
