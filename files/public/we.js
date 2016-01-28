@@ -34,6 +34,16 @@ var we = {
 
     if (location.pathname.substring(0, 6) === '/admin') this.isAdmin = true;
 
+    if (this.config.widgetContext) {
+      // add current page headers for ajax requests
+      $.ajaxSetup({
+        headers: {
+          'wejs-context': this.config.widgetContext,
+          'wejs-theme': this.config.theme
+        }
+      });
+    }
+
     cb();
   },
   setElementEvents: function setElementEvents() {
