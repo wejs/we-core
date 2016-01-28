@@ -213,5 +213,6 @@
   "form-helper-user-createdAt ": " ",
   "form-placeholder-user-createdAt ": " ",
   "passport.strategy.local": "Login with system email and password",
-  "widget.invalid.context": "Invalid widget context"
+  "widget.invalid.context": "Invalid widget context",
+  "widget.user-logo-and-displayname.label": "User logo and displayName"
 }
