@@ -2,9 +2,7 @@
  * Widget to show user logo and displayName
  *
  * this widget only works in user-* contexts
- *
  */
-
 module.exports = function (projectPath, Widget) {
   var widget = new Widget('user-logo-and-displayname', __dirname);
 
@@ -29,8 +27,9 @@ module.exports = function (projectPath, Widget) {
     }
   }
 
-  // // Override default widget class functions after instance
-  //
+  /**
+   * Override default widget class functions before save to check if can save
+   */
   widget.beforeSave = function widgetBeforeSave(req, res, next) {
     // check context in create
     if (res.locals.id || widget.checkIfIsValidContext(req.body.context)) {
@@ -39,7 +38,6 @@ module.exports = function (projectPath, Widget) {
       next(new Error(res.locals.__('widget.invalid.context')));
     }
   };
-
 
   widget.renderVisibilityField = function renderVisibilityField(widget, context, req, res) {
     var field = '';
@@ -51,7 +49,7 @@ module.exports = function (projectPath, Widget) {
     '<div class="col-sm-8"><select name="visibility" class="form-control">';
 
     field +=
-    '<option value="in-context" selected value="'+context+'">'+
+    '<option value="in-context" selected >'+
       res.locals.__('widget.in-context')+
     '</option>'+
     '</select></div></div>'+
@@ -59,17 +57,6 @@ module.exports = function (projectPath, Widget) {
 
     return field;
   }
-
-  // // form middleware, use for get data for widget form
-  // widget.formMiddleware = function formMiddleware(req, res, next) {
-  //
-  //   next();
-  // }
-
-  // // Widget view middleware, use for get data after render the widget html
-  // widget.viewMiddleware = function viewMiddleware(widget, req, res, next) {
-  //  return next();
-  // }
 
   return widget;
 };
