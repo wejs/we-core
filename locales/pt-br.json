@@ -19,6 +19,7 @@
 	"auth.forgot-password.reset-password": "Redefinir senha",
 	"auth.forgot-password.email.send": "A nova senha foi enviada para seu email.",
 	"auth.new-password": "Nova senha",
+  "auth.new-password.set.successfully": "A sua senha foi atualizada com sucesso",
 	"Profile": "Perfil",
 	"auth.change-password.reset-password": "Redefinir senha",
 	"auth.change-password.success": "Sua senha foi atualizada.",

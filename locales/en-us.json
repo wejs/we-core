@@ -18,6 +18,7 @@
 	"auth.forgot-password.reset-password": "Reset password",
 	"auth.forgot-password.email.send": "Reset password email was sent to your email",
 	"auth.new-password": "New password",
+	"auth.new-password.set.successfully": "Your password has been successfully updated",
 	"Profile": "Profile",
 	"auth.change-password.reset-password": "Reset password",
 	"auth.change-password.success": "Your password is updated",
