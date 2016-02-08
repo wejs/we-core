@@ -403,7 +403,8 @@ describe('we.responses.methods', function () {
         locals: {
           Model: we.db.models.user,
           model: 'user',
-          responseType: 'html'
+          responseType: 'html',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -434,7 +435,8 @@ describe('we.responses.methods', function () {
           Model: we.db.models.user,
           model: null,
           responseType: 'json',
-          messages: 'hi'
+          messages: 'hi',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -467,7 +469,8 @@ describe('we.responses.methods', function () {
           Model: we.db.models.user,
           model: 'user',
           responseType: 'json',
-          messages: 'hi'
+          messages: 'hi',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -504,7 +507,8 @@ describe('we.responses.methods', function () {
         locals: {
           Model: we.db.models.user,
           model: 'user',
-          responseType: 'html'
+          responseType: 'html',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -534,7 +538,8 @@ describe('we.responses.methods', function () {
         locals: {
           Model: we.db.models.user,
           model: 'user',
-          responseType: 'html'
+          responseType: 'html',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -564,7 +569,8 @@ describe('we.responses.methods', function () {
           Model: we.db.models.user,
           model: 'user',
           responseType: 'json',
-          messages: 'hi'
+          messages: 'hi',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -601,7 +607,8 @@ describe('we.responses.methods', function () {
         locals: {
           Model: we.db.models.user,
           model: 'user',
-          responseType: 'html'
+          responseType: 'html',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -633,7 +640,8 @@ describe('we.responses.methods', function () {
           Model: we.db.models.user,
           model: 'user',
           responseType: 'json',
-          messages: 'hi'
+          messages: 'hi',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -669,7 +677,8 @@ describe('we.responses.methods', function () {
         locals: {
           Model: we.db.models.user,
           model: 'user',
-          responseType: 'html'
+          responseType: 'html',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -700,7 +709,8 @@ describe('we.responses.methods', function () {
         locals: {
           Model: we.db.models.user,
           responseType: 'json',
-          messages: 'hi'
+          messages: 'hi',
+          __: function() {}
         },
         status: function() {},
         send: function() {},
@@ -734,7 +744,8 @@ describe('we.responses.methods', function () {
           Model: we.db.models.user,
           model: 'user',
           responseType: 'json',
-          messages: 'hi'
+          messages: 'hi',
+          __: function() {}
         },
         status: function() {},
         send: function() {},

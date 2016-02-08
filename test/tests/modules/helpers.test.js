@@ -445,7 +445,7 @@ describe('coreHelpers', function () {
         theme: 'app'
       })('400', {hash: {}});
 
-      assert.equal(text, '400.hbs\n');
+      assert(text.string.indexOf('response.badRequest.title') > -1);
       assert(we.view.renderTemplate.called);
       // then remove the spy
       we.view.renderTemplate.restore();
@@ -462,7 +462,7 @@ describe('coreHelpers', function () {
         }
       })('400', {hash: {}});
 
-      assert.equal(text, '400.hbs\n');
+      assert(text.string.indexOf('response.badRequest.title') > -1);
       assert(we.view.renderTemplate.called);
       // then remove the spy
       we.view.renderTemplate.restore();
