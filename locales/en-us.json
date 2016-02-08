@@ -215,5 +215,17 @@
   "form-placeholder-user-createdAt ": " ",
   "passport.strategy.local": "Login with system email and password",
   "widget.invalid.context": "Invalid widget context",
-  "widget.user-logo-and-displayname.label": "User logo and displayName"
+  "widget.user-logo-and-displayname.label": "User logo and displayName",
+
+  "response.badRequest.title": "Bad request",
+  "response.badRequest.description": "Something is wrong with you request or data send to server",
+
+  "response.notFound.title": "Not found",
+  "response.notFound.description": "Page not found in this system",
+
+  "response.forbidden.title": "Forbidden!",
+  "response.forbidden.description": "You dont have access to this page!",
+
+  "response.serveError.title": "Server error!",
+  "response.serveError.description": " "
 }

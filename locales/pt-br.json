@@ -157,5 +157,17 @@
   "passport.strategy.local": "Se autenticar usando o email e senha criados no sistema",
   "Create": "Criar",
   "user.find": "Usuários",
-  "widget.invalid.context": "O contexto do widget é inválido"
+  "widget.invalid.context": "O contexto do widget é inválido",
+
+  "response.badRequest.title": "Dados inválidos",
+  "response.badRequest.description": "Alguma informação enviada para o sistema está inválida",
+
+  "response.notFound.title": "Não encontrado",
+  "response.notFound.description": "O link ou a página que você procurava não foi encontrada no sistema",
+
+  "response.forbidden.title": "Acesso restrito!",
+  "response.forbidden.description": "Você não tem permissão no sistema para acessar essa página",
+
+  "response.serveError.title": "Erro no servidor!",
+  "response.serveError.description": "Aconteceu um erro no sistema"
 }
