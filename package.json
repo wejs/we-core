@@ -63,7 +63,7 @@
     "require-all": "^2.0.0",
     "rimraf": "^2.5.1",
     "sanitize-html": "^1.11.3",
-    "sequelize": "^3.19.1",
+    "sequelize": "^3.19.2",
     "serve-favicon": "~2.3.0",
     "string": "^3.2.0",
     "string.prototype.endswith": "^0.2.0",
