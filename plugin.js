@@ -35,6 +35,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     defaultUserAvatar: projectPath + '/node_modules/we-core/files/public/images/avatars/user-avatar.png',
 
     log: { level: 'debug' },
+
+    // set false to disable request log in dev env
+    enableRequestLog: true,
+
     // we.js url alias feature
     enableUrlAlias: true,
 
