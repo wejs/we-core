@@ -52,6 +52,24 @@ module.exports = {
           done();
         }).catch(done);
       }
-    }];
+    } , {
+      version: '0.3.120', // your plugin version
+      update: function update03120 (we, done) {
+
+        we.utils.async.series([
+          function changeWidgetTableThemeField(done) {
+            var sql = 'ALTER TABLE `widgets` '+
+              'CHANGE COLUMN `theme` `theme` VARCHAR(255) NULL ;';
+            we.db.defaultConnection.query(sql).then(function() {
+              done();
+            }).catch(done);
+          }
+        ], done);
+      }
+    }
+    ];
   }
 };
+
+// 'ALTER TABLE `roles` '+
+// 'ADD COLUMN `isSystemRole` TINYINT(1) NULL DEFAULT 0 AFTER `updatedAt`;'

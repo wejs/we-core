@@ -36,7 +36,11 @@ module.exports = function Model(we) {
       regionName: { type: we.db.Sequelize.STRING },
       // null || group-[id] || ceonference-[id]
       context: { type: we.db.Sequelize.STRING },
-      theme: { type:  we.db.Sequelize.STRING, allowNull: false },
+      theme: {
+        type:  we.db.Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
       weight: {
         type:  we.db.Sequelize.FLOAT,
         defaultValue: 0
