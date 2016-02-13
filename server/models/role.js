@@ -27,6 +27,16 @@ module.exports = function Model(we) {
             this.setDataValue('permissions', val.join(';'));
           }
         }
+      },
+      /**
+       * System roles cant be deleted
+       * @type {Object}
+       */
+      isSystemRole: {
+        type: we.db.Sequelize.BOOLEAN,
+        formFieldType: null,
+        allowNull: true,
+        defaultValue: false
       }
     },
     associations: {

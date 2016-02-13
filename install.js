@@ -29,7 +29,15 @@ module.exports = {
             we.acl.registerOneDefaltRole(we, 'owner', done);
           },
           function administratorRole(done) {
-            we.acl.registerOneDefaltRole(we, 'administrator', done);
+            // create the administrator role
+            return we.db.models.role.findOrCreate({
+              where: { name: 'administrator' },
+              defaults: { name: 'administrator' }
+            }).spread(function (role) {
+              // set the role in global roles how will be avaible in sails.acl.roles
+              we.acl.roles.administrator = role;
+              done(null , role);
+            }).catch(done);
           }
         ], done);
       }
@@ -63,6 +71,14 @@ module.exports = {
             we.db.defaultConnection.query(sql).then(function() {
               done();
             }).catch(done);
+          },
+          function addRoleIsSystemField(done) {
+            var sql = 'ALTER TABLE `roles` ' +
+              'ADD COLUMN `isSystemRole` TINYINT(1) NULL DEFAULT 0 AFTER `updatedAt`;';
+            we.db.defaultConnection.query(sql)
+            .then(function() {
+              done();
+            }).catch(done);
           }
         ], done);
       }
@@ -71,5 +87,3 @@ module.exports = {
   }
 };
 
-// 'ALTER TABLE `roles` '+
-// 'ADD COLUMN `isSystemRole` TINYINT(1) NULL DEFAULT 0 AFTER `updatedAt`;'
