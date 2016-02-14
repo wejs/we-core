@@ -75,6 +75,7 @@
     "sinon": "^1.17.3",
     "supertest": "^1.0.1",
     "we-plugin-form": "^0.3.27",
+    "we-plugin-menu": "^0.3.15",
     "we-test-tools": "^0.3.11",
     "we-theme-admin-default": "^0.3.12",
     "we-theme-site-wejs": "^0.3.31"
