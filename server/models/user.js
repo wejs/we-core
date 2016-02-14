@@ -265,6 +265,32 @@ module.exports = function UserModel(we) {
           delete obj._context;
 
           return obj;
+        },
+        generateDefaultWidgets: function generateDefaultWidgets(cb) {
+          var self = this;
+
+          we.utils.async.series([
+            function (done) {
+              we.db.models.widget.bulkCreate([{
+                title: null,
+                type: 'user-logo-and-displayname',
+                regionName: 'sidebar',
+                context: 'user-' + self.id,
+                theme: null,
+                weight: 0
+              },{
+                title: null,
+                type: 'usermenu',
+                regionName: 'sidebar',
+                context: 'user-' + self.id,
+                theme: null,
+                weight: 2
+              }
+            ]).then(function() {
+                done();
+              }).catch(done);
+            }
+          ], cb);
         }
       },
       hooks: {
@@ -307,7 +333,12 @@ module.exports = function UserModel(we) {
           // dont change user acceptTerms in update
           user.acceptTerms = true;
           return next(null, user);
-        }
+        },
+        afterCreate: function(record, options, next) {
+          we.utils.async.parallel([
+            record.generateDefaultWidgets.bind(record)
+          ], next);
+        },
       }
     }
   };
