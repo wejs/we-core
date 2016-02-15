@@ -47,7 +47,7 @@ module.exports = {
               vars: { email: req.body.email }
             });
 
-            return res.forbidden();
+            return res.queryError();
           }
 
           requireAccountActivation = we.config.auth.requireAccountActivation;
