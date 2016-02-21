@@ -499,9 +499,22 @@ describe('we.responses.methods', function () {
   });
 
   describe('notFound', function () {
-    before(function (done) { done(); });
+    var info;
+
+    before(function (done) {
+      info = we.log.info;
+      we.log.info = function() {};
+
+      done();
+    });
+
+    after(function (done) {
+      we.log.info = info;
+      done();
+    });
 
     it('we.responses.methods.notFound should run res.view if responseType=html', function (done) {
+
       var req = { method: 'POST', we: we };
       var res = {
         locals: {
@@ -529,6 +542,7 @@ describe('we.responses.methods', function () {
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 404);
       assert(!res.send.called);
+
       done();
     });
 
@@ -599,7 +613,19 @@ describe('we.responses.methods', function () {
   });
 
   describe('serverError', function () {
-    before(function (done) { done(); });
+    var error;
+
+    before(function (done) {
+      error = we.log.error;
+      we.log.error = function() {};
+
+      done();
+    });
+
+    after(function (done) {
+      we.log.error = error;
+      done();
+    });
 
     it('we.responses.methods.serverError should run res.view if responseType=html', function (done) {
       var req = { method: 'POST', we: we };
@@ -820,13 +846,13 @@ describe('we.responses.methods', function () {
         addMessage: function() {},
         status: function() {},
         send: function() {},
-        view: function() {},
-        redirect: function() {}
+        redirect: function() {},
+        renderPage: function () {}
       };
       sinon.spy(res, 'send');
       sinon.spy(res, 'status');
       sinon.spy(res, 'redirect');
-      sinon.spy(res, 'view');
+      sinon.spy(res, 'renderPage');
 
       we.responses.methods.queryError.bind({
         req: req, res: res, we: we
@@ -837,13 +863,12 @@ describe('we.responses.methods', function () {
         }]
       });
 
-      assert(res.view.called);
-      assert(!res.view.firstCall.args[0]);
+      assert(res.renderPage.called);
       assert(res.locals.validationError);
       assert(!res.redirect.called);
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 400);
-      assert(!res.send.called);
+      assert(res.send.called);
       done();
     });
 
@@ -859,12 +884,13 @@ describe('we.responses.methods', function () {
         addMessage: function() {},
         status: function() {},
         send: function() {},
-        view: function() {}
+        view: function() {},
+        renderPage: function () {}
       };
       sinon.spy(res, 'send');
       sinon.spy(res, 'status');
       sinon.spy(res, 'addMessage');
-      sinon.spy(res, 'view');
+      sinon.spy(res, 'renderPage');
 
       we.responses.methods.queryError.bind({
         req: req, res: res, we: we
@@ -873,12 +899,11 @@ describe('we.responses.methods', function () {
         message: 'a message'
       });
 
-      assert(res.view.called);
-      assert(!res.view.firstCall.args[0]);
+      assert(res.renderPage.called);
       assert(res.addMessage.called);
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 400);
-      assert(!res.send.called);
+      assert(res.send.called);
       done();
     });
 
@@ -894,12 +919,13 @@ describe('we.responses.methods', function () {
         addMessage: function() {},
         status: function() {},
         send: function() {},
-        view: function() {}
+        view: function() {},
+        renderPage: function () {}
       };
       sinon.spy(res, 'send');
       sinon.spy(res, 'status');
       sinon.spy(res, 'addMessage');
-      sinon.spy(res, 'view');
+      sinon.spy(res, 'renderPage');
 
       we.responses.methods.queryError.bind({
         req: req, res: res, we: we
@@ -913,7 +939,7 @@ describe('we.responses.methods', function () {
       assert(res.addMessage.called);
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 400);
-      assert(!res.view.called);
+      assert(!res.renderPage.called);
 
       we.env = 'test';
       done();

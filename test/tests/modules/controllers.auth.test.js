@@ -18,6 +18,21 @@ describe('controllers.auth', function () {
   });
 
   describe('controllers.auth.signup', function () {
+    var info;
+
+    before(function (done) {
+      info = we.log.info;
+      we.log.info = function() {};
+
+      done();
+    });
+
+    after(function (done) {
+      we.log.info = info;
+      done();
+    });
+
+
     it('signup action should run res.forbidden if we.config.auth.allowRegister is false', function (done) {
       var res = { locals: {}, forbidden: function(){}};
       sinon.spy(res, 'forbidden');
@@ -49,6 +64,20 @@ describe('controllers.auth', function () {
   });
 
   describe('controllers.auth.newPassword', function () {
+    var warn;
+
+    before(function (done) {
+      warn = we.log.warn;
+      we.log.warn = function() {};
+
+      done();
+    });
+
+    after(function (done) {
+      we.log.warn = warn;
+      done();
+    });
+
     it('newPassword action should run res.goTo if req.session.resetPassword is true and req.user.id is diferent than req.params.id', function (done) {
       var res = { locals: {}, goTo: function(){}};
       sinon.spy(res, 'goTo');
