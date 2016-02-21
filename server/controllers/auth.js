@@ -57,6 +57,13 @@ module.exports = {
           cb();
         });
       },
+      function checkUSerAcceptTermsField(cb) {
+        if (!req.body.acceptTerms || req.body.acceptTerms == 'false') {
+          cb('auth.register.acceptTerms.required');
+        } else {
+          cb();
+        }
+      },
       // save the user and password with transaction
       function saveUserAndPassword(cb) {
         we.db.defaultConnection.transaction(function (t) {
