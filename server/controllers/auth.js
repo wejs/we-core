@@ -619,8 +619,6 @@ module.exports = {
 
             res.addMessage('success', 'auth.change-password.success');
 
-            we.log.info('AuthChangePasswordEmail: Email resp:', emailResp);
-
             return res.ok();
           });
         })
