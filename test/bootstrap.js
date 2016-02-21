@@ -19,6 +19,9 @@ before(function(callback) {
       if(err) return callback(err);
 
       we.bootstrap({
+        // disable access log
+        enableRequestLog: false,
+
         i18n: {
           directory: path.resolve(__dirname, '..', 'config/locales'),
           updateFiles: true
