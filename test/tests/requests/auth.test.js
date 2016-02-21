@@ -3,9 +3,7 @@ var request = require('supertest');
 var helpers = require('we-test-tools').helpers;
 var stubs = require('we-test-tools').stubs;
 var sinon = require('sinon');
-var http;
-var we;
-var agent;
+var http, we, agent, showDebugEmail;
 
 describe('authFeature', function () {
   var salvedUser, salvedUserPassword;
@@ -16,6 +14,11 @@ describe('authFeature', function () {
     agent = request.agent(http);
 
     we = helpers.getWe();
+
+    // hide email debug log
+    showDebugEmail = we.email.showDebugEmail;
+    we.email.showDebugEmail = function() {};
+
     var userStub = stubs.userStub();
     helpers.createUser(userStub, function(err, user) {
       if (err) throw err;
@@ -38,6 +41,12 @@ describe('authFeature', function () {
       });
     })
 
+  });
+
+  after(function (done) {
+    // reset show debug email after tests
+    we.email.showDebugEmail = showDebugEmail;
+    done();
   });
 
   describe('register', function () {
@@ -492,6 +501,7 @@ describe('authFeature', function () {
     );
 
     it('post /auth/forgot-password should send AuthResetPasswordEmail pasword email and return 200', function (done) {
+
       // set spy to check is email is called
       sinon.spy(we.email, 'sendEmail');
 
@@ -500,7 +510,7 @@ describe('authFeature', function () {
       .set('Accept', 'application/json')
       .expect(200)
       .send({ email: salvedUser.email })
-      .end(function (err, res) {
+      .end(function (err) {
         if (err) throw err;
 
         assert(we.email.sendEmail.calledOnce);
@@ -510,7 +520,7 @@ describe('authFeature', function () {
         assert(we.email.sendEmail.args[0][2].resetPasswordUrl);
 
         we.email.sendEmail.restore();
-        // todo check tags
+
         done();
       });
     });
