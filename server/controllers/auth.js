@@ -612,7 +612,7 @@ module.exports = {
             }
           };
 
-          we.email.sendEmail(options, 'AuthChangePasswordEmail', templateVariables, function (err , emailResp) {
+          we.email.sendEmail('AuthChangePasswordEmail', options, templateVariables, function (err , emailResp) {
             if (err) {
               we.log.error('Error on send email AuthChangePasswordEmail', err, emailResp);
             }
