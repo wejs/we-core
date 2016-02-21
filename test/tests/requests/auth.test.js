@@ -195,6 +195,10 @@ describe('authFeature', function () {
         var userStub = stubs.userStub();
         userStub.confirmPassword = 'somethingdiferent';
         userStub.confirmEmail = userStub.email;
+        // hide warn error logs
+        var oldWarn = we.log.error;
+        we.log.warn = function() {};
+        sinon.spy(we.log, 'warn');
 
         request(http)
         .post('/signup')
@@ -203,7 +207,17 @@ describe('authFeature', function () {
         .expect(400)
         .end(function (err, res) {
           if (err) throw new Error(err, res.text);
-          // TODO check response html
+
+          assert(res.body.messages);
+
+          assert.equal(
+            'auth.confirmPassword.and.newPassword.diferent',
+            res.body.messages[0].message
+          );
+
+          we.log.warn.restore();
+          we.log.warn = oldWarn;
+
           done();
         });
       });
@@ -215,6 +229,10 @@ describe('authFeature', function () {
         var userStub = stubs.userStub();
         userStub.confirmPassword = userStub.password;
         userStub.confirmEmail = 'somethingdiferent';
+        // hide warn error logs
+        var oldWarn = we.log.error;
+        we.log.warn = function() {};
+        sinon.spy(we.log, 'warn');
 
         request(http)
         .post('/signup')
@@ -223,7 +241,52 @@ describe('authFeature', function () {
         .expect(400)
         .end(function (err, res) {
           if (err) throw new Error(err, res.text);
-          // TODO check response html
+
+          assert(res.body.messages);
+          assert.equal(
+            'auth.email.and.confirmEmail.diferent',
+            res.body.messages[0].message
+          );
+          assert.equal(
+            'Validation isEmail failed',
+            res.body.messages[1].message
+          );
+          we.log.warn.restore();
+          we.log.warn = oldWarn;
+
+          done();
+        });
+      });
+
+      it('post /signup route should return validation error if acceptTerms not is set or is false', function (done) {
+
+        we.config.auth.requireAccountActivation = true;
+
+        var userStub = stubs.userStub();
+        userStub.acceptTerms = false;
+        // hide warn error logs
+        var oldWarn = we.log.error;
+        we.log.warn = function() {};
+        sinon.spy(we.log, 'warn');
+
+        request(http)
+        .post('/signup')
+        .set('Accept', 'application/json')
+        .send(userStub)
+        .expect(400)
+        .end(function (err, res) {
+          if (err) throw new Error(err, res.body);
+
+          assert(res.body.messages);
+
+          assert.equal(
+            'auth.register.acceptTerms.required',
+            res.body.messages[0].message
+          );
+
+          we.log.warn.restore();
+          we.log.warn = oldWarn;
+
           done();
         });
       });

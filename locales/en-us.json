@@ -227,5 +227,6 @@
   "response.forbidden.description": "You dont have access to this page!",
 
   "response.serveError.title": "Server error!",
-  "response.serveError.description": " "
+  "response.serveError.description": " ",
+  "auth.register.acceptTerms.required": "You need to accept your terms to create account"
 }

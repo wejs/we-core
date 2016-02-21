@@ -169,5 +169,6 @@
   "response.forbidden.description": "Você não tem permissão no sistema para acessar essa página",
 
   "response.serveError.title": "Erro no servidor!",
-  "response.serveError.description": "Aconteceu um erro no sistema"
+  "response.serveError.description": "Aconteceu um erro no sistema",
+  "auth.register.acceptTerms.required": "Você deve aceitar os nossos termos para criar uma conta no sistema"
 }
