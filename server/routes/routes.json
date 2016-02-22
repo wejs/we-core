@@ -218,6 +218,17 @@
     "template"      : "admin/permission/index",
     "permission"    : "manage_permissions"
   },
+
+  "get /admin/theme": {
+    "titleHandler"  : "i18n",
+    "titleI18n"     : "theme_manage",
+    "name"          : "theme_manage",
+    "conconfigstroller"    : "admin",
+    "action"        : "findThemes",
+    "template"      : "admin/theme/index",
+    "permission"    : "manage_theme"
+  },
+
   "post /admin/role/:roleName/permissions/:permissionName": {
     "controller"    : "role",
     "action"        : "addPermissionToRole",
