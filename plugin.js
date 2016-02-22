@@ -7,6 +7,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
   // set plugin configs
   plugin.setConfigs({
+    // plugins to load, default is null for auto load all npm modules starting with we- prefix
+    plugins: null,
     // // flag to skip project and plugin install methods
     // skipInstall: false,
 
