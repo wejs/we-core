@@ -16,12 +16,23 @@ widget {
   background-color: lightblue;
 }
 
-.we-layout-edit-btn {
+.system-actions {
   display: block;
   position: fixed;
   bottom: 0px;
   margin-left: 2px;
+  z-index: 5;
 }
+.system-actions > div {
+  display: inline;
+}
+/*
+.we-admin-btn {
+  display: block;
+  position: fixed;
+  bottom: 0px;
+  margin-left: 2px;
+}*/
 
 body.we-editing-layout .we-region-actions,
 body.we-editing-layout .we-region-widget-actions {
