@@ -70,3 +70,33 @@ a.tabledrag-handle .handle {
 .li-submenu.active ul {
   display: block;
 }
+
+#skippy {
+  padding: 5px;
+  color: #000;
+  background-color: #fff;
+  /*outline: 0;*/
+  font-weight: bold;
+  border: 1px solid #000;
+  margin: 2px 3px;
+}
+
+.sr-only-focusable {
+  position: absolute;
+  top: -1000px;
+  left: -1000px;
+  height: 1px;
+  width: 1px;
+  text-align: left;
+  overflow: hidden;
+}
+
+.sr-only-focusable:active,
+.sr-only-focusable:focus,
+.sr-only-focusable:hover {
+  left: 0;
+  top: 0;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
