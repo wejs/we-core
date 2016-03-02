@@ -11,6 +11,8 @@ Site: [http://wejs.org](wejs.org)
 
 Status:  **maintained**
 
+[**Changelog**](CHANGELOG.md)
+
 ## Install for develop we.js core:
 
 > after install npm and node.js
