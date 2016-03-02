@@ -3,6 +3,7 @@ var path = require('path');
 var deleteDir = require('rimraf');
 var async = require('async');
 var testTools = require('we-test-tools');
+var We = require('../lib');
 var we;
 
 // we-test-tools
@@ -11,7 +12,7 @@ before(function(callback) {
   this.slow(100);
 
   testTools.copyLocalConfigIfNotExitst(projectPath, function() {
-    we = require('../lib');
+    we = new We();
 
     testTools.init({}, we);
 

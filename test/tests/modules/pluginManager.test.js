@@ -1,12 +1,15 @@
 var assert = require('assert');
 var path = require('path');
+var helpers = require('we-test-tools').helpers;
 var npmf = path.resolve(process.cwd(), 'node_modules');
+var we;
 
 describe('modulePluginManager', function () {
   var pluginManager;
 
   before(function (done) {
-    pluginManager = require('../../../lib/pluginManager');
+    we = helpers.getWe();
+    pluginManager = we.pluginManager;
     done();
   });
 

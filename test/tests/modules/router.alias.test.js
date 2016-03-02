@@ -14,7 +14,7 @@ describe('router.alias', function () {
       target: '/user'
     }).then(function (alias){
       assert(alias);
-      we.router.alias.initialize(we, function (err){
+      we.router.alias.initialize(function (err){
         if (err) throw err;
         assert(we.router.alias.cache['/user']);
         assert.equal(we.router.alias.cache['/user'].id, alias.id);
