@@ -5,6 +5,7 @@ var moment = require('moment');
 
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
+
   // set plugin configs
   plugin.setConfigs({
     // plugins to load, default is null for auto load all npm modules starting with we- prefix
@@ -202,7 +203,34 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       admin: null
     },
     clientComponentTemplates: { 'components-core': true },
-    database: { resetAllData: false },
+    // default db config
+    database: {
+      resetAllData: false,
+      prod: {
+        dialect: 'mysql',
+        database: 'test',
+        username: 'root',
+        password: '',
+        // by default log to info
+        logging: plugin.we.log.debug
+      },
+      dev: {
+        dialect: 'mysql',
+        database: 'test',
+        username: 'root',
+        password: '',
+          // by default log to info
+        logging: plugin.we.log.debug
+      },
+      test: {
+        dialect: 'mysql',
+        database: 'test',
+        username: 'root',
+        password: '',
+        // by default log to info
+        logging: plugin.we.log.debug
+      }
+    },
     // services register
     // { url: '', oauthCallback: '', name: ''}
     services: {},

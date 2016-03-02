@@ -10,6 +10,7 @@ module.exports = {
    * @param  {Function} done  callback
    */
   install: function install(we, done) {
+
     we.utils.async.series([
       /**
        * Check and create default roles required for all we.js projects
