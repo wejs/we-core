@@ -100,3 +100,11 @@ a.tabledrag-handle .handle {
   height: auto;
   overflow: visible;
 }
+
+.tab-content {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-top: 0px;
+  padding: 15px;
+  margin-bottom: 10px;
+}
