@@ -70,13 +70,22 @@ module.exports = {
   sortWidgetsList: function sortWidgetsList(req, res) {
     var we = req.we;
 
+    var where =  {
+      theme: { $or: [ req.params.theme, null, ''] },
+      layout: req.params.layout,
+      regionName: req.params.regionName,
+      context: ( req.query.context || res.locals.widgetContext ||  null),
+
+      $or: {
+        // url: { $or: [req.params.url, null, '']},
+        modelName: { $or: [res.locals.model , null, '']},
+        modelId: res.locals.id || null
+      }
+    };
+
     we.db.models.widget.findAll({
-      where: {
-        theme: req.params.theme,
-        layout: req.params.layout,
-        context: (res.locals.widgetContext || req.query.context || null),
-        regionName: req.params.regionName,
-      }, order: [ ['weight', 'ASC'], ['createdAt', 'DESC']]
+      where: where,
+      order: [ ['weight', 'ASC'], ['createdAt', 'DESC']]
     }).then(function (widgets) {
       if (req.method == 'POST') {
         res.send({ widget: widgets });
