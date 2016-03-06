@@ -6,22 +6,41 @@ var _ = require('lodash');
 var http, we;
 
 describe('userFeature', function () {
-  var salvedUser;
+  var salvedUser, salvedUser2;
 
   before(function (done) {
     we = helpers.getWe();
     http = helpers.getHttp();
-    // after all create one user
-    request(http)
-    .post('/admin/user/create')
-    .set('Accept', 'application/json')
-    .expect(201)
-    .send( stubs.userStub() )
-    .end(function (err, res) {
-      if (err) return done(err);
-      salvedUser = res.body.user;
-      done();
-    });
+
+    we.utils.async.series([
+      function createOneUser(done) {
+        // after all create one user
+        request(http)
+        .post('/admin/user/create')
+        .set('Accept', 'application/json')
+        .expect(201)
+        .send( stubs.userStub() )
+        .end(function (err, res) {
+          if (err) return done(err);
+          salvedUser = res.body.user;
+          done();
+        });
+      },
+      function createUser2(done) {
+        // after all create one user
+        request(http)
+        .post('/admin/user/create')
+        .set('Accept', 'application/json')
+        .expect(201)
+        .send( stubs.userStub() )
+        .end(function (err, res) {
+          if (err) return done(err);
+          salvedUser2 = res.body.user;
+          done();
+        });
+      }
+    ], done)
+
   });
 
   // describe('resourceCache', function () {
@@ -211,4 +230,77 @@ describe('userFeature', function () {
   describe('remove', function () {
     it('delete /api/v1/user/:name should delete one user file');
   });
+
+  describe('privacity', function() {
+    before(function (done) {
+      we.db.models.userPrivacity.create({
+        userId: salvedUser.id,
+        field: 'username',
+        privacity: 'private'
+      }).then(function(){
+        done();
+      }).catch(done);
+    })
+
+    describe('find', function () {
+
+      it('get /user route should return user list with privacity suport', function (done) {
+        we.db.models.userPrivacity.create({
+          userId: salvedUser.id,
+          field: 'username',
+          privacity: 'private'
+        }).then(function(){
+
+          request(http)
+          .get('/user')
+          .set('Accept', 'application/json')
+          .expect(200)
+          .end(function (err, res) {
+            if (err) throw err;
+            assert(res.body.user);
+            assert( _.isArray(res.body.user) , 'user not is array');
+            assert(res.body.meta);
+
+            res.body.user.forEach(function (u){
+              if (u.id == salvedUser.id) {
+                assert(!u.username);
+              } else {
+                assert(u.username);
+              }
+            })
+
+            done();
+          });
+        }).catch(done);
+      });
+    });
+
+    describe('findOne', function () {
+      it('get /user/:id route should return user data with privacity suport', function (done) {
+        request(http)
+        .get('/user/'+salvedUser.id)
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end(function (err, res) {
+          if (err) throw err;
+          assert(res.body.user);
+
+          assert.equal(res.body.user.id, salvedUser.id);
+          assert(!res.body.user.username);
+
+          done();
+        });
+      });
+    });
+
+    after(function (done) {
+      // cleanup
+      we.db.models.userPrivacity.destroy({
+        truncate: true
+      }).then(function(){
+        done();
+      }).catch(done);
+    });
+  })
+
 });

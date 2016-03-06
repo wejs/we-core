@@ -209,6 +209,16 @@ module.exports = function UserModel(we) {
               .string( record.username || record.displayName ).slugify().s,
             target: '/user/' + record.id,
           }
+        },
+
+        loadPrivacity: function loadPrivacity(record, done) {
+          we.db.models.userPrivacity.findAll({
+            where: { userId: record.id },
+            raw: true
+          }).then(function (p) {
+            record.privacity = p;
+            done();
+          }).catch(done);
         }
       },
       instanceMethods: {
@@ -241,23 +251,20 @@ module.exports = function UserModel(we) {
           });
         },
         toJSON: function toJSON() {
-          var req;
-          if (this.getReq) req = this.getReq();
-
           var obj = this.get();
+
+          // if (this.privacity) {
+          //   for (var i = this.privacity.length - 1; i >= 0; i--) {
+          //     if (this.privacity[i].privacity == 'private') {
+          //       delete obj[this.privacity[i].field];
+          //     }
+          //   }
+          // }
 
           // delete and hide user email
           delete obj.email;
           // remove password hash from view
           delete obj.password;
-
-          // TODO set user can here
-          if (req && req.isAuthenticated()) {
-            if (req.user.id == obj.id || req.user.isAdmin) {
-              // campos privados
-              obj.email = this.email;
-            }
-          }
 
           if (!obj.displayName) obj.displayName = obj.username;
 
@@ -294,7 +301,7 @@ module.exports = function UserModel(we) {
         }
       },
       hooks: {
-        beforeValidate: function(user, options, next) {
+        beforeValidate: function beforeValidate(user, options, next) {
           if (user.isNewRecord) {
             // dont set password on create
             user.dataValues.password = null;
@@ -303,7 +310,7 @@ module.exports = function UserModel(we) {
           next(null, user);
         },
         // Lifecycle Callbacks
-        beforeCreate: function(user, options, next) {
+        beforeCreate: function beforeCreate(user, options, next) {
           // set default displayName as username
           if (!user.displayName) {
             if (user.fullName && user.fullName.trim()) {
@@ -320,7 +327,7 @@ module.exports = function UserModel(we) {
           delete user.isModerator;
           next(null, user);
         },
-        beforeUpdate: function(user, options, next) {
+        beforeUpdate: function beforeUpdate(user, options, next) {
           // set default displayName as username
           if (!user.displayName) {
             if (user.fullName && user.fullName.trim()) {
@@ -334,11 +341,24 @@ module.exports = function UserModel(we) {
           user.acceptTerms = true;
           return next(null, user);
         },
-        afterCreate: function(record, options, next) {
+        afterCreate: function afterCreate(record, options, next) {
           we.utils.async.parallel([
             record.generateDefaultWidgets.bind(record)
           ], next);
         },
+
+        afterFind: function afterFind(record, options, next) {
+          if (!record) return next();
+
+          // load privacity to hide user fields in toJSON
+          if (we.utils._.isArray(record)) {
+            we.utils.async.eachSeries(record, function (r, next) {
+              we.db.models.user.loadPrivacity(r, next);
+            }, next);
+          } else {
+            we.db.models.user.loadPrivacity(record, next);
+          }
+        }
       }
     }
   };
