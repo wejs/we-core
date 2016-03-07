@@ -171,5 +171,8 @@
   "response.serveError.title": "Erro no servidor!",
   "response.serveError.description": "Aconteceu um erro no sistema",
   "auth.register.acceptTerms.required": "Você deve aceitar os nossos termos para criar uma conta no sistema",
-  "skip.to.content.link.text": "Ir para o conteúdo principal"
+  "skip.to.content.link.text": "Ir para o conteúdo principal",
+
+  "Privacity": "Privacidade",
+  "user.privacity.fieldName": "Dados"
 }

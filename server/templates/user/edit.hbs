@@ -1,8 +1,15 @@
 <ul class="nav nav-tabs">
-  <li role="presentation" class="active"><a href="#">Edit</a></li>
-  <li role="presentation"><a href="#">Privacity</a></li>
+  <li role="presentation" class="active">
+    {{#link-to 'user.edit' user.id}}
+      {{t 'user.profile.edit'}}
+    {{/link-to}}
+  </li>
+  <li role="presentation">
+    {{#link-to 'user.privacity' user.id}}
+      {{t 'Privacity'}}
+    {{/link-to}}
+  </li>
 </ul>
 <div class="tab-content">
-  <br>
   {{{form-model 'user' data validationError}}}
 </div>

@@ -6,7 +6,7 @@ var _ = require('lodash');
 var http, we;
 
 describe('userFeature', function () {
-  var salvedUser, salvedUser2;
+  var salvedUser, salvedUserPassword, salvedUser2, authenticatedRequest;
 
   before(function (done) {
     we = helpers.getWe();
@@ -14,17 +14,29 @@ describe('userFeature', function () {
 
     we.utils.async.series([
       function createOneUser(done) {
+        var userStub = stubs.userStub();
+
         // after all create one user
-        request(http)
-        .post('/admin/user/create')
-        .set('Accept', 'application/json')
-        .expect(201)
-        .send( stubs.userStub() )
-        .end(function (err, res) {
-          if (err) return done(err);
-          salvedUser = res.body.user;
-          done();
-        });
+        helpers.createUser(userStub, function(err, user) {
+          if (err) throw err;
+
+          salvedUser = user;
+          salvedUserPassword = userStub.password;
+
+          // login user and save the browser
+          authenticatedRequest = request.agent(http);
+          authenticatedRequest.post('/login')
+          .set('Accept', 'application/json')
+          .send({
+            email: salvedUser.email,
+            password: salvedUserPassword
+          })
+          .expect(200)
+          .set('Accept', 'application/json')
+          .end(function () {
+            done();
+          });
+        })
       },
       function createUser2(done) {
         // after all create one user
@@ -38,9 +50,24 @@ describe('userFeature', function () {
           salvedUser2 = res.body.user;
           done();
         });
+      },
+      function createAnAuthenticatedRequest(done) {
+        // login user and save the browser
+        authenticatedRequest = request.agent(http);
+        authenticatedRequest.post('/login')
+        .set('Accept', 'application/json')
+        .send({
+          email: salvedUser.email,
+          password: salvedUserPassword
+        })
+        .expect(200)
+        .set('Accept', 'application/json')
+        .end(function (err) {
+          if(err) return done(err);
+          done();
+        });
       }
-    ], done)
-
+    ], done);
   });
 
   // describe('resourceCache', function () {
@@ -235,7 +262,7 @@ describe('userFeature', function () {
     before(function (done) {
       we.db.models.userPrivacity.create({
         userId: salvedUser.id,
-        field: 'username',
+        field: 'gender',
         privacity: 'private'
       }).then(function(){
         done();
@@ -245,33 +272,26 @@ describe('userFeature', function () {
     describe('find', function () {
 
       it('get /user route should return user list with privacity suport', function (done) {
-        we.db.models.userPrivacity.create({
-          userId: salvedUser.id,
-          field: 'username',
-          privacity: 'private'
-        }).then(function(){
+        request(http)
+        .get('/user')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end(function (err, res) {
+          if (err) throw err;
+          assert(res.body.user);
+          assert( _.isArray(res.body.user) , 'user not is array');
+          assert(res.body.meta);
 
-          request(http)
-          .get('/user')
-          .set('Accept', 'application/json')
-          .expect(200)
-          .end(function (err, res) {
-            if (err) throw err;
-            assert(res.body.user);
-            assert( _.isArray(res.body.user) , 'user not is array');
-            assert(res.body.meta);
+          res.body.user.forEach(function (u){
+            if (u.id == salvedUser.id) {
+              assert(!u.gender);
+            } else {
+              assert(u.gender);
+            }
+          })
 
-            res.body.user.forEach(function (u){
-              if (u.id == salvedUser.id) {
-                assert(!u.username);
-              } else {
-                assert(u.username);
-              }
-            })
-
-            done();
-          });
-        }).catch(done);
+          done();
+        });
       });
     });
 
@@ -286,10 +306,50 @@ describe('userFeature', function () {
           assert(res.body.user);
 
           assert.equal(res.body.user.id, salvedUser.id);
-          assert(!res.body.user.username);
+          assert(!res.body.user.genger);
 
           done();
         });
+      });
+    });
+
+    describe('updateUserPrivacity', function () {
+      it('post /user/:userId/edit/privacity should update user privacity settings', function (done) {
+
+        var newValues = {
+          fullName: 'public',
+          biography: 'private',
+          gender: 'public',
+          language: 'public',
+          organization: 'private'
+        };
+
+        authenticatedRequest
+        .post('/user/'+salvedUser.id+'/edit/privacity ')
+        .send(newValues)
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end(function (err, res) {
+          if (err) throw err;
+
+          assert(res.body.privacity);
+
+          we.db.models.userPrivacity.findAll({
+            where: {
+              userId: salvedUser.id
+            },
+            raw: true
+          }).then(function (records) {
+
+            records.forEach(function (r) {
+              // check if privacity in db is same as configs
+              assert.equal(newValues[r.field], r.privacity, 'wong privacity settings: '+r.field+ ': '+ r.privacity);
+            });
+
+            done();
+          }).catch(done);
+        });
+
       });
     });
 

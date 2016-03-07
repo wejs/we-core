@@ -253,23 +253,12 @@ module.exports = function UserModel(we) {
         toJSON: function toJSON() {
           var obj = this.get();
 
-          // if (this.privacity) {
-          //   for (var i = this.privacity.length - 1; i >= 0; i--) {
-          //     if (this.privacity[i].privacity == 'private') {
-          //       delete obj[this.privacity[i].field];
-          //     }
-          //   }
-          // }
-
           // delete and hide user email
           delete obj.email;
           // remove password hash from view
           delete obj.password;
 
           if (!obj.displayName) obj.displayName = obj.username;
-
-          // delete context cache
-          delete obj._context;
 
           return obj;
         },

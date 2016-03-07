@@ -229,5 +229,8 @@
   "response.serveError.title": "Server error!",
   "response.serveError.description": " ",
   "auth.register.acceptTerms.required": "You need to accept your terms to create account",
-  "skip.to.content.link.text": "Skip to main content"
+  "skip.to.content.link.text": "Skip to main content",
+
+  "Privacity": "Privacity",
+  "user.privacity.fieldName": "Data"
 }

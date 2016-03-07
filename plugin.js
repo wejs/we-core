@@ -231,6 +231,20 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         logging: plugin.we.log.debug
       }
     },
+    /**
+     * Field privacity settings
+     * @type {Object}
+     */
+    privacity: {
+      userFields: {
+        public: ['displayName', 'avatar', 'banner'],
+        changeable: [
+          'fullName', 'biography', 'gender', 'language', 'organization'
+        ]
+      }
+
+    },
+
     // services register
     // { url: '', oauthCallback: '', name: ''}
     services: {},

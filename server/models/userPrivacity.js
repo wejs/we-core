@@ -17,7 +17,9 @@ module.exports = function (we) {
       privacity: {
         type: we.db.Sequelize.STRING,
         defaultValue: 'public'
-      }
+      },
+      // privacity record for send in json response
+      record: { type: we.db.Sequelize.VIRTUAL }
     },
     associations: {
       user: { type: 'belongsTo', model: 'user' }

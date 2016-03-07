@@ -1,0 +1,57 @@
+<ul class="nav nav-tabs">
+  <li role="presentation">
+    {{#link-to 'user.edit' user.id}}
+      {{t 'user.profile.edit'}}
+    {{/link-to}}
+  </li>
+  <li role="presentation" class="active">
+    {{#link-to 'user.privacity' user.id}}
+      {{t 'Privacity'}}
+    {{/link-to}}
+  </li>
+</ul>
+<div class="tab-content">
+
+<form  method="post">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{{t 'user.privacity.fieldName'}}</th>
+        <th>{{t 'Privacity'}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each publicFields}}
+        <tr>
+          <td>{{t this}}</td>
+          <td>Public</td>
+        </tr>
+      {{/each}}
+      {{#each data}}
+        {{#ifCond @key 'metadata'}}
+        {{else}}
+          <tr>
+            <td>{{@key}}</td>
+            <td>
+              <select class="form-control" name="{{@key}}">
+                {{#ifCond record.privacity 'private'}}
+                  <option value="public">{{t 'Public'}}</option>
+                  <option selected="selected" value="private">{{t 'Private'}}</option>
+                {{else}}
+                  <option selected="selected" value="public">{{t 'Public'}}</option>
+                  <option value="private">{{t 'Private'}}</option>
+                {{/ifCond}}
+              </select>
+            </td>
+          </tr>
+        {{/ifCond}}
+      {{/each}}
+      <tr>
+        <td colspan="2">
+          <button class="btn btn-primary">Save</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+</div>

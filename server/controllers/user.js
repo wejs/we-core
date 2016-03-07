@@ -69,5 +69,89 @@ module.exports = {
     } else {
       res.ok();
     }
+  },
+
+  findUserPrivacity: function findUserPrivacity(req, res, next) {
+    if (!res.locals.user) return res.notFound();
+
+    if (
+      !req.isAuthenticated() ||
+      !(
+        res.locals.user.id == req.user.id ||
+        req.we.acl.canStatic('update_user', req.userRoleNames)
+      )
+    ) {
+      return res.forbidden();
+    }
+
+    res.locals.userAttributes = req.we.config.privacity.userFields.changeable;
+    res.locals.publicFields = req.we.config.privacity.userFields.public;
+
+    req.we.db.models.userPrivacity.findAll({
+      where: {
+        userId: res.locals.user.id
+      }
+    }).then(function (r) {
+      res.locals.data = {};
+
+      if (r) {
+        for (var i = 0; i < res.locals.userAttributes.length; i++) {
+          res.locals.data[res.locals.userAttributes[i]] = {};
+
+          for (var j = 0; j < r.length; j++) {
+            if (r[j].field == res.locals.userAttributes[i]) {
+              res.locals.data[res.locals.userAttributes[i]].record = r[j];
+            }
+          }
+        }
+      }
+
+      if (req.method == 'POST') {
+        return req.we.controllers.user.updateUserPrivacity(req, res, next);
+      } else {
+        res.ok();
+      }
+    }).catch(res.queryError);
+  },
+
+  updateUserPrivacity: function updateUserPrivacity(req, res) {
+    // for each field ...
+    req.we.utils.async.eachSeries(res.locals.userAttributes,
+    function (fieldName, next) {
+      // if user dont changed field with fieldName
+      if (!req.body[fieldName]) return next();
+
+      if (!res.locals.data[fieldName]) res.locals.data[fieldName] = {};
+
+      // update if already are loaded
+      if (res.locals.data[fieldName].record) {
+        res.locals.data[fieldName].record.set('privacity', req.body[fieldName]);
+        res.locals.data[fieldName].record.save()
+        .then(function (r) {
+          res.locals.data[fieldName].record = r;
+
+          next();
+        }).catch(next);
+      } else {
+        // create if dont are loaded
+        req.we.db.models.userPrivacity.findOrCreate({
+          where: {
+            userId: res.locals.user.id,
+            field: fieldName
+          },
+          defaults: {
+            userId: res.locals.user.id,
+            field: fieldName,
+            privacity: req.body[fieldName]
+          }
+        }).spread(function (r) {
+          res.locals.data[fieldName].record = r;
+          next();
+        }).catch(next);
+      }
+    }, function (err) {
+      if (err) return res.queryError(err);
+      res.updated();
+    });
   }
 };

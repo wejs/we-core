@@ -92,6 +92,28 @@
     "controller"    : "auth",
     "action"        : "activate"
   },
+
+  "get /user/:userId([0-9]+)/edit/privacity": {
+    "name"          : "user.privacity",
+    "controller"    : "user",
+    "model"         : "privacity",
+    "action"        : "findUserPrivacity",
+    "titleHandler"  : "i18n",
+    "titleI18n"     : "Privacity",
+    "layoutName"    : "user-layout",
+    "template"      : "user/findUserPrivacity"
+  },
+  "post /user/:userId([0-9]+)/edit/privacity": {
+    "name"          : "user.privacity",
+    "controller"    : "user",
+    "model"         : "privacity",
+    "action"        : "findUserPrivacity",
+    "titleHandler"  : "i18n",
+    "titleI18n"     : "Privacity",
+    "layoutName"    : "user-layout",
+    "template"      : "user/findUserPrivacity"
+  },
+
   "post /auth/auth-token":{
     "controller"    : "auth",
     "action"        : "authToken"
