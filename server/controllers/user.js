@@ -87,6 +87,20 @@ module.exports = {
     res.locals.userAttributes = req.we.config.privacity.userFields.changeable;
     res.locals.publicFields = req.we.config.privacity.userFields.public;
 
+    // breadcrumb
+    res.locals.breadcrumb =
+      '<ol class="breadcrumb">'+
+        '<li><a href="/">'+res.locals.__('Home')+'</a></li>'+
+        '<li><a href="'+
+          req.we.router.urlTo('user.find', req.paramsArray)+
+        '">'+res.locals.__('user.find')+'</a></li>'+
+        '<li><a href="'+res.locals.user.getUrlPathAlias()+'">'+
+          res.locals.user.displayName+
+        '</a></li>'+
+        '<li><a href="/user/'+res.locals.user.id+'/edit">'+res.locals.__('edit')+'</a></li>'+
+        '<li class="active">'+res.locals.__('Privacity')+'</li>'+
+      '</ol>';
+
     req.we.db.models.userPrivacity.findAll({
       where: {
         userId: res.locals.user.id
