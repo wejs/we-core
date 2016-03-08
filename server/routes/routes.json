@@ -20,54 +20,63 @@
     "action": "signup",
     "template": "auth/register",
     "titleHandler"  : "i18n",
-    "titleI18n": "Register"
+    "titleI18n": "Register",
+    "breadcrumbHandler": "auth"
   },
   "post /signup": {
     "controller": "auth",
     "action": "signup",
     "template": "auth/register",
     "titleHandler"  : "i18n",
-    "titleI18n": "Register"
+    "titleI18n": "Register",
+    "breadcrumbHandler": "auth"
   },
   "get /login": {
     "controller": "auth",
     "action": "login",
     "titleHandler"  : "i18n",
     "titleI18n": "Login",
-    "template": "auth/login"
+    "template": "auth/login",
+    "breadcrumbHandler": "auth"
   },
   "post /login": {
     "controller": "auth",
     "action": "login",
     "titleHandler"  : "i18n",
     "titleI18n": "Login",
-    "template": "auth/login"
+    "template": "auth/login",
+    "breadcrumbHandler": "auth"
   },
   "post /auth/login": {
     "controller"    : "auth",
-    "action"        : "login"
+    "action"        : "login",
+    "breadcrumbHandler": "auth"
   },
   "/auth/logout": {
     "controller"    : "auth",
-    "action"        : "logout"
+    "action"        : "logout",
+    "breadcrumbHandler": "auth"
   },
   "get /auth/forgot-password": {
     "titleHandler"  : "i18n",
     "titleI18n"     : "auth.forgot-password",
     "controller"    : "auth",
     "action"        : "forgotPassword",
-    "template"      : "auth/forgot-password"
+    "template"      : "auth/forgot-password",
+    "breadcrumbHandler": "auth"
   },
   "post /auth/forgot-password": {
     "titleHandler"  : "i18n",
     "titleI18n"     : "auth.forgot-password",
     "controller"    : "auth",
     "action"        : "forgotPassword",
-    "template"      : "auth/forgot-password"
+    "template"      : "auth/forgot-password",
+    "breadcrumbHandler": "auth"
   },
   "get /auth/:id([0-9]+)/reset-password/:token": {
     "controller": "auth",
-    "action": "consumeForgotPasswordToken"
+    "action": "consumeForgotPasswordToken",
+    "breadcrumbHandler": "auth"
   },
   "get /api/v1/auth/check-if-can-reset-password": {
     "controller": "auth",
@@ -79,18 +88,21 @@
     "titleI18n"     : "auth.change-password",
     "controller"    : "auth",
     "action"        : "changePassword",
-    "template"      : "auth/change-password"
+    "template"      : "auth/change-password",
+    "breadcrumbHandler": "auth"
   },
   "get /auth/change-password": {
     "titleHandler"  : "i18n",
     "titleI18n"     : "auth.change-password",
     "controller"    : "auth",
     "action"        : "changePassword",
-    "template"      : "auth/change-password"
+    "template"      : "auth/change-password",
+    "breadcrumbHandler": "auth"
   },
   "get /user/:id([0-9]+)/activate/:token":{
     "controller"    : "auth",
-    "action"        : "activate"
+    "action"        : "activate",
+    "breadcrumbHandler": "auth"
   },
 
   "get /user/:userId([0-9]+)/edit/privacity": {
@@ -116,21 +128,24 @@
 
   "post /auth/auth-token":{
     "controller"    : "auth",
-    "action"        : "authToken"
+    "action"        : "authToken",
+    "breadcrumbHandler": "auth"
   },
   "get /auth/:id([0-9]+)/new-password": {
     "titleHandler"  : "i18n",
     "titleI18n"     : "auth.new-password",
     "controller"    : "auth",
     "action"        : "newPassword",
-    "template"      : "auth/new-password"
+    "template"      : "auth/new-password",
+    "breadcrumbHandler": "auth"
   },
   "post /auth/:id([0-9]+)/new-password": {
     "titleHandler"  : "i18n",
     "titleI18n"     : "auth.new-password",
     "controller"    : "auth",
     "action"        : "newPassword",
-    "template"      : "auth/new-password"
+    "template"      : "auth/new-password",
+    "breadcrumbHandler": "auth"
   },
   "get /admin/user/:userId([0-9]+)/roles": {
     "titleHandler"  : "i18n",
