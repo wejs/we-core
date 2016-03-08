@@ -10,8 +10,9 @@
       {{#link-to 'auth.forgotPassword'}}{{t 'auth.forgot-password'}}{{/link-to}}
     </li>
   </ul>
-  <br>
-  {{{form 'login' user}}}
+  <div class="tab-content">
+    {{{form 'login' user}}}
+  </div>
 {{else}}
   <p>{{{t 'auth.login.authenticated.msg'}}}</p>
 {{/unless}}
