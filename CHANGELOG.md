@@ -31,6 +31,6 @@
 
     ```
   - If you use mysql then to install **mysql** and **express-mysql-session**:<br>
-    `sh npm install --save mysql express-mysql-session `
+    `npm install --save mysql express-mysql-session`
 - v0.3.97: Add suport to url alias
 - v0.3.96: Add suport to windows 10
