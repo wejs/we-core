@@ -2,8 +2,8 @@
 
 ## Changes:
 
-- v1.0.0: we-core now returns one prototype and mysql modules is removed from we-core
-  - Update your global we cli: `npm install we -g`
+- v1.0.0: we-core now returns one prototype and mysql modules is removed from we-core. For update your project do:
+  - Update your global we cli and generators: `npm install we generator-wejs -g`
   - Update your project app.js to:
     ```js
     var We = require('we-core');
