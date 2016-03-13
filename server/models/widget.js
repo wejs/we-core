@@ -19,6 +19,8 @@ module.exports = function Model(we) {
         type:  we.db.Sequelize.STRING,
         allowNull: false
       },
+      // show in this path
+      path: { type: we.db.Sequelize.TEXT },
       // show only in this model
       modelName: { type: we.db.Sequelize.STRING, },
       modelId: { type: we.db.Sequelize.BIGINT, allowNull: true },
@@ -81,11 +83,14 @@ module.exports = function Model(we) {
           }
           return 'in-portal';
         }
-      }
+      },
+      html: { type: we.db.Sequelize.VIRTUAL }
     },
     options: {
       enableAlias: false,
+
       instanceMethods: {
+        getUrlPath: function() { return null; },
         viewMiddleware: function viewMiddleware(req, res, next) {
           if (!we.view.widgets[this.type]) {
             we.log.warn('Widget type not found in viewMiddleware: ', this.type);

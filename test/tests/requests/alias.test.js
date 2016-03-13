@@ -78,4 +78,14 @@ describe('routerAliasFeature', function() {
       }).catch(done);
     });
   });
+
+
+  after(function (done){
+    we.db.models.urlAlias
+    .destroy({ truncate: true })
+    .then(function(){
+      we.router.alias.cache = {};
+      done();
+    }).catch(done);
+  });
 });

@@ -4,11 +4,30 @@ module.exports = {
     if (req.user) req.body.creatorId = req.user.id;
 
     var type = req.body.type;
+
+    // context is fixed based in current context
+    req.body.context = res.locals.widgetContext;
+
+    if (req.body.modelName != res.locals.model || (!req.body.modelName) ) {
+      req.body.modelName = null;
+    }
+
+    if (req.body.modelId != res.locals.id || (!req.body.modelId) ) {
+      req.body.modelId = null;
+    }
+
+    if (req.body.path != req.path || (!req.body.path) ) {
+      req.body.path = null;
+    }
+
     req.we.view.widgets[type].beforeSave(req, res, function (err) {
       if (err) return res.queryError(err);
 
-      res.locals.Model.create(req.body)
-      .then(function (record) {
+      req.we.db.models.widget.create(req.body)
+      .then(function afterCreateWidget(record) {
+
+        res.locals.model = 'widget';
+
         res.locals.template = record.type + '/wiew';
         // run view middleware for load widget view data
         record.viewMiddleware(req, res, function() {
@@ -23,10 +42,12 @@ module.exports = {
             return res.created();
           }
         });
-      }).catch(res.queryError)
+      }).catch(function onError(err) {
+        res.locals.model = 'widget'.
+        res.queryError(err);
+      });
     });
   },
-
   /**
    * Update multiple widgets weight attribute
    *
@@ -37,29 +58,34 @@ module.exports = {
   sortWidgets: function sortWidgets(req, res) {
     var we = req.we;
 
+    res.locals.model = 'widget';
+
     res.locals.regionName = req.params.regionName;
-    res.locals.layoutName = req.params.layout;
+    res.locals.layoutName = req.params.layout || 'default';
+    // get where to only update records in this context
+    var where = we.view.getDefaultWidgetQuery(req, res);
 
     if (req.method == 'POST') {
       if (!req.body.widgets)
         return res.badRequest('widgets body params is required');
 
-      we.utils.async.each(req.body.widgets, function (w, next) {
+      var weights = 0;
+
+      we.utils.async.eachSeries(req.body.widgets, function (w, next) {
         // start in 1 for sorted widgets
-        w.weight = w.weight+1;
+        w.weight = weights;
         // only update weight field
         we.db.models.widget.update(w, {
-          where: {
-            theme: req.params.theme,
-            regionName: req.params.regionName,
-            layout: req.params.layout,
-            context: (res.locals.widgetContext || req.query.context || null),
+          where: we.utils._.merge(where, {
             id: w.id
-          }, fields: ['weight']})
-        .then(function () {
+          }),
+          fields: ['weight']
+        }).then(function afterUpdate() {
           next();
         }).catch(next);
-      }, function (err) {
+
+        weights++;
+      }, function afterUpdateAllWigets(err) {
         if (err) return res.serverError(err);
         we.controllers.widget.sortWidgetsList(req, res);
       });
@@ -67,21 +93,20 @@ module.exports = {
       we.controllers.widget.sortWidgetsList(req, res);
     }
   },
+  /**
+   * Widgets list getter for sort widgets
+   *
+   * @param  {object}   req  express.js request
+   * @param  {object}   res  express.js response
+   * @param  {Function} next callback
+   */
   sortWidgetsList: function sortWidgetsList(req, res) {
     var we = req.we;
 
-    var where =  {
-      theme: { $or: [ req.params.theme, null, ''] },
-      layout: req.params.layout,
-      regionName: req.params.regionName,
-      context: ( req.query.context || res.locals.widgetContext ||  null),
+    var where =  we.view.getDefaultWidgetQuery(req, res);
 
-      $or: {
-        // url: { $or: [req.params.url, null, '']},
-        modelName: { $or: [res.locals.model , null, '']},
-        modelId: res.locals.id || null
-      }
-    };
+    res.locals.model = 'widget';
+    res.locals.template = 'widget/sortWidgets';
 
     we.db.models.widget.findAll({
       where: where,
@@ -99,6 +124,7 @@ module.exports = {
   findOne: function findOne(req, res, next) {
     var we = req.we;
 
+    res.locals.model = 'widget';
     res.locals.layout = false;
     res.locals.regionName = req.params.regionName;
 
@@ -109,11 +135,12 @@ module.exports = {
       res.locals.template = record.type + '/wiew';
       res.status(200);
 
-      record.dataValues.html = we.view.widgets[record.type]
+      record.html = we.view.widgets[record.type]
       .render({
         locals: res.locals,
         widget: record
       }, res.locals.theme);
+
       if (res.locals.responseType == 'html') {
         return res.send(record.dataValues.html);
       } else {
@@ -124,10 +151,13 @@ module.exports = {
   },
 
   find: function findAll(req, res) {
-    return res.locals.Model.findAndCountAll(res.locals.query, res.locals.queryOptions)
+    res.locals.model = 'widget';
+
+    return req.we.db.models.widget
+    .findAndCountAll(res.locals.query, res.locals.queryOptions)
     .then(function (result) {
 
-      if (result && result.rows)  {
+      if (result && result.rows) {
         result.rows.forEach(function (record) {
           record.dataValues.html =  req.we.view.widgets[record.type].render({
             locals: res.locals,
@@ -227,6 +257,8 @@ module.exports = {
     var we = req.we;
     var id = req.params.id;
 
+    res.locals.model = 'widget';
+
     res.locals.Model.findOne({
       where: { id: id }
     }).then(function (record) {
@@ -283,21 +315,45 @@ module.exports = {
   edit: function update(req, res) {
     var we = req.we;
 
-    var id = res.locals.id;
-    // never update widget context in update action
+    var id = req.widgetId || res.locals.id;
+
+    // never update widget context
     delete req.body.context;
+
+    if (req.body.modelName != res.locals.model || (!req.body.modelName) ) {
+      req.body.modelName = null;
+    }
+
+    if (req.body.path != req.path || (!req.body.path) ) {
+      req.body.path = null;
+    }
+
     // remove layout for this response
     res.locals.layout = false;
+    res.locals.model = 'widget';
+
+    var where =  we.view.getDefaultWidgetQuery(req, res);
+    where.id = id;
+
+    if (res.locals.action != 'findOne' || res.locals.action != 'edit') {
+      where.inRecord = { $or: [false , null] };
+    }
+
     // check if the widget exists
-    res.locals.Model.findById(id)
-    .then(function (record) {
+    we.db.models.widget.findOne({
+      where: where
+    }).then(function (record) {
       if (!record) return res.notFound();
+
       var type = record.type;
       we.view.widgets[type].beforeSave(req, res, function (err) {
         if (err) return res.queryError(err);
         // update in db
         record.updateAttributes(req.body)
         .then(function() {
+
+          res.locals.model = 'widget';
+
           res.locals.template = record.type + '/wiew';
           res.status(200);
           // run view middleware for load widget view data
@@ -317,5 +373,19 @@ module.exports = {
         });
       });
     });
+  },
+
+  delete: function deletePage(req, res) {
+    res.locals.responseType = 'json';
+
+    var record = res.locals.data;
+    if (!record) return res.notFound();
+
+    res.locals.deleteMsg = res.locals.model+'.delete.confirm.msg';
+
+    record.destroy().then(function() {
+      res.locals.deleted = true;
+      return res.deleted();
+    }).catch(res.queryError);
   }
 };

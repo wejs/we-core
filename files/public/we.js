@@ -129,8 +129,12 @@ we.structure = {
   setForDataValuesWithVisibility: function(formData) {
     switch(formData.visibility) {
       case 'in-page':
-        formData.modelName = we.config.modelName;
-        formData.modelId = we.config.modelId;
+        if (we.config.modelName && we.config.modelId) {
+          formData.modelName = we.config.modelName;
+          formData.modelId = we.config.modelId;
+        } else {
+          formData.path = location.pathname;
+        }
         break;
       case 'in-session':
         formData.modelName = we.config.modelName;
@@ -181,6 +185,8 @@ we.structure = {
     modal.find('.steps-body .step1').show();
   },
   goToStep2: function goToStep2() {
+    var self = this;
+
     var modal = $(we.structure.addWidgetModalFormId);
     var regionWidgetsTag = $('#region-'+ this.newWidgetObj.regionName +'-widgets');
 
@@ -211,20 +217,24 @@ we.structure = {
           formData[d.name] = d.value;
         });
 
-        var url = we.config.structure.widgetCreateUrl;
-        if (!url) url = '/api/v1/widget';
-        url+='?responseType=json';
-
         we.structure.setForDataValuesWithVisibility(formData);
 
-        $.post(url, formData)
-        .then(function (r) {
+        formData.theme = self.newWidgetObj.theme;
+        formData.regionName = self.newWidgetObj.regionName;
+        formData.context = we.config.widgetContext;
+
+        $.ajax({
+          headers: { 'we-widget-action': 'add' },
+          url: location.pathname+'?responseType=json',
+          method: 'POST',
+          data: {
+            widget: JSON.stringify(formData)
+          }
+        }).then(function (r) {
           // insert after regions actions
           regionWidgetsTag.prepend(r.widget.html);
-        }).always(function(){
+        }).always(function() {
           modal.modal('hide');
-
-          modal.find('form').off( event );
         });
       });
     });
@@ -247,51 +257,42 @@ we.structure = {
 
       modalForm.find('form').submit(function( event ) {
         event.preventDefault();
-        var formData = {};
+        var formData = { id: id };
 
         modalForm.find('form').serializeArray().forEach(function (d) {
           formData[d.name] = d.value;
         });
 
-        var url = '/api/v1/widget/'+id+'?responseType=json';
-        if (we.config.structure.widgetUpdateUrl) {
-          url = we.config.structure.widgetUpdateUrl+id+'?responseType=json'
-        }
-
         we.structure.setForDataValuesWithVisibility(formData);
 
         $.ajax({
-          url: url,
+          headers: { 'we-widget-action': 'update' },
+          url: location.pathname+'?responseType=json',
           method: 'POST',
-          dataType: 'json',
-          contentType: 'application/json; charset=utf-8',
-          data: JSON.stringify(formData)
+          data: {
+            widget: JSON.stringify(formData)
+          }
         }).then(function (r) {
           we.events.emit('model-update', 'widget', r.widget);
           widgetTag.after(r.widget.html);
           widgetTag.remove();
         }).always(function(){
           modalForm.modal('hide');
-        })
+        });
       });
     });
   },
   deleteWidget: function deleteWidget(id) {
     if (!id) return console.warn('data-id attribute is required for deleteWidget');
 
-    var url;
-    if (we.config.structure.widgetDeleteUrl) {
-      url = we.config.structure.widgetDeleteUrl+id
-    } else {
-      url = '/api/v1/widget/'+id;
-    }
-    url += '/delete?responseType=json';
-
     if (confirm(we.config.structure.deleteWidgetConfirm)) {
       $.ajax({
-        url: url,
+        headers: { 'we-widget-action': 'delete' },
+        url: location.pathname+'?responseType=json',
         method: 'POST',
-        contentType: 'application/json; charset=utf-8'
+        data: {
+          widgetId: id
+        }
       }).then(function (r) {
         we.events.emit('model-update-after', 'widget', r);
         $('#widget-'+id).remove();
@@ -304,15 +305,25 @@ we.structure = {
     if (!modal) throw new Error('sort widget modal not found!', we.structure.sortWidgetModalFormId);
    modal.modal('show');
 
-    var url = '/api/v1/widget-sort/';
-    if (we.config.structure.widgetSortUrl)
-      url = we.config.structure.widgetSortUrl;
+    var url = location.pathname;
 
-    url += we.config.theme + '/'+
-      $('#we-layout').attr('data-we-layout')+
-      '/'+regionName  + '?skipHTML=true&context='+
-      $('#we-layout').attr('data-we-widgetcontext');
-    $.get(url).then(function (f) {
+    $.ajax({
+      headers: { 'we-widget-action': 'find' },
+      url: url+'?responseType=modal',
+      method: 'POST',
+      data: {
+        responseType: 'modal',
+        skipHTML: true,
+        widget: JSON.stringify({
+          theme: we.config.theme,
+          regionName: regionName,
+          layout: $('#we-layout').attr('data-we-layout'),
+          context: $('#we-layout').attr('data-we-widgetcontext'),
+          modelName: we.config.modelName,
+          modelId: we.config.modelId
+        })
+      }
+    }).then(function (f) {
       modal.find('.modal-body').html(f);
     });
   }
@@ -404,7 +415,7 @@ we.admin.layouts = {
     var sortableList = $(selector);
     // Sortable rows
     sortableList.sortable({
-      update: function( event, ui ) {
+      update: function updateSort() {
         saveOrder(this);
       }
     });
@@ -420,20 +431,19 @@ we.admin.layouts = {
         $(list[i]).attr('data-weight', i);
       }
 
-      var url = '/api/v1/widget-sort/';
-      if (we.config.structure.widgetSortUrl)
-        url = we.config.structure.widgetSortUrl;
-
-      url += we.config.theme + '/'+
-        $('#we-layout').attr('data-we-layout')+
-        '/'+regionName + '?skipHTML=true&responseType=JSON&context='+$('#we-layout').attr('data-we-widgetcontext');
-
       $.ajax({
-        url: url,
+        headers: { 'we-widget-action': 'updateSort' },
+        url: location.pathname+'?responseType=json',
         method: 'POST',
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8',
-        data: JSON.stringify({ widgets: widgets })
+        // dataType: 'json',
+        // contentType: 'application/json; charset=utf-8',
+        data: {
+          params: JSON.stringify({
+            regionName: regionName,
+            layout: $('#we-layout').attr('data-we-layout')
+          }),
+          widgets: JSON.stringify(widgets)
+        }
       }).done(function(r) {
         var region = $('#region-'+regionName);
         var widget;
@@ -447,8 +457,6 @@ we.admin.layouts = {
           }
           lastWidget = widget;
         }
-
-        // console.log('Done sort widgets', r);
       });
     }
   }

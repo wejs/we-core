@@ -62,7 +62,7 @@ module.exports = {
         }).catch(done);
       }
     } , {
-      version: '0.3.120', // your plugin version
+      version: '0.3.120',
       update: function update03120 (we, done) {
 
         we.utils.async.series([
@@ -79,7 +79,36 @@ module.exports = {
             we.db.defaultConnection.query(sql)
             .then(function() {
               done();
-            }).catch(done);
+            }).catch(function (err){
+              if (err != 'SequelizeDatabaseError') {
+                return done(err);
+              } else {
+                we.log.error(err);
+              }
+
+              done();
+            });
+          }
+        ], done);
+      }
+    },
+    {
+      version: '1.0.2',
+      update: function (we, done) {
+        we.utils.async.series([
+          function addWidgetTablURLField(done) {
+            var sql = 'ALTER TABLE `widgets` '+
+              ' ADD COLUMN `path` TEXT NULL; ';
+            we.db.defaultConnection.query(sql).then(function() {
+              done();
+            }).catch(function (err) {
+              if (err != 'SequelizeDatabaseError') {
+                return done(err);
+              } else {
+                we.log.error(err);
+              }
+              done();
+            });
           }
         ], done);
       }

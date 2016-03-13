@@ -185,56 +185,6 @@
     "model"         : "widget",
     "permission"    : true
   },
-  "get /api/v1/widget-sort/:theme/:layout/:regionName": {
-    "controller"    : "widget",
-    "action"        : "sortWidgets",
-    "model"         : "widget",
-    "permission"    : "manage_widget",
-    "template"      : "widget/sortWidgets",
-    "responseType"  : "modal"
-  },
-  "post /api/v1/widget-sort/:theme/:layout/:regionName": {
-    "controller"    : "widget",
-    "action"        : "sortWidgets",
-    "model"         : "widget",
-    "permission"    : "manage_widget",
-    "template"      : "widget/sortWidgets",
-    "responseType"  : "modal"
-  },
-  "get /api/v1/widget": {
-    "controller"    : "widget",
-    "action"        : "find",
-    "model"         : "widget",
-    "skipWidgets"   : true,
-    "permission"    : true
-  },
-  "post /api/v1/widget": {
-    "controller"    : "widget",
-    "action"        : "create",
-    "model"         : "widget",
-    "skipWidgets"   : true,
-    "permission"    : "manage_widget"
-  },
-  "get /api/v1/widget/:id([0-9]+)": {
-    "controller"    : "widget",
-    "action"        : "findOne",
-    "model"         : "widget",
-    "skipWidgets"   : true,
-    "permission"    : true
-  },
-  "post /api/v1/widget/:id([0-9]+)": {
-    "controller"    : "widget",
-    "action"        : "edit",
-    "model"         : "widget",
-    "skipWidgets"   : true,
-    "permission"    : "manage_widget"
-  },
-  "post /api/v1/widget/:id([0-9]+)/delete": {
-    "controller"    : "widget",
-    "action"        : "delete",
-    "model"         : "widget",
-    "permission"    : "manage_widget"
-  },
   "get /api/v1/routes": {
     "controller": "main",
     "action": "getRoutes",

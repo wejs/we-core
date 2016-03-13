@@ -21,7 +21,7 @@ describe('controllers.widget', function () {
     controller = require('../../../server/controllers/widget.js');
     we = helpers.getWe();
     var userStub = stubs.userStub();
-    helpers.createUser(userStub, function(err, u) {
+    helpers.createUser(userStub, function (err, u) {
       if(err) throw err;
       user = u;
 
@@ -49,6 +49,9 @@ describe('controllers.widget', function () {
       };
       var res = { locals: {
         theme: 'we-theme-site-wejs',
+        getTheme: function getTheme() {
+          return we.view.themes['we-theme-site-wejs'];
+        },
         Model: we.db.models.widget
       }, created: function(){
         assert.equal(res.locals.data.type, 'html');
@@ -69,15 +72,24 @@ describe('controllers.widget', function () {
         method: 'GET',
         we: we,
         user: user,
-        params: {},
+        params: {
+          layoutName: 'default',
+          regionName: 'sidebar'
+        },
         body: {},
         query: {}
       };
-      var res = { locals: { }, ok: function(){
-        assert(we.controllers.widget.sortWidgetsList.called);
-        we.controllers.widget.sortWidgetsList.restore();
-        done();
-      }};
+      var res = {
+        getTheme: function getTheme() {
+          return we.view.themes['we-theme-site-wejs'];
+        },
+        locals: { layoutName: 'default' },
+        ok: function(){
+          assert(we.controllers.widget.sortWidgetsList.called);
+          we.controllers.widget.sortWidgetsList.restore();
+          done();
+        }
+      };
       controller.sortWidgets(req, res);
     });
 
@@ -89,9 +101,15 @@ describe('controllers.widget', function () {
         params: {},
         body: {}
       };
-      var res = { locals: { }, badRequest: function(){
-        done();
-      }};
+      var res = {
+        getTheme: function getTheme() {
+          return we.view.themes['we-theme-site-wejs'];
+        },
+        locals: { layoutName: 'default' },
+        badRequest: function(){
+          done();
+        }
+      };
       controller.sortWidgets(req, res);
     });
 
@@ -114,14 +132,20 @@ describe('controllers.widget', function () {
           })
         }
       };
-      var res = { locals: { }, send: function(r) {
-        assert(r.widget);
-        for (var i = 0; i < r.widget.length; i++) {
-          // widget order is same bug with diferent weights
-          assert.equal(r.widget[i].id, widgets[i].id);
+      var res = {
+        getTheme: function getTheme() {
+          return we.view.themes['we-theme-site-wejs'];
+        },
+        locals: { layoutName: 'default' },
+        send: function(r) {
+          assert(r.widget);
+          for (var i = 0; i < r.widget.length; i++) {
+            // widget order is same bug with diferent weights
+            assert.equal(r.widget[i].id, widgets[i].id);
+          }
+          done();
         }
-        done();
-      }};
+      };
       controller.sortWidgets(req, res);
     });
 
@@ -157,10 +181,16 @@ describe('controllers.widget', function () {
           })
         }
       };
-      var res = { locals: { }, serverError: function(r) {
-        we.db.models.widget.update = oldFN;
-        done();
-      }};
+      var res = {
+        getTheme: function getTheme() {
+          return we.view.themes['we-theme-site-wejs'];
+        },
+        locals: { layoutName: 'default' },
+        serverError: function() {
+          we.db.models.widget.update = oldFN;
+          done();
+        }
+      };
       controller.sortWidgets(req, res);
     });
   });
