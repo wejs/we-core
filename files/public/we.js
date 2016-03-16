@@ -308,19 +308,12 @@ we.structure = {
     var url = location.pathname;
 
     $.ajax({
-      headers: { 'we-widget-action': 'find' },
-      url: url+'?responseType=modal',
+      headers: { 'we-widget-action': 'getWidgetsToSort' },
+      url: url+'?responseType=modal&skipHTML=true',
       method: 'POST',
       data: {
-        responseType: 'modal',
-        skipHTML: true,
-        widget: JSON.stringify({
-          theme: we.config.theme,
-          regionName: regionName,
-          layout: $('#we-layout').attr('data-we-layout'),
-          context: $('#we-layout').attr('data-we-widgetcontext'),
-          modelName: we.config.modelName,
-          modelId: we.config.modelId
+        params: JSON.stringify({
+          regionName: regionName
         })
       }
     }).then(function (f) {
@@ -444,7 +437,7 @@ we.admin.layouts = {
           }),
           widgets: JSON.stringify(widgets)
         }
-      }).done(function(r) {
+      }).done(function (r) {
         var region = $('#region-'+regionName);
         var widget;
         var lastWidget = null;

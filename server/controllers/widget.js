@@ -58,12 +58,10 @@ module.exports = {
   sortWidgets: function sortWidgets(req, res) {
     var we = req.we;
 
-    res.locals.model = 'widget';
-
     res.locals.regionName = req.params.regionName;
-    res.locals.layoutName = req.params.layout || 'default';
     // get where to only update records in this context
     var where = we.view.getDefaultWidgetQuery(req, res);
+    where.regionName = req.params.regionName;
 
     if (req.method == 'POST') {
       if (!req.body.widgets)
@@ -104,6 +102,7 @@ module.exports = {
     var we = req.we;
 
     var where =  we.view.getDefaultWidgetQuery(req, res);
+    where.regionName = req.params.regionName;
 
     res.locals.model = 'widget';
     res.locals.template = 'widget/sortWidgets';
