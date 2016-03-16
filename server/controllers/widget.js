@@ -43,7 +43,7 @@ module.exports = {
           }
         });
       }).catch(function onError(err) {
-        res.locals.model = 'widget'.
+        res.locals.model = 'widget';
         res.queryError(err);
       });
     });
