@@ -2,7 +2,6 @@ var assert = require('assert');
 var request = require('supertest');
 var helpers = require('we-test-tools').helpers;
 var stubs = require('we-test-tools').stubs;
-var _ = require('lodash');
 var http;
 var we;
 var agent;
@@ -28,7 +27,10 @@ describe('routerAliasFeature', function() {
       .set('Accept', 'application/json')
       .expect(201)
       .end(function (err, res) {
-        if (err) throw err;
+        if (err) {
+          console.error(res.text);
+          throw err;
+        }
 
         assert(res.body.user);
         assert.equal(res.body.user.linkPermanent,'/user/'+res.body.user.id);
@@ -84,7 +86,6 @@ describe('routerAliasFeature', function() {
     we.db.models.urlAlias
     .destroy({ truncate: true })
     .then(function(){
-      we.router.alias.cache = {};
       done();
     }).catch(done);
   });
