@@ -11,7 +11,10 @@
   <tbody class="ui-sortable">
     {{#each data}}
       <tr model-widget="{{id}}" class="ui-state-default ui-sortable-handle" model-id="{{id}}" data-weight="{{weight}}">
-        <td style="width: 30px; cursor: move;"><span class="glyphicon glyphicon-resize-vertical"></span></td>
+        <td style="width: 30px; cursor: move;">
+          <span class="glyphicon glyphicon-resize-vertical"></span>
+        </td>
+
         <td>
           <bind model-widget-{{id}}="id">{{id}}</bind>
           <input type="hidden" name="widgetId" value="{{id}}">
