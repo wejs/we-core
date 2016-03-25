@@ -14,6 +14,9 @@ module.exports = function(we) {
     var messages = locals.req.res.getMessages();
     var theme = (locals.theme || we.view.appTheme);
 
+    // skip rendering if dont have messages
+    if (!messages || !messages.length) return '';
+
     return new we.hbs.SafeString(we.view.renderTemplate('messages', theme, {
       messages: messages
     }));
