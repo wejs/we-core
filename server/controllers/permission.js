@@ -7,7 +7,7 @@
 
 module.exports = {
   manage: function manage(req, res) {
-    var we = req.getWe();
+    var we = req.we;
     var permissions = [];
 
     Object.keys(we.config.permissions).forEach(function(pN){
@@ -18,17 +18,14 @@ module.exports = {
     res.locals.data = permissions;
     res.locals.permissions = permissions;
 
-    we.db.models.role.findAll({
-      order: 'name ASC'
-    }).then(function (roles){
-      res.locals.metadata.count = permissions.length;
-      res.locals.roles = roles;
+    res.locals.metadata.count = permissions.length;
+    res.locals.roles =  we.acl.roles;
 
-      if (res.locals.responseType == 'json') {
-        res.send({ role: res.locals.roles });
-      } else {
-        res.ok();
-      }
-    });
+    if (res.locals.responseType == 'json') {
+      res.send({ role: res.locals.roles });
+    } else {
+      res.ok();
+    }
+
   }
 };
