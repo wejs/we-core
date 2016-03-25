@@ -26,6 +26,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     sendNestedModels: true,
     // default app permissions
     permissions: require('./lib/acl/corePermissions.json'),
+    // project roles
+    roles: {},
 
     port: process.env.PORT || '4000',
     hostname: 'http://localhost:' + ( process.env.PORT || '4000' ),
