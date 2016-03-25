@@ -227,5 +227,22 @@
     "action"        : "removePermissionFromRole",
     "model"         : "role",
     "permission"    : "manage_permissions"
+  },
+
+  "get /admin/role": {
+    "name"          : "admin.role.find",
+    "controller"    : "role",
+    "action"        : "find",
+    "model"         : "role",
+    "permission"    : "manage_permissions",
+    "template"      : "admin/role/find"
+  },
+
+  "post /admin/role": {
+    "controller"    : "role",
+    "action"        : "find",
+    "model"         : "role",
+    "permission"    : "manage_permissions",
+    "template"      : "admin/role/find"
   }
 }

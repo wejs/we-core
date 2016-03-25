@@ -1,7 +1,6 @@
 var assert = require('assert');
 var request = require('supertest');
 var helpers = require('we-test-tools').helpers;
-var _ = require('lodash');
 var http;
 var we;
 
@@ -20,13 +19,10 @@ describe('permissionsFeature', function() {
       if (err) throw err;
 
       assert(res.body.role);
-      assert(res.body.role.length);
 
-      res.body.role.forEach(function (r){
-        assert(r.name);
-        assert(r.id);
-        assert(r.createdAt);
-      });
+      for(var name in res.body.role) {
+        assert(we.acl.roles[name]);
+      }
 
       done();
     });
@@ -36,8 +32,10 @@ describe('permissionsFeature', function() {
     it('we.acl.addPermissionToRole should add a role to permission', function(done) {
       var roleName = we.acl.roles.owner.name;
       var permissionName = 'user_findOneByUsername';
-      we.acl.addPermissionToRole(we, roleName, permissionName, function(err, role) {
+      we.acl.addPermissionToRole(we, roleName, permissionName, function(err) {
         if (err) return done(err);
+        var role = we.acl.roles[roleName];
+
         assert(role);
         assert(role.permissions);
         assert(role.permissions.indexOf(permissionName) > -1);

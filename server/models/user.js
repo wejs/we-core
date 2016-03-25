@@ -94,7 +94,6 @@ module.exports = function UserModel(we) {
         },
         formFieldType: null // TODO
       },
-
       confirmEmail: {
         type: we.db.Sequelize.VIRTUAL,
         formFieldType: null,
@@ -119,13 +118,30 @@ module.exports = function UserModel(we) {
           }
         }
       },
-
       acceptTerms: {
         type: we.db.Sequelize.BOOLEAN,
         defaultValue: true,
         equals: true,
         allowNull: false,
         formFieldType: null
+      },
+
+      roles: {
+        type: we.db.Sequelize.TEXT,
+        formFieldType: null,
+        skipSanitizer: true,
+        get: function()  {
+          if (this.getDataValue('roles'))
+            return JSON.parse( this.getDataValue('roles') );
+          return [];
+        },
+        set: function(object) {
+          if (typeof object == 'object') {
+            this.setDataValue('roles', JSON.stringify(object));
+          } else {
+            throw new Error('invalid error in user roles value: ', object);
+          }
+        }
       }
     },
 
@@ -135,12 +151,6 @@ module.exports = function UserModel(we) {
         model: 'passport',
         inverse: 'user',
         through: 'users_passports'
-      },
-      roles: {
-        type: 'belongsToMany',
-        model: 'role',
-        inverse: 'users',
-        through: 'users_roles'
       }
     },
 
@@ -287,6 +297,45 @@ module.exports = function UserModel(we) {
               }).catch(done);
             }
           ], cb);
+        },
+
+        getRoles: function getRoles() {
+          var self = this;
+          return new we.db.Sequelize
+          .Promise(function getRolesPromisse(resolve){
+            resolve(self.roles);
+          });
+        },
+
+        setRoles: function setRoles(rolesToSave) {
+          var self = this;
+          return new we.db.Sequelize
+          .Promise(function setRolesPromisse(resolve, reject){
+            self.roles = rolesToSave;
+            self.save().then(resolve).catch(reject);
+          });
+        },
+
+        addRole: function addRole(role) {
+          if (typeof role == 'object') {
+            role = role.name;
+          }
+
+          var self = this;
+
+          return new we.db.Sequelize
+          .Promise(function setRolesPromisse(resolve, reject){
+
+            var roles = self.roles;
+            // if this user already have the role, do nothing
+            if (roles.indexOf(role) > -1) return resolve(self);
+            // else add the role and save the user
+            roles.push(role);
+
+            self.roles = roles;
+
+            self.save().then(resolve).catch(reject);
+          });
         }
       },
       hooks: {

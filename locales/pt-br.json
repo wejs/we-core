@@ -174,5 +174,7 @@
   "skip.to.content.link.text": "Ir para o conteúdo principal",
 
   "Privacity": "Privacidade",
-  "user.privacity.fieldName": "Dados"
+  "user.privacity.fieldName": "Dados",
+
+  "role.delete.confirm.msg": "Tem certeza que deseja deletar esse perfil de usuário?"
 }

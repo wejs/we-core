@@ -29,30 +29,10 @@ describe('controllers.role', function () {
       done();
     });
 
-    it('create action should run res.serverError for wrong req.body params', function (done) {
-      var res = { locals: {}, serverError: function(){
-        assert(res.serverError.called);
-        assert(req.we.log.error.called);
-        req.we.log.error.restore();
-        req.we.log.error = oldError;
-        done();
-      }};
-      var req = {
-        we: we, method: 'POST', body: {
-          name: {}
-        }
-      };
-      var oldError = req.we.log.error;
-      req.we.log.error = function() {};
-      sinon.spy(res, 'serverError');
-      sinon.spy(req.we.log, 'error');
-      controller.create(req, res);
-    });
-
-    it('create action should run res.created with record for POST and valid body', function (done) {
-      var res = { locals: {}, created: function(){
-        assert(res.created.called);
-        assert.equal(res.created.firstCall.args[0].name, 'coder');
+    it('create action should run res.ok with record for POST and valid body', function (done) {
+      var res = { locals: {}, ok: function(){
+        assert(res.ok.called);
+        assert.equal(res.ok.firstCall.args[0].name, 'coder');
         done();
       }};
       var req = {
@@ -61,51 +41,8 @@ describe('controllers.role', function () {
           description: 'Animal how converts coffe in software'
         }
       };
-      sinon.spy(res, 'created');
+      sinon.spy(res, 'ok');
       controller.create(req, res);
-    });
-  });
-
-  describe('controllers.role.edit', function () {
-    it('edit action should run res.ok if req.method=GET and role', function (done) {
-      var res = { locals: { data: role}, ok: function(){}};
-      var req = { we: we, method: 'GET', body: {}};
-      sinon.spy(res, 'ok');
-      controller.edit(req, res);
-      assert(res.ok.called);
-      done();
-    });
-
-    it('edit action should run next if role not is set', function (done) {
-      var res = { locals: { data: null }};
-      var req = { we: we, method: 'GET', body: {}};
-      controller.edit(req, res, function(){
-        // called
-        done();
-      });
-    });
-
-    it('edit action should run next if req.method=POST and role not are in cached roles', function (done) {
-      var res = { locals: { data: {
-        name: 'not_exitst_role'
-      } }};
-      var req = { we: we, method: 'POST', body: {}};
-      controller.edit(req, res, function(){
-        done();
-      });
-    });
-
-    it('edit action should run res.ok for valid data', function (done) {
-      var res = { locals: { data: role }, ok: function(){
-        assert(res.ok.called);
-        assert.equal(res.locals.data.description, 'Awsome!');
-        done();
-      }};
-      var req = { we: we, method: 'POST', body: {
-        description: 'Awsome!'
-      }};
-      sinon.spy(res, 'ok');
-      controller.edit(req, res);
     });
   });
 
@@ -310,23 +247,20 @@ describe('controllers.role', function () {
     });
   });
   describe('controllers.role.delete', function () {
-    it('delete action should run res.send for valid data', function (done) {
+    it('delete action should run res.ok for valid data', function (done) {
       we.acl.createRole(we, {
         name: 'monster'
       }, function(err){
         if (err) throw err;
 
         var res = { locals: { id: we.acl.roles.monster.id },
-        status: function() { return this },
-        send: function() {
-          assert(res.status.called);
-          assert(res.send.called);
+        ok: function() {
+          assert(res.ok.called);
           // called
           done();
         }};
         var req = { we: we, body: {}};
-        sinon.spy(res, 'send');
-        sinon.spy(res, 'status');
+        sinon.spy(res, 'ok');
         controller.delete(req, res);
       });
 

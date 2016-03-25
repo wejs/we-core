@@ -54,6 +54,7 @@ module.exports = {
     if (!we.acl.canStatic('manage_users', req.userRoleNames)) {
       delete req.body.email;
       delete req.body.active;
+      delete req.body.roles;
     }
 
     var record = res.locals.data;

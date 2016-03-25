@@ -27,7 +27,27 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // default app permissions
     permissions: require('./lib/acl/corePermissions.json'),
     // project roles
-    roles: {},
+    roles: {
+      administrator: {
+        name: 'administrator',
+        permissions: []
+      },
+      authenticated: {
+        name: 'authenticated',
+        permissions: [],
+        isSystemRole: true
+      },
+      unAuthenticated: {
+        name: 'unAuthenticated',
+        permissions: [],
+        isSystemRole: true
+      },
+      owner: {
+        name: 'owner',
+        permissions: [],
+        isSystemRole: true
+      }
+    },
 
     port: process.env.PORT || '4000',
     hostname: 'http://localhost:' + ( process.env.PORT || '4000' ),

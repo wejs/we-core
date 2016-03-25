@@ -232,5 +232,7 @@
   "skip.to.content.link.text": "Skip to main content",
 
   "Privacity": "Privacity",
-  "user.privacity.fieldName": "Data"
+  "user.privacity.fieldName": "Data",
+
+  "role.delete.confirm.msg": "Are you sure you want to delete this role?"
 }

@@ -44,11 +44,11 @@ module.exports = function Model(we) {
         defaultValue: null
       },
       weight: {
-        type:  we.db.Sequelize.FLOAT,
+        type: we.db.Sequelize.FLOAT,
         defaultValue: 0
       },
       configuration: {
-        type:  we.db.Sequelize.TEXT('medium'),
+        type: we.db.Sequelize.TEXT('medium'),
         skipSanitizer: true,
         get: function()  {
           if (this.getDataValue('configuration'))
