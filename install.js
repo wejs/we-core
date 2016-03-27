@@ -82,7 +82,7 @@ module.exports = {
       }
     },
     {
-      version: '1.2.0',
+      version: '1.1.3',
       update: function (we, done) {
         we.utils.async.series([
           function updateUserTable(done) {
