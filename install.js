@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 module.exports = {
   requirements: function(we, done) {
 
@@ -82,7 +84,7 @@ module.exports = {
       }
     },
     {
-      version: '1.1.3',
+      version: '1.1.4',
       update: function (we, done) {
         we.utils.async.series([
           function updateUserTable(done) {
@@ -134,10 +136,53 @@ module.exports = {
               // done();
             }).catch(function (err) {
               if (err) {
-                we.log.error(err);
+                we.log.warn(err);
               }
               done();
             });
+          },
+          function exportRoles(done) {
+            fs.lstat(we.projectPath+'/config/roles.js', function afterCheckRolesFile(err) {
+              if (err) {
+
+                if (err.code == 'ENOENT') {
+                  var sql = 'SELECT name, permissions FROM roles;';
+                  we.db.defaultConnection.query(sql)
+                  .spread(function (results) {
+
+                    for (var i = 0; i < results.length; i++) {
+                      if (results[i].permissions) {
+
+                        if (!we.acl.roles[results[i].name]) {
+                          // add new role if not exists
+                          we.acl.roles[results[i].name] = {
+                            name: results[i].name,
+                            permissions: []
+                          };
+                        }
+                        // export old permissions to new permission structure
+                        var permissions = results[i].permissions.split(';');
+                        we.acl.roles[results[i].name].permissions = permissions;
+                      }
+                    }
+
+                    we.acl.writeRolesToConfigFile(done);
+                  }).catch(function (err) {
+                    if (err) {
+                      we.log.error(err);
+                    }
+                    done();
+                  });
+                } else {
+                  we.log.error('we-core:update:1.1.3: unknow error on find roles.js file');
+                  done(err);
+                }
+              } else {
+                we.log.info('we-core:update:1.1.3: found foles.js file in your project, skiping exportRoles');
+                done();
+              }
+            })
+
           }
         ], done);
       }
