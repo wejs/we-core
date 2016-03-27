@@ -1,9 +1,4 @@
 {
-  "find_user": {
-    "title": "Find user",
-    "description": "Find and list users"
-  },
-
   "manage_permissions": {
     "title": "Manage permissions",
     "description": "Change permissions"
