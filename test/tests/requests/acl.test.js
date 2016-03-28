@@ -36,7 +36,11 @@ describe('ACLFeature', function() {
       .expect(200)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        if(err) throw err;
+        if(err) {
+          console.error(res.text);
+          throw err;
+        }
+
         done();
       });
     })
@@ -45,7 +49,7 @@ describe('ACLFeature', function() {
   describe('API', function() {
     it('we.acl.createRole create role and set it in we.acl.roles'  ,function(done) {
       var roleNameStrig = 'hero'
-      we.acl.createRole(we, { name: roleNameStrig }, function(err, role) {
+      we.acl.createRole({ name: roleNameStrig }, function(err, role) {
         if(err) throw err;
         assert(role);
         assert.equal(role.name, roleNameStrig);
@@ -65,7 +69,7 @@ describe('ACLFeature', function() {
     before(function (done) {
       var roleName = 'player';
       // after create a stub role
-      we.acl.createRole(we, { name: roleName }, function(err, role) {
+      we.acl.createRole({ name: roleName }, function(err, role) {
         if (err) throw err;
         if (!role) throw new Error('Role not created');
 
@@ -90,7 +94,10 @@ describe('ACLFeature', function() {
       .set('Accept', 'application/json')
       .expect(200)
       .end(function (err, res) {
-        if (err) throw err;
+        if (err) {
+          console.error(res.text);
+          throw err;
+        }
         assert(res.body.user);
         assert.equal(res.body.user.id, salvedUser.id);
         we.config.acl.disabled = true;

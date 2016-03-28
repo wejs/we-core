@@ -162,7 +162,7 @@ describe('controllers.role', function () {
 
     it('updateUserRoles action should run res.serverError if addPermissionToRole return error', function (done) {
       var oldFN = we.acl.addPermissionToRole;
-      we.acl.addPermissionToRole = function(w, r, p, cb) {
+      we.acl.addPermissionToRole = function(r, p, cb) {
         return cb(new Error('test error'));
       }
       var res = { locals: {}, serverError: function(){
@@ -211,7 +211,7 @@ describe('controllers.role', function () {
     it('removePermissionFromRole action should run res.serverError if removePermissionFromRole return error',
     function (done) {
       var oldFN = we.acl.removePermissionFromRole;
-      we.acl.removePermissionFromRole = function(w, r, p, cb) {
+      we.acl.removePermissionFromRole = function(r, p, cb) {
         return cb(new Error('test error'));
       }
       var res = { locals: {}, serverError: function(){
@@ -248,7 +248,7 @@ describe('controllers.role', function () {
   });
   describe('controllers.role.delete', function () {
     it('delete action should run res.ok for valid data', function (done) {
-      we.acl.createRole(we, {
+      we.acl.createRole({
         name: 'monster'
       }, function(err){
         if (err) throw err;
@@ -268,7 +268,7 @@ describe('controllers.role', function () {
 
     it('delete action should run res.serverError if deleteRole return error', function (done) {
       var oldFN = we.acl.deleteRole;
-      we.acl.deleteRole = function(w, r, cb) {
+      we.acl.deleteRole = function(r, cb) {
         return cb(new Error('test error'));
       }
       var res = { locals: {}, serverError: function(){

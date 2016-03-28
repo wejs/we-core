@@ -2,6 +2,7 @@
  * We.js plugin config
  */
 var moment = require('moment');
+var path = require('path');
 
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
@@ -25,7 +26,83 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // send nested models in response
     sendNestedModels: true,
     // default app permissions
-    permissions: require('./lib/acl/corePermissions.json'),
+    permissions: {
+      'find_user': {
+        'group': 'user',
+        'title': 'Find users',
+        'description': 'Find and find all users'
+      },
+      'create_user': {
+        'group': 'user',
+        'title': 'Create one user',
+        'description': 'Create one new user'
+      },
+      'update_user': {
+        'group': 'user',
+        'title': 'Update one user',
+        'description': 'Update one new user'
+      },
+      'delete_user': {
+        'group': 'user',
+        'title': 'Delete one user',
+        'description': 'Delete one user record'
+      },
+
+      'manage_role': {
+        'group': 'role',
+        'title': 'Manage roles',
+        'description': 'Change and update user roles'
+      },
+
+      'use_flag': {
+        'group': 'flag',
+        'title': 'Use flag API',
+        'description': ''
+      },
+      'use_follow': {
+        'group': 'follow',
+        'title': 'Use follow API',
+        'description': ''
+      },
+
+      'access_admin': {
+        'group': 'admin',
+        'title': 'Access admin page',
+        'description': ''
+      },
+
+      'manage_users': {
+        'group': 'admin',
+        'title': 'Manage users',
+        'description': ''
+      },
+      'manage_permissions': {
+        'group': 'admin',
+        'title': 'Manage permissions',
+        'description': ''
+      },
+      'manage_theme': {
+        'group': 'admin',
+        'title': 'Manage theme',
+        'description': ''
+      },
+      'manage_widget': {
+        'group': 'admin',
+        'title': 'Manage widget',
+        'description': 'Create, update and delete widgets'
+      },
+
+      'create_context_widget': {
+        'group': 'admin',
+        'title': 'Create global widgets',
+        'description': 'Create, update and delete widgets in context'
+      },
+      'setAlias': {
+        'group': 'router',
+        'title': 'Set url alias in form',
+        'description': 'Can set model alias'
+      }
+    },
     // project roles
     roles: {
       administrator: {
@@ -48,6 +125,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         isSystemRole: true
       }
     },
+    autoUpdateRolesConfig: true,
+    rolesConfigFile: path.resolve(projectPath + '/config/roles.js'),
 
     port: process.env.PORT || '4000',
     hostname: 'http://localhost:' + ( process.env.PORT || '4000' ),

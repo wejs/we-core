@@ -67,7 +67,8 @@
     "simple-hooks-callback": "^1.0.0",
     "string": "^3.2.0",
     "string.prototype.endswith": "^0.2.0",
-    "winston": "^2.1.1"
+    "winston": "^2.1.1",
+    "we-core-acl": "^1.0.0"
   },
   "devDependencies": {
     "istanbul": "^0.4.2",
