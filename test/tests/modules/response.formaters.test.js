@@ -20,15 +20,19 @@ describe('we.responses.formaters', function () {
     it('we.responses.formaters.html should run res.renderPage with req, res, and data', function (done) {
       var req = { my: 'req' };
       var res = {
+        locals: {},
         renderPage: function(req1, res1, data1) {
           assert.equal(req1, req);
           assert.equal(data1, data);
-        }
+        },
+        send: function(){}
       };
       sinon.spy(res, 'renderPage');
       var data = { i: 'am data'};
 
-      we.responses.formaters.html(data, req, res);
+      res.locals.data = data;
+
+      we.responses.formaters.html(req, res);
 
       assert(res.renderPage.called);
       done();
@@ -51,10 +55,11 @@ describe('we.responses.formaters', function () {
         locals: {
           template: 'testTemplate',
           theme: 'test'
-        }
+        },
+        send: function(){}
       };
       sinon.spy(req.we.view, 'renderTemplate');
-      we.responses.formaters.modal({}, req, res);
+      we.responses.formaters.modal(req, res);
       assert(req.we.view.renderTemplate.called);
       done();
     });

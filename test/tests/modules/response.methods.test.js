@@ -19,14 +19,22 @@ describe('we.responses.methods', function () {
   describe('ok', function () {
     before(function (done) { done(); });
 
-    it('we.responses.methods.ok should send user record if passed as arguments', function (done) {
-      var req = { method: 'POST', we: we };
+    it('we.responses.methods.ok should run res.format and set res.locals.data', function (done) {
+      var req = { method: 'POST', we: we, accepts: function(){ return false } };
       var res = {
         locals: {
           Model: we.db.models.user,
           model: 'user',
           responseType: 'json',
           action: 'edit'
+        },
+        format: function() {
+          assert.equal(res.status.firstCall.args[0], 200);
+          assert.equal(res.locals.data.id, user.id);
+          assert.equal(res.locals.data.displayName, user.displayName);
+          assert.equal(res.locals.data.fullName, user.fullName);
+
+          done();
         },
         status: function() {},
         send: function() {}
@@ -38,17 +46,13 @@ describe('we.responses.methods', function () {
         res: res,
         we: we
       })(user);
+
       assert(res.status.called);
-      assert.equal(res.status.firstCall.args[0], 200);
-      assert.equal(res.send.firstCall.args[0].user.id, user.id);
-      assert.equal(res.send.firstCall.args[0].user.displayName, user.displayName);
-      assert.equal(res.send.firstCall.args[0].user.fullName, user.fullName);
-      assert(res.send.called);
-      done();
+
     });
 
     it('we.responses.methods.ok should call res.redirect with /', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we,accepts: function(){ return true }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -81,22 +85,29 @@ describe('we.responses.methods', function () {
       done();
     });
 
-
     it('we.responses.methods.ok should call res.view with user record', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we,accepts: function(){ return false }  };
       var res = {
         locals: {
           Model: we.db.models.user,
           model: 'user',
-          responseType: 'html',
           action: 'find'
         },
         redirect: function() {},
         status: function() {},
-        send: function() {},
+        format: function() {
+
+          assert.equal(res.locals.data.id, user.id);
+          assert.equal(res.locals.data.displayName, user.displayName);
+          assert(!res.redirect.called);
+          assert(res.status.called);
+          assert.equal(res.status.firstCall.args[0], 200);
+
+          done();
+
+        },
         view: function() {}
       };
-      sinon.spy(res, 'send');
       sinon.spy(res, 'status');
       sinon.spy(res, 'redirect');
       sinon.spy(res, 'view');
@@ -107,15 +118,6 @@ describe('we.responses.methods', function () {
         we: we
       })(user);
 
-      assert(res.view.called);
-      assert.equal(res.view.firstCall.args[0].id, user.id);
-      assert.equal(res.view.firstCall.args[0].displayName, user.displayName);
-      assert(!res.redirect.called);
-      assert(res.status.called);
-      assert.equal(res.status.firstCall.args[0], 200);
-      assert(!res.send.called);
-
-      done();
     });
   });
 
@@ -123,7 +125,7 @@ describe('we.responses.methods', function () {
     before(function (done) { done(); });
 
     it('we.responses.methods.created should run res.view if is set to true skipRedirect', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return true }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -158,7 +160,7 @@ describe('we.responses.methods', function () {
     });
 
     it('we.responses.methods.created should run res.redirect res.locals.redirectTo is set', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return true }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -193,7 +195,7 @@ describe('we.responses.methods', function () {
 
     it('we.responses.methods.created should run res.redirect with user findOne if res.locals.redirectTo is not set',
     function (done) {
-      var req = { method: 'POST', we: we, paramsArray: [] };
+      var req = { method: 'POST', we: we, paramsArray: [],accepts: function(){ return true }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -230,7 +232,7 @@ describe('we.responses.methods', function () {
     before(function (done) { done(); });
 
     it('we.responses.methods.updated should run res.redirect redirectTo is set', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return true } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -263,7 +265,7 @@ describe('we.responses.methods', function () {
 
     it('we.responses.methods.updated should run res.redirect with user find redirectTo is not set',
     function (done) {
-      var req = { method: 'POST', we: we, paramsArray: [] };
+      var req = { method: 'POST', we: we, paramsArray: [], accepts: function(){ return true } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -292,47 +294,13 @@ describe('we.responses.methods', function () {
       assert(!res.send.called);
       done();
     });
-
-    it('we.responses.methods.updated should run res.send for json response',
-    function (done) {
-      var req = { method: 'POST', we: we, paramsArray: [] };
-      var res = {
-        locals: {
-          Model: we.db.models.user,
-          model: 'user',
-          responseType: 'json',
-          action: 'update',
-          data: user
-        },
-        status: function() {},
-        send: function() {},
-        view: function() {},
-        redirect: function() {}
-      };
-      sinon.spy(res, 'send');
-      sinon.spy(res, 'status');
-      sinon.spy(res, 'redirect');
-      sinon.spy(res, 'view');
-
-      we.responses.methods.updated.bind({
-        req: req, res: res, we: we
-      })();
-      assert(!res.view.called);
-      assert(!res.redirect.called);
-      assert(res.status.called);
-      assert.equal(res.status.firstCall.args[0], 200);
-      assert(res.send.called);
-      assert.equal(res.send.firstCall.args[0].user.id, user.id);
-      assert.equal(res.send.firstCall.args[0].user.displayName, user.displayName);
-      done();
-    });
   });
 
   describe('deleted', function () {
     before(function (done) { done(); });
 
     it('we.responses.methods.deleted should run res.redirect redirectTo is set', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return true }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -363,7 +331,7 @@ describe('we.responses.methods', function () {
       done();
     });
     it('we.responses.methods.deleted should run res.send for json responses', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return false }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -398,7 +366,7 @@ describe('we.responses.methods', function () {
     before(function (done) { done(); });
 
     it('we.responses.methods.forbidden should run res.view if responseType=html', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return true }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -429,7 +397,7 @@ describe('we.responses.methods', function () {
     });
 
     it('we.responses.methods.forbidden should run res.send only with messages if model not is set', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return false }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -463,7 +431,7 @@ describe('we.responses.methods', function () {
     });
 
     it('we.responses.methods.forbidden should run res.send with data', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return false }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -515,7 +483,7 @@ describe('we.responses.methods', function () {
 
     it('we.responses.methods.notFound should run res.view if responseType=html', function (done) {
 
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return true }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -547,7 +515,7 @@ describe('we.responses.methods', function () {
     });
 
     it('we.responses.methods.notFound should run res.view if responseType=html and set data={}', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return true }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -577,7 +545,7 @@ describe('we.responses.methods', function () {
     });
 
     it('we.responses.methods.notFound should run res.send if responseType!=html', function (done) {
-      var req = { method: 'GET', we: we };
+      var req = { method: 'GET', we: we, accepts: function(){ return false }  };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -628,7 +596,7 @@ describe('we.responses.methods', function () {
     });
 
     it('we.responses.methods.serverError should run res.view if responseType=html', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return true } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -660,7 +628,7 @@ describe('we.responses.methods', function () {
 
     it('we.responses.methods.serverError should run res.send if responseType!=html', function (done) {
       we.env = 'dev';
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return false } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -698,7 +666,7 @@ describe('we.responses.methods', function () {
     before(function (done) { done(); });
 
     it('we.responses.methods.badRequest should run res.view if responseType=html', function (done) {
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return true } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -730,7 +698,7 @@ describe('we.responses.methods', function () {
 
     it('we.responses.methods.badRequest should run res.send if responseType=json and send only messages', function (done) {
 
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return false } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -764,7 +732,7 @@ describe('we.responses.methods', function () {
     it('we.responses.methods.badRequest should run res.send if responseType=json and send data + messages',
     function (done) {
 
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return false } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -800,7 +768,7 @@ describe('we.responses.methods', function () {
     it('we.responses.methods.badRequest should run res.send if responseType=json and send addMessage',
     function (done) {
 
-      var req = { method: 'POST', we: we };
+      var req = { method: 'POST', we: we, accepts: function(){ return false } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -836,7 +804,7 @@ describe('we.responses.methods', function () {
 
     it('we.responses.methods.queryError should parse SequelizeValidationError errors', function (done) {
 
-      var req = { method: 'POST', we: we, __: we.i18n.__ };
+      var req = { method: 'POST', we: we, __: we.i18n.__, accepts: function(){ return true } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -845,11 +813,11 @@ describe('we.responses.methods', function () {
         },
         addMessage: function() {},
         status: function() {},
-        send: function() {},
+        format: function() {},
         redirect: function() {},
         renderPage: function () {}
       };
-      sinon.spy(res, 'send');
+      sinon.spy(res, 'format');
       sinon.spy(res, 'status');
       sinon.spy(res, 'redirect');
       sinon.spy(res, 'renderPage');
@@ -863,18 +831,17 @@ describe('we.responses.methods', function () {
         }]
       });
 
-      assert(res.renderPage.called);
       assert(res.locals.validationError);
       assert(!res.redirect.called);
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 400);
-      assert(res.send.called);
+      assert(res.format.called);
       done();
     });
 
     it('we.responses.methods.queryError should addMessage for SequelizeDatabaseError errors', function (done) {
 
-      var req = { method: 'POST', we: we, __: we.i18n.__ };
+      var req = { method: 'POST', we: we, __: we.i18n.__, accepts: function(){ return true } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -883,11 +850,11 @@ describe('we.responses.methods', function () {
         },
         addMessage: function() {},
         status: function() {},
-        send: function() {},
+        format: function() {},
         view: function() {},
         renderPage: function () {}
       };
-      sinon.spy(res, 'send');
+      sinon.spy(res, 'format');
       sinon.spy(res, 'status');
       sinon.spy(res, 'addMessage');
       sinon.spy(res, 'renderPage');
@@ -899,17 +866,16 @@ describe('we.responses.methods', function () {
         message: 'a message'
       });
 
-      assert(res.renderPage.called);
+      assert(res.format.called);
       assert(res.addMessage.called);
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 400);
-      assert(res.send.called);
       done();
     });
 
     it('we.responses.methods.queryError should run res.send', function (done) {
       we.env = 'dev';
-      var req = { method: 'POST', we: we, __: we.i18n.__ };
+      var req = { method: 'POST', we: we, __: we.i18n.__, accepts: function(){ return false } };
       var res = {
         locals: {
           Model: we.db.models.user,
@@ -918,11 +884,11 @@ describe('we.responses.methods', function () {
         },
         addMessage: function() {},
         status: function() {},
-        send: function() {},
+        format: function() {},
         view: function() {},
         renderPage: function () {}
       };
-      sinon.spy(res, 'send');
+      sinon.spy(res, 'format');
       sinon.spy(res, 'status');
       sinon.spy(res, 'addMessage');
       sinon.spy(res, 'renderPage');
@@ -934,12 +900,10 @@ describe('we.responses.methods', function () {
         message: 'a message'
       });
 
-      assert(res.send.called);
-      assert(res.send.firstCall.args[0]);
+      assert(res.format.called);
       assert(res.addMessage.called);
       assert(res.status.called);
       assert.equal(res.status.firstCall.args[0], 400);
-      assert(!res.renderPage.called);
 
       we.env = 'test';
       done();
@@ -951,7 +915,7 @@ describe('we.responses.methods', function () {
 
     it('we.responses.methods.goTo should redirect and pass status', function (done) {
 
-      var req = { method: 'POST', we: we, __: we.i18n.__ };
+      var req = { method: 'POST', we: we, __: we.i18n.__, accepts: function(){ return true } };
       var res = {
         locals: {},
         moveLocalsMessagesToFlash: function(){},

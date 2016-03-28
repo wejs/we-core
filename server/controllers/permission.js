@@ -21,7 +21,7 @@ module.exports = {
     res.locals.metadata.count = permissions.length;
     res.locals.roles =  we.acl.roles;
 
-    if (res.locals.responseType == 'json') {
+    if (req.accepts('json')) {
       res.send({ role: res.locals.roles });
     } else {
       res.ok();

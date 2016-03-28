@@ -137,13 +137,14 @@ module.exports = {
           return res.serverError(err);
         }
 
-        if (res.locals.responseType === 'html') {
+        if (req.accepts('html')) {
           return res.goTo( (res.locals.redirectTo || '/') );
         }
 
         res.locals.newUserCreated = true;
-
-        res.created({ user: newUser });
+        res.locals.model = 'user';
+        res.locals.data = newUser;
+        res.created();
       });
     });
   },
@@ -217,7 +218,7 @@ module.exports = {
 
         res.locals.newUserCreated = true;
         // redirect if are a html response
-        if (res.locals.responseType === 'html') return res.goTo( (res.locals.redirectTo || '/') );
+        if (req.accepts('html')) return res.goTo( (res.locals.redirectTo || '/') );
 
         res.send({ user: user});
       });
@@ -345,7 +346,7 @@ module.exports = {
 
         res.addMessage('success', 'auth.forgot-password.email.send');
         res.locals.emailSend = true;
-        if (res.locals.responseType == 'json') return res.ok();
+        if (req.accepts('json')) return res.ok();
         return res.ok();
       }).catch(res.queryError);
     }).catch(res.queryError);
@@ -386,7 +387,7 @@ module.exports = {
   /**
    * Api endpoint to check if current user can change the password without old password
    */
-  checkIfCanResetPassword: function(req, res) {
+  checkIfCanResetPassword: function (req, res){
     if(!req.isAuthenticated()) return res.forbidden();
 
     if (req.session && req.session.resetPassword) {
@@ -398,7 +399,7 @@ module.exports = {
     return res.forbidden();
   },
 
-  consumeForgotPasswordToken: function (req, res, next) {
+  consumeForgotPasswordToken: function (req, res, next){
     var we = req.getWe();
 
     var uid = req.params.id;
@@ -448,7 +449,7 @@ module.exports = {
             // set session variable req.session.resetPassword to indicate that there is a new password to be defined
             req.session.resetPassword = true;
 
-            if (res.locals.responseType == 'json') {
+            if (req.accepts('json')) {
               return res.status(200).send();
             }
 
@@ -510,14 +511,13 @@ module.exports = {
         // Reset req.session.resetPassword to indicate that the operation has been completed
         delete req.session.resetPassword;
 
-        if (res.locals.responseType == 'json') {
+        if (req.accepts('json')) {
           return res.status(200).send({messages: res.locals.messages});
         }
 
         res.addMessage('success', 'auth.new-password.set.successfully');
         res.locals.successfully = true;
 
-        if (res.locals.responseType == 'json') return res.ok();
         return res.ok();
       });
     }).catch(res.queryError);

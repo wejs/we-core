@@ -2,7 +2,6 @@ var assert = require('assert');
 var request = require('supertest');
 var helpers = require('we-test-tools').helpers;
 var stubs = require('we-test-tools').stubs;
-var sinon = require('sinon');
 var http;
 var we;
 var agent;
@@ -43,12 +42,10 @@ describe('mainFeature', function () {
   it('get / should load main.index route', function (done) {
     request(http)
     .get('/')
-    .set('Accept', 'application/json')
     .expect(200)
     .end(function (err, res) {
       if (err) throw err;
-      assert.equal('We test', res.body.title);
-      assert(res.body.messages);
+      assert(res.text.indexOf('We test') > -1);
       done();
     });
   });
