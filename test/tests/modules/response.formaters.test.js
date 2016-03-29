@@ -18,7 +18,7 @@ describe('we.responses.formaters', function () {
 
   describe('html', function () {
     it('we.responses.formaters.html should run res.renderPage with req, res, and data', function (done) {
-      var req = { my: 'req' };
+      var req = { my: 'req', query: {} };
       var res = {
         locals: {},
         renderPage: function(req1, res1, data1) {
@@ -39,8 +39,9 @@ describe('we.responses.formaters', function () {
     });
 
 
-    it('we.responses.formaters.modal should run req.we.view.renderTemplate', function (done) {
+    it('we.responses.formaters.html with req.query.contentOnly should run req.we.view.renderTemplate', function (done) {
       var req = {
+        query: { contentOnly: true },
         we: {
           view: {
             renderTemplate: function(tpl, theme, lc) {
@@ -59,7 +60,7 @@ describe('we.responses.formaters', function () {
         send: function(){}
       };
       sinon.spy(req.we.view, 'renderTemplate');
-      we.responses.formaters.modal(req, res);
+      we.responses.formaters.html(req, res);
       assert(req.we.view.renderTemplate.called);
       done();
     });
