@@ -26,6 +26,7 @@
 	"Widget": "Widget",
 	"Edit": "Edit",
 	"Delete": "Delete",
+	"widget.title": " ",
   "widget.context": "Widget context",
 	"widget.add": "Add widget",
 	"widget.sort": "Sort widgets",

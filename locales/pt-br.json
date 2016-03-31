@@ -27,6 +27,7 @@
 	"Widget": "Widget",
 	"Edit": "Editar",
 	"Delete": "Deletar",
+  "widget.title": " ",
 	"widget.add": "Adicionar widget",
   "widget.context": "Contexto do widget",
   "widget.visibility": "Exibir o widget: ",
