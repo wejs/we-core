@@ -252,13 +252,16 @@ module.exports = {
     });
   },
 
+  /**
+   * Get form do update
+   */
   getForm: function getForm(req, res, next) {
     var we = req.we;
     var id = req.params.id;
 
     res.locals.model = 'widget';
 
-    res.locals.Model.findOne({
+    we.db.models.widget.findOne({
       where: { id: id }
     }).then(function (record) {
       if (!record) return next();
