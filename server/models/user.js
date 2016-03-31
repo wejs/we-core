@@ -232,18 +232,18 @@ module.exports = function UserModel(we) {
         }
       },
       instanceMethods: {
-        getPassword: function getPassword() {
+        getPassword: function getPassword (){
           return we.db.models.password.findOne({
             where: { userId: this.id }
           });
         },
-        verifyPassword: function verifyPassword(password, cb) {
+        verifyPassword: function verifyPassword (password, cb){
           return this.getPassword().then( function(passwordObj){
             if (!passwordObj) return cb(null, false);
             passwordObj.validatePassword(password, cb);
           });
         },
-        updatePassword: function updatePassword(newPassword, cb) {
+        updatePassword: function updatePassword (newPassword, cb){
           var user = this;
           return this.getPassword().then( function (password){
             if (!password) {

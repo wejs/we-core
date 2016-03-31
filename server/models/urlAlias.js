@@ -48,25 +48,7 @@ module.exports = function UrlSlugModel(we) {
     options: {
       // Model tableName will be the same as the model name
       freezeTableName: true,
-
-      enableAlias: false,
-
-      hooks: {
-        afterCreate: function(record, opts, done) {
-          // cache after create a record
-          we.router.alias.cache[record.target] = record;
-          done();
-        },
-        afterUpdate: function(record, opts, done) {
-          // cache after udate the record
-          we.router.alias.cache[record.target] = record;
-          done();
-        },
-        afterDestroy: function(record, opts, done) {
-          delete we.router.alias.cache[record.target];
-          done();
-        }
-      }
+      enableAlias: false
     }
   }
 }
