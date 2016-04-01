@@ -341,6 +341,8 @@ module.exports = {
       where.inRecord = { $or: [false , null] };
     }
 
+  console.log('>>', req.query, req.url);
+
     // check if the widget exists
     we.db.models.widget.findOne({
       where: where
@@ -385,7 +387,7 @@ module.exports = {
 
     res.locals.deleteMsg = res.locals.model+'.delete.confirm.msg';
 
-    record.destroy().then(function() {
+    record.destroy().then(function afterDestroy() {
       res.locals.deleted = true;
       return res.deleted();
     }).catch(res.queryError);
