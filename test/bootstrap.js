@@ -61,6 +61,7 @@ after(function (callback) {
     projectPath + '/files/public/project.css',
     projectPath + '/files/public/project.js',
     projectPath + '/files/uploads',
+    projectPath + '/files/templatesCacheBuilds.js'
   ];
 
   async.each(tempFolders, function(folder, next){

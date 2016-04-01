@@ -361,6 +361,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       //Cache-Control: public, max-age=[maxage]
       maxage: 86400000 // one day
     },
+    templatesCacheFile: path.resolve(projectPath, 'files/templatesCacheBuilds.js'),
+    loadTemplatesFromCache: {
+      prod: true, dev: false, test: false
+    },
+
     security: {
       // see https://github.com/expressjs/cors#configuration-options for configuration options
       // This may be override by every route configs
