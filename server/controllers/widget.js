@@ -341,8 +341,6 @@ module.exports = {
       where.inRecord = { $or: [false , null] };
     }
 
-  console.log('>>', req.query, req.url);
-
     // check if the widget exists
     we.db.models.widget.findOne({
       where: where
