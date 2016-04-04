@@ -236,5 +236,6 @@
   "user.privacity.fieldName": "Data",
 
   "role.delete.confirm.msg": "Are you sure you want to delete this role?",
-  "auth.login.wrong.email.or.password": "Your email or password is wrong or you dont are registered in this system"
+  "auth.login.wrong.email.or.password": "Your email or password is wrong or you dont are registered in this system",
+  "field.password.invalid": "You password is wrong"
 }

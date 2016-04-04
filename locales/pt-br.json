@@ -178,5 +178,6 @@
   "user.privacity.fieldName": "Dados",
 
   "role.delete.confirm.msg": "Tem certeza que deseja deletar esse perfil de usuário?",
-  "auth.login.wrong.email.or.password": "Seu email ou senhas estão incorretos ou você não está registrado no sistema"
+  "auth.login.wrong.email.or.password": "Seu email ou senhas estão incorretos ou você não está registrado no sistema",
+  "field.password.invalid": "Seu senha está errada"
 }
