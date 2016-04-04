@@ -10,11 +10,9 @@ module.exports = {
    * Index page route /
    */
   index: function(req, res) {
-    var we = req.getWe();
-
     if (!res.locals.template) res.locals.template = 'home/index';
-
-    res.view({ title: we.config.appName });
+    res.locals.title = null; // dont show duplicated titles
+    res.view();
   },
 
   /**

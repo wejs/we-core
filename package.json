@@ -1,6 +1,6 @@
 {
   "name": "we-core",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "We.js is a node.js framework for build real time applications, sites or blogs!",
   "homepage": "https://github.com/wejs/we-core",
   "main": "./lib/index.js",
@@ -25,7 +25,7 @@
   "publishConfig": {
     "registry": "http://registry.npmjs.org"
   },
-  "author": "Alberto Souza <alberto.souza.dev@gmail.com>",
+  "author": "Alberto Souza <contato@albertosouza.net>",
   "license": "MIT",
   "dependencies": {
     "async": "^1.5.2",
@@ -64,9 +64,11 @@
     "sanitize-html": "^1.11.3",
     "sequelize": "^3.19.2",
     "serve-favicon": "~2.3.0",
+    "simple-hooks-callback": "^1.0.0",
     "string": "^3.2.0",
     "string.prototype.endswith": "^0.2.0",
-    "winston": "^2.1.1"
+    "winston": "^2.1.1",
+    "we-core-acl": "^1.0.2"
   },
   "devDependencies": {
     "istanbul": "^0.4.2",

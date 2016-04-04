@@ -11,7 +11,7 @@ module.exports = {
     var description = req.body.description;
 
     if (req.method == 'POST') {
-      req.we.acl.createRole(req.we, {
+      req.we.acl.createRole({
         name: name, description: description
       }, function (err, role) {
         if (err) {
@@ -105,7 +105,7 @@ module.exports = {
       !we.acl.permissions[req.params.permissionName]
     ) return next();
 
-    we.acl.addPermissionToRole(we, req.params.roleName, req.params.permissionName, function(err) {
+    we.acl.addPermissionToRole(req.params.roleName, req.params.permissionName, function(err) {
       if (err) return res.serverError(err);
       res.ok(we.acl.roles[req.params.roleName]);
     });
@@ -126,14 +126,14 @@ module.exports = {
       return next();
     }
 
-    we.acl.removePermissionFromRole(we, req.params.roleName, req.params.permissionName, function(err) {
+    we.acl.removePermissionFromRole(req.params.roleName, req.params.permissionName, function(err) {
       if (err) return res.serverError(err);
       res.deleted();
     });
   },
 
   delete: function deleteRecord(req, res) {
-    req.we.acl.deleteRole(req.we, req.body.name,
+    req.we.acl.deleteRole(req.body.name,
     function (err) {
       if (err) {
         req.we.log.error('role:delete: error on delete role', err);

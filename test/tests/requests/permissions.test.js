@@ -32,7 +32,7 @@ describe('permissionsFeature', function() {
     it('we.acl.addPermissionToRole should add a role to permission', function(done) {
       var roleName = we.acl.roles.owner.name;
       var permissionName = 'user_findOneByUsername';
-      we.acl.addPermissionToRole(we, roleName, permissionName, function(err) {
+      we.acl.addPermissionToRole(roleName, permissionName, function(err) {
         if (err) return done(err);
         var role = we.acl.roles[roleName];
 

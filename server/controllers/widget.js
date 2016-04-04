@@ -35,7 +35,7 @@ module.exports = {
             locals: res.locals,
             widget: record
           }, res.locals.theme);
-          if (res.locals.responseType == 'html') {
+          if (req.accepts('html')) {
             return res.status(201).send(record.dataValues.html);
           } else {
             res.locals.data = record;
@@ -140,7 +140,7 @@ module.exports = {
         widget: record
       }, res.locals.theme);
 
-      if (res.locals.responseType == 'html') {
+      if (req.accepts('html')) {
         return res.send(record.dataValues.html);
       } else {
         res.locals.data = record;
@@ -252,13 +252,16 @@ module.exports = {
     });
   },
 
+  /**
+   * Get form do update
+   */
   getForm: function getForm(req, res, next) {
     var we = req.we;
     var id = req.params.id;
 
     res.locals.model = 'widget';
 
-    res.locals.Model.findOne({
+    we.db.models.widget.findOne({
       where: { id: id }
     }).then(function (record) {
       if (!record) return next();
@@ -298,7 +301,7 @@ module.exports = {
 
         record.dataValues.html = we.view.widgets[record.type].renderForm(res.locals, res.locals.theme);
 
-        if (res.locals.responseType == 'html') {
+        if (req.accepts('html')) {
           res.send(record.dataValues.html);
         } else {
           res.locals.data = record;
@@ -362,7 +365,7 @@ module.exports = {
               widget: record
             }, res.locals.theme);
 
-            if (res.locals.responseType == 'html') {
+            if (req.accepts('html')) {
               return res.send(record.dataValues.html);
             } else {
               res.locals.data = record;
@@ -375,14 +378,14 @@ module.exports = {
   },
 
   delete: function deletePage(req, res) {
-    res.locals.responseType = 'json';
+    req.headers.accept = 'application/json';
 
     var record = res.locals.data;
     if (!record) return res.notFound();
 
     res.locals.deleteMsg = res.locals.model+'.delete.confirm.msg';
 
-    record.destroy().then(function() {
+    record.destroy().then(function afterDestroy() {
       res.locals.deleted = true;
       return res.deleted();
     }).catch(res.queryError);

@@ -165,13 +165,6 @@
     "permission"    : "manage_role",
     "template"      : "admin/role/updateUserRoles"
   },
-  "get /api/v1/widget/:id([0-9]+)/form": {
-    "controller"    : "widget",
-    "action"        : "getForm",
-    "model"         : "widget",
-    "permission"    : "manage_widget",
-    "skipWidgets"   : true
-  },
   "get /api/v1/widget-types": {
     "controller"    : "widget",
     "action"        : "getSelectWidgetTypes",

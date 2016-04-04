@@ -89,7 +89,6 @@ describe('authFeature', function () {
       .expect(201)
       .end(function (err, res) {
 
-        assert.equal(201, res.status);
         assert(res.headers['set-cookie'])
         assert(res.body.user.id);
         assert.equal(res.body.user.displayName, userStub.displayName);

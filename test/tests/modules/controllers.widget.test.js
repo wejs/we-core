@@ -45,7 +45,8 @@ describe('controllers.widget', function () {
       var req = {
         we: we,
         user: user,
-        body: getWidgetStub()
+        body: getWidgetStub(),
+        accepts: function(){ return false }
       };
       var res = { locals: {
         theme: 'we-theme-site-wejs',
@@ -213,7 +214,8 @@ describe('controllers.widget', function () {
           theme: 'we-theme-site-wejs',
           regionName: 'sidebar',
           layout: 'home'
-        }
+        },
+        accepts: function(){ return false }
       };
       var res = { locals: {
         theme: 'we-theme-site-wejs',
@@ -302,7 +304,8 @@ describe('controllers.widget', function () {
           type: 'html',
           theme: 'we-theme-site-wejs',
           layout: 'home'
-        }
+        },
+        accepts: function(){ return true }
       };
       var res = { locals: {
         context: 'events-1',
@@ -359,7 +362,9 @@ describe('controllers.widget', function () {
     it('getForm should run send with valid data and html response', function (done) {
       var req = {
         __: we.i18n.__,
-        we: we, params: { id: widgets[0].id }
+        we: we,
+        params: { id: widgets[0].id },
+        accepts: function(){ return true }
       };
       var res = { locals: {
         Model: we.db.models.widget,
@@ -376,7 +381,9 @@ describe('controllers.widget', function () {
     it('getForm should run send with valid data and json response', function (done) {
       var req = {
         __: we.i18n.__,
-        we: we, params: { id: widgets[0].id }
+        we: we,
+        params: { id: widgets[0].id },
+        accepts: function(){ return false }
       };
       var res = { locals: {
         Model: we.db.models.widget,
