@@ -11,8 +11,11 @@ module.exports = function passportStrategiesWidget(projectPath, Widget) {
     if (!req.we.config.passport) return next();
     // skip if area authenticated
     if (
-      req.isAuthenticated() ||
-      req.we.acl.canStatic('manage_widget', req.userRoleNames)
+      !req.isAuthenticated() ||
+      (
+        req.isAuthenticated() &&
+        req.we.acl.canStatic('manage_widget', req.userRoleNames)
+      )
     ) {
       widget.strategies = req.we.config.passport.strategies;
       next();
