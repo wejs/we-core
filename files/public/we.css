@@ -108,3 +108,7 @@ a.tabledrag-handle .handle {
   padding: 15px;
   margin-bottom: 10px;
 }
+
+#ui-datepicker-div {
+  z-index: 1001;
+}
