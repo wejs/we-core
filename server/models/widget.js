@@ -78,6 +78,8 @@ module.exports = function Model(we) {
                 return 'in-session';
               }
             }
+          } else if(this.getDataValue('path')) {
+            return 'in-page';
           } else if (this.getDataValue('context')) {
             return 'in-context';
           }
