@@ -815,3 +815,51 @@ $(function(){
 
 })(window);
 
+window.addEventListener('WebComponentsReady', function() {
+  // var we = window.we;
+
+  // -- Datetime picker component
+  // usage: <we-image data-id="{{id}}" data-style="thumbnail"></we-image>
+  var WeDatetiemPickerPrototype = Object.create(HTMLElement.prototype);
+  WeDatetiemPickerPrototype.createdCallback = function() {
+    var self = this;
+
+    var viewformat = this.dataset.viewformat;
+
+    var $element = $(self);
+
+    var $input = $element.children('input');
+    var input = $input[0];
+
+    var $viewInput = $input.clone();
+
+    input.type = 'hidden';
+
+    $viewInput.removeAttr('name');
+    $viewInput.attr('id', $viewInput[0].id + '-picker');
+
+    var $wrapper = $('<div class="row"><div class="col-sm-12"></div></div>');
+    $wrapper.children().append($viewInput);
+
+    $element.append($wrapper);
+
+    // add the datepicker
+    $(function() {
+      $viewInput.datetimepicker({
+        format: viewformat,
+        locale: window.WE_BOOTSTRAP_CONFIG.locale || 'en-us'
+      })
+      .on('dp.change', function onChangeViewInput(e) {
+        if (e.date) {
+          input.value = e.date.toISOString();
+        } else {
+          input.value = '';
+        }
+      });
+    });
+  };
+
+  document.registerElement('we-datetime-picker', {
+    prototype: WeDatetiemPickerPrototype
+  });
+});

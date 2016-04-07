@@ -10,8 +10,14 @@ var getAppBootstrapConfig = require('../../lib/staticConfig/getAppBootstrapConfi
 module.exports = function(we) {
   return function renderBootstrapConfig() {
     var configs = getAppBootstrapConfig(we);
+
     // set current request locale
-    configs.locale = this.locale;
+    if (this.req && this.req.user && this.req.user.language) {
+      configs.locale = this.req.user.language;
+    } else {
+      configs.locale = this.locale;
+    }
+
     // current theme
     configs.theme = this.theme;
     // get delete widget msg

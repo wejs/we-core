@@ -3,13 +3,13 @@
  *
  * usage:  {{we-date date format locals=locals}}
  */
-var moment = require('moment');
 
 module.exports = function(we) {
+  var moment = we.utils.moment;
+
   return function datehelper(date, format) {
     if (!date) return '';
     var options = arguments[arguments.length-1];
-
 
     var d = moment(date);
     if (!d.isValid()) return '';
