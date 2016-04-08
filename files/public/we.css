@@ -112,3 +112,11 @@ a.tabledrag-handle .handle {
 #ui-datepicker-div {
   z-index: 1001;
 }
+
+.widget-hidden {
+  display: none;
+}
+
+body.we-editing-layout .widget-hidden {
+  display: block;
+}
