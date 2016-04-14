@@ -120,3 +120,7 @@ a.tabledrag-handle .handle {
 body.we-editing-layout .widget-hidden {
   display: block;
 }
+
+.breadcrumb li.active a {
+  color: #777;
+}
