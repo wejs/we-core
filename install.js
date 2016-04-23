@@ -2,7 +2,6 @@ var fs = require('fs');
 
 module.exports = {
   requirements: function(we, done) {
-
     done();
   },
   /**
@@ -186,7 +185,22 @@ module.exports = {
           }
         ], done);
       }
-    }
+    },
+    {
+      version: '1.2.6',
+      update: function (we, done) {
+        we.log.info(
+          'instaling we-plugin-editor-summernote in this project, editor feature now are in diferent npm modules'
+        );
+
+        var exec = require('child_process').exec, child;
+        child = exec('npm install --save we-plugin-editor-summernote',
+        function afterInstall(error) {
+          we.log.info('DONE we-plugin-editor-summernote install');
+          done(error);
+        });
+      }
+    },
     ];
   }
 };
