@@ -162,7 +162,12 @@ we.structure = {
       context: $('#we-layout').attr('data-we-widgetcontext')
     };
 
-    $.get('/api/v1/widget-types').then(function(r){
+    $.ajax({
+      headers: { 'we-widget-action': 'getWidgetTypes' },
+      url: location.pathname,
+      method: 'POST',
+      data: {}
+    }).then(function afterGetWidgetTypes(r) {
       $('#AddWidgetFormModal-select-type').select2({
         data: r.widget.map(function (w){
           return {
@@ -172,16 +177,14 @@ we.structure = {
         })
       });
     });
-    // 1 selecionar tipo de widget
-    // 2
+
     modal.find('.steps-body .step1').show();
     modal.find('.steps-body .step2').hide();
-    // var url = '/api/v1/widget-form/' + form.find('input[name=theme]').val();
+
     modal.modal('show');
   },
   goToStep1: function goToStep1() {
     var modal = $(we.structure.addWidgetModalFormId);
-
     modal.find('.steps-body .step1').show();
   },
   goToStep2: function goToStep2() {

@@ -165,13 +165,6 @@
     "permission"    : "manage_role",
     "template"      : "admin/role/updateUserRoles"
   },
-  "get /api/v1/widget-types": {
-    "controller"    : "widget",
-    "action"        : "getSelectWidgetTypes",
-    "model"         : "widget",
-    "permission"    : true,
-    "responseType"  : "json"
-  },
   "get /api/v1/widget-form/:theme/:layout/:type": {
     "controller"    : "widget",
     "action"        : "getCreateForm",

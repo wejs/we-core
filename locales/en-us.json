@@ -238,5 +238,6 @@
   "role.delete.confirm.msg": "Are you sure you want to delete this role?",
   "auth.login.wrong.email.or.password": "Your email or password is wrong or you dont are registered in this system",
   "field.password.invalid": "You password is wrong",
-  "auth.login.user.not.active": "You need to validate your account after login in this system, check your email or contact the system administrator"
+  "auth.login.user.not.active": "You need to validate your account after login in this system, check your email or contact the system administrator",
+  "Search": "Search"
 }

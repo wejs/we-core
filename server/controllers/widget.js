@@ -181,7 +181,6 @@ module.exports = {
   getSelectWidgetTypes: function getSelectWidgetTypes(req, res) {
     var we = req.we;
 
-    res.locals.widgetContext = req.query.widgetContext;
     res.locals.widgetTypes = [];
 
     for (var type in we.view.widgets) {
@@ -192,7 +191,6 @@ module.exports = {
         })
       }
     }
-
     // var html = we.view.renderTemplate('widget/selectWidgetTypeForm', res.locals.theme, res.locals);
     return res.send({ widget: res.locals.widgetTypes});
   },
