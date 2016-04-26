@@ -72,6 +72,7 @@ describe('controllers.widget', function () {
       var req = {
         method: 'GET',
         we: we,
+        path: '/',
         user: user,
         params: {
           layoutName: 'default',
@@ -98,6 +99,7 @@ describe('controllers.widget', function () {
       var req = {
         method: 'POST',
         we: we,
+        path: '/',
         user: user,
         params: {},
         body: {}
@@ -119,6 +121,7 @@ describe('controllers.widget', function () {
       var req = {
         method: 'POST',
         we: we,
+        path: '/',
         user: user,
         params: {
           theme: 'we-theme-site-wejs',
@@ -168,6 +171,7 @@ describe('controllers.widget', function () {
         __: we.i18n.__,
         method: 'POST',
         we: we,
+        path: '/',
         user: user,
         params: {
           theme: 'we-theme-site-wejs',
@@ -210,6 +214,7 @@ describe('controllers.widget', function () {
       var req = {
         method: 'GET',
         we: we,
+        path: '/',
         params: {
           theme: 'we-theme-site-wejs',
           regionName: 'sidebar',
@@ -235,6 +240,7 @@ describe('controllers.widget', function () {
       var req = {
         __: we.i18n.__,
         query: {},
+        path: '/',
         method: 'GET', we: we, params: {}
       };
       var res = { locals: { }, send: function(r){
@@ -249,6 +255,7 @@ describe('controllers.widget', function () {
     it('getCreateForm should run next if params.type or params.theme not is set', function (done) {
       var req = {
         query: {},
+        path: '/',
         method: 'GET', we: we, params: {}
       };
       var res = { locals: { } };
@@ -260,6 +267,7 @@ describe('controllers.widget', function () {
     it('getCreateForm should run next if not found layoutToUpdate', function (done) {
       var req = {
         query: {},
+        path: '/',
         method: 'GET', we: we, params: {
           type: 'html',
           theme: 'we-theme-site-wejs',
@@ -281,6 +289,7 @@ describe('controllers.widget', function () {
 
       var req = {
         query: {},
+        path: '/',
         method: 'GET', we: we, params: {
           type: 'html',
           theme: 'we-theme-site-wejs',
@@ -300,6 +309,7 @@ describe('controllers.widget', function () {
     it('getCreateForm should run res.send for valid data', function (done) {
       var req = {
         query: {},
+        path: '/',
         method: 'GET', we: we, params: {
           type: 'html',
           theme: 'we-theme-site-wejs',
@@ -343,6 +353,7 @@ describe('controllers.widget', function () {
 
       var req = {
         query: {},
+        path: '/',
         method: 'GET', we: we, params: {
           id: widgets[0].id
         }
