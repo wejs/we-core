@@ -6,6 +6,14 @@
 
 module.exports = function(we) {
   return function breadcrumbHelper() {
-    return new we.hbs.SafeString(this.breadcrumb || '');
+    if (!this.breadcrumb) return '';
+
+    if (typeof this.breadcrumb == 'string') {
+      return new we.hbs.SafeString(this.breadcrumb);
+    } else if (this.breadcrumb && this.req){
+      return new we.hbs.SafeString(this.breadcrumb.render( this.req ));
+    } else {
+      return '';
+    }
   }
 }
