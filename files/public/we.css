@@ -124,3 +124,7 @@ body.we-editing-layout .widget-hidden {
 .breadcrumb li.active a {
   color: #777;
 }
+
+.strategy-link-local {
+  display: none;
+}
