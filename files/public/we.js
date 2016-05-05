@@ -88,7 +88,6 @@ var we = {
       return console.warn('data-event attribute is required for data-event handler', e);
     we.events.emit(weEvent, element, e);
   },
-
   get: function(obj, path, def) {
     /**
      * Retrieve nested item from object/array
@@ -105,7 +104,17 @@ var we = {
     if(obj === undefined) return def;
     return obj;
   },
-  utils: {}
+  utils: {
+    /**
+     * Sanitize user input htmls, use before add any user text content
+     *
+     * @param  {String} str
+     * @return {String}     Safe text to add in html
+     */
+    sanitize: function sanitize(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+  }
 };
 
 we.structure = {
