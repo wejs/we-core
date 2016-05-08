@@ -358,7 +358,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       resourceCacheActions: 'findOne',
       skipResourceCache: false,
       //Cache-Control: public, max-age=[maxage]
-      maxage: 86400000 // one day
+      maxage: 86400000*15 // 15 days
     },
     templatesCacheFile: path.resolve(projectPath, 'files/templatesCacheBuilds.js'),
     loadTemplatesFromCache: {
