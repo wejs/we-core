@@ -85,17 +85,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         'title': 'Manage theme',
         'description': ''
       },
-      'manage_widget': {
-        'group': 'admin',
-        'title': 'Manage widget',
-        'description': 'Create, update and delete widgets'
-      },
-
-      'create_context_widget': {
-        'group': 'admin',
-        'title': 'Create global widgets',
-        'description': 'Create, update and delete widgets in context'
-      },
       'setAlias': {
         'group': 'router',
         'title': 'Set url alias in form',

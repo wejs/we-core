@@ -272,32 +272,6 @@ module.exports = function UserModel(we) {
 
           return obj;
         },
-        generateDefaultWidgets: function generateDefaultWidgets(cb) {
-          var self = this;
-
-          we.utils.async.series([
-            function (done) {
-              we.db.models.widget.bulkCreate([{
-                title: null,
-                type: 'user-logo-and-displayname',
-                regionName: 'sidebar',
-                context: 'user-' + self.id,
-                theme: null,
-                weight: 0
-              },{
-                title: null,
-                type: 'usermenu',
-                regionName: 'sidebar',
-                context: 'user-' + self.id,
-                theme: null,
-                weight: 2
-              }
-            ]).then(function() {
-                done();
-              }).catch(done);
-            }
-          ], cb);
-        },
 
         getRoles: function getRoles() {
           var self = this;
@@ -378,11 +352,6 @@ module.exports = function UserModel(we) {
           // dont change user acceptTerms in update
           user.acceptTerms = true;
           return next(null, user);
-        },
-        afterCreate: function afterCreate(record, options, next) {
-          we.utils.async.parallel([
-            record.generateDefaultWidgets.bind(record)
-          ], next);
         },
 
         afterFind: function afterFind(record, options, next) {

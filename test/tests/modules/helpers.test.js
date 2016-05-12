@@ -155,35 +155,6 @@ describe('coreHelpers', function () {
     });
   });
 
-  describe('layoutHelper', function () {
-    var helper;
-
-    before(function (done) {
-      helper = require('../../../server/helpers/layout.js')(we);
-      done();
-    });
-
-    it('layoutHelper should run we.view.renderTemplate and return a html text', function (done) {
-      // set spy to check if renderTemplate is called
-      sinon.spy(we.view, 'renderTemplate');
-
-      var text = helper.bind({
-        context: 'ctx'
-      })('default', {
-        data: {
-          root: { regions: { default: { widgets: [] } } }
-        }
-      });
-
-      assert(text);
-      assert(we.view.renderTemplate.called);
-      // then remove the spy
-      we.view.renderTemplate.restore();
-
-      done();
-    });
-  });
-
   describe('linkToHelper', function () {
     var helper;
 
@@ -238,32 +209,6 @@ describe('coreHelpers', function () {
       assert(text.string.indexOf('href="?page=1"') >-1 );
       assert(text.string.indexOf('<ul class="pagination">') >-1 );
       assert(text.string.indexOf('<a href="?page=1" aria-label="Next">') >-1 );
-      done();
-    });
-  });
-
-  describe('regionHelper', function () {
-    var helper;
-
-    before(function (done) {
-      helper = require('../../../server/helpers/region.js')(we);
-      done();
-    });
-    it('regionHelper should render region template html', function (done) {
-      // set spy to check if renderTemplate is called
-      sinon.spy(we.view, 'renderTemplate');
-
-      var text = helper.bind({
-        context: 'ctx'
-      })('default', {
-        data: {
-          root: { regions: { default: { widgets: [] } } }
-        }
-      });
-      assert(text);
-      assert(we.view.renderTemplate.called);
-      // then remove the spy
-      we.view.renderTemplate.restore();
       done();
     });
   });

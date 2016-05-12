@@ -165,12 +165,6 @@
     "permission"    : "manage_role",
     "template"      : "admin/role/updateUserRoles"
   },
-  "get /api/v1/widget-form/:theme/:layout/:type": {
-    "controller"    : "widget",
-    "action"        : "getCreateForm",
-    "model"         : "widget",
-    "permission"    : true
-  },
   "get /api/v1/routes": {
     "controller": "main",
     "action": "getRoutes",
