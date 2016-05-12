@@ -1,21 +1,3 @@
-we-region,
-widget {
-  display: block;
-}
-.we-region-actions {
-  display: none;
-  padding: 4px;
-  background-color: gold;
-  border: 2px outset salmon;
-}
-
-
-.we-region-widget-actions {
-  display: none;
-  padding: 4px;
-  background-color: lightblue;
-}
-
 .system-actions {
   display: block;
   position: fixed;
@@ -33,22 +15,6 @@ widget {
   bottom: 0px;
   margin-left: 2px;
 }*/
-
-body.we-editing-layout .we-region-actions,
-body.we-editing-layout .we-region-widget-actions {
-  display: block;
-}
-
-
-body.we-editing-layout .widget {
-  border: 2px dashed transparent;
-  display: block;
-}
-
-body.we-editing-layout .widget:hover{
-  border-color: chocolate;
-}
-
 .modal-body .container {
   display: block;
   width: auto;
@@ -112,15 +78,6 @@ a.tabledrag-handle .handle {
 #ui-datepicker-div {
   z-index: 1001;
 }
-
-.widget-hidden {
-  display: none;
-}
-
-body.we-editing-layout .widget-hidden {
-  display: block;
-}
-
 .breadcrumb li.active a {
   color: #777;
 }
