@@ -20,8 +20,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // default find limit
     queryDefaultLimit: 25,
     queryMaxLimit: 300,
-    // map reponseType response types
+    // map reponseType response types, used by Accept headers in response selection
     responseTypes: ['html', 'json'],
+    defaultResponseType: 'html',
     // send nested models in response
     sendNestedModels: true,
     // default app permissions
