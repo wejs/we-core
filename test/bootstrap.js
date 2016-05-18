@@ -16,58 +16,58 @@ before(function(callback) {
 
     testTools.init({}, we);
 
-    testTools.helpers.resetDatabase(we, function(err) {
-      if(err) return callback(err);
+    we.bootstrap({
+      // disable access log
+      enableRequestLog: false,
 
-      we.bootstrap({
-        // disable access log
-        enableRequestLog: false,
-
-        i18n: {
-          directory: path.resolve(__dirname, '..', 'config/locales'),
-          updateFiles: true
-        },
-        themes: {
-          enabled: ['we-theme-site-wejs', 'we-theme-admin-default'],
-          app: 'we-theme-site-wejs',
-          admin: 'we-theme-admin-default'
-        }
-      }, function (err, we) {
+      i18n: {
+        directory: path.resolve(__dirname, '..', 'config/locales'),
+        updateFiles: true
+      },
+      themes: {
+        enabled: ['we-theme-site-wejs', 'we-theme-admin-default'],
+        app: 'we-theme-site-wejs',
+        admin: 'we-theme-admin-default'
+      }
+    }, function (err, we) {
+      if (err) return console.error(err);
+      we.startServer(function (err) {
         if (err) return console.error(err);
-        we.startServer(function (err) {
-          if (err) return console.error(err);
-          callback();
-        });
+        callback();
       });
     });
+
   });
 });
 
 //after all tests
 after(function (callback) {
 
+  testTools.helpers.resetDatabase(we, function(err) {
+    if(err) return callback(err);
 
-  we.db.defaultConnection.close();
+    we.db.defaultConnection.close();
 
-  var tempFolders = [
-    projectPath + '/files/tmp',
-    projectPath + '/files/config',
-    projectPath + '/files/sqlite',
+    var tempFolders = [
+      projectPath + '/files/tmp',
+      projectPath + '/files/config',
+      projectPath + '/files/sqlite',
 
-    projectPath + '/files/public/min',
+      projectPath + '/files/public/min',
 
-    projectPath + '/files/public/tpls.hbs.js',
-    projectPath + '/files/public/admin.tpls.hbs.js',
-    projectPath + '/files/public/project.css',
-    projectPath + '/files/public/project.js',
-    projectPath + '/files/uploads',
-    projectPath + '/files/templatesCacheBuilds.js'
-  ];
+      projectPath + '/files/public/tpls.hbs.js',
+      projectPath + '/files/public/admin.tpls.hbs.js',
+      projectPath + '/files/public/project.css',
+      projectPath + '/files/public/project.js',
+      projectPath + '/files/uploads',
+      projectPath + '/files/templatesCacheBuilds.js'
+    ];
 
-  async.each(tempFolders, function(folder, next){
-    deleteDir( folder, next);
-  }, function(err) {
-    if (err) throw new Error(err);
-    callback();
+    async.each(tempFolders, function(folder, next){
+      deleteDir( folder, next);
+    }, function(err) {
+      if (err) throw new Error(err);
+      callback();
+    });
   });
 })
