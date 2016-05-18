@@ -1,7 +1,8 @@
 # Change log file
 
 ## Changes:
-
+- v1.3.0: Widget feature moved to we-plugin-widget
+  - To update run `npm install we-plugin-widget`
 - v1.0.0: we-core now returns one prototype and mysql modules is removed from we-core. For update your project do:
   - Update your global we cli and generators: `npm install we generator-wejs -g`
   - Update your project app.js to:
