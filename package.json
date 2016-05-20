@@ -32,7 +32,7 @@
     "connect-flash": "0.1.1",
     "cookie-parser": "1.4.1",
     "cors": "2.7.1",
-    "email-templates": "2.3.0",
+    "email-templates-i18n": "^1.0.0",
     "express": "4.13.4",
     "express-session": "1.13.0",
     "handlebars": "4.0.5",
@@ -60,8 +60,8 @@
     "simple-hooks-callback": "1.0.0",
     "string": "3.3.1",
     "string.prototype.endswith": "0.2.0",
-    "winston": "2.2.0",
-    "we-core-acl": "1.2.0"
+    "we-core-acl": "1.2.0",
+    "winston": "2.2.0"
   },
   "devDependencies": {
     "istanbul": "0.4.3",
