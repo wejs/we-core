@@ -37,8 +37,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     log: { level: 'debug' },
     // set false to disable request log in dev env
     enableRequestLog: true,
-    // we.js url alias feature
-    enableUrlAlias: true,
 
     session: {
       secret: 'setASecreteKeyInYourAppConfig',
@@ -188,12 +186,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
       }
     },
-    router: {
-      alias: {
-        // dont load alias for this routes
-        excludePaths: [ '/public', '/favicon.ico', '/admin' ]
-      }
-    },
+    router: {},
+    /**
+     * Resource routes, add or remove routes generated to your resource
+     *
+     * @type {Object}
+     */
     resourceRoutes: {
       // pages
       createForm: function createFormRR(we, cfg, opts) {

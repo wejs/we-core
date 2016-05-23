@@ -5,17 +5,6 @@
     "template"   : "home/index",
     "layoutName" : "home"
   },
-  "get /api/v1/configs.json": {
-    "controller": "main",
-    "action": "getConfigsJS",
-    "responseType"  : "json"
-  },
-  "get /api/v1/routes": {
-    "controller": "main",
-    "action": "getRoutes",
-    "permission"    : true,
-    "responseType": "json"
-  },
   "get /admin": {
     "controller"    : "admin",
     "action"        : "index",
