@@ -22,6 +22,14 @@
     "type": "git",
     "url": "git@github.com:wejs/we-plugin-core.git"
   },
+  "files": [
+    "files",
+    "lib",
+    "locales",
+    "server",
+    "install.js",
+    "plugin.js"
+  ],
   "author": "Alberto Souza <contato@albertosouza.net>",
   "license": "MIT",
   "dependencies": {
