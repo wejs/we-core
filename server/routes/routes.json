@@ -15,96 +15,6 @@
     "action": "current",
     "model": "user"
   },
-  "get /signup": {
-    "controller": "auth",
-    "action": "signup",
-    "template": "auth/register",
-    "titleHandler"  : "i18n",
-    "titleI18n": "Register",
-    "breadcrumbHandler": "auth"
-  },
-  "post /signup": {
-    "controller": "auth",
-    "action": "signup",
-    "template": "auth/register",
-    "titleHandler"  : "i18n",
-    "titleI18n": "Register",
-    "breadcrumbHandler": "auth"
-  },
-  "get /login": {
-    "controller": "auth",
-    "action": "login",
-    "titleHandler"  : "i18n",
-    "titleI18n": "Login",
-    "template": "auth/login",
-    "breadcrumbHandler": "auth"
-  },
-  "post /login": {
-    "controller": "auth",
-    "action": "login",
-    "titleHandler"  : "i18n",
-    "titleI18n": "Login",
-    "template": "auth/login",
-    "breadcrumbHandler": "auth"
-  },
-  "post /auth/login": {
-    "controller"    : "auth",
-    "action"        : "login",
-    "breadcrumbHandler": "auth"
-  },
-  "/auth/logout": {
-    "controller"    : "auth",
-    "action"        : "logout",
-    "breadcrumbHandler": "auth"
-  },
-  "get /auth/forgot-password": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "auth.forgot-password",
-    "controller"    : "auth",
-    "action"        : "forgotPassword",
-    "template"      : "auth/forgot-password",
-    "breadcrumbHandler": "auth"
-  },
-  "post /auth/forgot-password": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "auth.forgot-password",
-    "controller"    : "auth",
-    "action"        : "forgotPassword",
-    "template"      : "auth/forgot-password",
-    "breadcrumbHandler": "auth"
-  },
-  "get /auth/:id([0-9]+)/reset-password/:token": {
-    "controller": "auth",
-    "action": "consumeForgotPasswordToken",
-    "breadcrumbHandler": "auth"
-  },
-  "get /api/v1/auth/check-if-can-reset-password": {
-    "controller": "auth",
-    "action": "checkIfCanResetPassword",
-    "responseType"  : "json"
-  },
-  "post /auth/change-password": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "auth.change-password",
-    "controller"    : "auth",
-    "action"        : "changePassword",
-    "template"      : "auth/change-password",
-    "breadcrumbHandler": "auth"
-  },
-  "get /auth/change-password": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "auth.change-password",
-    "controller"    : "auth",
-    "action"        : "changePassword",
-    "template"      : "auth/change-password",
-    "breadcrumbHandler": "auth"
-  },
-  "get /user/:id([0-9]+)/activate/:token":{
-    "controller"    : "auth",
-    "action"        : "activate",
-    "breadcrumbHandler": "auth"
-  },
-
   "get /user/:userId([0-9]+)/edit/privacity": {
     "name"          : "user.privacity",
     "controller"    : "user",
@@ -125,46 +35,6 @@
     "layoutName"    : "user-layout",
     "template"      : "user/findUserPrivacity"
   },
-
-  "post /auth/auth-token":{
-    "controller"    : "auth",
-    "action"        : "authToken",
-    "breadcrumbHandler": "auth"
-  },
-  "get /auth/:id([0-9]+)/new-password": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "auth.new-password",
-    "controller"    : "auth",
-    "action"        : "newPassword",
-    "template"      : "auth/new-password",
-    "breadcrumbHandler": "auth"
-  },
-  "post /auth/:id([0-9]+)/new-password": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "auth.new-password",
-    "controller"    : "auth",
-    "action"        : "newPassword",
-    "template"      : "auth/new-password",
-    "breadcrumbHandler": "auth"
-  },
-  "get /admin/user/:userId([0-9]+)/roles": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "admin.user.roles",
-    "controller"    : "role",
-    "action"        : "updateUserRoles",
-    "model"         : "user",
-    "permission"    : "manage_role",
-    "template"      : "admin/role/updateUserRoles"
-  },
-  "post /admin/user/:userId([0-9]+)/roles": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "admin.user.roles",
-    "controller"    : "role",
-    "action"        : "updateUserRoles",
-    "model"         : "user",
-    "permission"    : "manage_role",
-    "template"      : "admin/role/updateUserRoles"
-  },
   "get /api/v1/routes": {
     "controller": "main",
     "action": "getRoutes",
@@ -176,15 +46,6 @@
     "action"        : "index",
     "permission"    : "access_admin"
   },
-  "get /admin/permission": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "permission_manage",
-    "name"          : "permission_manage",
-    "controller"    : "permission",
-    "action"        : "manage",
-    "template"      : "admin/permission/index",
-    "permission"    : "manage_permissions"
-  },
 
   "get /admin/theme": {
     "titleHandler"  : "i18n",
@@ -194,35 +55,5 @@
     "action"        : "findThemes",
     "template"      : "admin/theme/index",
     "permission"    : "manage_theme"
-  },
-
-  "post /admin/role/:roleName/permissions/:permissionName": {
-    "controller"    : "role",
-    "action"        : "addPermissionToRole",
-    "model"         : "role",
-    "permission"    : "manage_permissions"
-  },
-  "delete /admin/role/:roleName/permissions/:permissionName": {
-    "controller"    : "role",
-    "action"        : "removePermissionFromRole",
-    "model"         : "role",
-    "permission"    : "manage_permissions"
-  },
-
-  "get /admin/role": {
-    "name"          : "admin.role.find",
-    "controller"    : "role",
-    "action"        : "find",
-    "model"         : "role",
-    "permission"    : "manage_permissions",
-    "template"      : "admin/role/find"
-  },
-
-  "post /admin/role": {
-    "controller"    : "role",
-    "action"        : "find",
-    "model"         : "role",
-    "permission"    : "manage_permissions",
-    "template"      : "admin/role/find"
   }
 }

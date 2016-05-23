@@ -26,7 +26,6 @@
   "license": "MIT",
   "dependencies": {
     "async": "2.0.0-rc.5",
-    "bcryptjs": "2.3.0",
     "body-parser": "1.15.1",
     "compression": "1.6.2",
     "connect-flash": "0.1.1",
@@ -47,8 +46,6 @@
     "node-uuid": "1.4.7",
     "nodemailer": "2.4.1",
     "nodemailer-smtp-transport": "2.5.0",
-    "passport": "0.3.2",
-    "passport-local": "1.0.0",
     "rc": "1.1.6",
     "recursive-readdir": "2.0.0",
     "request": "2.72.0",
@@ -60,7 +57,6 @@
     "simple-hooks-callback": "1.0.0",
     "string": "3.3.1",
     "string.prototype.endswith": "0.2.0",
-    "we-core-acl": "1.2.0",
     "winston": "2.2.0"
   },
   "devDependencies": {
@@ -68,8 +64,6 @@
     "mocha": "2.4.5",
     "sinon": "1.17.4",
     "supertest": "1.2.0",
-    "we-plugin-form": "0.3.34",
-    "we-plugin-menu": "1.2.0",
     "we-test-tools": "0.3.15",
     "we-theme-admin-default": "1.0.1",
     "we-theme-site-wejs": "0.3.31",

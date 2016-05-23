@@ -124,36 +124,9 @@ module.exports = function UserModel(we) {
         equals: true,
         allowNull: false,
         formFieldType: null
-      },
-
-      roles: {
-        type: we.db.Sequelize.TEXT,
-        formFieldType: null,
-        skipSanitizer: true,
-        get: function()  {
-          if (this.getDataValue('roles'))
-            return JSON.parse( this.getDataValue('roles') );
-          return [];
-        },
-        set: function(object) {
-          if (typeof object == 'object') {
-            this.setDataValue('roles', JSON.stringify(object));
-          } else {
-            throw new Error('invalid error in user roles value: ', object);
-          }
-        }
       }
     },
-
-    associations: {
-      passports:  {
-        type: 'belongsToMany',
-        model: 'passport',
-        inverse: 'user',
-        through: 'users_passports'
-      }
-    },
-
+    associations: {},
     options: {
       titleField: 'displayName',
       termFields: {
@@ -200,7 +173,7 @@ module.exports = function UserModel(we) {
           if (!res.locals.id || !res.locals.loadCurrentRecord) return done();
 
           this.findById(res.locals.id)
-          .then(function (record) {
+          .then(function findUser(record) {
              res.locals.data = record;
 
             if (record && record.id && req.isAuthenticated()) {
@@ -232,34 +205,6 @@ module.exports = function UserModel(we) {
         }
       },
       instanceMethods: {
-        getPassword: function getPassword (){
-          return we.db.models.password.findOne({
-            where: { userId: this.id }
-          });
-        },
-        verifyPassword: function verifyPassword (password, cb){
-          return this.getPassword().then( function(passwordObj){
-            if (!passwordObj) return cb(null, false);
-            passwordObj.validatePassword(password, cb);
-          });
-        },
-        updatePassword: function updatePassword (newPassword, cb){
-          var user = this;
-          return this.getPassword().then( function (password){
-            if (!password) {
-              // create one password if this user dont have one
-              return we.db.models.password.create({
-                userId: user.id,
-                password: newPassword
-              }).then(function (password) {
-                return cb(null, password);
-              })
-            }
-            // update
-            password.password = newPassword;
-            password.save().then(function(r){ cb(null, r) });
-          });
-        },
         toJSON: function toJSON() {
           var obj = this.get();
 
@@ -271,45 +216,6 @@ module.exports = function UserModel(we) {
           if (!obj.displayName) obj.displayName = obj.username;
 
           return obj;
-        },
-
-        getRoles: function getRoles() {
-          var self = this;
-          return new we.db.Sequelize
-          .Promise(function getRolesPromisse(resolve){
-            resolve(self.roles);
-          });
-        },
-
-        setRoles: function setRoles(rolesToSave) {
-          var self = this;
-          return new we.db.Sequelize
-          .Promise(function setRolesPromisse(resolve, reject){
-            self.roles = rolesToSave;
-            self.save().then(resolve).catch(reject);
-          });
-        },
-
-        addRole: function addRole(role) {
-          if (typeof role == 'object') {
-            role = role.name;
-          }
-
-          var self = this;
-
-          return new we.db.Sequelize
-          .Promise(function setRolesPromisse(resolve, reject){
-
-            var roles = self.roles;
-            // if this user already have the role, do nothing
-            if (roles.indexOf(role) > -1) return resolve(self);
-            // else add the role and save the user
-            roles.push(role);
-
-            self.roles = roles;
-
-            self.save().then(resolve).catch(reject);
-          });
         }
       },
       hooks: {

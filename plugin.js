@@ -25,98 +25,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     defaultResponseType: 'html',
     // send nested models in response
     sendNestedModels: true,
-    // default app permissions
-    permissions: {
-      'find_user': {
-        'group': 'user',
-        'title': 'Find users',
-        'description': 'Find and find all users'
-      },
-      'create_user': {
-        'group': 'user',
-        'title': 'Create one user',
-        'description': 'Create one new user'
-      },
-      'update_user': {
-        'group': 'user',
-        'title': 'Update one user',
-        'description': 'Update one new user'
-      },
-      'delete_user': {
-        'group': 'user',
-        'title': 'Delete one user',
-        'description': 'Delete one user record'
-      },
-
-      'manage_role': {
-        'group': 'role',
-        'title': 'Manage roles',
-        'description': 'Change and update user roles'
-      },
-
-      'use_flag': {
-        'group': 'flag',
-        'title': 'Use flag API',
-        'description': ''
-      },
-      'use_follow': {
-        'group': 'follow',
-        'title': 'Use follow API',
-        'description': ''
-      },
-
-      'access_admin': {
-        'group': 'admin',
-        'title': 'Access admin page',
-        'description': ''
-      },
-
-      'manage_users': {
-        'group': 'admin',
-        'title': 'Manage users',
-        'description': ''
-      },
-      'manage_permissions': {
-        'group': 'admin',
-        'title': 'Manage permissions',
-        'description': ''
-      },
-      'manage_theme': {
-        'group': 'admin',
-        'title': 'Manage theme',
-        'description': ''
-      },
-      'setAlias': {
-        'group': 'router',
-        'title': 'Set url alias in form',
-        'description': 'Can set model alias'
-      }
-    },
-    // project roles
-    roles: {
-      administrator: {
-        name: 'administrator',
-        permissions: []
-      },
-      authenticated: {
-        name: 'authenticated',
-        permissions: [],
-        isSystemRole: true
-      },
-      unAuthenticated: {
-        name: 'unAuthenticated',
-        permissions: [],
-        isSystemRole: true
-      },
-      owner: {
-        name: 'owner',
-        permissions: [],
-        isSystemRole: true
-      }
-    },
-    autoUpdateRolesConfig: true,
-    rolesConfigFile: path.resolve(projectPath + '/config/roles.js'),
-
     port: process.env.PORT || '4000',
     hostname: 'http://localhost:' + ( process.env.PORT || '4000' ),
     // default favicon, change in your project config/local.js
@@ -152,66 +60,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     // body parser settings to use in bodyParser.json()
     bodyParser: { limit: 20000000 },
-    // auth settings
-    auth : {
-      // flags to enable or disable the login and register
-      allowLogin: true,
-      allowRegister: true,
-
-      requireAccountActivation: true
-    },
-    acl : { disabled: true },
-    passport: {
-      // session is required for local strategy
-      enableSession: true,
-
-      accessTokenTime: 300000000,
-      cookieDomain: 'localhost:' + ( process.env.PORT || '3000' ),
-      cookieName: 'weoauth',
-      cookieSecure: false,
-      expiresTime: 900000, // time to expires token and session
-
-      strategies: {
-        // session
-        local: {
-          Strategy: require('passport-local').Strategy,
-          // url to image icon
-          icon: '/public/plugin/we-core/files/images/login.png',
-          authUrl: '/login',
-
-          usernameField: 'email',
-          passwordField: 'password',
-          session: true,
-          findUser: function findUserAndValidPassword(email, password, done) {
-            var we = this.we;
-            // build the find user query
-            var query = { where: {} };
-            query.where[we.config.passport.strategies.local.usernameField] = email;
-            // find user in DB
-            we.db.models.user.find(query).then (function (user) {
-              if (!user) {
-                return done(null, false, { message: 'auth.login.wrong.email.or.password' });
-              }
-              // get the user password
-              user.getPassword().then(function (passwordObj) {
-                if (!passwordObj)
-                  return done(null, false, { message: 'auth.login.user.dont.have.password' });
-
-                passwordObj.validatePassword(password, function (err, isValid) {
-                  if (err) return done(err);
-                  if (!isValid) {
-                    return done(null, false, { message: 'auth.login.user.incorrect.password.or.email' });
-                  } else {
-                    return done(null, user);
-                  }
-                });
-              })
-            });
-          }
-        }
-      }
-    },
-
     // see https://github.com/andris9/nodemailer-smtp-transport for config options
     email: {
       // default mail options
@@ -243,14 +91,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       // tls: ''
     },
     // external services API keys
-    apiKeys: {
-      // add google recaptcha key and secret in project config/local.js file for enable this feature
-      // Requires cliend side recaptcha implementation in registration form how is avaible in we-plugin-form
-      recaptcha: {
-        key: null,
-        secret: null
-      }
-    },
+    apiKeys: {},
     // node-i18n configs
     i18n: {
       // setup some locales - other locales default to en silently
@@ -370,6 +211,224 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       alias: {
         // dont load alias for this routes
         excludePaths: [ '/public', '/favicon.ico', '/admin' ]
+      }
+    },
+    resourceRoutes: {
+      // pages
+      createForm: function createFormRR(we, cfg, opts) {
+        // GET
+        we.routes['get '+opts.rootRoute+'/create'] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            layoutName: opts.layoutName, // null = default layout
+            name: opts.namePrefix + opts.name + '.create',
+            action: 'create',
+            controller: cfg.controller,
+            model: cfg.model,
+            template: opts.templateFolderPrefix + opts.name + '/create',
+            fallbackTemplate: opts.tplFolder + 'default/create.hbs',
+            permission: 'create_' + opts.name,
+            titleHandler: 'i18n',
+            titleI18n: opts.name + '.create',
+            breadcrumbHandler: 'create'
+          },
+          opts.create,
+          we.routes['get '+opts.rootRoute+'/create'] || {}
+        );
+        // POST
+        we.routes['post '+opts.rootRoute+'/create'] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            layoutName: opts.layoutName, // null = default layout
+            action: 'create',
+            controller: cfg.controller,
+            model: cfg.model,
+            template: opts.templateFolderPrefix + opts.name + '/create',
+            fallbackTemplate: opts.tplFolder + 'default/create.hbs',
+            permission: 'create_' + opts.name,
+            titleHandler: 'i18n',
+            titleI18n: opts.name + '.create',
+            breadcrumbHandler: 'create'
+          },
+          opts.create,
+          we.routes['post '+opts.rootRoute+'/create'] || {}
+        );
+      },
+      editForm: function editFormRR(we, cfg, opts, Model) {
+        // GET
+        we.routes['get '+opts.itemRoute+'/edit'] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            name: opts.namePrefix + opts.name + '.edit',
+            layoutName: opts.layoutName, // null = default layout
+            action: 'edit',
+            controller: cfg.controller,
+            model: cfg.model,
+            template: opts.templateFolderPrefix + opts.name + '/edit',
+            fallbackTemplate: opts.tplFolder + 'default/edit.hbs',
+            permission: 'update_' + opts.name,
+            titleHandler: opts.itemTitleHandler,
+            titleField: Model.options.titleField,
+            titleI18n: opts.name + '.edit',
+            breadcrumbHandler: 'edit'
+          },
+          opts.edit,
+          we.routes['get '+opts.itemRoute+'/edit'] || {}
+        );
+        // POST
+        we.routes['post '+opts.itemRoute+'/edit'] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            action: 'edit',
+            layoutName: opts.layoutName, // null = default layout
+            controller: cfg.controller,
+            model: cfg.model,
+            template: opts.templateFolderPrefix + opts.name + '/edit',
+            fallbackTemplate: opts.tplFolder + 'default/edit.hbs',
+            permission: 'update_' + opts.name,
+            titleHandler: opts.itemTitleHandler,
+            titleField: Model.options.titleField,
+            titleI18n: opts.name + '.edit',
+            breadcrumbHandler: 'edit'
+          },
+          opts.edit,
+          we.routes['post '+opts.itemRoute+'/edit'] || {}
+        );
+      },
+      deleteForm: function deleteFormRR(we, cfg, opts, Model) {
+        we.routes['get '+opts.itemRoute+'/delete'] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            name: opts.namePrefix + opts.name + '.delete',
+            action: 'delete',
+            layoutName: opts.layoutName, // null = default layout
+            controller: cfg.controller,
+            model: cfg.model,
+            template: opts.templateFolderPrefix + opts.name + '/delete',
+            fallbackTemplate: opts.tplFolder + 'default/delete.hbs',
+            permission: 'delete_' + opts.name,
+            titleHandler: opts.itemTitleHandler,
+            titleField: Model.options.titleField,
+            titleI18n: opts.name + '.delete',
+            breadcrumbHandler: 'delete'
+          },
+          opts.delete,
+          we.routes['get '+opts.itemRoute+'/delete'] || {}
+        );
+        // POST
+        we.routes['post '+opts.itemRoute+'/delete'] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            action: 'delete',
+            layoutName: opts.layoutName, // null = default layout
+            controller: cfg.controller,
+            model: cfg.model,
+            template: opts.templateFolderPrefix + opts.name + '/delete',
+            fallbackTemplate:  opts.tplFolder + 'default/delete.hbs',
+            permission: 'delete_' + opts.name,
+            titleHandler: opts.itemTitleHandler,
+            titleField: Model.options.titleField,
+            titleI18n: opts.name + '.delete',
+            breadcrumbHandler: 'delete'
+          },
+          opts.delete,
+          we.routes['post '+opts.itemRoute+'/delete'] || {}
+        );
+      },
+      // apis
+      createAPI: function createAPIRR(we, cfg, opts) {
+        // set post create on list for APIS
+        we.routes['post '+opts.rootRoute] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            action: 'create',
+            controller: cfg.controller,
+            model: cfg.model,
+            permission: 'create_' + opts.name,
+            breadcrumbHandler: 'create'
+          },
+          opts.create,
+          we.routes['post '+opts.rootRoute] || {}
+        );
+      },
+      findAll: function findAllRR(we, cfg, opts) {
+        we.routes['get ' + opts.rootRoute] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            layoutName: opts.layoutName, // null = default layout
+            name: opts.namePrefix + opts.name + '.find',
+            action: 'find',
+            controller: cfg.controller,
+            model: cfg.model,
+            template: opts.templateFolderPrefix + opts.name + '/find',
+            fallbackTemplate: opts.tplFolder + 'default/find.hbs',
+            permission: 'find_' + opts.name,
+            titleHandler: 'i18n',
+            titleI18n: opts.name + '.find',
+            routeQuery: opts.routeQuery,
+            // default search
+            search: {
+              // since search is avaible in findAll by default
+              since: {
+                parser: 'since',
+                target: {
+                  type: 'field',
+                  field: 'createdAt'
+                }
+              }
+            },
+            breadcrumbHandler: 'find'
+          },
+          opts.findAll,
+          we.routes['get ' + opts.rootRoute] || {}
+        );
+      },
+      findOne: function findOneRR(we, cfg, opts, Model) {
+        we.routes['get '+opts.itemRoute] = we.utils._.merge(
+          {
+            layoutName: opts.layoutName, // null = default layout
+            resourceName: opts.namePrefix+opts.name,
+            name: opts.namePrefix + opts.name + '.findOne',
+            action: 'findOne',
+            controller: cfg.controller,
+            model: cfg.model,
+            template: opts.templateFolderPrefix + opts.name + '/findOne',
+            fallbackTemplate: opts.tplFolder + 'default/findOne.hbs',
+            permission: 'find_' + opts.name,
+            titleHandler: opts.itemTitleHandler,
+            titleField: Model.options.titleField,
+            titleI18n: opts.name + '.findOne',
+            breadcrumbHandler: 'findOne'
+          },
+          opts.findOne,
+          we.routes['get '+opts.itemRoute] || {}
+        );
+      },
+      updateAPI: function updateAPIRR(we, cfg, opts) {
+        we.routes['put '+opts.itemRoute] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            action: 'edit',
+            controller: cfg.controller,
+            model: cfg.model,
+            permission: 'update_' + opts.name
+          },
+          opts.edit,
+          we.routes['put '+opts.itemRoute] || {}
+        );
+      },
+      deleteAPI: function deleteAPIRR(we, cfg, opts) {
+        we.routes['delete '+opts.itemRoute] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            action: 'delete',
+            controller: cfg.controller,
+            model: cfg.model,
+            permission: 'delete_' + opts.name
+          },
+          opts.delete,
+          we.routes['delete '+opts.itemRoute] || {}
+        );
       }
     }
   });
