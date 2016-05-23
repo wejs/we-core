@@ -10,31 +10,6 @@
     "action": "getConfigsJS",
     "responseType"  : "json"
   },
-  "get /account": {
-    "controller": "auth",
-    "action": "current",
-    "model": "user"
-  },
-  "get /user/:userId([0-9]+)/edit/privacity": {
-    "name"          : "user.privacity",
-    "controller"    : "user",
-    "model"         : "privacity",
-    "action"        : "findUserPrivacity",
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "Privacity",
-    "layoutName"    : "user-layout",
-    "template"      : "user/findUserPrivacity"
-  },
-  "post /user/:userId([0-9]+)/edit/privacity": {
-    "name"          : "user.privacity",
-    "controller"    : "user",
-    "model"         : "privacity",
-    "action"        : "findUserPrivacity",
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "Privacity",
-    "layoutName"    : "user-layout",
-    "template"      : "user/findUserPrivacity"
-  },
   "get /api/v1/routes": {
     "controller": "main",
     "action": "getRoutes",
@@ -46,7 +21,6 @@
     "action"        : "index",
     "permission"    : "access_admin"
   },
-
   "get /admin/theme": {
     "titleHandler"  : "i18n",
     "titleI18n"     : "theme_manage",

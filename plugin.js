@@ -34,14 +34,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     appLogo: '/public/plugin/we-core/files/images/logo-small.png',
 
     robotsTXT: __dirname + '/files/robots.txt',
-
-    defaultUserAvatar: projectPath + '/node_modules/we-core/files/public/images/avatars/user-avatar.png',
-
     log: { level: 'debug' },
-
     // set false to disable request log in dev env
     enableRequestLog: true,
-
     // we.js url alias feature
     enableUrlAlias: true,
 
@@ -164,20 +159,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         logging: plugin.we.log.debug
       }
     },
-    /**
-     * Field privacity settings
-     * @type {Object}
-     */
-    privacity: {
-      userFields: {
-        public: ['displayName', 'avatar', 'banner'],
-        changeable: [
-          'fullName', 'biography', 'gender', 'language', 'organization'
-        ]
-      }
-
-    },
-
     // services register
     // { url: '', oauthCallback: '', name: ''}
     services: {},
@@ -439,24 +420,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
   plugin.assets.addCoreAssetsFiles(plugin);
-
-  plugin.events.on('we:express:set:params', function(data) {
-    // user pre-loader
-    data.express.param('userId', function (req, res, next, id) {
-      if (!/^\d+$/.exec(String(id))) return res.notFound();
-      data.we.db.models.user.findById(id)
-      .then(function (user) {
-        if (!user) return res.notFound();
-        res.locals.user = user;
-        // set user context if userId is the first param
-        if (Object.keys(req.params)[0] == 'userId'){
-          res.locals.widgetContext = 'user-' + id;
-        }
-
-        next();
-      });
-    });
-  });
 
   return plugin;
 };

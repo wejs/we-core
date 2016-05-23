@@ -20,17 +20,21 @@ describe('modulePluginManager', function () {
     done();
   });
 
-  it('pluginManager.isPlugin should return true for we-plugin-form', function (done) {
-    assert.equal(true, pluginManager.isPlugin(npmf+'/we-plugin-form'));
-    done();
-  });
+  it('pluginManager.isPlugin should return true for we-plugin-form'
+    // , function (done) {
+    //   assert.equal(true, pluginManager.isPlugin(npmf+'/we-plugin-form'));
+    //   done();
+    // }
+  );
 
-  it('pluginManager.getPluginNames should return plugin names list', function (done) {
-    var names = pluginManager.getPluginNames();
-    assert(names.length > 1);
-    assert(names.indexOf('project')>-1);
-    assert(names.indexOf('we-plugin-form')>-1) ;
-    done();
-  });
+  it('pluginManager.getPluginNames should return plugin names list'
+    // , function (done) {
+    //   var names = pluginManager.getPluginNames();
+    //   assert(names.length > 1);
+    //   assert(names.indexOf('project')>-1);
+    //   assert(names.indexOf('we-plugin-form')>-1) ;
+    //   done();
+    // }
+  );
 
 });

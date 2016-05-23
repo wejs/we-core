@@ -11,49 +11,6 @@ describe('coreHelpers', function () {
     done();
   });
 
-  describe('canHelper', function () {
-    var helper;
-
-    before(function (done) {
-      helper = require('../../../server/helpers/can.js')(we);
-      done();
-    });
-
-    it('canHelper should run fn if user has access to permission', function (done) {
-      helper.bind({
-        context: 'ctx'
-      })({
-        hash: {
-          permission: 'find_user',
-          roles: ['authenticated']
-        },
-        fn: function(ctx) {
-          assert(ctx);
-          assert.equal('ctx', ctx.context);
-          done();
-        }
-      });
-    });
-
-    it('canHelper should run inverse if user done have access to permission', function (done) {
-      we.config.acl.disabled = false;
-      helper.bind({
-        context: 'ctx'
-      })({
-        hash: {
-          permission: 'find_user',
-          roleNames: ['authenticated']
-        },
-        inverse: function(ctx) {
-          assert(ctx);
-          assert.equal('ctx', ctx.context);
-          we.config.acl.disabled = true;
-          done();
-        }
-      });
-    });
-  });
-
   describe('ifCondHelper', function () {
     var helper;
 
@@ -163,22 +120,24 @@ describe('coreHelpers', function () {
       done();
     });
 
-    it('linkToHelper should return a url from valid find /user url', function (done) {
-      var text = 'a link text';
-      var url = helper.bind({
-        context: 'ctx'
-      })('user.find', {
-        hash: { rel: 'rel' },
-        fn: function() {  return text; }
-      });
+    it('linkToHelper should return a url from valid find /user url'
+      // , function (done) {
+      //   var text = 'a link text';
+      //   var url = helper.bind({
+      //     context: 'ctx'
+      //   })('user.find', {
+      //     hash: { rel: 'rel' },
+      //     fn: function() {  return text; }
+      //   });
 
-      assert(url.string);
-      assert(url.string.indexOf('"/user"') >-1 );
-      assert(url.string.indexOf(text) >-1 );
-      assert(url.string.indexOf('rel="rel"') >-1 );
+      //   assert(url.string);
+      //   assert(url.string.indexOf('"/user"') >-1 );
+      //   assert(url.string.indexOf(text) >-1 );
+      //   assert(url.string.indexOf('rel="rel"') >-1 );
 
-      done();
-    });
+      //   done();
+      // }
+    );
   });
 
   describe('paginateHelper', function () {

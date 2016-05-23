@@ -60,14 +60,14 @@
     "winston": "2.2.0"
   },
   "devDependencies": {
+    "express-mysql-session": "1.0.0",
     "istanbul": "0.4.3",
     "mocha": "2.4.5",
+    "mysql": "2.10.2",
     "sinon": "1.17.4",
     "supertest": "1.2.0",
     "we-test-tools": "0.3.15",
     "we-theme-admin-default": "1.0.1",
-    "we-theme-site-wejs": "0.3.31",
-    "express-mysql-session": "1.0.0",
-    "mysql": "2.10.2"
+    "we-theme-site-wejs": "0.3.31"
   }
 }
