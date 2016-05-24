@@ -1,7 +1,6 @@
 /**
  * We.js plugin config
  */
-var path = require('path');
 
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
@@ -21,8 +20,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     queryDefaultLimit: 25,
     queryMaxLimit: 300,
     // map reponseType response types, used by Accept headers in response selection
-    responseTypes: ['html', 'json'],
-    defaultResponseType: 'html',
+    responseTypes: ['json'],
+    defaultResponseType: 'json',
     // send nested models in response
     sendNestedModels: true,
     port: process.env.PORT || '4000',
@@ -119,16 +118,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       }
     },
     metadata: {},
-    // // theme configs
-    themes: {
-      // list of all enabled themes how will be load in bootstrap
-      enabled: [],
-      // default app theme
-      app: null,
-      // default admin theme
-      admin: null
-    },
-    clientComponentTemplates: { 'components-core': true },
     // default db config
     database: {
       resetAllData: false,
@@ -170,11 +159,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       //Cache-Control: public, max-age=[maxage]
       maxage: 86400000*15 // 15 days
     },
-    templatesCacheFile: path.resolve(projectPath, 'files/templatesCacheBuilds.js'),
-    loadTemplatesFromCache: {
-      prod: true, dev: false, test: false
-    },
-
     security: {
       // see https://github.com/expressjs/cors#configuration-options for configuration options
       // This may be override by every route configs
@@ -193,127 +177,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
      * @type {Object}
      */
     resourceRoutes: {
-      // pages
-      createForm: function createFormRR(we, cfg, opts) {
-        // GET
-        we.routes['get '+opts.rootRoute+'/create'] = we.utils._.merge(
-          {
-            resourceName: opts.namePrefix+opts.name,
-            layoutName: opts.layoutName, // null = default layout
-            name: opts.namePrefix + opts.name + '.create',
-            action: 'create',
-            controller: cfg.controller,
-            model: cfg.model,
-            template: opts.templateFolderPrefix + opts.name + '/create',
-            fallbackTemplate: opts.tplFolder + 'default/create.hbs',
-            permission: 'create_' + opts.name,
-            titleHandler: 'i18n',
-            titleI18n: opts.name + '.create',
-            breadcrumbHandler: 'create'
-          },
-          opts.create,
-          we.routes['get '+opts.rootRoute+'/create'] || {}
-        );
-        // POST
-        we.routes['post '+opts.rootRoute+'/create'] = we.utils._.merge(
-          {
-            resourceName: opts.namePrefix+opts.name,
-            layoutName: opts.layoutName, // null = default layout
-            action: 'create',
-            controller: cfg.controller,
-            model: cfg.model,
-            template: opts.templateFolderPrefix + opts.name + '/create',
-            fallbackTemplate: opts.tplFolder + 'default/create.hbs',
-            permission: 'create_' + opts.name,
-            titleHandler: 'i18n',
-            titleI18n: opts.name + '.create',
-            breadcrumbHandler: 'create'
-          },
-          opts.create,
-          we.routes['post '+opts.rootRoute+'/create'] || {}
-        );
-      },
-      editForm: function editFormRR(we, cfg, opts, Model) {
-        // GET
-        we.routes['get '+opts.itemRoute+'/edit'] = we.utils._.merge(
-          {
-            resourceName: opts.namePrefix+opts.name,
-            name: opts.namePrefix + opts.name + '.edit',
-            layoutName: opts.layoutName, // null = default layout
-            action: 'edit',
-            controller: cfg.controller,
-            model: cfg.model,
-            template: opts.templateFolderPrefix + opts.name + '/edit',
-            fallbackTemplate: opts.tplFolder + 'default/edit.hbs',
-            permission: 'update_' + opts.name,
-            titleHandler: opts.itemTitleHandler,
-            titleField: Model.options.titleField,
-            titleI18n: opts.name + '.edit',
-            breadcrumbHandler: 'edit'
-          },
-          opts.edit,
-          we.routes['get '+opts.itemRoute+'/edit'] || {}
-        );
-        // POST
-        we.routes['post '+opts.itemRoute+'/edit'] = we.utils._.merge(
-          {
-            resourceName: opts.namePrefix+opts.name,
-            action: 'edit',
-            layoutName: opts.layoutName, // null = default layout
-            controller: cfg.controller,
-            model: cfg.model,
-            template: opts.templateFolderPrefix + opts.name + '/edit',
-            fallbackTemplate: opts.tplFolder + 'default/edit.hbs',
-            permission: 'update_' + opts.name,
-            titleHandler: opts.itemTitleHandler,
-            titleField: Model.options.titleField,
-            titleI18n: opts.name + '.edit',
-            breadcrumbHandler: 'edit'
-          },
-          opts.edit,
-          we.routes['post '+opts.itemRoute+'/edit'] || {}
-        );
-      },
-      deleteForm: function deleteFormRR(we, cfg, opts, Model) {
-        we.routes['get '+opts.itemRoute+'/delete'] = we.utils._.merge(
-          {
-            resourceName: opts.namePrefix+opts.name,
-            name: opts.namePrefix + opts.name + '.delete',
-            action: 'delete',
-            layoutName: opts.layoutName, // null = default layout
-            controller: cfg.controller,
-            model: cfg.model,
-            template: opts.templateFolderPrefix + opts.name + '/delete',
-            fallbackTemplate: opts.tplFolder + 'default/delete.hbs',
-            permission: 'delete_' + opts.name,
-            titleHandler: opts.itemTitleHandler,
-            titleField: Model.options.titleField,
-            titleI18n: opts.name + '.delete',
-            breadcrumbHandler: 'delete'
-          },
-          opts.delete,
-          we.routes['get '+opts.itemRoute+'/delete'] || {}
-        );
-        // POST
-        we.routes['post '+opts.itemRoute+'/delete'] = we.utils._.merge(
-          {
-            resourceName: opts.namePrefix+opts.name,
-            action: 'delete',
-            layoutName: opts.layoutName, // null = default layout
-            controller: cfg.controller,
-            model: cfg.model,
-            template: opts.templateFolderPrefix + opts.name + '/delete',
-            fallbackTemplate:  opts.tplFolder + 'default/delete.hbs',
-            permission: 'delete_' + opts.name,
-            titleHandler: opts.itemTitleHandler,
-            titleField: Model.options.titleField,
-            titleI18n: opts.name + '.delete',
-            breadcrumbHandler: 'delete'
-          },
-          opts.delete,
-          we.routes['post '+opts.itemRoute+'/delete'] || {}
-        );
-      },
       // apis
       createAPI: function createAPIRR(we, cfg, opts) {
         // set post create on list for APIS
@@ -411,13 +274,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       }
     }
   });
-
-  plugin.setLayouts({
-    default: __dirname + '/server/templates/default-layout.hbs',
-    'user/layout': __dirname + '/server/templates/user/layout.hbs'
-  });
-
-  plugin.assets.addCoreAssetsFiles(plugin);
 
   return plugin;
 };

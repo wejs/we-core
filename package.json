@@ -68,10 +68,12 @@
     "winston": "2.2.0"
   },
   "devDependencies": {
+    "chance": "^1.0.3",
     "express-mysql-session": "1.0.0",
     "istanbul": "0.4.3",
     "mocha": "2.4.5",
     "mysql": "2.10.2",
+    "ncp": "^2.0.0",
     "sinon": "1.17.4",
     "supertest": "1.2.0",
     "we-test-tools": "0.3.15",

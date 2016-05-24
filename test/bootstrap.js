@@ -3,40 +3,43 @@ var path = require('path');
 var deleteDir = require('rimraf');
 var async = require('async');
 var testTools = require('we-test-tools');
+var ncp = require('ncp').ncp;
 var We = require('../lib');
 var we;
-
-// we-test-tools
 
 before(function(callback) {
   this.slow(100);
 
   testTools.copyLocalConfigIfNotExitst(projectPath, function() {
-    we = new We();
-
-    testTools.init({}, we);
-
-    we.bootstrap({
-      // disable access log
-      enableRequestLog: false,
-
-      i18n: {
-        directory: path.resolve(__dirname, '..', 'config/locales'),
-        updateFiles: true
-      },
-      themes: {
-        enabled: ['we-theme-site-wejs', 'we-theme-admin-default'],
-        app: 'we-theme-site-wejs',
-        admin: 'we-theme-admin-default'
+    ncp(
+      path.resolve(__dirname, 'testData/we-plugin-post'),
+      path.resolve(process.cwd(), 'node_modules/we-plugin-post'), function (err) {
+      if (err) {
+        return console.error(err);
       }
-    }, function (err, we) {
-      if (err) return console.error(err);
-      we.startServer(function (err) {
-        if (err) return console.error(err);
-        callback();
-      });
-    });
 
+      we = new We();
+
+      testTools.init({}, we);
+
+      we.bootstrap({
+        // disable access log
+        enableRequestLog: false,
+
+        i18n: {
+          directory: path.resolve(__dirname, '..', 'config/locales'),
+          updateFiles: true
+        },
+        themes: {}
+      }, function (err, we) {
+        if (err) return console.error(err);
+        we.startServer(function (err) {
+          if (err) return console.error(err);
+          callback();
+        });
+      });
+
+    });
   });
 });
 
@@ -49,6 +52,7 @@ after(function (callback) {
     we.db.defaultConnection.close();
 
     var tempFolders = [
+      path.resolve(process.cwd(), 'node_modules/we-plugin-post'),
       projectPath + '/files/tmp',
       projectPath + '/files/config',
       projectPath + '/files/sqlite',

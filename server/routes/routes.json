@@ -9,14 +9,5 @@
     "controller"    : "admin",
     "action"        : "index",
     "permission"    : "access_admin"
-  },
-  "get /admin/theme": {
-    "titleHandler"  : "i18n",
-    "titleI18n"     : "theme_manage",
-    "name"          : "theme_manage",
-    "controller"    : "admin",
-    "action"        : "findThemes",
-    "template"      : "admin/theme/index",
-    "permission"    : "manage_theme"
   }
 }

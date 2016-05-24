@@ -10,14 +10,14 @@ describe('controllers.admin', function () {
     done();
   });
 
-  it('admin.index action may set res.locals.template and run res.view', function (done) {
-    var res = { locals: {}, view: function(){}};
+  it('admin.index action may set res.locals.template and run res.ok', function (done) {
+    var res = { locals: {}, ok: function(){}};
 
-    sinon.spy(res, 'view');
+    sinon.spy(res, 'ok');
 
     controller.index({}, res);
     assert.equal(res.locals.template, 'home/index');
-    assert(res.view.called);
+    assert(res.ok.called);
     done();
   });
 });
