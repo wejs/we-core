@@ -1,13 +1,10 @@
-#We.js core module for v0.3.x+
+# We.js core module :green_heart:
 
-[![Join the chat at https://gitter.im/wejs/we](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/wejs/we?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/wejs/we](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/wejs/we?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/wejs/we-core.svg?branch=master)](https://travis-ci.org/wejs/we-core) [![Dependency Status](https://david-dm.org/wejs/we-core.png)](https://david-dm.org/wejs/we-core)
 
-[![Build Status](https://travis-ci.org/wejs/we-core.svg?branch=master)](https://travis-ci.org/wejs/we-core)
-[![Dependency Status](https://david-dm.org/wejs/we-core.png)](https://david-dm.org/wejs/we-core)
+**Main repository: https://github.com/wejs/we **
 
-### Main repository: https://github.com/wejs/we
-
-Site: [http://wejs.org](wejs.org)
+Site: [http://wejs.org](https://wejs.org)
 
 Status:  **maintained**
 
@@ -39,7 +36,7 @@ npm test
 ##### For run only 'userFeature' test use:
 
 ```sh
-NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b -g 'userFeature'
+we test -g 'resourceRequests'
 ```
 
 ##### For run the code coverage 
@@ -49,6 +46,7 @@ npm run coverage
 ```
 
 ## NPM Info:
+
 [![NPM](https://nodei.co/npm/we-core.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/we-core/)
 
 ## License
