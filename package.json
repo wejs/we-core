@@ -18,10 +18,7 @@
     "API",
     "SPA"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:wejs/we-plugin-core.git"
-  },
+  "repository": "wejs/we-plugin-core",
   "files": [
     "files",
     "lib",
