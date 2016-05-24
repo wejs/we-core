@@ -73,5 +73,8 @@
     "sinon": "1.17.4",
     "supertest": "1.2.0",
     "we-test-tools": "wejs/we-test-tools"
+  },
+  "engines": {
+    "node": ">=0.4.0"
   }
 }
