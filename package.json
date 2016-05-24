@@ -75,8 +75,6 @@
     "ncp": "^2.0.0",
     "sinon": "1.17.4",
     "supertest": "1.2.0",
-    "we-test-tools": "0.3.16",
-    "we-theme-admin-default": "1.0.1",
-    "we-theme-site-wejs": "0.3.31"
+    "we-test-tools": "wejs/we-test-tools"
   }
 }
