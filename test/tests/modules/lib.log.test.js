@@ -31,12 +31,11 @@ describe('lib/log', function () {
   it('should return logger with config file', function (done) {
     we.projectPath = path.resolve(__dirname, '../../testData');
 
-    process.env.LOG_LV = '';
     delete process.env.LOG_LV;
 
     var logger = getLogger(we);
 
-    // assert.equal(logger.transports.console.level, 'warn');
+    assert.equal(logger.transports.console.level, 'warn');
     assert.equal(logger.transports.console.depth, 6);
 
     we.projectPath = process.cwd();

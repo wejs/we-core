@@ -28,7 +28,8 @@ before(function(callback) {
 
         i18n: {
           directory: path.resolve(__dirname, '..', 'config/locales'),
-          updateFiles: true
+          updateFiles: true,
+          locales: ['en-us']
         },
         themes: {}
       }, function (err, we) {
