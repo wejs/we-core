@@ -19,7 +19,7 @@ describe('lib/log', function () {
     }
   });
 
-  it('should return logged without config file', function (done) {
+  it('should return logger without config file', function (done) {
     var logger = getLogger(we);
 
     assert.equal(logger.transports.console.level, 'info');
@@ -28,9 +28,10 @@ describe('lib/log', function () {
     done();
   });
 
-  it('should return logged with config file', function (done) {
+  it('should return logger with config file', function (done) {
     we.projectPath = path.resolve(__dirname, '../../testData');
 
+    process.env.LOG_LV = '';
     delete process.env.LOG_LV;
 
     var logger = getLogger(we);
