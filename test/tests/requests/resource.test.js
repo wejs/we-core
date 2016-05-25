@@ -58,6 +58,70 @@ describe('resourceRequests', function() {
           });
         }).catch(done);
       });
+
+      it ('should search for posts by title', function (done) {
+        var posts = [
+          postStub(),
+          postStub(),
+          postStub()
+        ];
+
+        we.db.models.post.bulkCreate(posts)
+        .spread(function(){
+          request(http)
+          .get('/post?title='+posts[1].title)
+          .set('Accept', 'application/json')
+          .expect(200)
+          .end(function (err, res) {
+            if (err) throw err;
+
+            assert.equal(res.body.post.length, 1);
+            assert(res.body.post[0].id, posts[1].title);
+            assert.equal(res.body.post[0].title, posts[1].title);
+            assert.equal(res.body.post[0].text, posts[1].text);
+
+            assert.equal(res.body.meta.count, 1);
+
+            done();
+          });
+        }).catch(done);
+      });
+
+
+      it ('should search for posts by text', function (done) {
+        var posts = [
+          postStub(),
+          postStub(),
+          postStub(),
+          postStub()
+        ];
+
+        var searchText = ' mussum ipsum';
+
+        posts[1].text += searchText;
+        posts[2].text += searchText;
+
+        we.db.models.post.bulkCreate(posts)
+        .spread(function(){
+          request(http)
+          .get('/post?text='+searchText)
+          .set('Accept', 'application/json')
+          .expect(200)
+          .end(function (err, res) {
+            if (err) throw err;
+
+            assert.equal(res.body.post.length, 2);
+
+            res.body.post.forEach(function(p){
+              assert(p.text.indexOf(searchText) >-1);
+            })
+
+            assert.equal(res.body.meta.count, 2);
+
+            done();
+          });
+        }).catch(done);
+      });
     });
 
     describe('GET /post/:id', function(){

@@ -11,6 +11,6 @@ module.exports = {
   index: function(req, res) {
     if (!res.locals.template) res.locals.template = 'home/index';
     res.locals.title = null; // dont show duplicated titles
-    res.view();
+    res.ok();
   }
 };
