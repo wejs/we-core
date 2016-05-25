@@ -5,6 +5,9 @@
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
 
+  // folder for fallback templates
+  plugin.tplFolder = projectPath + '/node_modules/we-plugin-view/server/templates/';
+
   // set plugin configs
   plugin.setConfigs({
     // plugins to load, default is null for auto load all npm modules starting with we- prefix
@@ -203,7 +206,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             controller: cfg.controller,
             model: cfg.model,
             template: opts.templateFolderPrefix + opts.name + '/find',
-            fallbackTemplate: opts.tplFolder + 'default/find.hbs',
+            fallbackTemplate: plugin.tplFolder + 'default/find.hbs',
             permission: 'find_' + opts.name,
             titleHandler: 'i18n',
             titleI18n: opts.name + '.find',
@@ -235,7 +238,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             controller: cfg.controller,
             model: cfg.model,
             template: opts.templateFolderPrefix + opts.name + '/findOne',
-            fallbackTemplate: opts.tplFolder + 'default/findOne.hbs',
+            fallbackTemplate: plugin.tplFolder + 'default/findOne.hbs',
             permission: 'find_' + opts.name,
             titleHandler: opts.itemTitleHandler,
             titleField: Model.options.titleField,
