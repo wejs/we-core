@@ -50,7 +50,6 @@
     "node-uuid": "1.4.7",
     "nodemailer": "2.4.1",
     "nodemailer-smtp-transport": "2.5.0",
-    "rc": "1.1.6",
     "recursive-readdir": "2.0.0",
     "request": "2.72.0",
     "require-all": "2.0.0",
