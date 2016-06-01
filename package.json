@@ -46,14 +46,12 @@
     "mkdirp": "0.5.1",
     "moment": "2.13.0",
     "morgan": "1.7.0",
-    "multer": "1.1.0",
     "node-uuid": "1.4.7",
     "nodemailer": "2.4.1",
     "nodemailer-smtp-transport": "2.5.0",
     "recursive-readdir": "2.0.0",
     "request": "2.72.0",
     "require-all": "2.0.0",
-    "rimraf": "2.5.2",
     "sanitize-html": "1.11.4",
     "sequelize": "3.23.2",
     "serve-favicon": "~2.3.0",
@@ -63,6 +61,7 @@
     "winston": "2.2.0"
   },
   "devDependencies": {
+    "rimraf": "2.5.2",
     "chance": "^1.0.3",
     "express-mysql-session": "1.0.0",
     "istanbul": "0.4.3",
