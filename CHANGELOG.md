@@ -1,7 +1,8 @@
 # Change log file
 
 ## Changes:
-
+- v1.5.0: Big update in cli and generators, Moved email features to we-plugin-email
+  - To update run `npm install --save we-plugin-email`
 - v1.4.0: Split we-core in small modules and update app project to be ready to APIs
   - To update run `npm install --save we-plugin-editor-summernote we-plugin-url-alias we-plugin-user we-plugin-view we-plugin-widget we-plugin-acl we-plugin-auth` 
   - And update we-core to v1.4.0 `npm install we-core`
