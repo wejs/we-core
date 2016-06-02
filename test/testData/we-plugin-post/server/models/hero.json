@@ -6,17 +6,6 @@
     },
     "history": {
       "type": "text"
-    },
-    "XP": {
-      "type": "INTEGER",
-      "defaltValue": 0
-    },
-    "level": {
-      "type": "INTEGER",
-      "defaultValue": 0
-    },
-    "race": {
-      "type": "string"
     }
   },
   "associations": {
@@ -26,5 +15,7 @@
       "required": true
     }
   },
-  "hooks": {}
+  "hooks": {
+    "afterCreate": ["logHero"]
+  }
 }

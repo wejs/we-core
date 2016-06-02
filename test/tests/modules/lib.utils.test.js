@@ -17,7 +17,7 @@ describe('lib/utils', function () {
       utils.listFilesRecursive(folder, function(err, files){
         if (err) return done(err);
 
-        assert.equal(files.length, 6);
+        assert.equal(files.length, 7);
 
         assert(files.indexOf(folder+'/package.json') > -1);
         assert(files.indexOf(folder+'/plugin.js') > -1);
