@@ -55,36 +55,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     // body parser settings to use in bodyParser.json()
     bodyParser: { limit: 20000000 },
-    // see https://github.com/andris9/nodemailer-smtp-transport for config options
-    email: {
-      // default mail options
-      mailOptions: {
-        // by default log emails in console
-        sendToConsole: true,
-        // default from and to
-        from: 'We.js project <contato@wejs.org>', // sender address
-        subject: 'A We.js project email', // Subject line
-      },
-      // connection configs
-      port: 25,
-      auth: {
-        user: '',
-        pass: ''
-      },
-      debug: true,
-      ignoreTLS: false,
-      name: null,
-      // optional params
-      // host: 'localhost',
-      // secure: 'true',
-      // localAddress: '',
-      // connectionTimeout: '',
-      // greetingTimeout: '',
-      // socketTimeout: '',
-
-      // authMethod: '',
-      // tls: ''
-    },
     // external services API keys
     apiKeys: {},
     // node-i18n configs
