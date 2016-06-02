@@ -1,0 +1,30 @@
+{
+  "attributes": {
+    "name": {
+      "type": "string",
+      "allowNull": false
+    },
+    "history": {
+      "type": "text"
+    },
+    "XP": {
+      "type": "INTEGER",
+      "defaltValue": 0
+    },
+    "level": {
+      "type": "INTEGER",
+      "defaultValue": 0
+    },
+    "race": {
+      "type": "string"
+    }
+  },
+  "associations": {
+    "creator": {
+      "type": "belongsTo",
+      "model": "user",
+      "required": true
+    }
+  },
+  "hooks": {}
+}
