@@ -1,6 +1,8 @@
 # Change log file
 
 ## Changes:
+- v1.6.0: we-plugin-file api updated, 
+  - to update: run `we update` and install we-plugin-file-local 
 - v1.5.0: Big update in cli and generators, Moved email features to we-plugin-email
   - To update run `npm install --save we-plugin-email`
 - v1.4.0: Split we-core in small modules and update app project to be ready to APIs
