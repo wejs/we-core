@@ -122,6 +122,39 @@ describe('resourceRequests', function() {
           });
         }).catch(done);
       });
+
+      it ('should search for posts by text with and and inTitleAndText, orWithComaParser search in q param', function (done) {
+        var posts = [
+          postStub(),
+          postStub(),
+          postStub(),
+          postStub()
+        ];
+
+        var searchText = ' mussum ipsum';
+        var searchText2 = '2222m ipsum';
+
+        posts[1].title = searchText;
+        posts[1].text = searchText;
+
+        posts[2].title = searchText2;
+        posts[2].text = searchText2;
+
+        we.db.models.post.bulkCreate(posts)
+        .spread(function(){
+          request(http)
+          .get('/post?q='+searchText+','+searchText2)
+          .set('Accept', 'application/json')
+          .expect(200)
+          .end(function (err, res) {
+            if (err) throw err;
+            assert.equal(res.body.post.length, 2);
+            assert.equal(res.body.meta.count, 2);
+
+            done();
+          });
+        }).catch(done);
+      });
     });
 
     describe('GET /post/:id', function(){

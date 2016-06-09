@@ -6,7 +6,7 @@
 , "devel": true
 , "eqeqeq": false
 , "eqnull": true
-, "es5": false
+, "esversion": 6
 , "evil": false
 , "immed": false
 , "indent": 2

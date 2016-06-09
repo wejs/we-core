@@ -18,6 +18,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             type: 'field',
             field: 'text'
           }
+        },
+        q: {
+          parser: 'orWithComaParser',
+          target: {
+            type: 'inTitleAndText'
+          }
         }
       }
     }
