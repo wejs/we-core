@@ -7,3 +7,5 @@ test
 config
 coverage
 *.log
+src
+coverage

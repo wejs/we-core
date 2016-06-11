@@ -3,8 +3,8 @@
  *
  */
 
-var _ = require('lodash'),
-  path = require('path');
+const _ = require('lodash'),
+  path = require('path')
 
 module.exports = function(we) {
   /**
@@ -13,7 +13,7 @@ module.exports = function(we) {
    * @param {string} name   theme npm pakage name
    * @param {string} projectPath project path where the theme is instaled
    */
-  function Theme(name, projectPath, options) {
+  function Theme (name, projectPath, options) {
     if (!name || (typeof name !== 'string') ) {
       return new Error('Param name is required for instantiate a new Theme object');
     }
