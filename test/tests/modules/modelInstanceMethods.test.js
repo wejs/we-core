@@ -2,18 +2,18 @@ var assert = require('assert');
 var helpers = require('we-test-tools').helpers;
 var we;
 
-describe('modelHooks', function () {
+describe('modelInstanceMethods', function () {
   before(function (done) {
     we = helpers.getWe();
     done();
   });
 
-  it('Should load model hooks from plugin', function (done) {
-    assert(we.db.modelHooks.setWananingoValue);
+  it('Should load model instanceMethods from plugin', function (done) {
+    assert(we.db.modelInstanceMethods.returnModelId);
     done();
   });
 
-  it('Should run the model hook in right model hook', function (done) {
+  it('Should run the model instanceMethod in right model', function (done) {
     var hs = {
       name: 'Iron Man',
       history: 'Iron Man (Tony Stark) is a fictional superhero appearing in American comic '+
@@ -25,7 +25,7 @@ describe('modelHooks', function () {
 
     we.db.models.hero.create(hs)
     .then(function(h) {
-      assert.equal(h.wananingo, true);
+      assert.equal(h.returnModelId(), h.id);
 
       done();
     })

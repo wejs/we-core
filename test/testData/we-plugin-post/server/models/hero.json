@@ -16,6 +16,8 @@
     }
   },
   "hooks": {
-    "afterCreate": ["logHero"]
-  }
+    "afterCreate": ["setWananingoValue"]
+  },
+  "classMethods": { "returnModelName": true },
+  "instanceMethods": { "returnModelId": true }
 }
