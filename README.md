@@ -12,7 +12,7 @@ Status:  **maintained**
 
 ## Install for develop we.js core:
 
-> after install npm and node.js
+After install npm and node.js
 
 ```js
 // clone this project
@@ -24,6 +24,12 @@ npm install
 // test
 npm test
 ```
+
+## Development:
+
+Run `npm run cw` for compile files in src to lib folder
+
+Only edit code in **src** folder
 
 ### How to test
 
