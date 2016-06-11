@@ -1,7 +1,7 @@
 # Change log file
 
 ## Changes:
-- v1.6.0: we-plugin-file api updated, 
+- v1.6.0: we-plugin-file api updated. Title, breadcrumb and metatag moved to we-plugin-view, add babel in we-core.
   - to update: run `we update` and install we-plugin-file-local 
 - v1.5.0: Big update in cli and generators, Moved email features to we-plugin-email
   - To update run `npm install --save we-plugin-email`
