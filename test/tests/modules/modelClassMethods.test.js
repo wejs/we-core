@@ -15,7 +15,7 @@ describe('modelClassMethods', function () {
 
   it('Should run the model classMethod in right model', function (done) {
 
-    assert(we.db.models.hero.returnModelName(), 'hero');
+    assert(we.db.models.hero.returnModelNameccc(), 'hero');
 
     done();
   });

@@ -22,6 +22,10 @@
   "hooks": {
     "afterCreate": ["setWananingoValue"]
   },
-  "classMethods": { "returnModelName": true },
-  "instanceMethods": { "returnModelId": true }
+  "classMethods": {
+    "returnModelNameccc": "returnModelName"
+  },
+  "instanceMethods": {
+    "returnModelIdiii": "returnModelId"
+  }
 }

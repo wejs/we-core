@@ -25,7 +25,7 @@ describe('modelInstanceMethods', function () {
 
     we.db.models.hero.create(hs)
     .then(function(h) {
-      assert.equal(h.returnModelId(), h.id);
+      assert.equal(h.returnModelIdiii(), h.id);
 
       done();
     })

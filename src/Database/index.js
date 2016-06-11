@@ -378,7 +378,7 @@ Database.prototype.setModelClassMethods = function setModelClassMethods () {
   modelNames
   .filter((mn) => { return db.modelsConfigs[mn].classMethods })
   .forEach(function setHook (mn) {
-    let i, fns
+    let clName
     let cms = db.modelsConfigs[mn].classMethods
 
     if (!db.modelsConfigs[mn].options)
@@ -386,23 +386,16 @@ Database.prototype.setModelClassMethods = function setModelClassMethods () {
     if (!db.modelsConfigs[mn].options.classMethods)
       db.modelsConfigs[mn].options.classMethods = {}
 
-    // hooks may be defined with arrays or objects
-    if (_.isArray(cms)) {
-      fns = cms
-    } else {
-      fns = Object.keys(cms)
-    }
-
-    for (i = 0; i < fns.length; i++) {
-      fnName = fns[i]
+    for (clName in cms) {
+      fnName = cms[clName]
 
       if (!db.modelClassMethods[fnName]) {
         db.we.log.warn('db.setModelClassMethods: model classMethod function not found', fnName)
       } else {
-        db.modelsConfigs[mn].options.classMethods[fnName] = db.modelClassMethods[fnName]
+        db.modelsConfigs[mn].options.classMethods[clName] = db.modelClassMethods[fnName]
       }
     }
-  });
+  })
 }
 
 /**
@@ -417,29 +410,22 @@ Database.prototype.setModelInstanceMethods = function setModelInstanceMethods() 
   modelNames
   .filter(mn => { return db.modelsConfigs[mn].instanceMethods })
   .forEach(function setHook (mn) {
-    let i, fns
+    let clName
     let ims = db.modelsConfigs[mn].instanceMethods
 
     if (!db.modelsConfigs[mn].options.instanceMethods)
       db.modelsConfigs[mn].options.instanceMethods = {}
 
-    // hooks may be defined with arrays or objects
-    if (_.isArray(ims)) {
-      fns = ims
-    } else {
-      fns = Object.keys(ims)
-    }
-    // is array
-    for (i = 0; i < fns.length; i++) {
-      fnName = fns[i]
+    for (clName in ims) {
+      fnName = ims[clName]
 
       if (!db.modelInstanceMethods[fnName]) {
         db.we.log.warn('db.setModelInstanceMethods: model instanceMethod function not found', fnName)
       } else {
-        db.modelsConfigs[mn].options.instanceMethods[fnName] = db.modelInstanceMethods[fnName]
+        db.modelsConfigs[mn].options.instanceMethods[clName] = db.modelInstanceMethods[fnName]
       }
     }
-  });
+  })
 }
 /**
  * Check records privacity
