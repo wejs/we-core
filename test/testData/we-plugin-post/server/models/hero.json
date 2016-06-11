@@ -4,6 +4,10 @@
       "type": "string",
       "allowNull": false
     },
+    "price": {
+      "type": "DECIMAL",
+      "size": [10, 2]
+    },
     "history": {
       "type": "text"
     }
