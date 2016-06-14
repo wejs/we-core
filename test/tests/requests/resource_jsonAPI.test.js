@@ -80,8 +80,8 @@ describe('resourceRequests_jsonAPI', function() {
             assert(res.body.data)
             assert(_.isArray(res.body.data) )
 
-            for (let i = 0; i < posts.length; i++) {
-              let p = posts[i]
+            for (var i = 0; i < posts.length; i++) {
+              var p = posts[i]
 
               assert(res.body.data[i].relationships)
               assert(res.body.data[i].attributes)
