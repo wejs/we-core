@@ -3,7 +3,7 @@
  *
  * All controllers is instance of this Controller prototype and have all actions defined here
  */
-const _ = require('lodash')
+import _ from 'lodash'
 
 /**
  * Constructor

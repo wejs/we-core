@@ -61,8 +61,8 @@ let JSONApi = {
         if (!d[a]) return;
 
         if (isArray(d[a])) {
-          // TODO
-          req.we.log.warn('JSONApi associations with hasMany and belongsToMany not is implemented')
+          // parse hasMany and BellongsToMany
+          JSONApi.parseNxNAssociation(mc, a, d[a], relationships, included, req.we)
           return;
         }
 
@@ -126,8 +126,8 @@ let JSONApi = {
     mc.associationNames.forEach(a => {
       if (!d[a]) return;
       if (isArray(d[a])) {
-        // TODO
-        req.we.log.warn('JSONApi associations with hasMany and belongsToMany not is implemented')
+        // parse hasMany and BellongsToMany
+        JSONApi.parseNxNAssociation(mc, a, d[a], relationships, included, req.we)
         return;
       }
 
@@ -180,6 +180,36 @@ let JSONApi = {
     }
 
     return req.body
+  },
+
+  parseNxNAssociation: function parseNxNAssociation (mc, attrN, items, relationships, included) {
+    let modelName = mc.associations[attrN].model
+
+    if (!relationships[attrN]) {
+      relationships[attrN] = {
+        data: []
+      }
+    }
+
+    items.forEach(item => {
+
+      relationships[attrN].data.push({
+        id: item.id,
+        type: modelName
+      })
+
+      let iid = modelName + '_' + item.id
+      // skyp if record alread in included
+      if (included[iid]) return
+
+      if (!included[iid]) {
+        included[iid] = {
+          type: modelName,
+          id: item.id,
+          attributes: item
+        }
+      }
+    })
   },
 
   crud: {
