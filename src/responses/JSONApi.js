@@ -170,14 +170,15 @@ let JSONApi = {
     // create and update actions
     if (actions.includes(context.config.action)) {
       // atributes is required
-      if (!req.body.attributes) return req.body
+      if (!req.body.data || !req.body.data.attributes) return req.body
       // change json api body to default we.js controller body compatible with sequelize
-      for (let attr in req.body.attributes) {
-        req.body[attr] = req.body.attributes[attr]
+      for (let attr in req.body.data.attributes) {
+        req.body[attr] = req.body.data.attributes[attr]
       }
-      // TODO parse req.body.relationships
+      // TODO parse req.body.data.relationships
       //
     }
+
     return req.body
   },
 

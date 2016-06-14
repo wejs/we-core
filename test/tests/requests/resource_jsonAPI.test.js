@@ -8,13 +8,15 @@ var _, http, we;
 function postStub (creatorId, jsonAPI) {
   if (jsonAPI) {
     return {
-      attributes: {
-        title: chance.sentence({words: 5}),
-        text: chance.paragraph(),
-        creatorId: creatorId
-      },
-      relationships: {
-        creator: [ { id: creatorId, type: 'user '}]
+      data: {
+        attributes: {
+          title: chance.sentence({words: 5}),
+          text: chance.paragraph(),
+          creatorId: creatorId
+        },
+        relationships: {
+          creator: [ { id: creatorId, type: 'user '}]
+        }
       }
     }
   } else {
@@ -314,15 +316,15 @@ describe('resourceRequests_jsonAPI', function() {
 
           assert(res.body.data.id);
           assert.equal(res.body.data.type, 'post');
-          assert.equal(res.body.data.attributes.title, p.attributes.title);
-          assert.equal(res.body.data.attributes.text, p.attributes.text);
+          assert.equal(res.body.data.attributes.title, p.data.attributes.title);
+          assert.equal(res.body.data.attributes.text, p.data.attributes.text);
 
           done();
         });
       });
 
       it ('should create one resource with valid data and JSONApi post data', function (done) {
-        var p = postStub();
+        var p = postStub(null, true);
         request(http)
         .post('/post')
         .send(p)
@@ -337,16 +339,16 @@ describe('resourceRequests_jsonAPI', function() {
 
           assert(res.body.data.id);
           assert.equal(res.body.data.type, 'post');
-          assert.equal(res.body.data.attributes.title, p.title);
-          assert.equal(res.body.data.attributes.text, p.text);
+          assert.equal(res.body.data.attributes.title, p.data.attributes.title);
+          assert.equal(res.body.data.attributes.text, p.data.attributes.text);
 
           done();
         });
       });
 
       it ('should return error if not set an not null attr', function (done) {
-        var p = postStub();
-        p.title = null;
+        var p = postStub(null, true);
+        p.data.attributes.title = null;
 
         request(http)
         .post('/post')
@@ -362,8 +364,8 @@ describe('resourceRequests_jsonAPI', function() {
           assert.equal(res.body.meta.messages[0].status, 'danger');
           assert.equal(res.body.meta.messages[0].message, 'title cannot be null');
 
-          assert.equal(res.body.data.attributes.title, p.title);
-          assert.equal(res.body.data.attributes.text, p.text);
+          assert.equal(res.body.data.attributes.title, p.data.attributes.title);
+          assert.equal(res.body.data.attributes.text, p.data.attributes.text);
 
           done();
         });
