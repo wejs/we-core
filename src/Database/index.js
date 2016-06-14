@@ -4,8 +4,8 @@
  * This file load default database logic with sequelize
  */
 
-const Sequelize = require('sequelize'),
-  _ = require('lodash')
+import Sequelize from 'sequelize'
+import { merge, isArray } from 'lodash'
 
 function Database (we) {
   this.we = we
@@ -163,7 +163,7 @@ Database.prototype.connect = function connect() {
   this.activeConnectionConfig = configs
 
   // set we.js core model definition configs
-  _.merge(configs, this.defaultModelDefinitionConfigs)
+  merge(configs, this.defaultModelDefinitionConfigs)
 
   if (!configs.logging && configs.logging !== false) {
     configs.logging = this.we.log.debug
@@ -344,7 +344,7 @@ Database.prototype.setModelHooks = function setModelHooks() {
 
     for (hname in hooks) {
       // hooks may be defined with arrays or objects
-      if (_.isArray(hooks[hname])) {
+      if (isArray(hooks[hname])) {
         fns = hooks[hname]
       } else {
         fns = Object.keys(hooks[hname])
@@ -433,7 +433,7 @@ Database.prototype.setModelInstanceMethods = function setModelInstanceMethods() 
  * @param  {Object|Array} data records
  */
 Database.prototype.checkRecordsPrivacity = function checkRecordsPrivacity (data) {
-  if (_.isArray(data)) {
+  if (isArray(data)) {
     for (let i = data.length - 1; i >= 0; i--) {
       if (data[i].privacity) {
         this.checkPrivacity(data[i]);
@@ -455,7 +455,7 @@ Database.prototype.checkPrivacity = function checkPrivacity (obj) {
       delete obj.dataValues[obj.privacity[i].field];
     }
 
-    if (_.isArray(obj[i])) {
+    if (isArray(obj[i])) {
       for (let j = obj[i].length - 1; j >= 0; j--) {
         if (obj[i][j].privacity && obj[i][j].dataValues) {
           this.checkPrivacity(obj[i][j]);

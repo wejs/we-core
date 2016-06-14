@@ -3,19 +3,19 @@
  */
 
 // Module dependencies.
-const async = require('async'),
-  http = require('http'),
-  _ = require('lodash'),
-  path = require('path'),
-  localization = require('./localization'),
-  staticConfig = require('./staticConfig'),
-  Database = require('./Database'),
-  Hooks = require('./Hooks'),
-  PluginManager = require('./PluginManager'),
-  Router = require('./Router'),
-  Sanitizer = require('./Sanitizer'),
-  EventEmiter = require('events'),
-  weExpress = require('./express')
+import async from 'async'
+import http from 'http'
+import _ from 'lodash'
+import path from 'path'
+import localization from './localization'
+import staticConfig from './staticConfig'
+import Database from './Database'
+import Hooks from './Hooks'
+import PluginManager from './PluginManager'
+import Router from './Router'
+import Sanitizer from './Sanitizer'
+import EventEmiter from 'events'
+import weExpress from './express'
 
 /**
  * We.js object

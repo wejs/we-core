@@ -1,6 +1,6 @@
-const path = require('path'),
-  fs = require('fs'),
-  _ = require('lodash')
+import path from 'path'
+import fs from 'fs'
+import _ from 'lodash'
 
 let projectPath, nodeModulesPath = process.cwd()
 

@@ -1,4 +1,4 @@
-const _ = require('lodash')
+import { clone, isArray } from 'lodash'
 
 /**
  * Build model config for definition from  JSON model config
@@ -21,10 +21,10 @@ module.exports = function defineModelFromJson (model, we) {
 function parseModelAttributes (attrs, we) {
   if (!attrs) return {}
 
-  var attr = {}
+  let attr = {}
 
-  for (var name in attrs) {
-    attr[name] = _.clone(attrs[name])
+  for (let name in attrs) {
+    attr[name] = clone(attrs[name])
     attr[name].type = getModelTypeFromDefinition(attrs[name], we)
   }
 
@@ -33,9 +33,9 @@ function parseModelAttributes (attrs, we) {
 
 function getModelTypeFromDefinition (attr, we) {
   if (attr.size) {
-    if (_.isArray(attr.size)) {
+    if (isArray(attr.size)) {
 
-      var fn = we.db.Sequelize[attr.type.toUpperCase()]
+      let fn = we.db.Sequelize[attr.type.toUpperCase()]
       fn.apply(null, attr.size)
 
       return fn(attr.size)

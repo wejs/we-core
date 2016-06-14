@@ -1,27 +1,32 @@
-var _ = require('lodash');
-var cors = require('cors');
-var mime = require('mime');
+import _ from 'lodash'
+import cors from 'cors'
+import { lookup } from 'mime'
 // absolute url regex tester
-var absoluteUrlRegex = new RegExp('^(?:[a-z]+:)?//', 'i');
+let absoluteUrlRegex = new RegExp('^(?:[a-z]+:)?//', 'i')
 
-var Router = function routerPrototype(we) {
-  this.we = we;
-  var router = this;
+/**
+ * Router protorype
+ *
+ * @param {Object} we
+ */
+function Router (we) {
+  this.we = we
+  let router = this
 
-  this.routeMap = {};
+  this.routeMap = {}
   // resources tree
-  this.resources = {};
+  this.resources = {}
   // resources salved by name
-  this.resourcesByName = {};
-  this.resourcesSort = [];
-  this.search = require('./search');
+  this.resourcesByName = {}
+  this.resourcesSort = []
+  this.search = require('./search')
 
   router.singleRecordActions = [
     'findOne', 'update', 'destroy', 'updateAttribute',
     'deleteAttribute', 'addRecord', 'removeRecord', 'getRecord', 'edit', 'delete'
-  ];
+  ]
 
-  we.events.emit('we:Router:construct', this);
+  we.events.emit('we:Router:construct', this)
 }
 
 /**
@@ -33,60 +38,60 @@ var Router = function routerPrototype(we) {
  * @param  {String} route  route like "get /route"
  * @param  {Object} config route configs
  */
-Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter){
-  var method, path;
+Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter) {
+  let method, path
 
   // set responseType based in extension
-  var extension = app.router.splitExtensionFromURL(route);
+  let extension = app.router.splitExtensionFromURL(route)
   if (extension) {
     // check if is valid this extension and is one of acceptable extensions
     if (app.config.responseTypes.indexOf(extension) >-1) {
-      config.responseType = extension;
+      config.responseType = extension
       // update route for allow accesss without extension
-      route = route.replace('.' + extension, '');
+      route = route.replace('.' + extension, '')
     } else {
-      extension = null;
+      extension = null
     }
   }
 
   // parse method and url
-  var r = route.split(' ');
+  let r = route.split(' ')
   if (r.length > 1) {
-    method = r[0];
-    path = r[1];
+    method = r[0]
+    path = r[1]
   } else {
-    method = 'get';
-    path = r[0];
+    method = 'get'
+    path = r[0]
   }
 
-  if (config.method) method = config.method;
+  if (config.method) method = config.method
 
-  var actionFunction = '';
+  let actionFunction = ''
   // search for the controller action to bind
   if (
     app.controllers[config.controller] &&
     app.controllers[config.controller][config.action]
   ) {
-    actionFunction = app.controllers[config.controller][config.action];
+    actionFunction = app.controllers[config.controller][config.action]
   } else {
-    return app.log.warn('app.router.bindRoute: Unknow controller or action:', path, config);
+    return app.log.warn('app.router.bindRoute: Unknow controller or action:', path, config)
   }
 
-  if (!groupRouter) groupRouter = app.express;
+  if (!groupRouter) groupRouter = app.express
 
   if (config.search) {
     // save param names
-    config.searchParams = Object.keys(config.search);
+    config.searchParams = Object.keys(config.search)
   }
 
-  var middlewares = [
+  let middlewares = [
     // CORS middleware per route
     cors( (config.CORS || app.config.security.CORS) ),
     // body we.js parser
     app.router.parseBody.bind({ config: config }),
     // bind context loader
     app.router.contextLoader.bind({ config: config })
-  ];
+  ]
 
   /**
    * Use this event to add acl related middlewares
@@ -94,31 +99,31 @@ Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter
    */
   app.events.emit('router:add:acl:middleware', {
     we: app, middlewares: middlewares, config: config
-  });
+  })
 
   /**
    * Use this event to change we.js route middlewares
    * @type {Event}
    */
-  app.events.emit('router:before:set:controller:middleware', {we: app, middlewares: middlewares, config: config});
+  app.events.emit('router:before:set:controller:middleware', {we: app, middlewares: middlewares, config: config})
   // bind contoller
-  middlewares.push(actionFunction);
+  middlewares.push(actionFunction)
 
-  groupRouter[method](path, middlewares);
+  groupRouter[method](path, middlewares)
 
-  var mapName = config.name;
+  var mapName = config.name
   if (!mapName)
-    mapName = config.controller + '.' + config.action;
+    mapName = config.controller + '.' + config.action
 
-  if (!app.router.routeMap[method]) app.router.routeMap[method] = {};
+  if (!app.router.routeMap[method]) app.router.routeMap[method] = {}
 
   // map get routes for use with link-to
   app.router.routeMap[method][mapName] = {
     map: app.router.parseRouteToMap(path),
     config: config
-  };
+  }
 
-  app.log.silly('Route bind:', method ,path);
+  app.log.silly('Route bind:', method ,path)
 }
 
 /**
@@ -127,16 +132,16 @@ Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter
  * @param  {Object} opts  route options
  * @todo make it simpler
  */
-Router.prototype.bindResource = function bindResource(opts) {
-  var we = this.we;
-  var router = this;
+Router.prototype.bindResource = function bindResource (opts) {
+  let we = this.we
+  let router = this
 
   // valid route options ...
-  if (!opts.name) throw new Error('Resource name is required in bind resource');
+  if (!opts.name) throw new Error('Resource name is required in bind resource')
   // get related Model
-  var Model = we.db.models[opts.name];
+  let Model = we.db.models[opts.name]
 
-  if (!Model) throw new Error('Resource Model '+opts.name+' not found and is required in bind resource');
+  if (!Model) throw new Error('Resource Model '+opts.name+' not found and is required in bind resource')
   // set default options
   _.defaults(opts, {
     routeId: ':'+ opts.name +(opts.idFormat || 'Id([0-9]+)'),
@@ -144,51 +149,51 @@ Router.prototype.bindResource = function bindResource(opts) {
     templateFolderPrefix: '',
     itemTitleHandler: 'i18n',
     rootRoute: '/' + opts.name
-  });
+  })
 
-  if (opts.namespace) opts.rootRoute = opts.namespace + opts.rootRoute;
+  if (opts.namespace) opts.rootRoute = opts.namespace + opts.rootRoute
 
   if (opts.parent) {
     if (!router.resourcesByName[opts.parent]) {
-      throw new Error('Parent route not found: '+opts.parent+' <- '+ opts.name);
+      throw new Error('Parent route not found: '+opts.parent+' <- '+ opts.name)
     }
 
     if (router.resourcesByName[opts.parent].itemRoute) {
-      opts.rootRoute = router.resourcesByName[opts.parent].itemRoute + opts.rootRoute;
+      opts.rootRoute = router.resourcesByName[opts.parent].itemRoute + opts.rootRoute
     } else {
-      opts.rootRoute = router.resourcesByName[opts.parent].itemRoute + opts.rootRoute;
+      opts.rootRoute = router.resourcesByName[opts.parent].itemRoute + opts.rootRoute
     }
   }
 
-  if (!opts.itemRoute) opts.itemRoute = opts.rootRoute+'/'+opts.routeId;
+  if (!opts.itemRoute) opts.itemRoute = opts.rootRoute+'/'+opts.routeId
 
-  var cfg = {
+  let cfg = {
     controller: ( opts.controller || opts.name ),
     model: ( opts.model || opts.name )
-  };
+  }
 
-  if (Model.options.titleField) opts.itemTitleHandler = 'recordField';
+  if (Model.options.titleField) opts.itemTitleHandler = 'recordField'
 
   we.events.emit('we-core:before:bind:one:resource:route', {
     options: opts,
     configuration: cfg,
     we: we
-  });
+  })
 
   // run all route resources bindders in router.resrouce
   // this allows plugins to extend with extra resource paths
-  for (var r in we.config.resourceRoutes) {
+  for (let r in we.config.resourceRoutes) {
     we.config.resourceRoutes[r](we, cfg, opts, Model);
   }
 
   // after bind this resource routes, bind subRoutes
-  router.bindSubRouteResources(opts, we);
+  router.bindSubRouteResources(opts, we)
 }
 
 Router.prototype.bindSubRouteResources = function bindSubRouteResources(opts, we) {
   if (opts.subRoutes) {
-    for (var resource in opts.subRoutes) {
-      we.router.bindResource(opts.subRoutes[resource]);
+    for (let resource in opts.subRoutes) {
+      we.router.bindResource(opts.subRoutes[resource])
     }
   }
 }
@@ -286,7 +291,7 @@ Router.prototype.contextLoader = function contextLoader(req, res, next) {
   // save all params values as array for router.urlTo
   req.paramsArray = _.toArray(req.params);
   // set accept headers based in config.responseType, this overrides req.query.responseType
-  if (config.responseType) req.headers.accept = mime.lookup(config.responseType);
+  if (config.responseType) req.headers.accept = lookup(config.responseType);
 
   hooks.trigger('we:router:request:before:load:context', {
     req: req, res: res
