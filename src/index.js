@@ -131,9 +131,11 @@ function We (options) {
       we.hooks.trigger('we:models:before:instance', we, (err) => {
         if (err)  return next(err)
 
-        for ( var modelName in we.db.modelsConfigs) {
+        for (let modelName in we.db.modelsConfigs) {
+          let mc = we.db.modelsConfigs[modelName];
+
           // all models have a link permanent
-          we.db.modelsConfigs[modelName].definition.linkPermanent = {
+          mc.definition.linkPermanent = {
             type: we.db.Sequelize.VIRTUAL,
             formFieldType: null,
             get: function() {
@@ -144,7 +146,7 @@ function We (options) {
           }
 
           // set
-          we.db.modelsConfigs[modelName].definition.metadata = {
+          mc.definition.metadata = {
             type: we.db.Sequelize.VIRTUAL,
             formFieldType: null
           }
@@ -152,11 +154,17 @@ function We (options) {
           we.db.setModelClassMethods()
           we.db.setModelInstanceMethods()
 
+          // save attrs list:
+          mc.attributeList = Object.keys(mc.definition)
+          // save assoc attr names list:
+          if (mc.associations)
+            mc.associationNames = Object.keys(mc.associations)
+
           // define the model
           we.db.models[modelName] = we.db.define(
             modelName,
-            we.db.modelsConfigs[modelName].definition,
-            we.db.modelsConfigs[modelName].options
+            mc.definition,
+            mc.options
           )
         }
 
@@ -164,7 +172,7 @@ function We (options) {
         we.db.setModelAllJoins()
         we.db.setModelHooks()
 
-        we.hooks.trigger('we:models:set:joins', we, function afterSetJoins(err) {
+        we.hooks.trigger('we:models:set:joins', we, function afterSetJoins (err) {
           if (err)  return next(err)
           next()
         })

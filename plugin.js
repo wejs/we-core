@@ -23,8 +23,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     queryDefaultLimit: 25,
     queryMaxLimit: 300,
     // map reponseType response types, used by Accept headers in response selection
-    responseTypes: ['json'],
-    defaultResponseType: 'json',
+    responseTypes: [
+      'application/json',
+      'application/vnd.api+json'
+    ],
+    defaultResponseType: 'application/json',
     // send nested models in response
     sendNestedModels: true,
     port: process.env.PORT || '4000',
@@ -54,7 +57,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       }
     },
     // body parser settings to use in bodyParser.json()
-    bodyParser: { limit: 20000000 },
+    bodyParser: {
+      type: 'application/*',
+      limit: 20000000
+    },
     // external services API keys
     apiKeys: {},
     // node-i18n configs

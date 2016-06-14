@@ -1,5 +1,3 @@
-var mime = require('mime');
-
 /**
  * Parse response type middleware
  *
@@ -8,9 +6,10 @@ var mime = require('mime');
  * @param  {Function} next callback
  */
 module.exports = function responseType (req, res, next){
+
   if (!req.headers) req.headers = {};
 
-  req.headers.accept = mime.lookup(parseResponseType(req));
+  req.headers.accept = parseResponseType(req);
 
   next();
 }
@@ -23,7 +22,7 @@ module.exports = function responseType (req, res, next){
  * @param  {Object} req express.js request
  * @return {String}     the response type string
  */
-function parseResponseType (req){
+function parseResponseType (req) {
   if (req.extension) return req.extension.toLowerCase();
 
   if (req.query && req.query.responseType) {

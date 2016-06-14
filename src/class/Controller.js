@@ -113,6 +113,7 @@ Controller.prototype.delete = function deletePage (req, res) {
     res.locals.template = res.local.model + '/' + 'delete'
 
   let record = res.locals.data
+
   if (!record) return res.notFound()
 
   res.locals.deleteMsg = res.locals.model + '.delete.confirm.msg'

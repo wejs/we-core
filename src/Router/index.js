@@ -543,9 +543,15 @@ Router.prototype.parseQuerySearch = function parseQuerySearch(req, res, query) {
  * @param  {Object}   res  express response
  * @param  {Function} next callback
  */
-Router.prototype.parseBody = function parseBody(req ,res, next) {
+Router.prototype.parseBody = function parseBody (req ,res, next) {
+  let parsers = req.we.responses.parsers
+  // add suport to parse body params if dont are in default json requests
+  if (parsers[req.headers.accept]) {
+    req.body = parsers[req.headers.accept](req, res, this) || {}
+  }
+
   if (req.we.config.updateMethods.indexOf(req.method) >-1 ) {
-    for(var p in req.body) {
+    for (var p in req.body) {
       if (req.body[p] === '' ) {
         // change empty string body params to null
         req.body[p] = null;
@@ -572,7 +578,7 @@ Router.prototype.parseBody = function parseBody(req ,res, next) {
  * @param {Object} req   express.js request
  * @param {Object} res   express.js response
  */
-Router.prototype.addRequestNx1Assocs = function addRequestNx1Assocs(req, res, query) {
+Router.prototype.addRequestNx1Assocs = function addRequestNx1Assocs (req, res, query) {
   if (
     res.locals.model &&
     req.we.db.modelsConfigs[res.locals.model] &&
