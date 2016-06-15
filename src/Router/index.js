@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import cors from 'cors'
-import { lookup } from 'mime'
+import mime from 'mime'
 // absolute url regex tester
 let absoluteUrlRegex = new RegExp('^(?:[a-z]+:)?//', 'i')
 
@@ -291,7 +291,7 @@ Router.prototype.contextLoader = function contextLoader(req, res, next) {
   // save all params values as array for router.urlTo
   req.paramsArray = _.toArray(req.params);
   // set accept headers based in config.responseType, this overrides req.query.responseType
-  if (config.responseType) req.headers.accept = lookup(config.responseType);
+  if (config.responseType) req.headers.accept = mime.lookup(config.responseType);
 
   hooks.trigger('we:router:request:before:load:context', {
     req: req, res: res
