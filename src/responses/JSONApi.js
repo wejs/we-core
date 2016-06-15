@@ -42,6 +42,8 @@ let JSONApi = {
         included = {},
         r = {},
         mc = req.we.db.modelsConfigs[res.locals.model]
+    // skip if data is empty
+    if (!res.locals.data) return { data: [] };
 
     data = res.locals.data
     .map(d => {
@@ -108,6 +110,8 @@ let JSONApi = {
         included = {},
         r = {},
         mc = req.we.db.modelsConfigs[res.locals.model]
+    // skip if data is empty
+    if (!res.locals.data) return { data: [] };
 
     if (res.locals.data.toJSON) {
       d = res.locals.data.toJSON()
