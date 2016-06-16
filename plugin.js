@@ -23,6 +23,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     queryDefaultLimit: 25,
     queryMaxLimit: 300,
     // map reponseType response types, used by Accept headers in response selection
+    // this is set automaticaly after add new response types
     responseTypes: [
       'application/json',
       'application/vnd.api+json'

@@ -1,3 +1,5 @@
+import mime from 'mime'
+
 /**
  * Parse response type middleware
  *
@@ -9,7 +11,7 @@ module.exports = function responseType (req, res, next){
 
   if (!req.headers) req.headers = {};
 
-  req.headers.accept = parseResponseType(req);
+  parseResponseType(req);
 
   next();
 }
@@ -23,8 +25,6 @@ module.exports = function responseType (req, res, next){
  * @return {String}     the response type string
  */
 function parseResponseType (req) {
-  if (req.extension) return req.extension.toLowerCase();
-
   if (req.query && req.query.responseType) {
     if (req.query.responseType == 'modal') {
       // suport for old we.js contentOnly api
@@ -32,11 +32,11 @@ function parseResponseType (req) {
       req.query.contentOnly = true;
     }
 
-    return req.query.responseType.toLowerCase();
+    req.headers.accept = mime.lookup(req.query.responseType.toLowerCase());
   }
 
-  var type = req.accepts(req.we.config.responseTypes);
-  if (type) return type;
+  if (req.accepts(req.we.config.responseTypes))
+    return;
 
-  return req.we.config.defaultResponseType;
+  req.headers.accept = req.we.config.defaultResponseType;
 }

@@ -14,6 +14,7 @@ module.exports = {
   mkdirp: require('mkdirp'),
   string: require('string'),
   cookieParser: require('cookie-parser'),
+  mime: require('mime'),
 
   /**
    * Is authenticated method usable if we-plugin-auth not is installed
