@@ -10,33 +10,34 @@ let jsonF = {
    * @return {Object}      JS object to send with res.send
    */
   jsonFormater: function jsonFormater (req, res) {
-    if (!res.locals.data) res.locals.data = {};
-
     if (!res.locals.model) {
+      if (!res.locals.data) res.locals.data = {}
       // set messages
-      res.locals.data.messages = res.locals.messages;
-      return res.send(res.locals.data);
+      res.locals.data.messages = res.locals.messages
+      return res.send(res.locals.data)
     }
 
-    var response = {};
+    let response = {}
 
     if (req.we.config.sendNestedModels) {
-      response[res.locals.model] = res.locals.data;
+      response[res.locals.model] = res.locals.data
     } else {
-      response[res.locals.model] = parseRecord(req, res, res.locals.data);
+      response[res.locals.model] = parseRecord(req, res, res.locals.data)
     }
 
     // check field privacity access
-    req.we.db.checkRecordsPrivacity(res.locals.data);
+    if (res.locals.data) {
+      req.we.db.checkRecordsPrivacity(res.locals.data)
+    }
 
-    response.meta = res.locals.metadata;
+    response.meta = res.locals.metadata
 
     if (!isEmpty( res.locals.messages) ) {
       // set messages
-      response.messages = res.locals.messages;
+      response.messages = res.locals.messages
     }
 
-    res.send(response);
+    res.send(response)
   }
 }
 

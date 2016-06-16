@@ -163,6 +163,7 @@ describe('resourceRequests', function() {
         .then(function (p) {
           request(http)
           .get('/post/'+p.id)
+          .set('Accept', 'application/json')
           .expect(200)
           .end(function (err, res) {
             if (err) throw err;
@@ -182,6 +183,7 @@ describe('resourceRequests', function() {
         request(http)
         .get('/post/12321313123121311231231233')
         .expect(404)
+        .set('Accept', 'application/json')
         .end(function (err, res) {
           if (err) throw err;
 
@@ -202,6 +204,7 @@ describe('resourceRequests', function() {
           };
           request(http)
           .put('/post/'+p.id)
+          .set('Accept', 'application/json')
           .send(updateData)
           .expect(200)
           .end(function (err, res) {
@@ -223,6 +226,7 @@ describe('resourceRequests', function() {
         .then(function (p) {
           request(http)
           .delete('/post/'+p.id)
+          .set('Accept', 'application/json')
           .expect(204)
           .end(function (err, res) {
             if (err) throw err;
