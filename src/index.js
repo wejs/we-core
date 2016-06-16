@@ -59,15 +59,6 @@ function We (options) {
   we.sanitizer = new Sanitizer(this)
   // The we.js router
   we.router = new Router(this)
-  // set add ResponseFormat here for use we.js app
-  we.responses.addResponseFormater = (extension, formater, position) => {
-    position = (position === 0 || position)? position: we.config.responseTypes.length
-
-    we.config.responseTypes.splice(position, 0, extension)
-
-    we.responses.formaters[extension] = formater
-  }
-
   // we.js prototypes
   we.class = {
     Controller: require('./class/Controller.js'),
@@ -110,6 +101,13 @@ function We (options) {
       // load plugin static configs, merge with old we.config and
       // override the defalt config
       we.config = staticConfig.loadPluginConfigs(we)
+      // set add ResponseFormat here for use we.js app
+      we.responses.addResponseFormater = function (extension, formater, position) {
+        position = (position === 0 || position)? position: we.config.responseTypes.length
+
+        we.config.responseTypes.splice(position, 0, extension)
+        we.responses.formaters[extension] = formater
+      }
 
       we.hooks.trigger('we:before:load:plugin:features', we, () => {
         async.eachSeries(we.pluginNames, (pluginName, next) => {
