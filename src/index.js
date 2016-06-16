@@ -16,6 +16,7 @@ import Router from './Router'
 import Sanitizer from './Sanitizer'
 import EventEmiter from 'events'
 import weExpress from './express'
+import { readFileSync, writeFileSync, writeFile } from 'fs'
 
 /**
  * We.js object
@@ -285,6 +286,64 @@ function We (options) {
   ];
   we.hooks.on('bootstrap', we.bootstrapFunctions)
 }
+
+/**
+ * Set config in config/configuration.json file
+ *
+ * @param {String}   variable path to the variable
+ * @param {String}   value
+ * @param {Function} cb       callback
+ */
+We.prototype.setConfig = function setConfig (variable, value, cb) {
+  var cJSON,
+      cFGpath = path.join(this.projectPath, '/config/configuration.json')
+
+  try {
+    cJSON = JSON.parse(readFileSync(cFGpath))
+  } catch(e) {
+    if (e.code == 'ENOENT') {
+      writeFileSync(cFGpath, '{}')
+      cJSON = {}
+    } else {
+      return cb(e)
+    }
+  }
+
+  if (value == 'true') value = true
+  if (value == 'false') value = false
+
+  _.set(cJSON, variable, value)
+
+  writeFile(cFGpath, JSON.stringify(cJSON, null, 2), cb)
+}
+
+/**
+ * Unset config in config/configuration.json file
+ *
+ * @param {String}   variable path to the variable
+ * @param {String}   value
+ * @param {Function} cb       callback
+ */
+We.prototype.unSetConfig = function unSetConfig (variable, cb) {
+  var cJSON,
+      cFGpath = path.join(this.projectPath, '/config/configuration.json')
+
+  try {
+    cJSON = JSON.parse(readFileSync(cFGpath))
+  } catch(e) {
+    if (e.code == 'ENOENT') {
+      writeFileSync(cFGpath, '{}')
+      cJSON = {}
+    } else {
+      return cb(e)
+    }
+  }
+
+  _.unset(cJSON, variable)
+
+  writeFile(cFGpath, JSON.stringify(cJSON, null, 2), cb)
+}
+
 // flag to check if this we.js instance did the bootstrap
 We.prototype.bootstrapStarted = false
   // flag to check if needs restart
