@@ -54,7 +54,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         path: '/',
         httpOnly: true,
         secure: false,
-        maxAge: null
+        maxAge: 86400000*15 // 15 days
       }
     },
     // body parser settings to use in bodyParser.json()
