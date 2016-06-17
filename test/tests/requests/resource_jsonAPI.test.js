@@ -360,9 +360,8 @@ describe('resourceRequests_jsonAPI', function() {
           if (err) throw err;
 
           assert(!res.body.data.id);
-
-          assert.equal(res.body.meta.messages[0].status, 'danger');
-          assert.equal(res.body.meta.messages[0].message, 'title cannot be null');
+          assert.equal(res.body.errors[0].status, 400);
+          assert.equal(res.body.errors[0].title, 'title cannot be null');
 
           assert.equal(res.body.data.attributes.title, p.data.attributes.title);
           assert.equal(res.body.data.attributes.text, p.data.attributes.text);

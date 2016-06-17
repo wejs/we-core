@@ -1,38 +1,31 @@
-import { isArray, isEmpty } from 'lodash'
+import { isArray } from 'lodash'
 const actions = ['edit', 'create']
 
 let JSONApi = {
   jsonAPIFormater: function jsonAPIFormater (req, res) {
-    let response;
+    let response = {};
 
-    if (!res.locals.model) {
-      if (!res.locals.data) res.locals.data = {};
-      // set messages
-      res.locals.data.messages = res.locals.messages;
-      return res.send(res.locals.data);
+    if (res.locals.model) {
+      // check field privacity access for users
+      if (res.locals.model == 'user') {
+        req.we.db.checkRecordsPrivacity(res.locals.data)
+      }
+
+      if (res.locals.action == 'find') {
+        response = JSONApi.formatList (req, res)
+      } else if (res.locals.action == 'delete') {
+        // dont send data in delete
+        response = {}
+      } else {
+        response = JSONApi.formatItem (req, res)
+        // formatItem (req, res, response)
+      }
     }
 
-    // check field privacity access for users
-    if (res.locals.model == 'user') {
-      req.we.db.checkRecordsPrivacity(res.locals.data)
-    }
+    response.meta = res.locals.metadata || {};
 
-    if (res.locals.action == 'find') {
-      response = JSONApi.formatList (req, res)
-    } else if (res.locals.action == 'delete') {
-      // dont send data in delete
-      response = {}
-    } else {
-      response = JSONApi.formatItem (req, res)
-      // formatItem (req, res, response)
-    }
-
-    response.meta = res.locals.metadata
-
-    if (!isEmpty( res.locals.messages) ) {
-      // set messages
-      response.meta.messages = res.locals.messages
-    }
+    // parse we.js errors to jsonapi errors
+    JSONApi.parseErrors(response, req, res);
 
     res.send(response)
   },
@@ -42,6 +35,7 @@ let JSONApi = {
         included = {},
         r = {},
         mc = req.we.db.modelsConfigs[res.locals.model]
+
     // skip if data is empty
     if (!res.locals.data) return { data: [] };
 
@@ -110,6 +104,7 @@ let JSONApi = {
         included = {},
         r = {},
         mc = req.we.db.modelsConfigs[res.locals.model]
+
     // skip if data is empty
     if (!res.locals.data) return { data: [] };
 
@@ -216,10 +211,32 @@ let JSONApi = {
     })
   },
 
-  crud: {
-    create: function createRecordFromReq (req, Model, next) {
-      Model.create(req.body.data.attributes)
-      .nodeify(next)
+  /**
+   * Format erros from res.locals.messages to jsonapi erros and set it in response
+   */
+  parseErrors: function parseErrors (response, req, res) {
+    if (!response.meta.messages) response.meta.messages = []
+
+    if (res.locals.messages) {
+      let errors = [];
+
+      // first get and format all errros:
+      res.locals.messages.forEach(m => {
+        if (m.status == 'danger' || m.status == 'error') {
+          errors.push({
+            status: res.statusCode,
+            title: m.message
+          })
+        } else {
+          // others messages like success goes in meta object
+          response.meta.messages.push(m)
+        }
+      })
+
+
+      if (errors && errors.length) {
+        response.errors = errors
+      }
     }
   }
 }
