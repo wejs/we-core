@@ -59,7 +59,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     // body parser settings to use in bodyParser.json()
     bodyParser: {
-      type: '*',
+      // type: '*',
       limit: 20000000
     },
     // external services API keys
