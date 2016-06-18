@@ -8,7 +8,13 @@ import { resolve } from 'path'
  * @return {Boolean}
  */
 module.exports = function isPlugin (nodeModulePath) {
-  let pkg = require( resolve(nodeModulePath, 'package.json') );
+  let pkg;
+  try {
+    pkg = require( resolve(nodeModulePath, 'package.json') );
+  } catch(e) {
+    return false;
+  }
+
 
   if (pkg.keywords && pkg.keywords.includes('wejs-plugin') ) {
     return true

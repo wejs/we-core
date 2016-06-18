@@ -21,11 +21,13 @@ import { readFileSync, writeFileSync, writeFile } from 'fs'
  * @type {Object}
  */
 function We (options) {
+  if (!options) options = {}
+
   let we = this
 
   this.packageJSON = require('../package.json');
 
-  this.config = {}
+  this.config = options || {}
 
   this.childProcesses = []
 
@@ -34,8 +36,6 @@ function We (options) {
   this.pluginNames = []
   // controllers
   this.controllers = {}
-
-  if (!options) options = {}
 
   this.projectPath = options.projectPath || process.cwd()
 
@@ -74,33 +74,56 @@ function We (options) {
   // plugin manager and plugins vars
   we.pluginManager = new PluginManager(this)
 
-  if (we.config.bootstrapForInstall) {
-    we.hooks.on('bootstrap', [
-      we.bootstrapFunctions.loadCoreFeatures,
-      we.bootstrapFunctions.loadPluginFeatures,
-      we.bootstrapFunctions.loadTemplateCache,
-      we.bootstrapFunctions.instantiateModels,
-      we.bootstrapFunctions.loadControllers,
-      we.bootstrapFunctions.initI18n,
-      we.bootstrapFunctions.installAndRegisterPlugins
-    ])
-  } else {
-    // -- register core bootstrap hooks
-    we.hooks.on('bootstrap', [
-      we.bootstrapFunctions.loadCoreFeatures,
-      we.bootstrapFunctions.loadPluginFeatures,
-      we.bootstrapFunctions.loadTemplateCache,
-      we.bootstrapFunctions.instantiateModels,
-      we.bootstrapFunctions.loadControllers,
-      we.bootstrapFunctions.initI18n,
-      we.bootstrapFunctions.setExpressApp,
-      we.bootstrapFunctions.passport,
-      we.bootstrapFunctions.createDefaultFolders,
-      we.bootstrapFunctions.registerAllViewTemplates,
-      we.bootstrapFunctions.mergeRoutes,
-      we.bootstrapFunctions.bindResources,
-      we.bootstrapFunctions.bindRoutes
-    ])
+  switch (we.config.bootstrapMode) {
+    case 'install':
+      we.hooks.on('bootstrap', [
+        we.bootstrapFunctions.loadCoreFeatures,
+        we.bootstrapFunctions.loadPluginFeatures,
+        we.bootstrapFunctions.loadTemplateCache,
+        we.bootstrapFunctions.instantiateModels,
+        we.bootstrapFunctions.loadControllers,
+        we.bootstrapFunctions.initI18n,
+        we.bootstrapFunctions.installAndRegisterPlugins
+      ])
+      break
+    case 'complete':
+    case 'full':
+    case 'test':
+      // full load, usefull for tests
+      we.hooks.on('bootstrap', [
+        we.bootstrapFunctions.loadCoreFeatures,
+        we.bootstrapFunctions.loadPluginFeatures,
+        we.bootstrapFunctions.loadTemplateCache,
+        we.bootstrapFunctions.instantiateModels,
+        we.bootstrapFunctions.loadControllers,
+        we.bootstrapFunctions.initI18n,
+        we.bootstrapFunctions.installAndRegisterPlugins,
+        we.bootstrapFunctions.setExpressApp,
+        we.bootstrapFunctions.passport,
+        we.bootstrapFunctions.createDefaultFolders,
+        we.bootstrapFunctions.registerAllViewTemplates,
+        we.bootstrapFunctions.mergeRoutes,
+        we.bootstrapFunctions.bindResources,
+        we.bootstrapFunctions.bindRoutes
+      ])
+      break
+    default:
+      // defaults to load for run
+      we.hooks.on('bootstrap', [
+        we.bootstrapFunctions.loadCoreFeatures,
+        we.bootstrapFunctions.loadPluginFeatures,
+        we.bootstrapFunctions.loadTemplateCache,
+        we.bootstrapFunctions.instantiateModels,
+        we.bootstrapFunctions.loadControllers,
+        we.bootstrapFunctions.initI18n,
+        we.bootstrapFunctions.setExpressApp,
+        we.bootstrapFunctions.passport,
+        we.bootstrapFunctions.createDefaultFolders,
+        we.bootstrapFunctions.registerAllViewTemplates,
+        we.bootstrapFunctions.mergeRoutes,
+        we.bootstrapFunctions.bindResources,
+        we.bootstrapFunctions.bindRoutes
+      ])
   }
 }
 

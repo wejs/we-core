@@ -7,7 +7,7 @@ var ncp = require('ncp').ncp;
 var We = require('../lib');
 var we;
 
-before(function(callback) {
+before(function (callback) {
   this.slow(100);
 
   testTools.copyLocalConfigIfNotExitst(projectPath, function() {
@@ -18,7 +18,7 @@ before(function(callback) {
         return console.error(err);
       }
 
-      we = new We();
+      we = new We({ bootstrapMode: 'test' });
 
       testTools.init({}, we);
 
@@ -39,8 +39,8 @@ before(function(callback) {
           if (err) return console.error(err);
           callback();
         });
-      });
 
+      });
     });
   });
 });

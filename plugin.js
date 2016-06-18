@@ -10,8 +10,9 @@ module.exports = function loadPlugin (projectPath, Plugin) {
 
   // set plugin configs
   plugin.setConfigs({
-    // flag set to only load features required for run plugins install methods
-    bootstrapForInstall: false,
+    // select how bootstrap functions will run
+    // values: full || install
+    bootstrapMode: null,
 
     // enable suport to parse req.query.where to sequelize query
     enableQueryWhere: false,

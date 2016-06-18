@@ -18,8 +18,7 @@
     "wejs",
     "plugin",
     "wejs-plugin",
-    "API",
-    "SPA"
+    "framework"
   ],
   "repository": "wejs/we-plugin-core",
   "files": [
@@ -74,6 +73,11 @@
   },
   "engines": {
     "node": ">=4.0.0"
+  },
+  "wejs": {
+    "plugins": {
+      "we-plugin-post": true
+    }
   },
   "babel": {
     "presets": [
