@@ -73,23 +73,35 @@ function We (options) {
   we.db.sequelize = we.db.defaultConnection
   // plugin manager and plugins vars
   we.pluginManager = new PluginManager(this)
-  // -- register core bootstrap hooks
-  we.hooks.on('bootstrap', [
-    we.bootstrapFunctions.loadCoreFeatures,
-    we.bootstrapFunctions.loadPluginFeatures,
-    we.bootstrapFunctions.loadTemplateCache,
-    we.bootstrapFunctions.instantiateModels,
-    we.bootstrapFunctions.loadControllers,
-    we.bootstrapFunctions.initI18n,
-    we.bootstrapFunctions.installAndRegisterPlugins,
-    we.bootstrapFunctions.setExpressApp,
-    we.bootstrapFunctions.passport,
-    we.bootstrapFunctions.createDefaultFolders,
-    we.bootstrapFunctions.registerAllViewTemplates,
-    we.bootstrapFunctions.mergeRoutes,
-    we.bootstrapFunctions.bindResources,
-    we.bootstrapFunctions.bindRoutes
-  ])
+
+  if (we.config.bootstrapForInstall) {
+    we.hooks.on('bootstrap', [
+      we.bootstrapFunctions.loadCoreFeatures,
+      we.bootstrapFunctions.loadPluginFeatures,
+      we.bootstrapFunctions.loadTemplateCache,
+      we.bootstrapFunctions.instantiateModels,
+      we.bootstrapFunctions.loadControllers,
+      we.bootstrapFunctions.initI18n,
+      we.bootstrapFunctions.installAndRegisterPlugins
+    ])
+  } else {
+    // -- register core bootstrap hooks
+    we.hooks.on('bootstrap', [
+      we.bootstrapFunctions.loadCoreFeatures,
+      we.bootstrapFunctions.loadPluginFeatures,
+      we.bootstrapFunctions.loadTemplateCache,
+      we.bootstrapFunctions.instantiateModels,
+      we.bootstrapFunctions.loadControllers,
+      we.bootstrapFunctions.initI18n,
+      we.bootstrapFunctions.setExpressApp,
+      we.bootstrapFunctions.passport,
+      we.bootstrapFunctions.createDefaultFolders,
+      we.bootstrapFunctions.registerAllViewTemplates,
+      we.bootstrapFunctions.mergeRoutes,
+      we.bootstrapFunctions.bindResources,
+      we.bootstrapFunctions.bindRoutes
+    ])
+  }
 }
 
 /**

@@ -2,7 +2,7 @@
  * We.js plugin config
  */
 
-module.exports = function loadPlugin(projectPath, Plugin) {
+module.exports = function loadPlugin (projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
 
   // folder for fallback templates
@@ -10,10 +10,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
   // set plugin configs
   plugin.setConfigs({
-    // plugins to load, default is null for auto load all npm modules starting with we- prefix
-    plugins: null,
-    // // flag to skip project and plugin install methods
-    // skipInstall: false,
+    // flag set to only load features required for run plugins install methods
+    bootstrapForInstall: false,
 
     // enable suport to parse req.query.where to sequelize query
     enableQueryWhere: false,

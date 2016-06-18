@@ -1,8 +1,6 @@
 import path from 'path'
-import fs from 'fs'
-import _ from 'lodash'
 
-let projectPath, nodeModulesPath = process.cwd()
+let projectPath = process.cwd();
 
 /**
  * Plugin manager, load, valid and store avaible plugins
@@ -14,11 +12,11 @@ function PluginManager (we) {
 
   projectPath = we.projectPath
   // npm module folder from node_modules
-  nodeModulesPath = path.resolve(projectPath, 'node_modules')
+  this.nodeModulesPath = path.resolve(projectPath, 'node_modules')
 
   this.configs = we.configs
   this.plugins = {}
-  this.pluginNames = []
+  this.pluginNames = this.getPluginsList()
   // a list of plugin.js files get from npm module folder
   this.pluginFiles = {}
   // array with all plugin paths
@@ -28,35 +26,49 @@ function PluginManager (we) {
   // a list of plugins to install
   this.pluginsToInstall = {}
 }
-
+// flag to check if plugins already is loaded
+PluginManager.prototype.pluginsLoaded = false
+// function to check if npm module is plugin
 PluginManager.prototype.isPlugin = require('./isPlugin.js')
 // return the name of all enabled plugins
 PluginManager.prototype.getPluginNames = function getPluginNames () {
-  return Object.keys( this.plugins )
+  return this.pluginNames
 }
 // load one plugin running related plugin.js file
 PluginManager.prototype.loadPlugin = function loadPlugin (pluginFile, npmModuleName, projectPath) {
   this.plugins[npmModuleName] = require(pluginFile)( projectPath , this.we.class.Plugin)
 }
 /**
- * Get plugin list from config or from npm_modules folder
+ * Get plugin names list from project package.json
  *
- * @param  {Object}   we   we.js
- * @param  {Function} done callback
  * @return {Array}        Plugin names list
  */
-PluginManager.prototype.getPluginsList = function getPluginsList (we, done) {
-  if (we.config.plugins) {
-    return done(null, Object.keys(we.config.plugins))
+PluginManager.prototype.getPluginsList = function getPluginsList () {
+  let names = [];
+
+  if (this.we.projectPackageJSON.wejs && this.we.projectPackageJSON.wejs.plugins) {
+
+    for (let name in this.we.projectPackageJSON.wejs.plugins) {
+      if (this.we.projectPackageJSON.wejs.plugins[name]) {
+        names.push(name)
+      }
+    }
   }
 
-  fs.readdir(nodeModulesPath, (err, folders) => {
-    if (err) return done(err)
+  //
+  if (this.we.projectPackageJSON.name != 'we-core') {
+    // move we-core to plugin list start
+    let weCoreIndex = names.indexOf('we-core')
+    if (weCoreIndex == -1) {
+      // not is in plugins list then add before all
+      names.unshift('we-core')
+    } else if (weCoreIndex !== -1 && weCoreIndex > 0) {
+      // move we-core to load after others plugins
+      names.unshift(names.splice(weCoreIndex, 1))
+    }
+  }
 
-    done(null, folders.filter(f => {
-      return (f.substring(0, 3) === 'we-')
-    }))
-  })
+  return names
 }
 
 /**
@@ -67,67 +79,60 @@ PluginManager.prototype.getPluginsList = function getPluginsList (we, done) {
  */
 PluginManager.prototype.loadPlugins = function loadPlugins (we, done) {
   // only load one time
-  if (! _.isEmpty(this.plugins) )
-    return this.plugins
+  if (this.pluginsLoaded) return this.plugins
 
-  let pluginManager = this
+  let newPluginNames = we.utils._.cloneDeep(this.pluginNames);
 
-  this.getPluginsList(we, function (err, folders) {
-    if (err) return done(err)
+  this.pluginNames.forEach((name, i) => {
+    // load project bellow
+    if (name == 'project') return;
 
-    let npmModuleName, pluginPath, pluginFile
-    // skip if dont starts with we-
-    let files = folders.filter(f => {
-      return (f.substring(0, 3) === 'we-')
-    })
+    // get full path
+    let pluginPath = path.resolve(this.nodeModulesPath, name)
 
-    // move we-core to list start if it is installed and
-    // is in list start
-    let weCoreIndex = files.indexOf('we-core')
+    // check if is plugin
+    if ( !this.isPlugin(pluginPath) ) {
+      // if not is plugin, remove from array and show log
+      let index = newPluginNames.indexOf(name)
+      newPluginNames.splice(index, 1);
 
-    if (weCoreIndex !== -1 && weCoreIndex > 0) {
-      files.unshift(files.splice(weCoreIndex, 1))
+      we.log.warn('pluginManager:'+name+' not is plugin')
+      return;
     }
 
-    for (let i = 0; i < files.length; i++) {
-      npmModuleName = files[i]
-      // get full path
-      pluginPath = path.resolve(nodeModulesPath, npmModuleName)
-      // check if is plugin
-      if (pluginManager.isPlugin(pluginPath) ) {
-        // save plugin name
-        pluginManager.pluginNames.push(npmModuleName)
-        // save plugin path
-        pluginManager.pluginPaths.push(pluginPath)
-        // resolve full plugin file path
-        pluginFile = path.resolve( pluginPath, 'plugin.js' )
-        // save this plugin file
-        pluginManager.pluginFiles[npmModuleName] = pluginFile
-        // load plugin resources
-        pluginManager.loadPlugin(pluginFile, npmModuleName, projectPath)
-        // check if needs to install this plugin
-        if (!pluginManager.isInstalled(npmModuleName)) {
-          pluginManager.pluginsToInstall[npmModuleName] = pluginFile
-        }
-      }
+    // save plugin path
+    this.pluginPaths.push(pluginPath)
+    // resolve full plugin file path
+    let pluginFile = path.resolve( pluginPath, 'plugin.js' )
+    // save this plugin file
+    this.pluginFiles[name] = pluginFile
+    // load plugin resources
+    this.loadPlugin(pluginFile, name, projectPath)
+    // check if needs to install this plugin
+    if (!this.isInstalled(name)) {
+      this.pluginsToInstall[name] = pluginFile
     }
+  })
 
-    // check if project is plugin
-    if (pluginManager.isPlugin(projectPath) ) {
-      // save plugin name
-      pluginManager.pluginNames.push('project')
-      // - then load project as plugin if it have the plugin.js file
-      let projectFile = path.resolve(projectPath, 'plugin.js')
-      // after all plugins load the project as plugin
-      pluginManager.loadProjectAsPlugin()
-      // check if needs to install the project
-      if (!pluginManager.isInstalled('project')) {
-        pluginManager.pluginsToInstall.project = projectFile
-      }
+  this.pluginNames = newPluginNames
+
+  // if project is plugin ...
+  if (this.isPlugin(projectPath)) {
+    this.pluginNames.push('project');
+    // - then load project as plugin if it have the plugin.js file
+    let projectFile = path.resolve(projectPath, 'plugin.js')
+    this.pluginFiles.project = projectFile
+    // after all plugins load the project as plugin
+    this.loadProjectAsPlugin()
+    // check if needs to install the project
+    if (!this.isInstalled('project')) {
+      this.pluginsToInstall.project = projectFile
     }
+  }
+  // load done
+  this.pluginsLoaded = true
 
-    done(null, pluginManager.plugins)
-  });
+  done(null, this.plugins)
 }
 /**
  * Check if one plugin is installed
@@ -154,7 +159,7 @@ PluginManager.prototype.getPluginInstallScript = function getPluginInstallScript
   if (name == 'project') {
     pluginFolder = projectPath
   } else {
-    pluginFolder = path.resolve(nodeModulesPath, name)
+    pluginFolder = path.resolve(this.nodeModulesPath, name)
   }
   // get the install file
   let installFile = path.resolve(pluginFolder, 'install.js')
