@@ -80,7 +80,11 @@ module.exports = function initExpress(we) {
     }
   });
 
+  // application/vnd.api+json body parser
   weExpress.use(bodyParser.json(we.config.bodyParser));
+  weExpress.use(bodyParser.json({
+    type: 'application/vnd.api+json'
+  }));
   weExpress.use(bodyParser.urlencoded({ extended: false }));
 
   weExpress.use(we.utils.cookieParser());
