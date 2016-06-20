@@ -15,7 +15,6 @@ module.exports = function isPlugin (nodeModulePath) {
     return false;
   }
 
-
   if (pkg.keywords && pkg.keywords.includes('wejs-plugin') ) {
     return true
   } else {

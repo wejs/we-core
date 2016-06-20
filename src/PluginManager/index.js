@@ -83,7 +83,7 @@ PluginManager.prototype.loadPlugins = function loadPlugins (we, done) {
 
   let newPluginNames = we.utils._.cloneDeep(this.pluginNames);
 
-  this.pluginNames.forEach((name, i) => {
+  this.pluginNames.forEach(name => {
     // load project bellow
     if (name == 'project') return;
 
@@ -116,19 +116,17 @@ PluginManager.prototype.loadPlugins = function loadPlugins (we, done) {
 
   this.pluginNames = newPluginNames
 
-  // if project is plugin ...
-  if (this.isPlugin(projectPath)) {
-    this.pluginNames.push('project');
-    // - then load project as plugin if it have the plugin.js file
-    let projectFile = path.resolve(projectPath, 'plugin.js')
-    this.pluginFiles.project = projectFile
-    // after all plugins load the project as plugin
-    this.loadProjectAsPlugin()
-    // check if needs to install the project
-    if (!this.isInstalled('project')) {
-      this.pluginsToInstall.project = projectFile
-    }
+  this.pluginNames.push('project');
+  // - then load project as plugin if it have the plugin.js file
+  let projectFile = path.resolve(projectPath, 'plugin.js')
+  this.pluginFiles.project = projectFile
+  // after all plugins load the project as plugin
+  this.loadProjectAsPlugin()
+  // check if needs to install the project
+  if (!this.isInstalled('project')) {
+    this.pluginsToInstall.project = projectFile
   }
+
   // load done
   this.pluginsLoaded = true
 
@@ -361,7 +359,6 @@ PluginManager.prototype.runPluginUpdates = function (name, done) {
     })
   }, done)
 }
-
 
 /**
  * Check is project have a plugin.js file and if yes load it as plugin
