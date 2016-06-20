@@ -46,8 +46,19 @@ PluginManager.prototype.loadPlugin = function loadPlugin (pluginFile, npmModuleN
 PluginManager.prototype.getPluginsList = function getPluginsList () {
   let names = [];
 
-  if (this.we.projectPackageJSON.wejs && this.we.projectPackageJSON.wejs.plugins) {
+  // dev or test modules
+  if (this.we.env != 'prod') {
+    if (this.we.projectPackageJSON.wejs && this.we.projectPackageJSON.wejs.devPlugins) {
+      for (let name in this.we.projectPackageJSON.wejs.devPlugins) {
+        if (this.we.projectPackageJSON.wejs.devPlugins[name]) {
+          names.push(name)
+        }
+      }
+    }
+  }
 
+  // modules avaible in all envs
+  if (this.we.projectPackageJSON.wejs && this.we.projectPackageJSON.wejs.plugins) {
     for (let name in this.we.projectPackageJSON.wejs.plugins) {
       if (this.we.projectPackageJSON.wejs.plugins[name]) {
         names.push(name)
