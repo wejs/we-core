@@ -104,6 +104,9 @@ module.exports = {
       })
     })
   },
+  syncModels: function (we, done) {
+    we.db.defaultConnection.sync().nodeify(done)
+  },
   loadControllers: function loadControllers (we, next) {
     we.log.verbose('loadControllers step')
     we.events.emit('we:after:load:controllers', we)
@@ -121,24 +124,19 @@ module.exports = {
     we.log.verbose('installAndRegisterPluginsIfNeed step')
     // dont have plugins to install
     if (!we.pluginManager.pluginsToInstall) return next()
-    // sync all model before start the install scripts
-    we.db.defaultConnection.sync()
-    .then(function afterSyncAllPluginTables() {
-      // get plugins to install names
-      var names = Object.keys(we.pluginManager.pluginsToInstall);
-      we.utils.async.eachSeries(names, function onEachPlugin (name, nextPlugin) {
-        // run install scripts
-        we.pluginManager.installPlugin(name, function afterInstallOnePlugin (err){
-          if (err) return nextPlugin(err)
-          // register it
-          we.pluginManager.registerPlugin(name, nextPlugin)
-        });
-      }, function afterInstallAllPlugins (err) {
-        if (err) return next(err)
-        next()
+    // get plugins to install names
+    var names = Object.keys(we.pluginManager.pluginsToInstall);
+    we.utils.async.eachSeries(names, function onEachPlugin (name, nextPlugin) {
+      // run install scripts
+      we.pluginManager.installPlugin(name, function afterInstallOnePlugin (err){
+        if (err) return nextPlugin(err)
+        // register it
+        we.pluginManager.registerPlugin(name, nextPlugin)
       });
-    })
-    .catch(next)
+    }, function afterInstallAllPlugins (err) {
+      if (err) return next(err)
+      next()
+    });
   },
   setExpressApp: function setExpressApp (we, next) {
     // load express

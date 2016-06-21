@@ -81,6 +81,7 @@ function We (options) {
         we.bootstrapFunctions.loadPluginFeatures,
         we.bootstrapFunctions.loadTemplateCache,
         we.bootstrapFunctions.instantiateModels,
+        we.bootstrapFunctions.syncModels,
         we.bootstrapFunctions.loadControllers,
         we.bootstrapFunctions.initI18n,
         we.bootstrapFunctions.installAndRegisterPlugins
@@ -95,6 +96,7 @@ function We (options) {
         we.bootstrapFunctions.loadPluginFeatures,
         we.bootstrapFunctions.loadTemplateCache,
         we.bootstrapFunctions.instantiateModels,
+        we.bootstrapFunctions.syncModels,
         we.bootstrapFunctions.loadControllers,
         we.bootstrapFunctions.initI18n,
         we.bootstrapFunctions.installAndRegisterPlugins,
@@ -114,6 +116,7 @@ function We (options) {
         we.bootstrapFunctions.loadPluginFeatures,
         we.bootstrapFunctions.loadTemplateCache,
         we.bootstrapFunctions.instantiateModels,
+        we.bootstrapFunctions.syncModels,
         we.bootstrapFunctions.loadControllers,
         we.bootstrapFunctions.initI18n,
         we.bootstrapFunctions.setExpressApp,
