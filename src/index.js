@@ -76,6 +76,7 @@ function We (options) {
 
   switch (we.config.bootstrapMode) {
     case 'install':
+    case 'installation':
       we.hooks.on('bootstrap', [
         we.bootstrapFunctions.loadCoreFeatures,
         we.bootstrapFunctions.loadPluginFeatures,
@@ -138,6 +139,8 @@ function We (options) {
  * @param {Function} cb       callback
  */
 We.prototype.setConfig = function setConfig (variable, value, cb) {
+  if (!cb) cb = function(){}
+
   var cJSON,
       cFGpath = path.join(this.projectPath, '/config/configuration.json')
 
