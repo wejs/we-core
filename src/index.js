@@ -3,11 +3,9 @@
  */
 
 // Module dependencies.
-import async from 'async'
 import http from 'http'
 import _ from 'lodash'
 import path from 'path'
-import localization from './localization'
 import staticConfig from './staticConfig'
 import Database from './Database'
 import Hooks from './Hooks'
@@ -15,7 +13,6 @@ import PluginManager from './PluginManager'
 import Router from './Router'
 import Sanitizer from './Sanitizer'
 import EventEmiter from 'events'
-import weExpress from './express'
 import { readFileSync, writeFileSync, writeFile } from 'fs'
 
 /**
@@ -24,11 +21,13 @@ import { readFileSync, writeFileSync, writeFile } from 'fs'
  * @type {Object}
  */
 function We (options) {
+  if (!options) options = {}
+
   let we = this
 
   this.packageJSON = require('../package.json');
 
-  this.config = {}
+  this.config = options || {}
 
   this.childProcesses = []
 
@@ -38,9 +37,9 @@ function We (options) {
   // controllers
   this.controllers = {}
 
-  if (!options) options = {}
-
   this.projectPath = options.projectPath || process.cwd()
+
+  this.projectPackageJSON = require(path.resolve(this.projectPath, 'package.json'))
 
   this.projectConfigFolder = options.projectConfigFolder || path.join(this.projectPath, 'config')
 
@@ -74,215 +73,62 @@ function We (options) {
   we.db.sequelize = we.db.defaultConnection
   // plugin manager and plugins vars
   we.pluginManager = new PluginManager(this)
-  // -- register core bootstrap hooks
-  // -- this allows to unregister any step after run we.bootstrap method
-  we.bootstrapFunctions = [
-    function loadCoreFeatures (we, next) {
-      we.log.verbose('loadCoreFeatures step')
 
-      we.db.loadCoreModels( err => {
-        if(err) return next(err)
-
-        we.pluginManager.loadPluginsSettingsFromDB(we, err => {
-          if (err) return next(err)
-          // preload all plugins
-          we.pluginManager.loadPlugins(we, (err, plugins) => {
-            if (err) return next(err)
-            we.plugins = plugins
-            next()
-          });
-        });
-      });
-    },
-    function loadPluginFeatures (we, next) {
-      we.log.verbose('loadPluginFeatures step')
-
-      we.pluginNames = we.pluginManager.pluginNames
-      // load plugin static configs, merge with old we.config and
-      // override the defalt config
-      we.config = staticConfig.loadPluginConfigs(we)
-      // set add ResponseFormat here for use we.js app
-      we.responses.addResponseFormater = function (extension, formater, position) {
-        position = (position === 0 || position)? position: we.config.responseTypes.length
-
-        we.config.responseTypes.splice(position, 0, extension)
-        we.responses.formaters[extension] = formater
-      }
-
-      we.hooks.trigger('we:before:load:plugin:features', we, () => {
-        async.eachSeries(we.pluginNames, (pluginName, next) => {
-          we.plugins[pluginName].loadFeatures(we, next)
-        }, (err) => {
-          if (err) return next(err)
-
-          we.events.emit('we:after:load:plugins', we)
-          next()
-        })
-      })
-    },
-    function loadTemplateCache (we, next) {
-      // step to plug we-plugin-view
-      we.hooks.trigger('we-core:on:load:template:cache', we, next)
-    },
-    function instantiateModels (we, next) {
-      //  step to define all models with sequelize
-      we.log.verbose('instantiateModels step')
-      we.hooks.trigger('we:models:before:instance', we, (err) => {
-        if (err)  return next(err)
-
-        for (let modelName in we.db.modelsConfigs) {
-          let mc = we.db.modelsConfigs[modelName];
-
-          // all models have a link permanent
-          mc.definition.linkPermanent = {
-            type: we.db.Sequelize.VIRTUAL,
-            formFieldType: null,
-            get: function() {
-              if (this.cachedLinkPermanent) return this.cachedLinkPermanent
-              this.cachedLinkPermanent = this.getUrlPath()
-              return this.cachedLinkPermanent
-            }
-          }
-
-          // set
-          mc.definition.metadata = {
-            type: we.db.Sequelize.VIRTUAL,
-            formFieldType: null
-          }
-
-          we.db.setModelClassMethods()
-          we.db.setModelInstanceMethods()
-
-          // save attrs list:
-          mc.attributeList = Object.keys(mc.definition)
-          // save assoc attr names list:
-          if (mc.associations)
-            mc.associationNames = Object.keys(mc.associations)
-
-          // define the model
-          we.db.models[modelName] = we.db.define(
-            modelName,
-            mc.definition,
-            mc.options
-          )
-        }
-
-        // set all associations
-        we.db.setModelAllJoins()
-        we.db.setModelHooks()
-
-        we.hooks.trigger('we:models:set:joins', we, function afterSetJoins (err) {
-          if (err)  return next(err)
-          next()
-        })
-      })
-    },
-    function loadControllers(we, next) {
-      we.log.verbose('loadControllers step')
-      we.events.emit('we:after:load:controllers', we)
-      next()
-    },
-    function initI18n(we, next) {
-      we.log.verbose('initI18n step')
-      localization(we)
-      we.events.emit('we:after:init:i18n', we)
-      next()
-    },
-    function installAndRegisterPlugins(we, next) {
-      if (we.config.skipInstall) return next()
-
-      we.log.verbose('installAndRegisterPluginsIfNeed step')
-      // dont have plugins to install
-      if (!we.pluginManager.pluginsToInstall) return next()
-      // sync all model before start the install scripts
-      we.db.defaultConnection.sync()
-      .then(function afterSyncAllPluginTables() {
-        // get plugins to install names
-        var names = Object.keys(we.pluginManager.pluginsToInstall);
-        async.eachSeries(names, function onEachPlugin (name, nextPlugin) {
-          // run install scripts
-          we.pluginManager.installPlugin(name, function afterInstallOnePlugin (err){
-            if (err) return nextPlugin(err)
-            // register it
-            we.pluginManager.registerPlugin(name, nextPlugin)
-          });
-        }, function afterInstallAllPlugins (err) {
-          if (err) return next(err)
-          next()
-        });
-      })
-      .catch(next)
-    },
-    function setExpressApp (we, next) {
-      // load express
-      we.express = weExpress(we)
-      we.events.emit('we:after:load:express', we)
-      next()
-    },
-    function passport (we, next) {
-      // hook to set authentication.
-      // if we-plugin-auth is installed, load passport here
-      we.hooks.trigger('we-core:on:set:passport', we, next)
-    },
-    function createDefaultFolders (we, next) {
-      we.log.verbose('createDefaultFolders step')
-      we.hooks.trigger('we:create:default:folders', we, function() {
-        next()
-      })
-    },
-    function registerAllViewTemplates (we, next) {
-      // hook to plugin we-plugin-view template register
-      we.hooks.trigger('we-core:on:register:templates', we, next)
-    },
-    function mergeRoutes(we, next) {
-      we.log.verbose('mergeRoutes step')
-      we.routes = {}
-      // merge plugin routes
-      for ( var plugin in we.plugins) {
-        _.merge(we.routes, we.plugins[plugin].routes)
-      }
-      // merge project routes
-       _.merge(we.routes, we.config.routes)
-      next()
-    },
-    /**
-     * Bind all resources in App
-     *
-     * @param  {Object}   we
-     * @param  {Function} next
-     */
-    function bindResources(we, next) {
-      we.log.verbose('bindResources step')
-      try {
-        for (var resource in we.router.resources) {
-          we.router.bindResource(we.router.resources[resource])
-        }
-        next()
-      } catch (e) {
-        next(e)
-      }
-    },
-
-    function bindRoutes(we, next) {
-      we.log.verbose('bindRoutes step')
-      we.hooks.trigger('we:before:routes:bind', we, function beforeRouteBind() {
-        for (var route in we.routes) {
-          we.router.bindRoute(we, route, we.routes[route] )
-        }
-
-        we.hooks.trigger('we:after:routes:bind', we, function afterRouteBind() {
-          // bind after router handler for run responseMethod
-          we.express.use(function (req, res, done) {
-            if (res.responseMethod) return res[res.responseMethod]()
-            done()
-          });
-
-          next()
-        });
-      });
-    }
-  ];
-  we.hooks.on('bootstrap', we.bootstrapFunctions)
+  switch (we.config.bootstrapMode) {
+    case 'install':
+    case 'installation':
+      we.hooks.on('bootstrap', [
+        we.bootstrapFunctions.loadCoreFeatures,
+        we.bootstrapFunctions.loadPluginFeatures,
+        we.bootstrapFunctions.loadTemplateCache,
+        we.bootstrapFunctions.instantiateModels,
+        we.bootstrapFunctions.syncModels,
+        we.bootstrapFunctions.loadControllers,
+        we.bootstrapFunctions.initI18n,
+        we.bootstrapFunctions.installAndRegisterPlugins
+      ])
+      break
+    case 'complete':
+    case 'full':
+    case 'test':
+      // full load, usefull for tests
+      we.hooks.on('bootstrap', [
+        we.bootstrapFunctions.loadCoreFeatures,
+        we.bootstrapFunctions.loadPluginFeatures,
+        we.bootstrapFunctions.loadTemplateCache,
+        we.bootstrapFunctions.instantiateModels,
+        we.bootstrapFunctions.syncModels,
+        we.bootstrapFunctions.loadControllers,
+        we.bootstrapFunctions.initI18n,
+        we.bootstrapFunctions.installAndRegisterPlugins,
+        we.bootstrapFunctions.setExpressApp,
+        we.bootstrapFunctions.passport,
+        we.bootstrapFunctions.createDefaultFolders,
+        we.bootstrapFunctions.registerAllViewTemplates,
+        we.bootstrapFunctions.mergeRoutes,
+        we.bootstrapFunctions.bindResources,
+        we.bootstrapFunctions.bindRoutes
+      ])
+      break
+    default:
+      // defaults to load for run
+      we.hooks.on('bootstrap', [
+        we.bootstrapFunctions.loadCoreFeatures,
+        we.bootstrapFunctions.loadPluginFeatures,
+        we.bootstrapFunctions.loadTemplateCache,
+        we.bootstrapFunctions.instantiateModels,
+        we.bootstrapFunctions.syncModels,
+        we.bootstrapFunctions.loadControllers,
+        we.bootstrapFunctions.initI18n,
+        we.bootstrapFunctions.setExpressApp,
+        we.bootstrapFunctions.passport,
+        we.bootstrapFunctions.createDefaultFolders,
+        we.bootstrapFunctions.registerAllViewTemplates,
+        we.bootstrapFunctions.mergeRoutes,
+        we.bootstrapFunctions.bindResources,
+        we.bootstrapFunctions.bindRoutes
+      ])
+  }
 }
 
 /**
@@ -293,6 +139,8 @@ function We (options) {
  * @param {Function} cb       callback
  */
 We.prototype.setConfig = function setConfig (variable, value, cb) {
+  if (!cb) cb = function(){}
+
   var cJSON,
       cFGpath = path.join(this.projectPath, '/config/configuration.json')
 
@@ -341,7 +189,8 @@ We.prototype.unSetConfig = function unSetConfig (variable, cb) {
 
   writeFile(cFGpath, JSON.stringify(cJSON, null, 2), cb)
 }
-
+// set bootstrap functions
+We.prototype.bootstrapFunctions = require('./bootstrapFunctions');
 // flag to check if this we.js instance did the bootstrap
 We.prototype.bootstrapStarted = false
   // flag to check if needs restart

@@ -257,7 +257,11 @@ describe('resourceRequests_jsonAPI', function() {
         .then(function (p) {
 
           var updateData = {
-            title: 'iIIeeei'
+            data: {
+              attributes: {
+                title: 'iIIeeei'
+              }
+            }
           };
           request(http)
           .put('/post/'+p.id)
@@ -269,7 +273,7 @@ describe('resourceRequests_jsonAPI', function() {
             if (err) throw err;
 
             assert(res.body.data.id);
-            assert.equal(res.body.data.attributes.title, updateData.title);
+            assert.equal(res.body.data.attributes.title, updateData.data.attributes.title);
             assert.equal(res.body.data.attributes.text, p.text);
 
             done();

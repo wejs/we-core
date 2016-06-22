@@ -1,3 +1,6 @@
 {
-  "name": "we-plugin-post"
+  "name": "we-plugin-post",
+  "keywords": [
+    "wejs-plugin"
+  ]
 }

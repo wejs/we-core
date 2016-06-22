@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path')
 
 module.exports = {
   requirements: function(we, done) {
@@ -201,6 +202,61 @@ module.exports = {
         });
       }
     },
+    {
+      version: '1.8.0',
+      update: function (we, done) {
+        we.log.info(
+          'registering all installed plugins to work with new we.js plugin manager'
+        );
+
+        var pkg = require( path.resolve(we.projectPath, 'package.json') )
+        var nodeModulesPath = path.resolve(we.projectPath, 'node_modules')
+
+        if (!pkg.wejs) pkg.wejs = {}
+        if (!pkg.wejs.plugins) pkg.wejs.plugins = {}
+
+        for (var n in pkg.dependencies) {
+          if (n != 'we-core' &&
+            oldIsPlugin( path.resolve(nodeModulesPath,   n))
+          ) {
+            pkg.wejs.plugins[n] = true
+          }
+        }
+
+        fs.writeFile(
+          path.resolve(we.projectPath, 'package.json'),
+          JSON.stringify(pkg, null, 2),
+          { flags: 'w' },
+          function (err) {
+            if (err) return done(err)
+
+            var We = require('./lib/index.js')
+            var weUp = new We({
+              bootstrapMode: 'install'
+            })
+
+            weUp.bootstrap(function (err) {
+              if (err) return done(err)
+              done()
+            })
+          }
+        )
+
+        // old we.js is plugin function to check is one npm module is plugin
+        function oldIsPlugin (nodeModulePath) {
+          // then check if the npm module is one plugin
+          try {
+            if (fs.statSync( path.resolve( nodeModulePath, 'plugin.js' ) )) {
+              return true
+            } else {
+              return false
+            }
+          } catch (e) {
+            return false
+          }
+        }
+      }
+    }
     ];
   }
 };

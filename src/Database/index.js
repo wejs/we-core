@@ -229,7 +229,7 @@ Database.prototype.loadCoreModels = function loadCoreModels (done) {
     },
     weight: {
       comment: 'plugin weight how controll plugin load order',
-      type: Sequelize.INTEGER(5),
+      type: Sequelize.INTEGER,
       defaultValue: 0,
       allowNull: false
     },

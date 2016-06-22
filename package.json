@@ -1,6 +1,6 @@
 {
   "name": "we-core",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "description": "We.js is a node.js framework for build real time applications, sites or blogs!",
   "homepage": "https://wejs.org",
   "main": "./lib/index.js",
@@ -17,8 +17,8 @@
     "we.js",
     "wejs",
     "plugin",
-    "API",
-    "SPA"
+    "wejs-plugin",
+    "framework"
   ],
   "repository": "wejs/we-plugin-core",
   "files": [
@@ -61,7 +61,7 @@
     "babel-plugin-array-includes": "^2.0.3",
     "babel-preset-es2015": "^6.9.0",
     "chance": "^1.0.3",
-    "express-mysql-session": "1.1.0",
+    "express-mysql-session": "1.1.1",
     "istanbul": "0.4.3",
     "mocha": "2.5.3",
     "mysql": "2.11.1",
@@ -73,6 +73,11 @@
   },
   "engines": {
     "node": ">=4.0.0"
+  },
+  "wejs": {
+    "plugins": {
+      "we-plugin-post": true
+    }
   },
   "babel": {
     "presets": [

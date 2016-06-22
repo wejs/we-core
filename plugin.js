@@ -2,7 +2,7 @@
  * We.js plugin config
  */
 
-module.exports = function loadPlugin(projectPath, Plugin) {
+module.exports = function loadPlugin (projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
 
   // folder for fallback templates
@@ -10,10 +10,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
   // set plugin configs
   plugin.setConfigs({
-    // plugins to load, default is null for auto load all npm modules starting with we- prefix
-    plugins: null,
-    // // flag to skip project and plugin install methods
-    // skipInstall: false,
+    // select how bootstrap functions will run
+    // values: full || install
+    bootstrapMode: null,
 
     // enable suport to parse req.query.where to sequelize query
     enableQueryWhere: false,
@@ -59,7 +58,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     // body parser settings to use in bodyParser.json()
     bodyParser: {
-      // type: '*',
       limit: 20000000
     },
     // external services API keys
