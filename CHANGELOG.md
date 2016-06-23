@@ -1,6 +1,7 @@
 # Change log file
 
 ## Changes:
+- v1.8.0: New plugin manager
 - v1.7.0:
   - Added suport for jsonapi requests in core and response format improved
 - v1.6.0: we-plugin-file api updated. Title, breadcrumb and metatag moved to we-plugin-view, add babel in we-core.
