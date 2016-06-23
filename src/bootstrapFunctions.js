@@ -201,6 +201,8 @@ module.exports = {
           done()
         });
 
+        we.responses.sortResponses(we);
+
         next()
       });
     });
