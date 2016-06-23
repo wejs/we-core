@@ -77,6 +77,7 @@ function We (options) {
   switch (we.config.bootstrapMode) {
     case 'install':
     case 'installation':
+    case 'update':
       we.hooks.on('bootstrap', [
         we.bootstrapFunctions.loadCoreFeatures,
         we.bootstrapFunctions.loadPluginFeatures,
