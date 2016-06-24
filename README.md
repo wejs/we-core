@@ -45,15 +45,11 @@ npm test
 we test -g 'resourceRequests'
 ```
 
-##### For run the code coverage 
+##### For run the code coverage
 
 ```sh
 npm run coverage
 ```
-
-## NPM Info:
-
-[![NPM](https://nodei.co/npm/we-core.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/we-core/)
 
 ## License
 
