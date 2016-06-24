@@ -1,24 +1,24 @@
 /**
-* We.js express init and configs
+* We.js express module
 */
 
-var express = require('express');
-var compress = require('compression');
-var favicon = require('serve-favicon');
-var bodyParser = require('body-parser');
-var responseTypeMD = require('../Router/responseType.js');
-var messages = require('../messages');
-var cors = require('cors');
-var flash = require('connect-flash');
+import express from 'express'
+import compress from 'compression'
+import favicon from 'serve-favicon'
+import bodyParser from 'body-parser'
+import responseTypeMD from '../Router/responseType.js'
+import messages from '../messages'
+import cors from 'cors'
+import flash from 'connect-flash'
 
-module.exports = function initExpress(we) {
-  var weExpress = express();
+module.exports = function initExpress (we) {
+  let weExpress = express();
   // express response compression middleware
   weExpress.use(compress());
   // remove uneed x-powered-by header
   weExpress.disable('x-powered-by');
   // set default vars
-  weExpress.use(function setDefaultVars(req, res, next) {
+  weExpress.use(function setDefaultVars (req, res, next) {
     // set default req.getWe for suport with this getter
     req.getWe = function getWejs() { return we };
     if (!res.locals) res.locals = {};
@@ -86,7 +86,9 @@ module.exports = function initExpress(we) {
 
   weExpress.use(we.utils.cookieParser());
   // set session store
-  require('./sessionStore')(we, weExpress);
+  if (!we.config.disablePublicFolder) {
+    require('./publicFolders')(we, weExpress);
+  }
 
   weExpress.use(flash());
   // set public folders

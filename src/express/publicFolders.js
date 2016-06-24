@@ -1,14 +1,14 @@
-var express = require('express');
-var path = require('path');
+import express from 'express'
+import path from 'path'
 
 module.exports = function setPublicFolderMiddlewares (we, weExpress) {
-  var cfg = { maxAge: we.config.cache.maxage };
-
-  var publicRouter = express.Router();
+  let cfg = { maxAge: we.config.cache.maxage },
+    plugin,
+    publicRouter = express.Router();
 
   if (we.view && we.view.themes) {
     // set themes public folder
-    for (var themeName in we.view.themes) {
+    for (let themeName in we.view.themes) {
       publicRouter.use(
         '/theme/' + we.view.themes[themeName].name,
         express.static(path.join(
@@ -17,10 +17,9 @@ module.exports = function setPublicFolderMiddlewares (we, weExpress) {
       );
     }
   }
-
+  
   // set plugins public folder
-  var plugin;
-  for (var pluginName in we.plugins) {
+  for (let pluginName in we.plugins) {
     plugin = we.plugins[pluginName];
     publicRouter.use(
       '/plugin/' + plugin['package.json'].name + '/files',
