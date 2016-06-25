@@ -41,6 +41,12 @@ function Router (we) {
 Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter) {
   let method, path
 
+  if (!config) {
+    // is route configuration is false or null, this route will be disabled
+    app.log.verbose('route disabled:', route);
+    return;
+  }
+
   // set responseType based in extension
   let extension = app.router.splitExtensionFromURL(route)
   if (extension) {
