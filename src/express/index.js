@@ -86,12 +86,13 @@ module.exports = function initExpress (we) {
 
   weExpress.use(we.utils.cookieParser());
   // set session store
+  require('./sessionStore')(we, weExpress);
+
+  weExpress.use(flash());
+
+  // set public folders
   if (!we.config.disablePublicFolder) {
     require('./publicFolders')(we, weExpress);
   }
-
-  weExpress.use(flash());
-  // set public folders
-  require('./publicFolders')(we, weExpress);
   return weExpress;
 };
