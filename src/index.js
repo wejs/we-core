@@ -121,6 +121,7 @@ function We (options) {
         we.bootstrapFunctions.syncModels,
         we.bootstrapFunctions.loadControllers,
         we.bootstrapFunctions.initI18n,
+        we.bootstrapFunctions.installAndRegisterPlugins,
         we.bootstrapFunctions.setExpressApp,
         we.bootstrapFunctions.passport,
         we.bootstrapFunctions.createDefaultFolders,
