@@ -66,6 +66,11 @@ describe('resourceRequests_jsonAPI', function() {
           postStub(su.id)
         ];
 
+        var postsByTitle = {}
+        posts.forEach(function(p){
+          postsByTitle[p.title] = p
+        })
+
         we.db.models.post.bulkCreate(posts)
         .spread(function(){
           request(http)
@@ -82,18 +87,20 @@ describe('resourceRequests_jsonAPI', function() {
             assert(res.body.data)
             assert(_.isArray(res.body.data) )
 
-            for (var i = 0; i < posts.length; i++) {
-              var p = posts[i]
+            res.body.data.forEach(function (p) {
 
-              assert(res.body.data[i].relationships)
-              assert(res.body.data[i].attributes)
+              assert(p.relationships)
+              assert(p.attributes)
+              assert(p.id)
 
-              assert(res.body.data[i].id)
-              assert(res.body.data[i].id, p.id)
+              var pn = postsByTitle[p.attributes.title]
+              assert(pn)
 
-              assert.equal(res.body.data[i].attributes.title, p.title)
-              assert.equal(res.body.data[i].attributes.text, p.text)
-            }
+              assert(p.id, pn.id)
+
+              assert.equal(p.attributes.title, pn.title)
+              assert.equal(p.attributes.text, pn.text)
+            })
 
             assert.equal(res.body.meta.count, 3);
 
@@ -239,7 +246,7 @@ describe('resourceRequests_jsonAPI', function() {
         var info = we.log.info;
         we.log.info = function() {};
         request(http)
-        .get('/post/12321313123121311231231233')
+        .get('/post/1232131')
         .expect(404)
         .end(function (err, res) {
           if (err) throw err;
