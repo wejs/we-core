@@ -369,7 +369,8 @@ Router.prototype.contextLoaded = function contextLoaded(err) {
     // preload user roles
     return this.req.user.getRoles()
     .then(function afterGetUserRoles(result) {
-      this.next(null, result);
+      this.next(null, result)
+      return result
     }.bind(this));
   }.bind(this));
   // });

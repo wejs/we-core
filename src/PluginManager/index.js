@@ -237,6 +237,7 @@ PluginManager.prototype.registerPlugin = function (name, done) {
     // push to plugin record array
     pluginManager.records.push(r)
     done()
+    return r
   })
   .catch(done)
 }
@@ -250,7 +251,7 @@ PluginManager.prototype.registerPlugin = function (name, done) {
 PluginManager.prototype.loadPluginsSettingsFromDB = function (we, cb) {
   let pluginManager = this
 
-  we.db.models.plugin.findAll({
+  return we.db.models.plugin.findAll({
     order: [['weight', 'ASC'], ['id', 'ASC']],
     raw: true
   })
@@ -266,6 +267,7 @@ PluginManager.prototype.loadPluginsSettingsFromDB = function (we, cb) {
     pluginManager.records = plugins
 
     cb(null, plugins)
+    return plugins
   })
   .catch(cb)
 }
@@ -362,10 +364,13 @@ PluginManager.prototype.runPluginUpdates = function (name, done) {
       if (err) return next (err)
       // update the plugin version in db
       pluginRecord.version = up.version
-      pluginRecord.save()
+
+      return pluginRecord.save()
       .then(function () {
-        we.log.info('Plugin '+name+ ' updated to: '+up.version)
+        we.log.info('Plugin '+name+ ' updated to: ' + up.version)
         next()
+
+        return pluginRecord
       })
       .catch(next)
     })

@@ -59,7 +59,8 @@ function Database (we) {
               }
             }
 
-            return done()
+            done()
+            return record
           })
           .catch(done)
         }
@@ -239,9 +240,10 @@ Database.prototype.loadCoreModels = function loadCoreModels (done) {
   })
 
 
-  db.models.plugin.sync()
-  .then(function(){
-    done();
+  return db.models.plugin.sync()
+  .then(function () {
+    done()
+    return null
   })
   .catch(function errorOnSyncCoreModels (err) {
     // database connection error
@@ -259,7 +261,7 @@ Check the database documentation in http://wejs.org site`)
       process.exit()
     }
     // unknow error ...
-    done(err)
+    return done(err)
   });
 }
 
@@ -278,9 +280,9 @@ Database.prototype.syncAllModels = function syncAllModels (cd, cb) {
   if (!cb) cb = function(){ }
 
   if (this.env == 'test' || (this.env != 'prod' && cd && cd.resetAllData)) {
-    this.defaultConnection.sync({force: true}).then(function(){ cb(); }).catch(cb)
+    this.defaultConnection.sync({force: true}).nodeify(cb)
   } else {
-    this.defaultConnection.sync().then(function(){ cb(); }).catch(cb)
+    this.defaultConnection.sync().nodeify(cb)
   }
 }
 
