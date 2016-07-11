@@ -15,6 +15,7 @@ module.exports = {
   string: require('string'),
   cookieParser: require('cookie-parser'),
   mime: require('mime'),
+  express: require('express'),
 
   /**
    * Is authenticated method usable if we-plugin-auth not is installed
