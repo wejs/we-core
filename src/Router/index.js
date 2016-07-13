@@ -370,7 +370,7 @@ Router.prototype.contextLoaded = function contextLoaded(err) {
     return this.req.user.getRoles()
     .then(function afterGetUserRoles(result) {
       this.next(null, result)
-      return result
+      return null
     }.bind(this));
   }.bind(this));
   // });
