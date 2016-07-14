@@ -79,6 +79,7 @@ function We (options) {
     case 'installation':
     case 'update':
       we.hooks.on('bootstrap', [
+        we.bootstrapFunctions.checkDBConnection,
         we.bootstrapFunctions.loadCoreFeatures,
         we.bootstrapFunctions.loadPluginFeatures,
         we.bootstrapFunctions.loadTemplateCache,
@@ -94,6 +95,7 @@ function We (options) {
     case 'test':
       // full load, usefull for tests
       we.hooks.on('bootstrap', [
+        we.bootstrapFunctions.checkDBConnection,
         we.bootstrapFunctions.loadCoreFeatures,
         we.bootstrapFunctions.loadPluginFeatures,
         we.bootstrapFunctions.loadTemplateCache,
@@ -114,6 +116,7 @@ function We (options) {
     default:
       // defaults to load for run
       we.hooks.on('bootstrap', [
+        we.bootstrapFunctions.checkDBConnection,
         we.bootstrapFunctions.loadCoreFeatures,
         we.bootstrapFunctions.loadPluginFeatures,
         we.bootstrapFunctions.loadTemplateCache,

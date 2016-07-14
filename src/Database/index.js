@@ -196,7 +196,6 @@ Database.prototype.define = function defineModel (name, definition, options) {
  * @return {Object} models db.models var
  */
 Database.prototype.loadCoreModels = function loadCoreModels (done) {
-  let log = this.we.log
   let db = this
 
   //  system / plugins table
@@ -239,30 +238,12 @@ Database.prototype.loadCoreModels = function loadCoreModels (done) {
     }
   })
 
-
   return db.models.plugin.sync()
   .then(function () {
     done()
     return null
   })
-  .catch(function errorOnSyncCoreModels (err) {
-    // database connection error
-    if (err.name == 'SequelizeAccessDeniedError') {
-      console.log('database access error')
-      log.warn('Cannot connect to the database')
-      log.warn(`This behavior occurs if one of the following conditions is true:
-  1. The SQL database is not running or you need to create the database.
-  2. The account that is used by the project in locals/config.js file does not have the required permissions to the database server.
-
-Check the database documentation in http://wejs.org site`)
-
-      log.verbose('Error: ', err)
-
-      process.exit()
-    }
-    // unknow error ...
-    return done(err)
-  });
+  .catch(done);
 }
 
 /**
@@ -468,5 +449,120 @@ Database.prototype.checkPrivacity = function checkPrivacity (obj) {
 }
 
 Database.prototype.defineModelFromJson = require('./defineModelFromJson.js');
+
+
+Database.prototype.checkDBConnection = function checkDBConnection(we, cb) {
+  let log = this.we.log
+  let db = this
+
+  we.db.defaultConnection.authenticate()
+  .nodeify(function afterCheckConnection (err) {
+    if (!err) return cb(null, true) // all fine
+
+    // database connection error
+    if (err.name == 'SequelizeAccessDeniedError') {
+      log.warn('Cannot connect to the database')
+      log.warn(`This behavior occurs if one of the following conditions is true:
+  1. The SQL database is not running or you need to create the database.
+  2. The account that is used by the project in config/local.js file does not have the required permissions to the database server.
+
+Check the database documentation in https://wejs.org site`)
+
+      log.verbose('Error: ', err)
+
+      process.exit()
+    }
+    // connected but database dont exists
+    if (err.name == 'SequelizeConnectionError') {
+      return db.tryToCreateDB(function (e, success) {
+        if (e) return cb(e) // unknow error on try to create
+        if (!success) return cb(err) // cant create
+        cb(null, true) // success
+      });
+    }
+
+    // unknow error
+    cb(err)
+  })
+}
+
+
+Database.prototype.tryToCreateDB = function tryToCreateDB(cb) {
+  let db = this,
+      cfg = db.activeConnectionConfig
+
+  switch (cfg.dialect) {
+    case 'mysql':
+      return db.createMysqlDatabase(cb)
+    case 'postgres':
+      return db.createPostgreDatabase(cb)
+    default:
+      return cb()
+  }
+}
+
+Database.prototype.createMysqlDatabase = function createMysqlDatabase(cb) {
+  let db = this,
+      cfg = db.activeConnectionConfig
+
+  let mysql = require('mysql')
+  let connection = mysql.createConnection({
+    host     : cfg.host || 'localhost',
+    user     : cfg.username,
+    password : cfg.password
+  })
+  let dbName = cfg.database
+
+  connection.connect()
+
+  connection.query(`CREATE DATABASE ${dbName};`, function(err) {
+   if (err) {
+      db.we.log.warn('Unknow error on try to create mysql DB:, err')
+      return cb(err)
+    }
+
+    connection.end()
+
+    db.we.log.info(`Database "${dbName}" created`)
+
+    cb(null, true)
+  });
+}
+
+/**
+ * Create the database in postgre database
+ */
+Database.prototype.createPostgreDatabase = function createPostgreDatabase(callback) {
+
+  let db = this,
+      cfg = db.activeConnectionConfig
+
+  let pg = require('pg')
+
+  let dbName = cfg.database,
+      username = cfg.username,
+      password = cfg.password,
+      host = cfg.host || 'localhost'
+
+  let conStringPri = 'postgres://' + username + ':' + password + '@' + host + '/postgres'
+
+
+  // connect to postgres db
+  pg.connect(conStringPri, function afterConnectWithPG(err, client) {
+    if (err) return callback(err)
+    // create the db and ignore any errors, for example if it already exists.
+    client.query('CREATE DATABASE ' + dbName, function afterCreateTheDB(err) {
+      if (err) {
+        db.we.log.warn('unknow error on try to create postgres DB:, err')
+        return callback(err)
+      }
+
+      db.we.log.info(`Database "${dbName}" created`)
+
+      callback(null, true)
+      client.end() // close the connection
+    })
+  })
+}
 
 module.exports = Database;
