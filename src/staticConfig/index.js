@@ -75,9 +75,9 @@ staticConfig.readJsonConfiguration = function (projectConfigFolder) {
 
   try {
     // load configuration.json after others but before local.js
-    return require(dirCFJSON);
+    return JSON.parse(fs.readFileSync(dirCFJSON))
   } catch (e) {
-    if (e.code != 'MODULE_NOT_FOUND' ) {
+    if (e.code != 'ENOENT' ) {
       console.error('Unknow error on load config/configuration.json config:', e);
     } else {
       // if not exists create it
