@@ -32,10 +32,6 @@ module.exports = function getAppBootstrapConfig(we) {
     }
   };
 
-  // acl configs
-  if (we.config.acl)
-    configs.acl = { disabled: we.config.acl.disabled };
-
   // get log config
   configs.client.log = we.config.clientside.log;
 
@@ -47,11 +43,6 @@ module.exports = function getAppBootstrapConfig(we) {
 
   configs.locales = we.config.i18n.locales;
   configs.client.language = we.config.i18n.defaultLocale;
-
-  if (we.config.auth) {
-     configs.client.isProvider = we.config.auth.isProvider;
-     configs.client.isConsumer = we.config.auth.isConsumer;
-  }
 
   configs.structure = {};
 
