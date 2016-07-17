@@ -263,15 +263,11 @@ module.exports = {
 
     res.status(500)
 
-    req.we.log.verbose('ServerError:', data)
+    req.we.log.error('ServerError:', data)
 
     res.locals.title = __('response.serveError.title')
 
-    if (!data) {
-      data = {}
-    } else if (typeof data == 'string') {
-      res.addMessage('error', data)
-    }
+    if (data && typeof data == 'string') res.addMessage('error', String(data))
 
     if (req.accepts('html')) {
       res.locals.template = '500'
@@ -296,11 +292,7 @@ module.exports = {
 
     if (req.we.env == 'dev') console.trace('400', req.path)
 
-    if (!data) {
-      data = {}
-    } else if (typeof data == 'string') {
-      res.addMessage('warning', data)
-    }
+    if (data && typeof data == 'string') res.addMessage('warning', String(data))
 
     if (req.accepts('html')) {
       // if is html
