@@ -263,6 +263,8 @@ module.exports = {
 
     res.status(500)
 
+    req.we.log.verbose('ServerError:', data)
+
     res.locals.title = __('response.serveError.title')
 
     if (!data) {
