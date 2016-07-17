@@ -30,7 +30,7 @@ Controller.prototype.find = function findAll (req, res) {
     res.locals.metadata.count = record.count
     res.locals.data = record.rows
     res.ok()
-    return record
+    return null
   })
   .catch(res.queryError)
 }
@@ -69,7 +69,7 @@ Controller.prototype.create = function create (req, res) {
     .then(function afterCreate (record) {
       res.locals.data = record
       res.created()
-      return record
+      return null
     })
     .catch(res.queryError)
   } else {
@@ -97,7 +97,7 @@ Controller.prototype.edit = function edit (req, res) {
     .then(function afterUpdate () {
       res.locals.data = record
       res.updated()
-      return record
+      return null
     })
     .catch(res.queryError)
   } else {
@@ -126,7 +126,7 @@ Controller.prototype.delete = function deletePage (req, res) {
     .then(function afterDestroy () {
       res.locals.deleted = true
       res.deleted()
-      return record
+      return null
     })
     .catch(res.queryError)
   } else {

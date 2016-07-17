@@ -60,7 +60,7 @@ function Database (we) {
             }
 
             done()
-            return record
+            return null
           })
           .catch(done)
         }

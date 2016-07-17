@@ -237,7 +237,7 @@ PluginManager.prototype.registerPlugin = function (name, done) {
     // push to plugin record array
     pluginManager.records.push(r)
     done()
-    return r
+    return null
   })
   .catch(done)
 }
@@ -267,7 +267,8 @@ PluginManager.prototype.loadPluginsSettingsFromDB = function (we, cb) {
     pluginManager.records = plugins
 
     cb(null, plugins)
-    return plugins
+
+    return null
   })
   .catch(cb)
 }
@@ -370,7 +371,7 @@ PluginManager.prototype.runPluginUpdates = function (name, done) {
         we.log.info('Plugin '+name+ ' updated to: ' + up.version)
         next()
 
-        return pluginRecord
+        return null
       })
       .catch(next)
     })
