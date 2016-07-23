@@ -4,7 +4,7 @@
  */
 var sanitizeHtml = require('sanitize-html');
 
-var Sanitizer = function(we) {
+function Sanitizer (we) {
   this.we = we;
   var sanitizer = this;
 
