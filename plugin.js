@@ -157,6 +157,41 @@ module.exports = function loadPlugin (projectPath, Plugin) {
         // default methods
         methods: ['GET', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+      },
+      sanitizer: {
+        allowedTags: [
+          // text blocks
+          'p',
+          'pre',
+          'code',
+          'blockquote',
+          'br',
+          'a', 'img',
+          'hr',
+          'mention',
+          'iframe',
+          'div',
+          // text format
+          'b', 'i', 'em', 'strong',  'u',
+          'h1', 'h2', 'h3',
+          'h4', 'h5','h6',
+          // list
+          'ul', 'ol', 'nl', 'li'
+        ],
+        selfClosing: [
+          'br',
+          'img',
+          'hr'
+        ],
+        allowedAttributes: {
+          'span': [ 'style' ],
+          'div': [ 'style' ],
+          'i': ['class'],
+          'a': ['href', 'alt', 'target', 'type'],
+          'img': ['src', 'alt', 'style', 'class', 'data-filename', 'style', 'width', 'height'],
+          'iframe': ['src', 'width', 'height', 'frameborder'],
+          'mention': ['data-user-id']
+        }
       }
     },
     router: {},

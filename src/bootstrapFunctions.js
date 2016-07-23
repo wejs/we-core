@@ -3,7 +3,7 @@ import localization from './localization'
 import weExpress from './express'
 
 module.exports = {
-  checkDBConnection: function checkDBConnection(we, next) {
+  checkDBConnection: function checkDBConnection (we, next) {
     we.db.checkDBConnection(we, next)
   },
   loadCoreFeatures: function loadCoreFeatures (we, next) {
