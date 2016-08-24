@@ -1,38 +1,29 @@
-var winston = require('winston');
-var path = require('path');
-var _ = require('lodash');
+const winston = require('winston');
+const _ = require('lodash');
 
-module.exports = function getTheLogger(we) {
+module.exports = function getTheLogger (we) {
   if (!we) throw new Error('we instance is required for get logger instance');
-
-  var logger = null;
-
-  var cfgFile = {};
-  var configs = {
-    log: {
+  let configs = _.defaults(we.config.log, {
       level: 'info' ,
-      colorize: true,
+      colorize: false,
       timestamp: true,
+      json: true,
+      stringify: true,
       prettyPrint: true,
       depth: 5,
       showLevel: true
     }
+  )
+  // allow to set log level with LOG_LV enviroment variable
+  if (process.env.LOG_LV) configs.level = process.env.LOG_LV;
+
+  // start one logger
+  let logger = new (winston.Logger)(configs);
+
+  if (!configs.transports || !configs.transports.length) {
+    // default console logger
+    logger.add(winston.transports.Console, configs)
   }
 
-  try {
-    cfgFile = require( path.resolve( we.projectPath, 'config', 'log.js' ));
-    _.merge(configs, cfgFile);
-  } catch(e) {
-    if (e.code != 'MODULE_NOT_FOUND' ) {
-      throw e;
-    }
-  }
-
-  if (process.env.LOG_LV) configs.log.level = process.env.LOG_LV;
-
-  return logger = new (winston.Logger)({
-    transports: [
-      new (winston.transports.Console)(configs.log)
-    ]
-  });
+  return logger;
 };

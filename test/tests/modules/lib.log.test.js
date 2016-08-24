@@ -28,31 +28,31 @@ describe('lib/log', function () {
     done();
   });
 
-  it('should return logger with config file', function (done) {
-    we.projectPath = path.resolve(__dirname, '../../testData');
+  // it('should return logger with config file', function (done) {
+  //   we.projectPath = path.resolve(__dirname, '../../testData');
 
-    delete process.env.LOG_LV;
+  //   delete process.env.LOG_LV;
 
-    var logger = getLogger(we);
+  //   var logger = getLogger(we);
 
-    assert.equal(logger.transports.console.level, 'warn');
-    assert.equal(logger.transports.console.depth, 6);
+  //   assert.equal(logger.transports.console.level, 'warn');
+  //   assert.equal(logger.transports.console.depth, 6);
 
-    we.projectPath = process.cwd();
+  //   we.projectPath = process.cwd();
 
-    process.env.LOG_LV = 'info';
+  //   process.env.LOG_LV = 'info';
 
-    done();
-  });
+  //   done();
+  // });
 
-  it('should throw error with error in log.js config file', function (done) {
-    we.projectPath = path.resolve(__dirname, '../../testData/invalidLogConfig');
+  // it('should throw error with error in log.js config file', function (done) {
+  //   we.projectPath = path.resolve(__dirname, '../../testData/invalidLogConfig');
 
-    try {
-      getLogger(we);
-    } catch(e) {
-      assert.equal(e.message, 'Unexpected identifier');
-      done();
-    }
-  });
+  //   try {
+  //     getLogger(we);
+  //   } catch(e) {
+  //     assert.equal(e.message, 'Unexpected identifier');
+  //     done();
+  //   }
+  // });
 });
