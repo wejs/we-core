@@ -11,7 +11,7 @@ let JSONApi = {
         req.we.db.checkRecordsPrivacity(res.locals.data)
       }
 
-      if (res.locals.action == 'find') {
+      if (res.locals.action == 'find' || isArray(res.locals.data) ) {
         response = JSONApi.formatList (req, res)
       } else if (res.locals.action == 'delete') {
         // dont send data in delete
