@@ -11,9 +11,10 @@ module.exports = function getTheLogger (we) {
       stringify: true,
       prettyPrint: true,
       depth: 5,
-      showLevel: true
+      showLevel: false
     }
-  )
+  );
+
   // allow to set log level with LOG_LV enviroment variable
   if (process.env.LOG_LV) configs.level = process.env.LOG_LV;
 
@@ -22,8 +23,22 @@ module.exports = function getTheLogger (we) {
 
   if (!configs.transports || !configs.transports.length) {
     // default console logger
-    logger.add(winston.transports.Console, configs)
+    logger.add(winston.transports.Console, configs);
   }
+  // sabe close method
+  logger.closeAllLoggersAndDisconnect = closeAllLoggersAndDisconnect;
 
   return logger;
 };
+
+/**
+ * Method for wait all log writes after disconnect
+ *
+ * @param  {Object}   we
+ * @param  {Function} cb
+ */
+function closeAllLoggersAndDisconnect(we, cb) {
+  setTimeout(()=> {
+    cb();
+  }, 350);
+}

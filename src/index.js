@@ -417,8 +417,10 @@ We.prototype.go = function go (cfgs, cb) {
  * @param  {Function} cb callback
  */
 We.prototype.exit = function exit (cb) {
-  this.db.defaultConnection.close()
-  cb()
+  // close db connection
+  this.db.defaultConnection.close();
+  // close all loggers and wait for end writes
+  this.log.closeAllLoggersAndDisconnect(this, cb);
 }
 
 /**
