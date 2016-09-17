@@ -195,6 +195,9 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       }
     },
     router: {},
+    JSONApi: {
+      sendSubRecordAttributes: false
+    },
     /**
      * Resource routes, add or remove routes generated to your resource
      *

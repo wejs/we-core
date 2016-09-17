@@ -1,5 +1,5 @@
-import { isArray } from 'lodash'
-const actions = ['edit', 'create']
+import { isArray } from 'lodash';
+const actions = ['edit', 'create'];
 
 let JSONApi = {
   jsonAPIFormater: function jsonAPIFormater (req, res) {
@@ -8,17 +8,16 @@ let JSONApi = {
     if (res.locals.model) {
       // check field privacity access for users
       if (res.locals.model == 'user') {
-        req.we.db.checkRecordsPrivacity(res.locals.data)
+        req.we.db.checkRecordsPrivacity(res.locals.data);
       }
 
       if (res.locals.action == 'find' || isArray(res.locals.data) ) {
-        response = JSONApi.formatList (req, res)
+        response = JSONApi.formatList (req, res);
       } else if (res.locals.action == 'delete') {
         // dont send data in delete
-        response = {}
+        response = {};
       } else {
-        response = JSONApi.formatItem (req, res)
-        // formatItem (req, res, response)
+        response = JSONApi.formatItem (req, res);
       }
     }
 
@@ -27,91 +26,76 @@ let JSONApi = {
     // parse we.js errors to jsonapi errors
     JSONApi.parseErrors(response, req, res);
 
-    res.send(response)
+    res.send(response);
   },
 
   formatList: function formatList (req, res) {
     let data = [],
         included = {},
         r = {},
-        mc = req.we.db.modelsConfigs[res.locals.model]
+        mc = req.we.db.modelsConfigs[res.locals.model];
 
     // skip if data is empty
     if (!res.locals.data) return { data: [] };
 
     data = res.locals.data
+    .map(d => { return d.toJSON(); })
     .map(d => {
-      return d.toJSON()
-    })
-    .map(d => {
-
-      let attributes = {};
-      let relationships = {};
+      let attributes = {},
+          relationships = {};
 
       // attributes
       mc.attributeList.forEach(a => {
-        attributes[a] = d[a]
-      })
-
+        attributes[a] = d[a];
+      });
+      // associations:
       mc.associationNames.forEach(a => {
         if (!d[a]) return;
 
         if (isArray(d[a])) {
-          // parse hasMany and BellongsToMany
-          JSONApi.parseNxNAssociation(mc, a, d[a], relationships, included, req.we)
+          // parse hasMany and BelongsToMany
+          JSONApi.parseNxNAssociation(mc, a, d[a], relationships, included, req.we);
           return;
+        } else {
+          // parse belongsTo and hasOne
+          JSONApi.parse1xNAssociation(mc, a, d[a], relationships, included, req.we);
         }
-
-        if (d[a].toJSON) d[a] = d[a].toJSON()
-
-        let iid = mc.associations[a].model + '_' + d[a].id
-
-        if (!included[iid]) {
-          included[iid] = {
-            type: mc.associations[a].model,
-            id: d[a].id,
-            attributes: d[a]
-          }
-        }
-
-        relationships[a] = {
-          data: {
-            id: d[a].id,
-            type: mc.associations[a].model
-          }
-        }
-      })
-
+      });
+      // done one
       return {
         type: res.locals.model,
         id: d.id,
         attributes: attributes,
         relationships: relationships
-      }
-    })
+      };
+    });
 
     r.data = data;
 
-    if (included) r.included = Object.keys(included).map(iid => {
-      delete included[iid].attributes.id // remove the id from attributes
-      return included[iid]
-    })
+    if (req.we.config.JSONApi.sendSubRecordAttributes && included) {
+      r.included = Object.keys(included).map(iid => {
+        if (included[iid].attributes) {
+          delete included[iid].attributes.id; // remove the id from attributes
+        }
+        return included[iid];
+      });
+    }
 
-    return r
+    return r;
   },
   formatItem: function formatItem (req, res) {
     let d,
         included = {},
         r = {},
-        mc = req.we.db.modelsConfigs[res.locals.model]
+        mc = req.we.db.modelsConfigs[res.locals.model];
 
     // skip if data is empty
     if (!res.locals.data) return { data: [] };
 
     if (res.locals.data.toJSON) {
-      d = res.locals.data.toJSON()
+      d = res.locals.data.toJSON();
     } else {
-      d = res.locals.data
+      d = res.locals.data;
     }
 
     let attributes = {};
@@ -119,50 +103,39 @@ let JSONApi = {
 
     // attributes
     mc.attributeList.forEach(a => {
-      attributes[a] = d[a]
-    })
+      attributes[a] = d[a];
+    });
 
+    // associations:
     mc.associationNames.forEach(a => {
       if (!d[a]) return;
       if (isArray(d[a])) {
-        // parse hasMany and BellongsToMany
-        JSONApi.parseNxNAssociation(mc, a, d[a], relationships, included, req.we)
+        // parse hasMany and BelongsToMany
+        JSONApi.parseNxNAssociation(mc, a, d[a], relationships, included, req.we);
         return;
+      } else {
+        // parse belongsTo and hasOne
+        JSONApi.parse1xNAssociation(mc, a, d[a], relationships, included, req.we);
       }
-
-      if (d[a].toJSON) d[a] = d[a].toJSON()
-
-      let iid = mc.associations[a].model + '_' + d[a].id
-
-      if (!included[iid]) {
-        included[iid] = {
-          type: mc.associations[a].model,
-          id: d[a].id,
-          attributes: d[a]
-        }
-      }
-
-      relationships[a] = {
-        data: {
-          id: d[a].id,
-          type: mc.associations[a].model
-        }
-      }
-    })
+    });
 
     r.data = {
       type: res.locals.model,
       id: d.id,
       attributes: attributes,
       relationships: relationships
+    };
+
+    if (req.we.config.JSONApi.sendSubRecordAttributes && included) {
+      r.included = Object.keys(included).map(iid => {
+        if (included[iid].attributes) {
+          delete included[iid].attributes.id; // remove the id from attributes
+        }
+        return included[iid];
+      });
     }
 
-    if (included) r.included = Object.keys(included).map(iid => {
-      delete included[iid].attributes.id // remove the id from attributes
-      return included[iid]
-    })
-
-    return r
+    return r;
   },
 
   jsonAPIParser: function jsonAPIParser (req, res, context) {
@@ -181,13 +154,35 @@ let JSONApi = {
     return req.body
   },
 
-  parseNxNAssociation: function parseNxNAssociation (mc, attrN, items, relationships, included) {
-    let modelName = mc.associations[attrN].model
+  parse1xNAssociation: function parse1xNAssociation(mc, attrN, items, relationships, included, we) {
+    if (items.toJSON) items = items.toJSON();
+
+    let iid = mc.associations[attrN].model + '_' + items.id;
+
+    if (we.config.JSONApi.sendSubRecordAttributes && !included[iid]) {
+      included[iid] = {
+        type: mc.associations[attrN].model,
+        id: items.id
+      };
+
+      included[iid].attributes = items;
+    }
+
+    relationships[attrN] = {
+      data: {
+        id: items.id,
+        type: mc.associations[attrN].model
+      }
+    };
+  },
+
+  parseNxNAssociation: function parseNxNAssociation (mc, attrN, items, relationships, included, we) {
+    let modelName = mc.associations[attrN].model;
 
     if (!relationships[attrN]) {
       relationships[attrN] = {
         data: []
-      }
+      };
     }
 
     items.forEach(item => {
@@ -195,20 +190,18 @@ let JSONApi = {
       relationships[attrN].data.push({
         id: item.id,
         type: modelName
-      })
+      });
 
-      let iid = modelName + '_' + item.id
-      // skyp if record alread in included
-      if (included[iid]) return
-
-      if (!included[iid]) {
+      let iid = modelName + '_' + item.id;
+      // skyp if record already in included
+      if (we.config.JSONApi.sendSubRecordAttributes && !included[iid]) {
         included[iid] = {
           type: modelName,
-          id: item.id,
-          attributes: item
-        }
+          id: item.id
+        };
+        included[iid].attributes = item;
       }
-    })
+    });
   },
 
   /**
