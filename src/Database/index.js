@@ -161,6 +161,14 @@ Database.prototype.connect = function connect() {
   let dbC = this.we.config.database,
       configs = dbC[this.env];
 
+  if (!configs) {
+    this.we.log.error(`Database configuration not found for enviroment: ${this.env}`);
+
+    return this.we.exit( ()=> {
+      process.exit();
+    });
+  }
+
   // set we.js core model definition configs
   merge(configs, this.defaultModelDefinitionConfigs);
 
@@ -451,34 +459,41 @@ Database.prototype.checkPrivacity = function checkPrivacity (obj) {
 
 Database.prototype.defineModelFromJson = require('./defineModelFromJson.js');
 
-
+/**
+ * Check database configuration and connection
+ *
+ * @param  {Object}   we
+ * @param  {Function} cb callback
+ */
 Database.prototype.checkDBConnection = function checkDBConnection(we, cb) {
-  let log = this.we.log
-  let db = this
-
+  let log = this.we.log,
+      db = this;
+  // skip if is exiting ...
+  if (this.we.isExiting) return;
+  // try to connect in database for check if database configuration is right
   we.db.defaultConnection.authenticate()
   .nodeify(function afterCheckConnection (err) {
-    if (!err) return cb(null, true) // all fine
+    if (!err) return cb(null, true); // all fine
 
-    // database connection error
+    // handle database connection error:
     if (err.name == 'SequelizeAccessDeniedError') {
       log.warn('Cannot connect to the database')
       log.warn(`This behavior occurs if one of the following conditions is true:
   1. The SQL database is not running or you need to create the database.
   2. The account that is used by the project in config/local.js file does not have the required permissions to the database server.
 
-Check the database documentation in https://wejs.org site`)
+Check the database documentation in https://wejs.org site`);
 
-      log.verbose('Error: ', err)
+      log.verbose('Error: ', err);
 
-      process.exit()
+      process.exit();
     }
     // connected but database dont exists
     if (err.name == 'SequelizeConnectionError') {
       return db.tryToCreateDB(function (e, success) {
-        if (e) return cb(e) // unknow error on try to create
-        if (!success) return cb(err) // cant create
-        cb(null, true) // success
+        if (e) return cb(e); // unknow error on try to create
+        if (!success) return cb(err); // cant create
+        cb(null, true); // success
       });
     }
 
