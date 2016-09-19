@@ -158,16 +158,17 @@ function Database (we) {
  * @return {object} sequelize database connection
  */
 Database.prototype.connect = function connect() {
-  let dbC = this.we.config.database
-  let configs = dbC[this.env]
-
-  this.activeConnectionConfig = configs
+  let dbC = this.we.config.database,
+      configs = dbC[this.env];
 
   // set we.js core model definition configs
-  merge(configs, this.defaultModelDefinitionConfigs)
+  merge(configs, this.defaultModelDefinitionConfigs);
 
-  if (!configs.logging && configs.logging !== false) {
-    configs.logging = this.we.log.debug
+  this.activeConnectionConfig = configs;
+
+  // disable database logging by deffault
+  if (!configs || !configs.logging) {
+    configs.logging = false;
   }
 
   // connect with uri or with username and pass
