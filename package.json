@@ -1,6 +1,6 @@
 {
   "name": "we-core",
-  "version": "1.8.13",
+  "version": "1.8.14",
   "description": "We.js is a node.js framework for build real time applications, sites or blogs!",
   "homepage": "https://wejs.org",
   "main": "./lib/index.js",
