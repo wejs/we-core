@@ -32,7 +32,7 @@
   "author": "Alberto Souza <contato@albertosouza.net>",
   "license": "MIT",
   "dependencies": {
-    "async": "2.0.1",
+    "async": "2.1.1",
     "body-parser": "1.15.2",
     "compression": "1.6.2",
     "connect-flash": "0.1.1",
@@ -53,7 +53,7 @@
     "sequelize": "3.24.3",
     "serve-favicon": "~2.3.0",
     "simple-hooks-callback": "1.0.0",
-    "string": "3.3.1",
+    "string": "3.3.3",
     "winston": "2.2.0"
   },
   "devDependencies": {
@@ -63,7 +63,7 @@
     "chance": "^1.0.4",
     "express-mysql-session": "1.2.0",
     "istanbul": "0.4.5",
-    "mocha": "3.1.0",
+    "mocha": "3.1.2",
     "mysql": "2.11.1",
     "ncp": "^2.0.0",
     "pg": "^6.1.0",
