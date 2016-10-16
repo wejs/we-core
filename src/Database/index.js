@@ -196,7 +196,19 @@ Database.prototype.connect = function connect() {
  * @return {Object}         sequelize model
  */
 Database.prototype.define = function defineModel (name, definition, options) {
-  return this.defaultConnection.define(name, definition, options)
+  // suport for uuids:
+  if (
+    this.activeConnectionConfig.UUIDInAllModels &&
+    !definition.id
+  ) {
+    definition.id = {
+      type: Sequelize.UUID,
+      primaryKey: true,
+      defaultValue: Sequelize.UUIDV4
+    };
+  }
+
+  return this.defaultConnection.define(name, definition, options);
 }
 
 /**
