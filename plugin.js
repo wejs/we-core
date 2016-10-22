@@ -274,6 +274,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
         );
       },
       updateAPI: function updateAPIRR(we, cfg, opts) {
+        // pipe put and patch will be handled in same controller, action as update
         we.routes['put '+opts.itemRoute] = we.utils._.merge(
           {
             resourceName: opts.namePrefix+opts.name,
@@ -284,6 +285,18 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           },
           opts.edit,
           we.routes['put '+opts.itemRoute] || {}
+        );
+
+        we.routes['patch '+opts.itemRoute] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            action: 'edit',
+            controller: cfg.controller,
+            model: cfg.model,
+            permission: 'update_' + opts.name
+          },
+          opts.edit,
+          we.routes['patch '+opts.itemRoute] || {}
         );
       },
       deleteAPI: function deleteAPIRR(we, cfg, opts) {
