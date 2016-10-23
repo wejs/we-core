@@ -11,7 +11,7 @@ module.exports = function defineModelFromJson (model, we) {
   return {
     definition: parseModelAttributes(model.attributes, we),
     associations: model.associations,
-    options: model.options,
+    options: ( model.options || {} ),
     hooks: model.hooks,
     classMethods: model.classMethods,
     instanceMethods: model.instanceMethods
