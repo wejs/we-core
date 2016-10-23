@@ -147,11 +147,37 @@ let JSONApi = {
       for (let attr in req.body.data.attributes) {
         req.body[attr] = req.body.data.attributes[attr]
       }
-      // TODO parse req.body.data.relationships
-      //
+
+      if (req.body.data.relationships) {
+        JSONApi.jsonAPIParseAssoc(req, res, context);
+      }
     }
 
     return req.body
+  },
+
+  jsonAPIParseAssoc: function jsonAPIParseAssoc(req, res, context) {
+    const associations = req.we.db.models[context.config.model].associations;
+    for(let assocName in associations) {
+      if (
+        req.body.data.relationships[assocName] &&
+        req.body.data.relationships[assocName].data
+      ) {
+        switch(associations[assocName].associationType) {
+          case 'BelongsTo':
+            req.body[ assocName+'Id' ] = req.body.data.relationships[assocName].data.id;
+            break;
+          case 'HasMany':
+          case 'BelongsToMany':
+            if (req.body.data.relationships[assocName].data.map) {
+              req.body[ assocName ] = req.body.data.relationships[assocName].data.map(function(d) {
+                return d.id;
+              });
+            }
+            break;
+        }
+      }
+    }
   },
 
   parse1xNAssociation: function parse1xNAssociation(mc, attrN, items, relationships, included, we) {
