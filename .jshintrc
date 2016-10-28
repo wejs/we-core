@@ -1,4 +1,4 @@
-{ "asi": true
+{ "asi": false
 , "boss": true
 , "browser": true
 , "camelcase": false
