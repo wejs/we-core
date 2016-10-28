@@ -205,6 +205,8 @@ module.exports = {
       data = null
     }
 
+    delete res.locals.data;
+
     res.status(403)
 
     res.locals.title = __('response.forbidden.title')
