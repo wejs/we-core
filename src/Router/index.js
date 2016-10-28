@@ -92,12 +92,21 @@ Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter
 
   let middlewares = [
     // CORS middleware per route
-    cors( (config.CORS || app.config.security.CORS) ),
-    // body we.js parser
-    app.router.parseBody.bind({ config: config }),
+    cors( (config.CORS || app.config.security.CORS) )
+  ];
+
+  /**
+   * Use this event to set middlewares after CORS MD
+   * @type {Event}
+   */
+  app.events.emit('router:route:after:cors:middleware', {
+    we: app, middlewares: middlewares, config: config
+  });
+
+  // body we.js parser
+  middlewares.push(app.router.parseBody.bind({ config: config }));
     // bind context loader
-    app.router.contextLoader.bind({ config: config })
-  ]
+  middlewares.push(app.router.contextLoader.bind({ config: config }));
 
   /**
    * Use this event to add acl related middlewares
