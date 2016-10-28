@@ -1,32 +1,32 @@
-import _ from 'lodash'
-import cors from 'cors'
-import mime from 'mime'
-// absolute url regex tester
-let absoluteUrlRegex = new RegExp('^(?:[a-z]+:)?//', 'i')
-
+const _ = require('lodash'),
+      cors = require('cors'),
+      S = require('string'),
+      mime = require('mime'),
+      // absolute url regex tester
+      absoluteUrlRegex = new RegExp('^(?:[a-z]+:)?//', 'i');
 /**
  * Router protorype
  *
  * @param {Object} we
  */
 function Router (we) {
-  this.we = we
-  let router = this
+  this.we = we;
+  let router = this;
 
-  this.routeMap = {}
+  this.routeMap = {};
   // resources tree
-  this.resources = {}
+  this.resources = {};
   // resources salved by name
-  this.resourcesByName = {}
-  this.resourcesSort = []
-  this.search = require('./search')
+  this.resourcesByName = {};
+  this.resourcesSort = [];
+  this.search = require('./search');
 
   router.singleRecordActions = [
     'findOne', 'update', 'destroy', 'updateAttribute',
     'deleteAttribute', 'addRecord', 'removeRecord', 'getRecord', 'edit', 'delete'
-  ]
+  ];
 
-  we.events.emit('we:Router:construct', this)
+  we.events.emit('we:Router:construct', this);
 }
 
 /**
@@ -39,7 +39,7 @@ function Router (we) {
  * @param  {Object} config route configs
  */
 Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter) {
-  let method, path
+  let method, path;
 
   if (!config) {
     // is route configuration is false or null, this route will be disabled
@@ -48,46 +48,46 @@ Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter
   }
 
   // set responseType based in extension
-  let extension = app.router.splitExtensionFromURL(route)
+  let extension = app.router.splitExtensionFromURL(route);
   if (extension) {
     // check if is valid this extension and is one of acceptable extensions
     if (app.config.responseTypes.indexOf(extension) >-1) {
-      config.responseType = extension
+      config.responseType = extension;
       // update route for allow accesss without extension
-      route = route.replace('.' + extension, '')
+      route = route.replace('.' + extension, '');
     } else {
-      extension = null
+      extension = null;
     }
   }
 
   // parse method and url
-  let r = route.split(' ')
+  let r = route.split(' ');
   if (r.length > 1) {
-    method = r[0]
-    path = r[1]
+    method = r[0];
+    path = r[1];
   } else {
-    method = 'get'
-    path = r[0]
+    method = 'get';
+    path = r[0];
   }
 
-  if (config.method) method = config.method
+  if (config.method) method = config.method;
 
-  let actionFunction = ''
+  let actionFunction = '';
   // search for the controller action to bind
   if (
     app.controllers[config.controller] &&
     app.controllers[config.controller][config.action]
   ) {
-    actionFunction = app.controllers[config.controller][config.action]
+    actionFunction = app.controllers[config.controller][config.action];
   } else {
-    return app.log.warn('app.router.bindRoute: Unknow controller or action:', path, config)
+    return app.log.warn('app.router.bindRoute: Unknow controller or action:', path, config);
   }
 
-  if (!groupRouter) groupRouter = app.express
+  if (!groupRouter) groupRouter = app.express;
 
   if (config.search) {
     // save param names
-    config.searchParams = Object.keys(config.search)
+    config.searchParams = Object.keys(config.search);
   }
 
   let middlewares = [
@@ -114,32 +114,32 @@ Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter
    */
   app.events.emit('router:add:acl:middleware', {
     we: app, middlewares: middlewares, config: config
-  })
+  });
 
   /**
    * Use this event to change we.js route middlewares
    * @type {Event}
    */
-  app.events.emit('router:before:set:controller:middleware', {we: app, middlewares: middlewares, config: config})
+  app.events.emit('router:before:set:controller:middleware', {we: app, middlewares: middlewares, config: config});
   // bind contoller
-  middlewares.push(actionFunction)
+  middlewares.push(actionFunction);
 
-  groupRouter[method](path, middlewares)
+  groupRouter[method](path, middlewares);
 
-  var mapName = config.name
+  var mapName = config.name;
   if (!mapName)
-    mapName = config.controller + '.' + config.action
+    mapName = config.controller + '.' + config.action;
 
-  if (!app.router.routeMap[method]) app.router.routeMap[method] = {}
+  if (!app.router.routeMap[method]) app.router.routeMap[method] = {};
 
   // map get routes for use with link-to
   app.router.routeMap[method][mapName] = {
     map: app.router.parseRouteToMap(path),
     config: config
-  }
+  };
 
-  app.log.silly('Route bind:', method ,path)
-}
+  app.log.silly('Route bind:', method, path);
+};
 
 /**
  * Set resource, findAll, find, create, edit and delete routes
@@ -148,52 +148,55 @@ Router.prototype.bindRoute = function bindRoute (app, route, config, groupRouter
  * @todo make it simpler
  */
 Router.prototype.bindResource = function bindResource (opts) {
-  let we = this.we
-  let router = this
-
   // valid route options ...
-  if (!opts.name) throw new Error('Resource name is required in bind resource')
-  // get related Model
-  let Model = we.db.models[opts.name]
+  if (!opts.name) throw new Error('Resource name is required in bind resource');
 
-  if (!Model) throw new Error('Resource Model '+opts.name+' not found and is required in bind resource')
+  let we = this.we,
+      paramIdNamePrefix = S(opts.name).camelize().s,
+      router = this;
+
+  // get related Model
+  let Model = we.db.models[opts.name];
+
+  if (!Model) throw new Error('Resource Model '+opts.name+' not found and is required in bind resource');
   // set default options
   _.defaults(opts, {
-    routeId: ':'+ opts.name +(opts.idFormat || 'Id([0-9]+)'),
+    paramIdName: paramIdNamePrefix+'Id',
+    routeId: ':'+ paramIdNamePrefix +(opts.idFormat || 'Id([0-9]+)'),
     namePrefix: '',
     templateFolderPrefix: '',
     itemTitleHandler: 'i18n',
     rootRoute: '/' + opts.name
-  })
+  });
 
-  if (opts.namespace) opts.rootRoute = opts.namespace + opts.rootRoute
+  if (opts.namespace) opts.rootRoute = opts.namespace + opts.rootRoute;
 
   if (opts.parent) {
     if (!router.resourcesByName[opts.parent]) {
-      throw new Error('Parent route not found: '+opts.parent+' <- '+ opts.name)
+      throw new Error('Parent route not found: '+opts.parent+' <- '+ opts.name);
     }
 
     if (router.resourcesByName[opts.parent].itemRoute) {
-      opts.rootRoute = router.resourcesByName[opts.parent].itemRoute + opts.rootRoute
+      opts.rootRoute = router.resourcesByName[opts.parent].itemRoute + opts.rootRoute;
     } else {
-      opts.rootRoute = router.resourcesByName[opts.parent].itemRoute + opts.rootRoute
+      opts.rootRoute = router.resourcesByName[opts.parent].itemRoute + opts.rootRoute;
     }
   }
 
-  if (!opts.itemRoute) opts.itemRoute = opts.rootRoute+'/'+opts.routeId
+  if (!opts.itemRoute) opts.itemRoute = opts.rootRoute+'/'+opts.routeId;
 
   let cfg = {
     controller: ( opts.controller || opts.name ),
     model: ( opts.model || opts.name )
-  }
+  };
 
-  if (Model.options.titleField) opts.itemTitleHandler = 'recordField'
+  if (Model.options.titleField) opts.itemTitleHandler = 'recordField';
 
   we.events.emit('we-core:before:bind:one:resource:route', {
     options: opts,
     configuration: cfg,
     we: we
-  })
+  });
 
   // run all route resources bindders in router.resrouce
   // this allows plugins to extend with extra resource paths
@@ -202,16 +205,16 @@ Router.prototype.bindResource = function bindResource (opts) {
   }
 
   // after bind this resource routes, bind subRoutes
-  router.bindSubRouteResources(opts, we)
-}
+  router.bindSubRouteResources(opts, we);
+};
 
 Router.prototype.bindSubRouteResources = function bindSubRouteResources(opts, we) {
   if (opts.subRoutes) {
     for (let resource in opts.subRoutes) {
-      we.router.bindResource(opts.subRoutes[resource])
+      we.router.bindResource(opts.subRoutes[resource]);
     }
   }
-}
+};
 
 /**
  * Check if one url is absolute or relative
@@ -221,7 +224,7 @@ Router.prototype.bindSubRouteResources = function bindSubRouteResources(opts, we
  */
 Router.prototype.isAbsoluteUrl = function isAbsoluteUrl(str) {
   return absoluteUrlRegex.test(str);
-}
+};
 
 /**
  * Parse route url to map
@@ -238,7 +241,7 @@ Router.prototype.parseRouteToMap = function parseRouteToMap(route) {
       return r;
     }
   });
-}
+};
 
 /**
  * Url builder function helper, converts one route name to url
@@ -274,7 +277,7 @@ Router.prototype.urlTo = function urlTo (name, params){
 
   if (route.map && route.map.length && !url) url = '/';
   return url;
-}
+};
 
 /**
  * Return a path url for given model record
@@ -285,7 +288,7 @@ Router.prototype.urlTo = function urlTo (name, params){
  */
 Router.prototype.pathToModel = function pathToModel(record) {
   return record.urlPath();
-}
+};
 
 /**
  * Context loader middleware, run after others router middleware
@@ -329,8 +332,8 @@ Router.prototype.contextLoader = function contextLoader(req, res, next) {
       res.locals.Model = req.we.db.models[res.locals.model];
       // set id if exists and not is set
       if (!res.locals.id) {
-        if (req.params[res.locals.model + 'Id']) {
-          res.locals.id = req.params[res.locals.model + 'Id'];
+        if (req.params[res.locals.paramIdName]) {
+          res.locals.id = req.params[res.locals.paramIdName];
         } else if (req.params.id) {
           res.locals.id = req.params.id;
         }
@@ -359,7 +362,7 @@ Router.prototype.contextLoader = function contextLoader(req, res, next) {
       }
     });
   });
-}
+};
 
 /**
  * contextLoaded , function how runs after contextLoader
@@ -378,13 +381,13 @@ Router.prototype.contextLoaded = function contextLoaded(err) {
     // preload user roles
     return this.req.user.getRoles()
     .nodeify(function afterGetUserRoles(err, result) {
-      if (err) return this.res.queryError(err)
+      if (err) return this.res.queryError(err);
 
-      this.next(null, result)
+      this.next(null, result);
     }.bind(this));
   }.bind(this));
   // });
-}
+};
 
 /**
  * Check resource cache
@@ -421,7 +424,7 @@ Router.prototype.liveBindRoute = function bindRoute(we, route, config) {
   we.router.bindRoute(we, route, config);
   // push this new route to after 404 and error middlewares
   allRoutes.splice(allRoutes.length-3, 0, allRoutes.splice(allRoutes.length-1, 1)[0]);
-}
+};
 
 /**
  * Check if need to load current model
@@ -439,7 +442,7 @@ Router.prototype.needLoadCurrentModel = function needLoadCurrentModel(req, res) 
   if ( this.singleRecordActions.indexOf( res.locals.action ) >-1 ) {
     return true;
   }
-}
+};
 
 /**
  * Parse req.query for current request
@@ -499,7 +502,7 @@ Router.prototype.parseQuery = function parseQuery(req, res, next) {
   this.parseQuerySearch(req, res, query);
 
   return next(null, query);
-}
+};
 
 /**
  * Parse request query where
@@ -536,7 +539,7 @@ Router.prototype.parseQueryWhere = function parseQueryWhere(req, res, query) {
       }
     }
   }
-}
+};
 
 /**
  * Parse request query search
@@ -552,11 +555,11 @@ Router.prototype.parseQuerySearch = function parseQuerySearch(req, res, query) {
       if (req.query[sName] || res.locals.search[sName].runIfNull) {
         this.search.targets[res.locals.search[sName].target.type](
           sName, res.locals.search[sName], req.query[sName], query, req, res
-        )
+        );
       }
     }
   }
-}
+};
 
 /**
  * Parse body requests
@@ -566,10 +569,10 @@ Router.prototype.parseQuerySearch = function parseQuerySearch(req, res, query) {
  * @param  {Function} next callback
  */
 Router.prototype.parseBody = function parseBody (req ,res, next) {
-  let parsers = req.we.responses.parsers
+  let parsers = req.we.responses.parsers;
   // add suport to parse body params if dont are in default json requests
   if (parsers[req.headers.accept]) {
-    req.body = parsers[req.headers.accept](req, res, this) || {}
+    req.body = parsers[req.headers.accept](req, res, this) || {};
   }
 
   if (req.we.config.updateMethods.indexOf(req.method) >-1 ) {
@@ -592,7 +595,7 @@ Router.prototype.parseBody = function parseBody (req ,res, next) {
   }
 
   next();
-}
+};
 
 /**
  * Add request N x 1 associations in current request query.include for use in query
@@ -616,13 +619,13 @@ Router.prototype.addRequestNx1Assocs = function addRequestNx1Assocs (req, res, q
           model: req.we.db.models[assocs[name].model],
           as: name,
           required: false
-        })
+        });
       }
     }
 
     if (!query.include.length) delete query.include;
   }
-}
+};
 
 /**
  * Helper function for get and split extension from url
@@ -641,7 +644,7 @@ Router.prototype.splitExtensionFromURL = function splitExtensionFromURL (url){
   if (nameAndExt.length < 2) return null;
   // get extension
   return nameAndExt[nameAndExt.length-1];
-}
+};
 
 /**
  * Check if url is public folder url
@@ -653,6 +656,6 @@ Router.prototype.isPublicFolder = function isPublicFolder (url){
   return url.startsWith('/public') ||
          url == '/robots.txt' ||
          url == '/favicon.ico';
-}
+};
 
 module.exports = Router;

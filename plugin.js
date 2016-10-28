@@ -213,6 +213,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
             action: 'create',
             controller: cfg.controller,
             model: cfg.model,
+            paramIdName: opts.paramIdName,
             permission: 'create_' + opts.name,
             breadcrumbHandler: 'create'
           },
@@ -229,6 +230,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
             action: 'find',
             controller: cfg.controller,
             model: cfg.model,
+            paramIdName: opts.paramIdName,
             template: opts.templateFolderPrefix + opts.name + '/find',
             fallbackTemplate: plugin.tplFolder + 'default/find.hbs',
             permission: 'find_' + opts.name,
@@ -261,6 +263,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
             action: 'findOne',
             controller: cfg.controller,
             model: cfg.model,
+            paramIdName: opts.paramIdName,
             template: opts.templateFolderPrefix + opts.name + '/findOne',
             fallbackTemplate: plugin.tplFolder + 'default/findOne.hbs',
             permission: 'find_' + opts.name,
@@ -281,6 +284,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
             action: 'edit',
             controller: cfg.controller,
             model: cfg.model,
+            paramIdName: opts.paramIdName,
             permission: 'update_' + opts.name
           },
           opts.edit,
@@ -293,6 +297,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
             action: 'edit',
             controller: cfg.controller,
             model: cfg.model,
+            paramIdName: opts.paramIdName,
             permission: 'update_' + opts.name
           },
           opts.edit,
@@ -306,6 +311,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
             action: 'delete',
             controller: cfg.controller,
             model: cfg.model,
+            paramIdName: opts.paramIdName,
             permission: 'delete_' + opts.name
           },
           opts.delete,

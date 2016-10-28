@@ -43,7 +43,7 @@ function Database (we) {
          * @param  {Function} done callback
          */
         contextLoader: function contextLoader (req, res, done) {
-          if (!res.locals.id || !res.locals.loadCurrentRecord) return done()
+          if (!res.locals.id || !res.locals.loadCurrentRecord) return done();
 
           return this.findOne({
             where: { id: res.locals.id },
