@@ -205,8 +205,6 @@ module.exports = {
       data = null
     }
 
-    delete res.locals.data;
-
     res.status(403)
 
     res.locals.title = __('response.forbidden.title')
@@ -215,6 +213,8 @@ module.exports = {
       res.locals.layoutName = 'fullwidth'
       res.locals.template = '403'
     }
+
+    delete res.locals.data;
 
     res.format(req.we.responses.formaters)
 
@@ -249,6 +249,8 @@ module.exports = {
       res.locals.template = '404';
     }
 
+    delete res.locals.data;
+
     res.format(req.we.responses.formaters)
 
     req.we.freeResponseMemory(req, res)
@@ -276,6 +278,8 @@ module.exports = {
       res.locals.layoutName = 'fullwidth'
     }
 
+    delete res.locals.data;
+
     // send the response
     res.format(req.we.responses.formaters)
     // helper for unset variables
@@ -287,24 +291,26 @@ module.exports = {
    * @param  {Obejct|String} data message
    */
   badRequest: function badResponse (data) {
-    let res = this.res
-    let req = this.req
+    let res = this.res,
+        req = this.req;
 
-    res.status(400)
+    res.status(400);
 
-    if (req.we.env == 'dev') console.trace('400', req.path)
+    if (req.we.env == 'dev') console.trace('400', req.path);
 
-    if (data && typeof data == 'string') res.addMessage('warning', String(data))
+    if (data && typeof data == 'string') res.addMessage('warning', String(data));
 
     if (req.accepts('html')) {
       // if is html
-      if (!res.locals.template) res.locals.template = '400'
+      if (!res.locals.template) res.locals.template = '400';
     }
 
-    // send the response
-    res.format(req.we.responses.formaters)
+    delete res.locals.data;
 
-    req.we.freeResponseMemory(req, res)
+    // send the response
+    res.format(req.we.responses.formaters);
+
+    req.we.freeResponseMemory(req, res);
   },
   /**
    * Sequelize query error parser
@@ -362,9 +368,11 @@ module.exports = {
       res.status(500)
     }
 
-    res.format(req.we.responses.formaters)
+    delete res.locals.data;
 
-    req.we.freeResponseMemory(req, res)
+    res.format(req.we.responses.formaters);
+
+    req.we.freeResponseMemory(req, res);
   },
 
   /**
