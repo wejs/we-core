@@ -374,8 +374,8 @@ describe('resourceRequests_jsonAPI', function() {
           assert.equal(res.body.errors[0].status, 400);
           assert.equal(res.body.errors[0].title, 'title cannot be null');
 
-          assert.equal(res.body.data.attributes.title, p.data.attributes.title);
-          assert.equal(res.body.data.attributes.text, p.data.attributes.text);
+          // assert.equal(res.body.data.attributes.title, p.data.attributes.title);
+          // assert.equal(res.body.data.attributes.text, p.data.attributes.text);
 
           done();
         });
