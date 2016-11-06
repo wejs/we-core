@@ -452,12 +452,12 @@ Router.prototype.needLoadCurrentModel = function needLoadCurrentModel(req, res) 
  * @param  {Function} next Callback
  */
 Router.prototype.parseQuery = function parseQuery(req, res, next) {
-  var we = req.we;
-  var query = {
-    // set subQuery to false by default
-    subQuery: false,
-    where: {}
-  };
+  const we = req.we,
+    query = {
+      // set subQuery to false by default
+      subQuery: false,
+      where: {}
+    };
 
   if (res.locals.skipParseQuery) return next(null, query);
 
@@ -486,13 +486,16 @@ Router.prototype.parseQuery = function parseQuery(req, res, next) {
   }
 
   if (req.query.order) {
-    query.order = res.locals.model + '.' +req.query.order;
+    query.order = req.query.order;
+  } else if (req.query.sortDirection && req.query.sort) {
+    query.order = [[req.query.sort, req.query.sortDirection]];
   } else if (req.query.sort) {
-    query.order = res.locals.model + '.' +req.query.sort;
+    query.order = req.query.sort;
   } else {
     // default order
     query.order = [['createdAt', 'DESC']];
   }
+
   // set default query include
   // query.include = [{ all: true, required: false}];
   this.addRequestNx1Assocs(req, res, query);
