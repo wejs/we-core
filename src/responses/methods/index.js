@@ -318,26 +318,29 @@ module.exports = {
    * @param  {Object} err The database error
    */
   queryError: function queryError (err) {
-    let res = this.res
-    let req = this.req
-    let isQueryError = true
+    const res = this.res,
+          req = this.req;
 
     if (err) {
-      // parse all sequelize validation erros
-      if (err.name === 'SequelizeValidationError') {
+      // parse all sequelize validation erros for html (we-plugin-view)
+      if (
+        req.accepts('html') &&
+        err.name === 'SequelizeValidationError'
+      ) {
       // query validation error ...
-        res.locals.validationError = {}
-        if (req.accepts('html')) {
-          err.errors.forEach(function (err) {
-            if (!res.locals.validationError[err.path])
-              res.locals.validationError[err.path] = []
+        res.locals.validationError = {};
 
-            res.locals.validationError[err.path].push({
-              field: err.path, rule: err.type,
-              message: req.__(err.message)
-            });
+        err.errors.forEach( (err)=> {
+          if (!res.locals.validationError[err.path])
+            res.locals.validationError[err.path] = []
+
+          res.locals.validationError[err.path].push({
+            field: err.path,
+            rule: err.type,
+            message: req.__(err.message)
           });
-        }
+        });
+
       } else if (err.name === 'SequelizeDatabaseError') {
       // parse sequelize database errors
         if (err.message) {
@@ -345,24 +348,27 @@ module.exports = {
         }
       } else if (typeof err == 'string') {
         res.addMessage('error', err)
-      } else {
-        // unknow error type
-        isQueryError = false
-
+      } else if (err.name != 'SequelizeValidationError') {
         console.error('responses.queryError:unknowError: ', req.path, err, err.name)
       }
 
-      // and for others errors
+      // default error handler, push erros to messages and let response formaters resolve how to format this messages
+
       if (err.errors) {
-        err.errors.forEach(function (err) {
+        err.errors.forEach( (err)=> {
           res.addMessage('error', err.message, {
-            field: err.path, rule: err.type
+            field: err.path,
+            rule: err.type,
+            errorName: err.name,
+            value: err.value,
+            level: 'error',
+            code: err.code // code if avaible
           })
         })
       }
     }
 
-    if (isQueryError) {
+    if (err.name == 'SequelizeValidationError') {
       res.status(400)
     } else {
       res.status(500)

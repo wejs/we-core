@@ -234,7 +234,7 @@ let JSONApi = {
    * Format erros from res.locals.messages to jsonapi erros and set it in response
    */
   parseErrors: function parseErrors (response, req, res) {
-    if (!response.meta.messages) response.meta.messages = []
+    if (!response.meta.messages) response.meta.messages = [];
 
     if (res.locals.messages) {
       let errors = [];
@@ -242,22 +242,23 @@ let JSONApi = {
       // first get and format all errros:
       res.locals.messages.forEach(m => {
         if (m.status == 'danger' || m.status == 'error') {
-          errors.push({
+          errors.push(req.we.utils._.merge({
             status: res.statusCode,
             title: m.message
-          })
+          }, m.extraData));
         } else {
           // others messages like success goes in meta object
-          response.meta.messages.push(m)
+          response.meta.messages.push(m);
         }
-      })
+
+      });
 
 
       if (errors && errors.length) {
-        response.errors = errors
+        response.errors = errors;
       }
     }
   }
-}
+};
 
 module.exports = JSONApi;
