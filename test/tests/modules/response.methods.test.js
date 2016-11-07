@@ -677,7 +677,7 @@ describe('we.responses.methods', function () {
 
     it('we.responses.methods.queryError should addMessage for SequelizeDatabaseError errors', function (done) {
 
-      var req = { method: 'POST', we: we, __: we.i18n.__, accepts: function(){ return true } };
+      var req = { method: 'POST', we: we, __: we.i18n.__, accepts: function(){ return true; } };
       var res = {
         locals: {
           Model: we.db.models.post,
@@ -705,7 +705,7 @@ describe('we.responses.methods', function () {
       assert(res.format.called);
       assert(res.addMessage.called);
       assert(res.status.called);
-      assert.equal(res.status.firstCall.args[0], 400);
+      assert.equal(res.status.firstCall.args[0], 500);
       done();
     });
 
@@ -739,7 +739,7 @@ describe('we.responses.methods', function () {
       assert(res.format.called);
       assert(res.addMessage.called);
       assert(res.status.called);
-      assert.equal(res.status.firstCall.args[0], 400);
+      assert.equal(res.status.firstCall.args[0], 500);
 
       we.env = 'test';
       done();
