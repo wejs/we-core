@@ -140,7 +140,7 @@ describe('resourceRequests_jsonAPI', function() {
 
               assert(p.relationships);
               assert(p.relationships.tags);
-              assert.equal(p.relationships.tags.length, 2);
+              assert.equal(p.relationships.tags.data.length, 2);
             });
 
             assert.equal(res.body.meta.count, 3);

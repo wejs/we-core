@@ -143,7 +143,7 @@ function Database (we) {
             });
           }
 
-          return assocs;
+          return { data: assocs };
         },
 
         toJSONAPI: function toJSONAPI() {

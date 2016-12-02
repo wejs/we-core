@@ -5,20 +5,18 @@ let JSONApi = {
   jsonAPIFormater: function jsonAPIFormater (req, res) {
     let response = {};
 
-    if (res.locals.model) {
-      // check field privacity access for users
-      if (res.locals.model == 'user') {
-        req.we.db.checkRecordsPrivacity(res.locals.data);
-      }
+    // check field privacity access for users
+    if (res.locals.model == 'user') {
+      req.we.db.checkRecordsPrivacity(res.locals.data);
+    }
 
-      if (res.locals.action == 'find' || isArray(res.locals.data) ) {
-        response = JSONApi.formatList (req, res);
-      } else if (res.locals.action == 'delete') {
-        // dont send data in delete
-        response = {};
-      } else {
-        response = JSONApi.formatItem (req, res);
-      }
+    if (res.locals.action == 'find' || isArray(res.locals.data) ) {
+      response = JSONApi.formatList (req, res);
+    } else if (res.locals.action == 'delete') {
+      // dont send data in delete
+      response = {};
+    } else if (res.locals.model) {
+      response = JSONApi.formatItem (req, res);
     }
 
     response.meta = res.locals.metadata || {};
@@ -38,7 +36,11 @@ let JSONApi = {
 
     data = res.locals.data
     .map(d => {
-      return d.toJSONAPI();
+      if (d.toJSONAPI) {
+        return d.toJSONAPI();
+      } else {
+        return d;
+      }
     });
 
     r.data = data;
