@@ -1,0 +1,16 @@
+{
+  "attributes": {
+    "text": {
+      "type": "string",
+      "allowNull": false
+    }
+  },
+  "associations": {
+    "inPosts": {
+      "type": "belongsToMany",
+      "model": "post",
+      "inverse": "tags",
+      "through": "posts_tags"
+    }
+  }
+}

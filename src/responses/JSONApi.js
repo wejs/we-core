@@ -31,55 +31,17 @@ let JSONApi = {
 
   formatList: function formatList (req, res) {
     let data = [],
-        included = {},
-        r = {},
-        mc = req.we.db.modelsConfigs[res.locals.model];
+        r = {};
 
     // skip if data is empty
     if (!res.locals.data) return { data: [] };
 
     data = res.locals.data
-    .map(d => { return d.toJSON(); })
     .map(d => {
-      let attributes = {},
-          relationships = {};
-
-      // attributes
-      mc.attributeList.forEach(a => {
-        attributes[a] = d[a];
-      });
-      // associations:
-      mc.associationNames.forEach(a => {
-        if (!d[a]) return;
-
-        if (isArray(d[a])) {
-          // parse hasMany and BelongsToMany
-          JSONApi.parseNxNAssociation(mc, a, d[a], relationships, included, req.we);
-          return;
-        } else {
-          // parse belongsTo and hasOne
-          JSONApi.parse1xNAssociation(mc, a, d[a], relationships, included, req.we);
-        }
-      });
-      // done one
-      return {
-        type: res.locals.model,
-        id: d.id,
-        attributes: attributes,
-        relationships: relationships
-      };
+      return d.toJSONAPI();
     });
 
     r.data = data;
-
-    if (req.we.config.JSONApi.sendSubRecordAttributes && included) {
-      r.included = Object.keys(included).map(iid => {
-        if (included[iid].attributes) {
-          delete included[iid].attributes.id; // remove the id from attributes
-        }
-        return included[iid];
-      });
-    }
 
     return r;
   },
