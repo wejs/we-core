@@ -94,8 +94,8 @@ Controller.prototype.edit = function edit (req, res) {
     if (!record) return res.notFound()
 
     record.updateAttributes(req.body)
-    .then(function afterUpdate () {
-      res.locals.data = record
+    .then(function afterUpdate (newRecord) {
+      res.locals.data = newRecord
       res.updated()
       return null
     })
