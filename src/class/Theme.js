@@ -4,7 +4,7 @@
  */
 
 const _ = require('lodash'),
-  path = require('path')
+  path = require('path');
 
 module.exports = function(we) {
   /**
@@ -116,4 +116,4 @@ module.exports = function(we) {
   };
 
   return Theme;
-}
+};

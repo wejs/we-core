@@ -1,7 +1,7 @@
 /**
  * Route search parsers and targets
  */
-var moment = require('moment');
+const moment = require('moment');
 
 /**
  * Converts one date string to dateTime
@@ -31,12 +31,12 @@ module.exports = {
     contains: function(searchName, field, value, w) {
       return w[field.target.field] = {
         $like : '%'+value+'%'
-      }
+      };
     },
     startsWith: function(searchName, field, value, w) {
       return w[field.target.field] = {
         $like : value+'%'
-      }
+      };
     },
     userSearchQuery: function(searchName, field, value, w) {
       return w.$or = {
@@ -49,14 +49,14 @@ module.exports = {
         username: {
           $eq: value
         }
-      }
+      };
     },
     since: function(searchName, field, value, w) {
       if (!value) return w;
 
       return w[field.target.field] = {
         $gt: dateToDateTime(value)
-      }
+      };
     },
 
     // if user from :userId is
@@ -81,4 +81,4 @@ module.exports = {
       }
     }
   }
-}
+};

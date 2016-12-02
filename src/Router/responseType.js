@@ -1,4 +1,4 @@
-import mime from 'mime'
+const mime = require('mime');
 
 /**
  * Parse response type middleware
@@ -14,7 +14,7 @@ module.exports = function responseType (req, res, next){
   parseResponseType(req);
 
   next();
-}
+};
 
 /**
  * Parse the response type

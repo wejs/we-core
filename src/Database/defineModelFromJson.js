@@ -1,4 +1,6 @@
-import { clone, isArray } from 'lodash'
+const lodash = require('lodash'),
+      clone = lodash.clone,
+      isArray = lodash.isArray;
 
 /**
  * Build model config for definition from  JSON model config
@@ -15,34 +17,34 @@ module.exports = function defineModelFromJson (model, we) {
     hooks: model.hooks,
     classMethods: model.classMethods,
     instanceMethods: model.instanceMethods
-  }
-}
+  };
+};
 
 function parseModelAttributes (attrs, we) {
-  if (!attrs) return {}
+  if (!attrs) return {};
 
-  let attr = {}
+  let attr = {};
 
   for (let name in attrs) {
-    attr[name] = clone(attrs[name])
-    attr[name].type = getModelTypeFromDefinition(attrs[name], we)
+    attr[name] = clone(attrs[name]);
+    attr[name].type = getModelTypeFromDefinition(attrs[name], we);
   }
 
-  return attr
+  return attr;
 }
 
 function getModelTypeFromDefinition (attr, we) {
   if (attr.size) {
     if (isArray(attr.size)) {
 
-      let fn = we.db.Sequelize[attr.type.toUpperCase()]
-      fn.apply(null, attr.size)
+      let fn = we.db.Sequelize[attr.type.toUpperCase()];
+      fn.apply(null, attr.size);
 
-      return fn(attr.size)
+      return fn(attr.size);
     } else {
-      return we.db.Sequelize[attr.type.toUpperCase()](attr.size)
+      return we.db.Sequelize[attr.type.toUpperCase()](attr.size);
     }
   } else {
-    return we.db.Sequelize[attr.type.toUpperCase()]
+    return we.db.Sequelize[attr.type.toUpperCase()];
   }
 }
