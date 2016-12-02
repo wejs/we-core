@@ -94,6 +94,11 @@ Controller.prototype.edit = function edit (req, res) {
     if (!record) return res.notFound();
 
     record.updateAttributes(req.body)
+    .then(function reloadAssocs(n) {
+      return n.reload().then(function() {
+        return n;
+      });
+    })
     .then(function afterUpdate (newRecord) {
       res.locals.data = newRecord;
       res.updated();
