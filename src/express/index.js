@@ -9,7 +9,6 @@ import bodyParser from 'body-parser'
 import responseTypeMD from '../Router/responseType.js'
 import messages from '../messages'
 import cors from 'cors'
-import flash from 'connect-flash'
 
 module.exports = function initExpress (we) {
   let weExpress = express();
@@ -89,6 +88,7 @@ module.exports = function initExpress (we) {
   require('./sessionStore')(we, weExpress);
   // add flash middleware if session is avaible
   if (we.config.session) {
+    const flash = require('connect-flash');
     weExpress.use(flash());
   }
 
