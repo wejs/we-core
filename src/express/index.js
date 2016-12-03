@@ -87,8 +87,10 @@ module.exports = function initExpress (we) {
   weExpress.use(we.utils.cookieParser());
   // set session store
   require('./sessionStore')(we, weExpress);
-
-  weExpress.use(flash());
+  // add flash middleware if session is avaible
+  if (we.config.session) {
+    weExpress.use(flash());
+  }
 
   // set public folders
   if (!we.config.disablePublicFolder) {

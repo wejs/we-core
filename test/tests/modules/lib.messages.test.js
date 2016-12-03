@@ -103,6 +103,7 @@ describe('lib/messages', function () {
     describe('res.getMessages', function(){
       it('should get messages from locals and flash', function (done) {
         var req = {
+          we: we,
           flash: function() {
             return [{
               status: 'error',
@@ -135,6 +136,7 @@ describe('lib/messages', function () {
     describe('res.moveLocalsMessagesToFlash', function(){
       it('should run res.getMessages and set in req.flash', function (done) {
         var req = {
+          we: we,
           flash: function(name, data) {
             if (!data) return [];
             assert.equal(name, 'messages');
