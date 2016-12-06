@@ -53,7 +53,7 @@ let JSONApi = {
     if (!res.locals.data) return { data: [] };
 
     if (res.locals.data.toJSONAPI) {
-      return res.locals.data.toJSONAPI();
+      return { data: res.locals.data.toJSONAPI() };
     } else {
       return res.locals.data;
     }
