@@ -47,59 +47,16 @@ let JSONApi = {
 
     return r;
   },
-  formatItem: function formatItem (req, res) {
-    let d,
-        included = {},
-        r = {},
-        mc = req.we.db.modelsConfigs[res.locals.model];
 
+  formatItem: function formatItem (req, res) {
     // skip if data is empty
     if (!res.locals.data) return { data: [] };
 
-    if (res.locals.data.toJSON) {
-      d = res.locals.data.toJSON();
+    if (res.locals.data.toJSONAPI) {
+      return res.locals.data.toJSONAPI();
     } else {
-      d = res.locals.data;
+      return res.locals.data;
     }
-
-    let attributes = {};
-    let relationships = {};
-
-    // attributes
-    mc.attributeList.forEach(a => {
-      attributes[a] = d[a];
-    });
-
-    // associations:
-    mc.associationNames.forEach(a => {
-      if (!d[a]) return;
-      if (isArray(d[a])) {
-        // parse hasMany and BelongsToMany
-        JSONApi.parseNxNAssociation(mc, a, d[a], relationships, included, req.we);
-        return;
-      } else {
-        // parse belongsTo and hasOne
-        JSONApi.parse1xNAssociation(mc, a, d[a], relationships, included, req.we);
-      }
-    });
-
-    r.data = {
-      type: res.locals.model,
-      id: d.id,
-      attributes: attributes,
-      relationships: relationships
-    };
-
-    if (req.we.config.JSONApi.sendSubRecordAttributes && included) {
-      r.included = Object.keys(included).map(iid => {
-        if (included[iid].attributes) {
-          delete included[iid].attributes.id; // remove the id from attributes
-        }
-        return included[iid];
-      });
-    }
-
-    return r;
   },
 
   jsonAPIParser: function jsonAPIParser (req, res, context) {
