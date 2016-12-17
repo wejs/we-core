@@ -1,9 +1,10 @@
-var assert = require('assert'),
-    request = require('supertest'),
-    helpers = require('we-test-tools').helpers,
-    Chance = require('chance'),
-    chance = new Chance(),
-    _, http, we;
+const assert = require('assert'),
+      request = require('supertest'),
+      helpers = require('we-test-tools').helpers,
+      Chance = require('chance'),
+      chance = new Chance();
+
+let _, http, we;
 
 function postStub (creatorId, jsonAPI) {
   if (jsonAPI) {

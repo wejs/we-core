@@ -1,16 +1,17 @@
-var assert = require('assert');
-var request = require('supertest');
-var helpers = require('we-test-tools').helpers;
-var Chance = require('chance');
-var chance = new Chance();
-var _, http, we;
+const assert = require('assert'),
+      request = require('supertest'),
+      helpers = require('we-test-tools').helpers,
+      Chance = require('chance'),
+      chance = new Chance();
+
+let _, http, we;
 
 function postStub(creatorId) {
   return {
     title: chance.sentence({words: 5}),
     text: chance.paragraph(),
     creatorId: creatorId
-  }
+  };
 }
 
 describe('resourceRequests', function() {
