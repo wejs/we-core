@@ -4,7 +4,7 @@ var deleteDir = require('rimraf');
 var async = require('async');
 var testTools = require('we-test-tools');
 var ncp = require('ncp').ncp;
-var We = require('../lib');
+var We = require('../src');
 var we;
 
 before(function (callback) {

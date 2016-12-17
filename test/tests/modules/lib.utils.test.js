@@ -5,7 +5,7 @@ var utils, we;
 
 describe('lib/utils', function () {
   before(function (done) {
-    utils = require('../../../lib/utils');
+    utils = require('../../../src/utils');
     we = helpers.getWe();
     done();
   });

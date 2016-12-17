@@ -4,7 +4,7 @@ var getAppBootstrapConfig, we;
 
 describe('lib.staticConfig.getAppBootstrapConfig', function () {
   before(function (done) {
-    getAppBootstrapConfig = require('../../../lib/staticConfig/getAppBootstrapConfig.js');
+    getAppBootstrapConfig = require('../../../src/staticConfig/getAppBootstrapConfig.js');
     we = helpers.getWe();
     done();
   });

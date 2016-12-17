@@ -4,7 +4,7 @@ var messages, we;
 
 describe('lib/messages', function () {
   before(function (done) {
-    messages = require('../../../lib/messages');
+    messages = require('../../../src/messages');
     we = helpers.getWe();
     done();
   });

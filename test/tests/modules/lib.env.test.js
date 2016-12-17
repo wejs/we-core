@@ -3,7 +3,7 @@ var getEnv;
 
 describe('getEnv', function () {
   before(function (done) {
-    getEnv = require('../../../lib/getEnv.js');
+    getEnv = require('../../../src/getEnv.js');
     done();
   });
 

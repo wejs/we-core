@@ -3,7 +3,7 @@ var We;
 
 describe('lib/index.js', function () {
   before(function (done) {
-    We = require('../../../lib/index.js');
+    We = require('../../../src/index.js');
     done();
   });
 
