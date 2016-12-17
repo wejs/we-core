@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+const { resolve } = require('path');
 
 /**
  * Helper to check if a npm module is a plugin
@@ -16,8 +16,8 @@ module.exports = function isPlugin (nodeModulePath) {
   }
 
   if (pkg.keywords && pkg.keywords.includes('wejs-plugin') ) {
-    return true
+    return true;
   } else {
-    return false
+    return false;
   }
-}
+};

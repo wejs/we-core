@@ -1,10 +1,11 @@
-import express from 'express'
-import path from 'path'
+const express = require('express'),
+      path = require('path');
 
 module.exports = function setPublicFolderMiddlewares (we, weExpress) {
-  let cfg = { maxAge: we.config.cache.maxage },
-    plugin,
+  const cfg = { maxAge: we.config.cache.maxage },
     publicRouter = express.Router();
+
+  let plugin;
 
   if (we.view && we.view.themes) {
     // set themes public folder
@@ -17,7 +18,7 @@ module.exports = function setPublicFolderMiddlewares (we, weExpress) {
       );
     }
   }
-  
+
   // set plugins public folder
   for (let pluginName in we.plugins) {
     plugin = we.plugins[pluginName];
@@ -33,4 +34,4 @@ module.exports = function setPublicFolderMiddlewares (we, weExpress) {
   ));
 
   weExpress.use('/public', publicRouter);
-}
+};

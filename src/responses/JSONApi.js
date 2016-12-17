@@ -1,8 +1,8 @@
-import { isArray } from 'lodash';
-const actions = ['edit', 'create'];
+const { isArray } = require('lodash'),
+      actions = ['edit', 'create'];
 
 let JSONApi = {
-  jsonAPIFormater: function jsonAPIFormater (req, res) {
+  jsonAPIFormater(req, res) {
     let response = {};
 
     // check field privacity access for users
@@ -27,7 +27,7 @@ let JSONApi = {
     res.send(response);
   },
 
-  formatList: function formatList (req, res) {
+  formatList(req, res) {
     let data = [],
         r = {};
 
@@ -48,7 +48,7 @@ let JSONApi = {
     return r;
   },
 
-  formatItem: function formatItem (req, res) {
+  formatItem(req, res) {
     // skip if data is empty
     if (!res.locals.data) return { data: [] };
 
@@ -59,14 +59,14 @@ let JSONApi = {
     }
   },
 
-  jsonAPIParser: function jsonAPIParser (req, res, context) {
+  jsonAPIParser(req, res, context) {
     // create and update actions
     if (actions.includes(context.config.action)) {
       // atributes is required
-      if (!req.body.data || !req.body.data.attributes) return req.body
+      if (!req.body.data || !req.body.data.attributes) return req.body;
       // change json api body to default we.js controller body compatible with sequelize
       for (let attr in req.body.data.attributes) {
-        req.body[attr] = req.body.data.attributes[attr]
+        req.body[attr] = req.body.data.attributes[attr];
       }
 
       if (req.body.data.relationships) {
@@ -74,10 +74,10 @@ let JSONApi = {
       }
     }
 
-    return req.body
+    return req.body;
   },
 
-  jsonAPIParseAssoc: function jsonAPIParseAssoc(req, res, context) {
+  jsonAPIParseAssoc(req, res, context) {
     const associations = req.we.db.models[context.config.model].associations;
     for(let assocName in associations) {
       if (
@@ -101,7 +101,7 @@ let JSONApi = {
     }
   },
 
-  parse1xNAssociation: function parse1xNAssociation(mc, attrN, items, relationships, included, we) {
+  parse1xNAssociation(mc, attrN, items, relationships, included, we) {
     if (items.toJSON) items = items.toJSON();
 
     let iid = mc.associations[attrN].model + '_' + items.id;
@@ -123,7 +123,7 @@ let JSONApi = {
     };
   },
 
-  parseNxNAssociation: function parseNxNAssociation (mc, attrN, items, relationships, included, we) {
+  parseNxNAssociation(mc, attrN, items, relationships, included, we) {
     let modelName = mc.associations[attrN].model;
 
     if (!relationships[attrN]) {
@@ -154,7 +154,7 @@ let JSONApi = {
   /**
    * Format erros from res.locals.messages to jsonapi erros and set it in response
    */
-  parseErrors: function parseErrors (response, req, res) {
+  parseErrors(response, req, res) {
     if (!response.meta.messages) response.meta.messages = [];
 
     if (res.locals.messages) {
