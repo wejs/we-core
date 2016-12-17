@@ -27,7 +27,7 @@ function We (options) {
 
   this.packageJSON = require('../package.json');
 
-  this.config = options || {};
+  this.config = options;
 
   this.childProcesses = [];
 
@@ -136,317 +136,317 @@ function We (options) {
   }
 }
 
-/**
- * Set config in config/configuration.json file
- *
- * @param {String}   variable path to the variable
- * @param {String}   value
- * @param {Function} cb       callback
- */
-We.prototype.setConfig = function setConfig (variable, value, cb) {
-  if (!cb) cb = function(){};
+We.prototype = {
+  /**
+   * Set config in config/configuration.json file
+   *
+   * @param {String}   variable path to the variable
+   * @param {String}   value
+   * @param {Function} cb       callback
+   */
+  setConfig(variable, value, cb) {
+    if (!cb) cb = function(){};
 
-  var cJSON,
-      cFGpath = path.join(this.projectPath, '/config/configuration.json');
+    let cJSON,
+        cFGpath = path.join(this.projectPath, '/config/configuration.json');
 
-  try {
-    cJSON = JSON.parse(readFileSync(cFGpath));
-  } catch(e) {
-    if (e.code == 'ENOENT') {
-      writeFileSync(cFGpath, '{}');
-      cJSON = {};
-    } else {
-      return cb(e);
+    try {
+      cJSON = JSON.parse(readFileSync(cFGpath));
+    } catch(e) {
+      if (e.code == 'ENOENT') {
+        writeFileSync(cFGpath, '{}');
+        cJSON = {};
+      } else {
+        return cb(e);
+      }
     }
-  }
 
-  if (value == 'true') value = true;
-  if (value == 'false') value = false;
+    if (value == 'true') value = true;
+    if (value == 'false') value = false;
 
-  _.set(cJSON, variable, value);
+    _.set(cJSON, variable, value);
 
-  writeFile(cFGpath, JSON.stringify(cJSON, null, 2), cb);
-};
+    writeFile(cFGpath, JSON.stringify(cJSON, null, 2), cb);
+  },
 
-/**
- * Unset config in config/configuration.json file
- *
- * @param {String}   variable path to the variable
- * @param {String}   value
- * @param {Function} cb       callback
- */
-We.prototype.unSetConfig = function unSetConfig (variable, cb) {
-  var cJSON,
-      cFGpath = path.join(this.projectPath, '/config/configuration.json');
+  /**
+   * Unset config in config/configuration.json file
+   *
+   * @param {String}   variable path to the variable
+   * @param {String}   value
+   * @param {Function} cb       callback
+   */
+  unSetConfig(variable, cb) {
+    let cJSON,
+        cFGpath = path.join(this.projectPath, '/config/configuration.json');
 
-  try {
-    cJSON = JSON.parse(readFileSync(cFGpath));
-  } catch(e) {
-    if (e.code == 'ENOENT') {
-      writeFileSync(cFGpath, '{}');
-      cJSON = {};
-    } else {
-      return cb(e);
+    try {
+      cJSON = JSON.parse(readFileSync(cFGpath));
+    } catch(e) {
+      if (e.code == 'ENOENT') {
+        writeFileSync(cFGpath, '{}');
+        cJSON = {};
+      } else {
+        return cb(e);
+      }
     }
-  }
 
-  _.unset(cJSON, variable);
+    _.unset(cJSON, variable);
 
-  writeFile(cFGpath, JSON.stringify(cJSON, null, 2), cb);
-};
-
-// set bootstrap functions
-We.prototype.bootstrapFunctions = require('./bootstrapFunctions');
-// flag to check if this we.js instance did the bootstrap
-We.prototype.bootstrapStarted = false;
+    writeFile(cFGpath, JSON.stringify(cJSON, null, 2), cb);
+  },
+  // set bootstrap functions
+  bootstrapFunctions: require('./bootstrapFunctions'),
+  // flag to check if this we.js instance did the bootstrap
+  bootstrapStarted: false,
   // flag to check if needs restart
-We.prototype.needsRestart = false;
-// we.utils.async, we.utils._ ... see the ./utils file
-We.prototype.utils = require('./utils');
-// load we.js responses
-We.prototype.responses = require('./responses');
+  needsRestart: false,
+  // we.utils.async, we.utils._ ... see the ./utils file
+  utils: require('./utils'),
+  // load we.js responses
+  responses: require('./responses'),
   // save we-core path to plugin.js for update e install process
-We.prototype.weCorePluginfile = path.resolve(__dirname, '../') + '/plugin.js';
+  weCorePluginfile: path.resolve(__dirname, '../') + '/plugin.js',
+  //Overide default toString and inspect to custom infos in we.js object
+  inspect() {
+    return '\nWe.js ;)\n';
+  },
+  toString() {
+    return this.inspect();
+  },
+  // client side config generator
+  getAppBootstrapConfig: require('./staticConfig/getAppBootstrapConfig.js'),
 
-//Overide default toString and inspect to custom infos in we.js object
-We.prototype.inspect = function inspect() {
-  return '\nWe.js ;)\n';
-};
-We.prototype.toString = We.prototype.inspect;
+  /**
+   * Bootstrap and initialize the app
+   *
+   * @param  {Object}   configOnRun optional
+   * @param  {Function} cb          callback to run after load we.js
+   */
+  bootstrap(configOnRun, cb) {
+    const we = this;
+    // only bootstrap we.js one time
+    if (we.bootstrapStarted) throw new Error('We.js already did bootstrap');
 
-// client side config generator
-We.prototype.getAppBootstrapConfig = require('./staticConfig/getAppBootstrapConfig.js');
-
-/**
- * Bootstrap and initialize the app
- *
- * @param  {Object}   configOnRun optional
- * @param  {Function} cb          callback to run after load we.js
- */
-We.prototype.bootstrap = function bootstrap (configOnRun, cb) {
-  let we = this;
-  // only bootstrap we.js one time
-  if (we.bootstrapStarted) throw new Error('We.js already did bootstrap');
-
-  we.bootstrapStarted = true;
-  // configsOnRun object is optional
-  if (!cb) {
-    cb = configOnRun;
-    configOnRun = null;
-  }
-  // configs on run extends default and file configs
-  if (configOnRun) _.merge(we.config, configOnRun);
-
-  // run the bootstrap hook
-  we.hooks.trigger('bootstrap', we, function bootstrapDone (err) {
-    if (err) {
-      console.log('Error on bootstrap: ');
-      throw err;
+    we.bootstrapStarted = true;
+    // configsOnRun object is optional
+    if (!cb) {
+      cb = configOnRun;
+      configOnRun = null;
     }
+    // configs on run extends default and file configs
+    if (configOnRun) _.merge(we.config, configOnRun);
 
-    we.events.emit('we:bootstrap:done', we);
-
-    we.log.debug('We.js bootstrap done');
-    return cb(null, we);
-  });
-};
-
-/**
- * Start we.js server (express)
- * use after we.bootstrap
- *
- * @param  {Function} cb    callback how returns with cb(err);
- */
-We.prototype.startServer = function startExpressServer(cb) {
-  if (!cb) cb = function(){}; // cb is optional
-
-  let we = this;
-  we.hooks.trigger('we:server:before:start' ,we ,function afterRunBeforeServerStart (err) {
-    if (err) return cb(err);
-    /**
-     * Get port from environment and store in Express.
-     */
-    var port = normalizePort(we.config.port);
-    we.express.set('port', port);
-
-    /**
-     * Create HTTP server with suport to url alias rewrite
-     */
-    var server = http.createServer(function onCreateServer (req, res){
-      req.we = we;
-
-      // suport for we.js widget API
-      // install we-plugin-widget to enable this feature
-      if (req.headers && req.headers['we-widget-action'] && req.method == 'POST') {
-        req.isWidgetAction = true;
-        req.originalMethod = req.method;
-        req.method = 'GET'; // widgets only are associated to get routes
+    // run the bootstrap hook
+    we.hooks.trigger('bootstrap', we, function bootstrapDone (err) {
+      if (err) {
+        console.log('Error on bootstrap: ');
+        throw err;
       }
 
-      // parse extension if not is public folder
-      if (!we.router.isPublicFolder(req.url)) {
-        req.extension = we.router.splitExtensionFromURL(req.url);
+      we.events.emit('we:bootstrap:done', we);
 
-        if (req.extension) {
-          let format = we.utils.mime.lookup(req.extension);
+      we.log.debug('We.js bootstrap done');
+      return cb(null, we);
+    });
+  },
 
-          if (req.we.config.responseTypes.includes(format)) {
-            // update the header response format with extension format
-            req.headers.accept = format;
-            // update the old url
-            req.url = req.url.replace('.'+req.extension, '');
+  /**
+   * Start we.js server (express)
+   * use after we.bootstrap
+   *
+   * @param  {Function} cb    callback how returns with cb(err);
+   */
+  startServer(cb) {
+    if (!cb) cb = function(){}; // cb is optional
+
+    let we = this;
+    we.hooks.trigger('we:server:before:start' ,we ,function afterRunBeforeServerStart (err) {
+      if (err) return cb(err);
+      /**
+       * Get port from environment and store in Express.
+       */
+      var port = normalizePort(we.config.port);
+      we.express.set('port', port);
+
+      /**
+       * Create HTTP server with suport to url alias rewrite
+       */
+      var server = http.createServer(function onCreateServer (req, res){
+        req.we = we;
+
+        // suport for we.js widget API
+        // install we-plugin-widget to enable this feature
+        if (req.headers && req.headers['we-widget-action'] && req.method == 'POST') {
+          req.isWidgetAction = true;
+          req.originalMethod = req.method;
+          req.method = 'GET'; // widgets only are associated to get routes
+        }
+
+        // parse extension if not is public folder
+        if (!we.router.isPublicFolder(req.url)) {
+          req.extension = we.router.splitExtensionFromURL(req.url);
+
+          if (req.extension) {
+            let format = we.utils.mime.lookup(req.extension);
+
+            if (req.we.config.responseTypes.includes(format)) {
+              // update the header response format with extension format
+              req.headers.accept = format;
+              // update the old url
+              req.url = req.url.replace('.'+req.extension, '');
+            }
           }
         }
-      }
-      // install we-plugin-url-alias to enable alias feature
-      if (we.plugins['we-plugin-url-alias'] && we.config.enableUrlAlias) {
-        we.router.alias.httpHandler.bind(this)(req, res);
-      } else {
-        we.express.bind(this)(req, res);
-      }
-    });
+        // install we-plugin-url-alias to enable alias feature
+        if (we.plugins['we-plugin-url-alias'] && we.config.enableUrlAlias) {
+          we.router.alias.httpHandler.bind(this)(req, res);
+        } else {
+          we.express.bind(this)(req, res);
+        }
+      });
 
-    we.events.emit('we:server:after:create', { we: we, server: server });
+      we.events.emit('we:server:after:create', { we: we, server: server });
 
-    /**
-     * Listen on provided port, on all network interfaces.
-     */
+      /**
+       * Listen on provided port, on all network interfaces.
+       */
 
-    // catch 404 and forward to error handler
-    we.express.use(function routeNotFound (req, res) {
-      we.log.debug('Route not found:', req.path);
-      // var err = new Error('Not Found');
-      // err.status = 404;
-      return res.notFound();
-    });
+      // catch 404 and forward to error handler
+      we.express.use(function routeNotFound (req, res) {
+        we.log.debug('Route not found:', req.path);
+        // var err = new Error('Not Found');
+        // err.status = 404;
+        return res.notFound();
+      });
 
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening);
-    /**
-     * Normalize a port into a number, string, or false.
-     */
-    function normalizePort (val) {
-      let port = parseInt(val, 10);
+      server.listen(port);
+      server.on('error', onError);
+      server.on('listening', onListening);
+      /**
+       * Normalize a port into a number, string, or false.
+       */
+      function normalizePort (val) {
+        let port = parseInt(val, 10);
 
-      if (isNaN(port)) {
-        // named pipe
-        return val;
-      }
+        if (isNaN(port)) {
+          // named pipe
+          return val;
+        }
 
-      if (port >= 0) {
-        // port number
-        return port;
-      }
+        if (port >= 0) {
+          // port number
+          return port;
+        }
 
-      return false;
-    }
-
-    /**
-     * Event listener for HTTP server "error" event.
-     */
-    function onError (error) {
-      if (error.syscall !== 'listen') {
-        throw error;
+        return false;
       }
 
-      var bind = typeof port === 'string'
-        ? 'Pipe ' + port
-        : 'Port ' + port;
-
-      // handle specific listen errors with friendly messages
-      switch (error.code) {
-        case 'EACCES':
-          console.error(bind + ' requires elevated privileges');
-          process.exit(1);
-          break;
-        case 'EADDRINUSE':
-          console.error(bind + ' is already in use');
-          process.exit(1);
-          break;
-        default:
+      /**
+       * Event listener for HTTP server "error" event.
+       */
+      function onError (error) {
+        if (error.syscall !== 'listen') {
           throw error;
+        }
+
+        var bind = typeof port === 'string'
+          ? 'Pipe ' + port
+          : 'Port ' + port;
+
+        // handle specific listen errors with friendly messages
+        switch (error.code) {
+          case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+          case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+          default:
+            throw error;
+        }
       }
-    }
-    /**
-     * Event listener for HTTP server "listening" event.
-     */
-    function onListening () {
-      var addr = server.address();
-      var bind = typeof addr === 'string'
-        ? 'pipe ' + addr
-        : 'port ' + addr.port;
-      we.log.info('Run in '+we.env+' enviroment and listening on ' + bind);
-    }
-    // save the current http server
-    we.http = server;
+      /**
+       * Event listener for HTTP server "listening" event.
+       */
+      function onListening () {
+        let addr = server.address(),
+            bind = typeof addr === 'string'
+          ? 'pipe ' + addr
+          : 'port ' + addr.port;
+        we.log.info('Run in '+we.env+' enviroment and listening on ' + bind);
+      }
+      // save the current http server
+      we.http = server;
 
-    // express error handlers
-    // will print stacktrace
-    we.express.use(function onExpressError (err, req, res, next) {
-      we.log.error('onExpressError:Error on:', req.path, err);
-      res.serverError(err);
+      // express error handlers
+      // will print stacktrace
+      we.express.use(function onExpressError (err, req, res, next) {
+        we.log.error('onExpressError:Error on:', req.path, err);
+        res.serverError(err);
+      });
+
+      we.hooks.trigger('we:server:after:start',we, function afterHookAfterStart (err) {
+        cb(err, we);
+      });
     });
+  },
 
-    we.hooks.trigger('we:server:after:start',we, function afterHookAfterStart (err) {
-      cb(err, we);
+  /**
+   * Bootstrap and Start we.js server
+   *
+   * @param  {Object}   cfgs configs (optional)
+   * @param  {Function} cb   callback
+   */
+  go(cfgs, cb) {
+    if (!cb) {
+      cb = cfgs;
+      cfgs = {};
+    }
+
+    this.bootstrap(cfgs, function afterBootstrapOnWeGo (err, we) {
+      if (err) throw err;
+      we.startServer(cb);
     });
-  });
-};
+  },
 
-/**
- * Bootstrap and Start we.js server
- *
- * @param  {Object}   cfgs configs (optional)
- * @param  {Function} cb   callback
- */
-We.prototype.go = function go (cfgs, cb) {
-  if (!cb) {
-    cb = cfgs;
-    cfgs = {};
+  /**
+   * Turn off process function
+   *
+   * @param  {Function} cb callback
+   */
+  exit(cb) {
+    this.isExiting = true;
+    // close db connection
+    if (this.db.defaultConnection) {
+      this.db.defaultConnection.close();
+    }
+    // close all loggers and wait for end writes
+    this.log.closeAllLoggersAndDisconnect(this, cb);
+  },
+
+  /**
+   * Helper function to delete (unpoint) pointers from response for help GC
+   */
+  freeResponseMemory(req, res) {
+    delete res.locals.req;
+    delete res.locals.regions;
+    delete res.locals.Model;
+    delete res.locals.body;
+    delete res.locals.layoutHtml;
+  },
+
+  /**
+   * Run all plugin and project cron tasks
+   *
+   * @param  {Function} cb callback
+   */
+  runCron(cb) {
+    this.cron = require('./cron');
+    this.cron.loadAndRunAllTasks(this, cb);
   }
-
-  this.bootstrap(cfgs, function afterBootstrapOnWeGo (err, we) {
-    if (err) throw err;
-    we.startServer(cb);
-  });
-};
-
-/**
- * Turn off process function
- *
- * @param  {Function} cb callback
- */
-We.prototype.exit = function exit (cb) {
-  this.isExiting = true;
-
-  // close db connection
-  if (this.db.defaultConnection) {
-    this.db.defaultConnection.close();
-  }
-  // close all loggers and wait for end writes
-  this.log.closeAllLoggersAndDisconnect(this, cb);
-};
-
-/**
- * Helper function to delete (unpoint) pointers from response for help GC
- */
-We.prototype.freeResponseMemory = function freeResponseMemory (req, res) {
-  delete res.locals.req;
-  delete res.locals.regions;
-  delete res.locals.Model;
-  delete res.locals.body;
-  delete res.locals.layoutHtml;
-};
-
-/**
- * Run all plugin and project cron tasks
- *
- * @param  {Function} cb callback
- */
-We.prototype.runCron = function runCron (cb) {
-  this.cron = require('./cron');
-  this.cron.loadAndRunAllTasks(this, cb);
 };
 
 module.exports = We;
