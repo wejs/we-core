@@ -143,7 +143,7 @@ function We (options) {
  * @param {String}   value
  * @param {Function} cb       callback
  */
-We.prototype = function setConfig (variable, value, cb) {
+We.prototype.setConfig = function setConfig (variable, value, cb) {
   if (!cb) cb = function(){};
 
   var cJSON,
