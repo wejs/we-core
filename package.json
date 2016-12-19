@@ -8,7 +8,7 @@
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
     "verbose-test": "NODE_ENV=test LOG_LV=verbose ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
     "coverage": "NODE_ENV=test LOG_LV=info node_modules/.bin/istanbul cover -x src node_modules/.bin/_mocha -- -u exports -R spec test/bootstrap.js test/**/*.test.js",
-    "preversion": "npm run compile && npm test",
+    "preversion": "npm test",
     "postversion": "git push",
     "compile": "babel src --out-dir lib",
     "cw": "babel src --out-dir lib -watch "
