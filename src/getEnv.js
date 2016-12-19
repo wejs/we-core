@@ -5,7 +5,7 @@
  */
 
 module.exports = function getEnv() {
-  let env
+  let env;
 
   // check in process.arg
   if (process.argv.includes('--dev')) {

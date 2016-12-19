@@ -2,9 +2,9 @@
  * Static configs loader
  */
 
-const fs = require('fs');
-const path = require('path');
-const _ = require('lodash');
+const fs = require('fs'),
+      path = require('path'),
+      _ = require('lodash');
 
 /**
  * Get project static configs
@@ -13,41 +13,41 @@ const _ = require('lodash');
  * @return {Object}             configs
  */
 function staticConfig (projectPath, app) {
-  if (!projectPath) throw new Error('project path is required for load static configs')
+  if (!projectPath) throw new Error('project path is required for load static configs');
 
   // return configs if already is loaded
-  if (app.staticConfigsIsLoad) return app.config
+  if (app.staticConfigsIsLoad) return app.config;
 
   // - load and merge project configs
 
-  let projectConfigFolder = app.projectConfigFolder
+  let projectConfigFolder = app.projectConfigFolder;
 
-  let files = []
+  let files = [];
 
   try {
-    files = fs.readdirSync(projectConfigFolder)
+    files = fs.readdirSync(projectConfigFolder);
   } catch(e) {
-    if (e.code != 'ENOENT') console.error('Error on load project config folder: ', e)
+    if (e.code != 'ENOENT') console.error('Error on load project config folder: ', e);
   }
 
   let file;
   for (let i = 0; i < files.length; i++) {
-    if (files[i] == 'local.js') continue // skip locals.js to load after all
-    if (!files[i].endsWith('.js')) continue // only accepts .js config files
+    if (files[i] == 'local.js') continue; // skip locals.js to load after all
+    if (!files[i].endsWith('.js')) continue; // only accepts .js config files
 
-    file = path.resolve(projectConfigFolder, files[i])
+    file = path.resolve(projectConfigFolder, files[i]);
     // skip dirs
-    if (fs.lstatSync(file).isDirectory()) continue
-    _.merge(app.config, require(file))
+    if (fs.lstatSync(file).isDirectory()) continue;
+    _.merge(app.config, require(file));
   }
 
-  let jsonConfiguration = staticConfig.readJsonConfiguration(projectConfigFolder)
-  let localConfigFile = staticConfig.readLocalConfigFile(projectConfigFolder)
+  let jsonConfiguration = staticConfig.readJsonConfiguration(projectConfigFolder);
+  let localConfigFile = staticConfig.readLocalConfigFile(projectConfigFolder);
 
   // load project local config file
-  _.merge(app.config, jsonConfiguration, localConfigFile)
+  _.merge(app.config, jsonConfiguration, localConfigFile);
 
-  app.staticConfigsIsLoad = true
+  app.staticConfigsIsLoad = true;
 
   return app.config;
 }
@@ -65,38 +65,38 @@ staticConfig.readLocalConfigFile = function (projectConfigFolder) {
     }
     return {};
   }
-}
+};
 
 /**
  * Read JSON Configuration file and create it if not exists
  */
 staticConfig.readJsonConfiguration = function (projectConfigFolder) {
-  let dirCFJSON = path.resolve(projectConfigFolder, 'configuration.json');
+  const dirCFJSON = path.resolve(projectConfigFolder, 'configuration.json');
 
   try {
     // load configuration.json after others but before local.js
-    return JSON.parse(fs.readFileSync(dirCFJSON))
+    return JSON.parse(fs.readFileSync(dirCFJSON));
   } catch (e) {
     if (e.code != 'ENOENT' ) {
       console.error('Unknow error on load config/configuration.json config:', e);
     } else {
       // if not exists create it
-      fs.writeFileSync(dirCFJSON, '{}')
-      console.log('The file configuration.json was created')
+      fs.writeFileSync(dirCFJSON, '{}');
+      console.log('The file configuration.json was created');
     }
-    return {}
+    return {};
   }
-}
+};
 
-staticConfig.loadPluginConfigs = function(we) {
+staticConfig.loadPluginConfigs = function loadPluginConfigs(we) {
   if (we.pluginConfigsIsLoad) return we.config;
 
-  var pluginManager = we.pluginManager;
+  const pluginManager = we.pluginManager;
 
-  var pluginConfigs = {};
+  let pluginConfigs = {};
 
   // - load and merge plugin configs
-  for (var pluginName in pluginManager.plugins) {
+  for (let pluginName in pluginManager.plugins) {
     _.merge(pluginConfigs, pluginManager.plugins[pluginName].configs);
   }
   // load project local config file
@@ -105,6 +105,6 @@ staticConfig.loadPluginConfigs = function(we) {
   we.pluginConfigsIsLoad = true;
 
   return we.config;
-}
+};
 
 module.exports = staticConfig;

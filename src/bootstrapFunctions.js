@@ -105,7 +105,7 @@ module.exports = {
       we.db.setModelHooks();
 
       we.hooks.trigger('we:models:set:joins', we, function afterSetJoins (err) {
-        if (err)  return next(err);
+        if (err) return next(err);
         next();
       });
     });
@@ -150,7 +150,7 @@ module.exports = {
     we.events.emit('we:after:load:express', we);
     next();
   },
-  passport: function passport (we, next) {
+  passport(we, next) {
     // hook to set authentication.
     // if we-plugin-auth is installed, load passport here
     we.hooks.trigger('we-core:on:set:passport', we, next);
@@ -169,7 +169,7 @@ module.exports = {
     we.log.verbose('mergeRoutes step');
     we.routes = {};
     // merge plugin routes
-    for ( var plugin in we.plugins) {
+    for (let plugin in we.plugins) {
       we.utils._.merge(we.routes, we.plugins[plugin].routes);
     }
     // merge project routes
@@ -185,7 +185,7 @@ module.exports = {
   bindResources(we, next) {
     we.log.verbose('bindResources step');
     try {
-      for (var resource in we.router.resources) {
+      for (let resource in we.router.resources) {
         we.router.bindResource(we.router.resources[resource]);
       }
       next();
@@ -196,13 +196,13 @@ module.exports = {
   bindRoutes(we, next) {
     we.log.verbose('bindRoutes step');
     we.hooks.trigger('we:before:routes:bind', we, function beforeRouteBind() {
-      for (var route in we.routes) {
+      for (let route in we.routes) {
         we.router.bindRoute(we, route, we.routes[route] );
       }
 
       we.hooks.trigger('we:after:routes:bind', we, function afterRouteBind() {
         // bind after router handler for run responseMethod
-        we.express.use(function (req, res, done) {
+        we.express.use( (req, res, done)=> {
           if (res.responseMethod) return res[res.responseMethod]();
           done();
         });

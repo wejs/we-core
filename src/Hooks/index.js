@@ -1,1 +1,1 @@
-module.exports = require('simple-hooks-callback')
+module.exports = require('simple-hooks-callback');

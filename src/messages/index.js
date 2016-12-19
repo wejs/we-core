@@ -4,7 +4,7 @@
  * This module helps with system messages how will be send to users
  */
 
-var messenger = {
+const messenger = {
   setFunctionsInResponse: function setFeaturesInResponse(req, res, next) {
     if (!next) next = function(){};
     if (!res.locals.messages ) res.locals.messages = [];
@@ -42,7 +42,7 @@ var messenger = {
         message: message,
         extraData: (extraData || null)
       });
-    }
+    };
 
     /**
      * Get all messages
@@ -65,7 +65,7 @@ var messenger = {
       }
 
       return messages;
-    }
+    };
 
     /**
      * Move all locals messages to session (flash)
@@ -75,7 +75,7 @@ var messenger = {
     res.moveLocalsMessagesToFlash = function moveLocalsMessagesToFlash() {
       var msgs = res.getMessages();
       if (msgs && msgs.length) req.flash('messages', msgs);
-    }
+    };
 
     next();
   }

@@ -1,5 +1,5 @@
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs'),
+      path = require('path');
 
 /**
  * List files in dir in parallel
@@ -9,10 +9,10 @@ var path = require('path');
  * @param  {String}   dir
  * @param  {Function} done run with error, files
  */
-var walk = function walk(dir, done) {
+const walk = function walk(dir, done) {
   var results = [];
 
-  fs.readdir(dir, function(err, list) {
+  fs.readdir(dir, (err, list)=> {
     if (err) {
       if (err.code === 'ENOENT') {
         return done(null, []);
@@ -20,13 +20,14 @@ var walk = function walk(dir, done) {
         return done(err);
       }
     }
-    var pending = list.length;
+    let pending = list.length;
     if (!pending) return done(null, results);
-    list.forEach(function(file) {
+
+    list.forEach( (file)=> {
       file = path.resolve(dir, file);
-      fs.stat(file, function(err, stat) {
+      fs.stat(file, (err, stat)=> {
         if (stat && stat.isDirectory()) {
-          walk(file, function(err, res) {
+          walk(file, (err, res)=> {
             results = results.concat(res);
             if (!--pending) done(null, results);
           });

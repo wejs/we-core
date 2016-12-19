@@ -1,7 +1,7 @@
-var i18n = require('i18n');
-var moment = require('moment');
+const i18n = require('i18n'),
+      moment = require('moment');
 
-var localization = function init (we){
+var localization = function init (we) {
   i18n.configure (we.config.i18n);
 
   we.i18n = i18n;
@@ -23,7 +23,6 @@ var localization = function init (we){
       next();
     });
   });
-
 };
 
 module.exports = localization;

@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
 /**
  * Get App Bootstrap configs
@@ -8,7 +8,7 @@ var _ = require('lodash');
  */
 module.exports = function getAppBootstrapConfig(we) {
 
-  var configs = {};
+  let configs = {};
 
   configs.version = '2';
 
@@ -47,4 +47,4 @@ module.exports = function getAppBootstrapConfig(we) {
   configs.structure = {};
 
   return configs;
-}
+};
