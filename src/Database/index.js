@@ -115,11 +115,12 @@ function Database (we) {
                   associationList[j]
                 );
               } else {
+
                 // 1xN association
                 relationships[ associationList[j] ] = {
                   data: {
                     id: this.getDataValue([associationList[j]]).id,
-                    type: model.associations[ associationList[j] ].options.name.singular
+                    type: model.associations[ associationList[j] ].target.name
                   }
                 };
               }
@@ -133,7 +134,7 @@ function Database (we) {
           const assocs = [],
                 modelName = this.$modelOptions.name.singular,
                 model = we.db.models[modelName],
-                type = model.associations[ assocName ].options.name.singular,
+                type = model.associations[ assocName ].target.name,
                 items = this.get(assocName);
 
           for (var i = 0; i < items.length; i++) {
