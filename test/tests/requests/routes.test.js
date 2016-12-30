@@ -1,8 +1,8 @@
-var assert = require('assert');
-var request = require('supertest');
-var helpers = require('we-test-tools').helpers;
-var Chance = require('chance');
-var _, http, we;
+const assert = require('assert'),
+      request = require('supertest'),
+      helpers = require('we-test-tools').helpers;
+
+let _, http, we;
 
 describe('routes', function() {
   before(function (done) {

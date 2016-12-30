@@ -1,9 +1,8 @@
 /**
- * We.js plugin config
+ * We.js core plugin main file
  */
-
 module.exports = function loadPlugin (projectPath, Plugin) {
-  var plugin = new Plugin(__dirname);
+  const plugin = new Plugin(__dirname);
 
   // folder for fallback templates
   plugin.tplFolder = projectPath + '/node_modules/we-plugin-view/server/templates/';
@@ -153,7 +152,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       // This may be override by every route configs
       CORS: {
         // block all CORS requests by default
-        origin: function(origin, cb){ cb(null, false) },
+        origin: function(origin, cb){ cb(null, false); },
         // default methods
         methods: ['GET', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
@@ -205,7 +204,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
      */
     resourceRoutes: {
       // apis
-      createAPI: function createAPIRR(we, cfg, opts) {
+      createAPI(we, cfg, opts) {
         // set post create on list for APIS
         we.routes['post '+opts.rootRoute] = we.utils._.merge(
           {
@@ -221,7 +220,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           we.routes['post '+opts.rootRoute] || {}
         );
       },
-      findAll: function findAllRR(we, cfg, opts) {
+      findAll(we, cfg, opts) {
         we.routes['get ' + opts.rootRoute] = we.utils._.merge(
           {
             resourceName: opts.namePrefix+opts.name,
@@ -254,7 +253,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           we.routes['get ' + opts.rootRoute] || {}
         );
       },
-      findOne: function findOneRR(we, cfg, opts, Model) {
+      findOne(we, cfg, opts, Model) {
         we.routes['get '+opts.itemRoute] = we.utils._.merge(
           {
             layoutName: opts.layoutName, // null = default layout
@@ -276,7 +275,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           we.routes['get '+opts.itemRoute] || {}
         );
       },
-      updateAPI: function updateAPIRR(we, cfg, opts) {
+      updateAPI(we, cfg, opts) {
         // pipe put and patch will be handled in same controller, action as update
         we.routes['put '+opts.itemRoute] = we.utils._.merge(
           {
@@ -304,7 +303,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           we.routes['patch '+opts.itemRoute] || {}
         );
       },
-      deleteAPI: function deleteAPIRR(we, cfg, opts) {
+      deleteAPI(we, cfg, opts) {
         we.routes['delete '+opts.itemRoute] = we.utils._.merge(
           {
             resourceName: opts.namePrefix+opts.name,

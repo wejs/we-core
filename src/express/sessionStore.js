@@ -1,11 +1,11 @@
-var session = require('express-session');
+const session = require('express-session');
 
 module.exports = function(we, weExpress) {
   // - default session storage
   // To change the  session store change the we.config.session.store
   // To disable session set we.config.session to null
   if (we.config.session && !we.config.session.store && we.db.activeConnectionConfig.dialect == 'mysql') {
-    var SessionStore = require('express-mysql-session');
+    let SessionStore = require('express-mysql-session');
     we.config.session.store = new SessionStore({
       host: we.db.activeConnectionConfig.host || 'localhost',
       port: we.db.activeConnectionConfig.port || 3306,
@@ -24,4 +24,4 @@ module.exports = function(we, weExpress) {
 
     weExpress.use(we.session);
   }
-}
+};

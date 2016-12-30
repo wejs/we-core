@@ -1,5 +1,4 @@
-import path from 'path'
-
+const path = require('path');
 let projectPath = process.cwd();
 
 /**
@@ -8,36 +7,36 @@ let projectPath = process.cwd();
  * @type {Object}
  */
 function PluginManager (we) {
-  this.we = we
+  this.we = we;
 
-  projectPath = we.projectPath
+  projectPath = we.projectPath;
   // npm module folder from node_modules
-  this.nodeModulesPath = path.resolve(projectPath, 'node_modules')
+  this.nodeModulesPath = path.resolve(projectPath, 'node_modules');
 
-  this.configs = we.configs
-  this.plugins = {}
-  this.pluginNames = this.getPluginsList()
+  this.configs = we.configs;
+  this.plugins = {};
+  this.pluginNames = this.getPluginsList();
   // a list of plugin.js files get from npm module folder
-  this.pluginFiles = {}
+  this.pluginFiles = {};
   // array with all plugin paths
-  this.pluginPaths = []
+  this.pluginPaths = [];
   // plugin records from db
-  this.records = []
+  this.records = [];
   // a list of plugins to install
-  this.pluginsToInstall = {}
+  this.pluginsToInstall = {};
 }
 // flag to check if plugins already is loaded
-PluginManager.prototype.pluginsLoaded = false
+PluginManager.prototype.pluginsLoaded = false;
 // function to check if npm module is plugin
-PluginManager.prototype.isPlugin = require('./isPlugin.js')
+PluginManager.prototype.isPlugin = require('./isPlugin.js');
 // return the name of all enabled plugins
 PluginManager.prototype.getPluginNames = function () {
-  return this.pluginNames
-}
+  return this.pluginNames;
+};
 // load one plugin running related plugin.js file
 PluginManager.prototype.loadPlugin = function (pluginFile, npmModuleName, projectPath) {
-  this.plugins[npmModuleName] = require(pluginFile)( projectPath , this.we.class.Plugin)
-}
+  this.plugins[npmModuleName] = require(pluginFile)( projectPath , this.we.class.Plugin);
+};
 /**
  * Get plugin names list from project package.json
  *
@@ -51,7 +50,7 @@ PluginManager.prototype.getPluginsList = function () {
     if (this.we.projectPackageJSON.wejs && this.we.projectPackageJSON.wejs.devPlugins) {
       for (let name in this.we.projectPackageJSON.wejs.devPlugins) {
         if (this.we.projectPackageJSON.wejs.devPlugins[name]) {
-          names.push(name)
+          names.push(name);
         }
       }
     }
@@ -61,7 +60,7 @@ PluginManager.prototype.getPluginsList = function () {
   if (this.we.projectPackageJSON.wejs && this.we.projectPackageJSON.wejs.plugins) {
     for (let name in this.we.projectPackageJSON.wejs.plugins) {
       if (this.we.projectPackageJSON.wejs.plugins[name]) {
-        names.push(name)
+        names.push(name);
       }
     }
   }
@@ -69,18 +68,18 @@ PluginManager.prototype.getPluginsList = function () {
   //
   if (this.we.projectPackageJSON.name != 'we-core') {
     // move we-core to plugin list start
-    let weCoreIndex = names.indexOf('we-core')
+    let weCoreIndex = names.indexOf('we-core');
     if (weCoreIndex == -1) {
       // not is in plugins list then add before all
-      names.unshift('we-core')
+      names.unshift('we-core');
     } else if (weCoreIndex !== -1 && weCoreIndex > 0) {
       // move we-core to load after others plugins
-      names.unshift(names.splice(weCoreIndex, 1))
+      names.unshift(names.splice(weCoreIndex, 1));
     }
   }
 
-  return names
-}
+  return names;
+};
 
 /**
  * Load and register all avaible plugins
@@ -90,7 +89,7 @@ PluginManager.prototype.getPluginsList = function () {
  */
 PluginManager.prototype.loadPlugins = function (we, done) {
   // only load one time
-  if (this.pluginsLoaded) return this.plugins
+  if (this.pluginsLoaded) return this.plugins;
 
   let newPluginNames = we.utils._.cloneDeep(this.pluginNames);
 
@@ -99,50 +98,50 @@ PluginManager.prototype.loadPlugins = function (we, done) {
     if (name == 'project') return;
 
     // get full path
-    let pluginPath = path.resolve(this.nodeModulesPath, name)
+    let pluginPath = path.resolve(this.nodeModulesPath, name);
 
     // check if is plugin
     if ( !this.isPlugin(pluginPath) ) {
       // if not is plugin, remove from array and show log
-      let index = newPluginNames.indexOf(name)
+      let index = newPluginNames.indexOf(name);
       newPluginNames.splice(index, 1);
 
-      we.log.warn('pluginManager:'+name+' not is plugin')
+      we.log.warn('pluginManager:'+name+' not is plugin');
       return;
     }
 
     // save plugin path
-    this.pluginPaths.push(pluginPath)
+    this.pluginPaths.push(pluginPath);
     // resolve full plugin file path
-    let pluginFile = path.resolve( pluginPath, 'plugin.js' )
+    let pluginFile = path.resolve( pluginPath, 'plugin.js' );
     // save this plugin file
-    this.pluginFiles[name] = pluginFile
+    this.pluginFiles[name] = pluginFile;
     // load plugin resources
-    this.loadPlugin(pluginFile, name, projectPath)
+    this.loadPlugin(pluginFile, name, projectPath);
     // check if needs to install this plugin
     if (!this.isInstalled(name)) {
-      this.pluginsToInstall[name] = pluginFile
+      this.pluginsToInstall[name] = pluginFile;
     }
-  })
+  });
 
-  this.pluginNames = newPluginNames
+  this.pluginNames = newPluginNames;
 
   this.pluginNames.push('project');
   // - then load project as plugin if it have the plugin.js file
-  let projectFile = path.resolve(projectPath, 'plugin.js')
-  this.pluginFiles.project = projectFile
+  let projectFile = path.resolve(projectPath, 'plugin.js');
+  this.pluginFiles.project = projectFile;
   // after all plugins load the project as plugin
-  this.loadProjectAsPlugin()
+  this.loadProjectAsPlugin();
   // check if needs to install the project
   if (!this.isInstalled('project')) {
-    this.pluginsToInstall.project = projectFile
+    this.pluginsToInstall.project = projectFile;
   }
 
   // load done
-  this.pluginsLoaded = true
+  this.pluginsLoaded = true;
 
-  done(null, this.plugins)
-}
+  done(null, this.plugins);
+};
 /**
  * Check if one plugin is installed
  *
@@ -152,77 +151,77 @@ PluginManager.prototype.loadPlugins = function (we, done) {
 PluginManager.prototype.isInstalled = function (name) {
   for (let i = 0; i < this.records.length; i++) {
     if (this.records[i].name == name) {
-      return true
+      return true;
     }
   }
-  return false
-}
+  return false;
+};
 
 /**
  * Get the plugin install.js script if is avaible
  * @param  {String} name   plugin name
  */
 PluginManager.prototype.getPluginInstallScript = function (name) {
-  let pluginFolder
+  let pluginFolder;
   // get folder, for suport with project plugin
   if (name == 'project') {
-    pluginFolder = projectPath
+    pluginFolder = projectPath;
   } else {
-    pluginFolder = path.resolve(this.nodeModulesPath, name)
+    pluginFolder = path.resolve(this.nodeModulesPath, name);
   }
   // get the install file
-  let installFile = path.resolve(pluginFolder, 'install.js')
-  let install
+  let installFile = path.resolve(pluginFolder, 'install.js');
+  let install;
   try {
-    return install = require(installFile)
+    return install = require(installFile);
   } catch (e) {
     if (e.code == 'MODULE_NOT_FOUND') {
       // this plugin dont have the install file
-      return null
+      return null;
     }
     // unknow error
-    throw(e)
+    throw(e);
   }
-}
+};
 
 PluginManager.prototype.installPlugin = function (name, done) {
-  let install = this.getPluginInstallScript(name)
-  let we = this.we
+  let install = this.getPluginInstallScript(name);
+  let we = this.we;
 
   // dont have the install script
   if (!install || !install.install) {
-    we.log.info('Plugin '+ name + ' dont have install method')
-    return done()
+    we.log.info('Plugin '+ name + ' dont have install method');
+    return done();
   }
   // run the install script if avaible
   install.install(we, function afterRunPluginInstallMethod (err) {
-    if (err) return done(err)
+    if (err) return done(err);
 
-    we.log.info('Plugin '+ name + ' installed')
-    return done()
+    we.log.info('Plugin '+ name + ' installed');
+    return done();
   });
-}
+};
 
 PluginManager.prototype.registerPlugin = function (name, done) {
-  let we =this.we
-  let pluginManager = this
+  let we =this.we;
+  let pluginManager = this;
 
-  let filename
+  let filename;
   if (name == 'project') {
-    filename = 'plugin.js'
+    filename = 'plugin.js';
   } else {
-    filename = 'node_modules/'+ name + '/plugin.js'
+    filename = 'node_modules/'+ name + '/plugin.js';
   }
 
-  let install = this.getPluginInstallScript(name)
+  let install = this.getPluginInstallScript(name);
 
-  let version = '0.0.0'
+  let version = '0.0.0';
 
   // get version of last update
   if (install && install.updates) {
-    let updates = install.updates(we)
+    let updates = install.updates(we);
     if (updates && updates.length) {
-      version = updates[updates.length - 1].version
+      version = updates[updates.length - 1].version;
     }
   }
 
@@ -233,14 +232,14 @@ PluginManager.prototype.registerPlugin = function (name, done) {
     status: 1
   })
   .then(function (r) {
-    we.log.info('Plugin '+name+' registered with id: '+ r.id)
+    we.log.info('Plugin '+name+' registered with id: '+ r.id);
     // push to plugin record array
-    pluginManager.records.push(r)
-    done()
-    return null
+    pluginManager.records.push(r);
+    done();
+    return null;
   })
-  .catch(done)
-}
+  .catch(done);
+};
 
 /**
  * Load all plugin settings from DB
@@ -249,7 +248,7 @@ PluginManager.prototype.registerPlugin = function (name, done) {
  * @param  {Function} cb  callback
  */
 PluginManager.prototype.loadPluginsSettingsFromDB = function (we, cb) {
-  let pluginManager = this
+  let pluginManager = this;
 
   return we.db.models.plugin.findAll({
     order: [['weight', 'ASC'], ['id', 'ASC']]
@@ -258,19 +257,19 @@ PluginManager.prototype.loadPluginsSettingsFromDB = function (we, cb) {
     // move we-core to start of array if exists
     for (let i = 0; i < plugins.length; i++) {
       if (plugins[i].name == 'we-core') {
-        plugins.unshift(plugins.splice(i, 1)[0])
-        break
+        plugins.unshift(plugins.splice(i, 1)[0]);
+        break;
       }
     }
 
-    pluginManager.records = plugins
+    pluginManager.records = plugins;
 
-    cb(null, plugins)
+    cb(null, plugins);
 
-    return null
+    return null;
   })
-  .catch(cb)
-}
+  .catch(cb);
+};
 
 /**
  * Get one plugin record from pluginManager.records array
@@ -284,60 +283,60 @@ PluginManager.prototype.getPluginRecord = function (name) {
       return this.records[l];
   }
   return null;
-}
+};
 
 PluginManager.prototype.getPluginsToUpdate = function (done) {
-  let we = this.we
-  let pluginsToUpdate = []
-  let name, installFile, updates, pluginRecord
+  const we = this.we;
+  let pluginsToUpdate = [];
+  let name, installFile, updates, pluginRecord;
 
   for (let i = 0; i < this.pluginNames.length; i++) {
-    name = this.pluginNames[i]
-    installFile = this.getPluginInstallScript(name)
+    name = this.pluginNames[i];
+    installFile = this.getPluginInstallScript(name);
 
     // skip if dont have updates
-    if (!installFile || !installFile.updates) continue
+    if (!installFile || !installFile.updates) continue;
 
-    updates = installFile.updates(we)
+    updates = installFile.updates(we);
 
-    if (!updates.length) continue
+    if (!updates.length) continue;
 
-    pluginRecord = this.getPluginRecord(name)
+    pluginRecord = this.getPluginRecord(name);
 
-    if (!pluginRecord) continue
+    if (!pluginRecord) continue;
 
     if (pluginRecord.version == '0.0.0') {
       pluginsToUpdate.push({
         name: name,
         installFile: installFile,
         record: pluginRecord
-      })
-      continue
+      });
+      continue;
     }
 
-    let firstUpdateFound = false
+    let firstUpdateFound = false;
     for (let j = 0; j < updates.length; j++) {
       if (firstUpdateFound) {
         pluginsToUpdate.push({
           name: name,
           installFile: installFile,
           record: pluginRecord
-        })
-        break
+        });
+        break;
       }
 
       if (!firstUpdateFound && updates[j].version == pluginRecord.version) {
-        firstUpdateFound = true
+        firstUpdateFound = true;
       }
     }
   }
 
-  done(null, pluginsToUpdate)
-}
+  done(null, pluginsToUpdate);
+};
 
 PluginManager.prototype.runPluginUpdates = function (name, done) {
-  let we = this.we
-  let installFile = this.getPluginInstallScript(name)
+  let we = this.we;
+  let installFile = this.getPluginInstallScript(name);
   let updates = installFile.updates(we);
   let pluginRecord = this.getPluginRecord(name);
 
@@ -347,13 +346,13 @@ PluginManager.prototype.runPluginUpdates = function (name, done) {
   if (pluginRecord.version == '0.0.0') {
     updatesToRun = updates;
   } else {
-    let firstUpdateFound = false
+    let firstUpdateFound = false;
     for (let i = 0; i < updates.length; i++) {
       if (firstUpdateFound) {
-        updatesToRun.push(updates[i])
+        updatesToRun.push(updates[i]);
       }
       if (!firstUpdateFound && updates[i].version == pluginRecord.version) {
-        firstUpdateFound = true
+        firstUpdateFound = true;
       }
     }
   }
@@ -361,38 +360,38 @@ PluginManager.prototype.runPluginUpdates = function (name, done) {
   we.utils.async.eachSeries(updatesToRun, function (up, next) {
     // run the update fn
     up.update(we, function (err) {
-      if (err) return next (err)
+      if (err) return next (err);
       // update the plugin version in db
-      pluginRecord.version = up.version
+      pluginRecord.version = up.version;
 
       return pluginRecord.save()
       .then(function () {
-        we.log.info('Plugin '+name+ ' updated to: ' + up.version)
-        next()
+        we.log.info('Plugin '+name+ ' updated to: ' + up.version);
+        next();
 
-        return null
+        return null;
       })
-      .catch(next)
-    })
-  }, done)
-}
+      .catch(next);
+    });
+  }, done);
+};
 
 /**
  * Check is project have a plugin.js file and if yes load it as plugin
  */
 PluginManager.prototype.loadProjectAsPlugin = function () {
-  let file = null
+  let file = null;
   // load project plugin.js file if exists
   try {
-    file = path.join( projectPath, 'plugin.js' )
-    this.loadPlugin(file, 'project', projectPath)
+    file = path.join( projectPath, 'plugin.js' );
+    this.loadPlugin(file, 'project', projectPath);
   } catch (e) {
     if (e.code != 'MODULE_NOT_FOUND') {
-      throw e
+      throw e;
     }
   }
-  return file
-}
+  return file;
+};
 
 // exports pluginManager
-module.exports = PluginManager
+module.exports = PluginManager;

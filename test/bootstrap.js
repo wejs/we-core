@@ -1,79 +1,71 @@
-var projectPath = process.cwd();
-var path = require('path');
-var deleteDir = require('rimraf');
-var async = require('async');
-var testTools = require('we-test-tools');
-var ncp = require('ncp').ncp;
-var We = require('../lib');
-var we;
+const projectPath = process.cwd(),
+      path = require('path'),
+      deleteDir = require('rimraf'),
+      async = require('async'),
+      testTools = require('we-test-tools'),
+      ncp = require('ncp').ncp,
+      We = require('../src');
 
+let we;
+
+// Add the stub plugin in node_modules folder:
 before(function (callback) {
-  this.slow(100);
-
   testTools.copyLocalConfigIfNotExitst(projectPath, function() {
-    ncp(
-      path.resolve(__dirname, 'testData/we-plugin-post'),
-      path.resolve(process.cwd(), 'node_modules/we-plugin-post'), function (err) {
-      if (err) {
-        return console.error(err);
-      }
+    const f = path.resolve(__dirname, 'testData/we-plugin-post'),
+          d = path.resolve(process.cwd(), 'node_modules/we-plugin-post');
 
-      we = new We({ bootstrapMode: 'test' });
-
-      testTools.init({}, we);
-
-      we.bootstrap({
-        // disable access log
-        enableRequestLog: false,
-
-        i18n: {
-          directory: path.resolve(__dirname, '..', 'config/locales'),
-          updateFiles: true,
-          locales: ['en-us']
-        },
-        themes: {}
-      }, function (err, we) {
-        if (err) return console.error(err);
-
-        we.startServer(function (err) {
-          if (err) return console.error(err);
-          callback();
-        });
-
-      });
-    });
+    ncp(f, d, callback);
   });
 });
 
-//after all tests
-after(function (callback) {
 
-  testTools.helpers.resetDatabase(we, function(err) {
+// prepare we.js core and load app features:
+before(function (callback) {
+  this.slow(100);
+
+  we = new We({ bootstrapMode: 'test' });
+
+  testTools.init({}, we);
+
+  we.bootstrap({
+    // disable access log
+    enableRequestLog: false,
+
+    i18n: {
+      directory: path.resolve(__dirname, '..', 'config/locales'),
+      updateFiles: true,
+      locales: ['en-us']
+    },
+    themes: {}
+  }, callback);
+});
+
+// start the server:
+before(function (callback) {
+  we.startServer(callback);
+});
+
+// after all tests remove test folders and delete the database:
+after(function (callback) {
+  testTools.helpers.resetDatabase(we, (err)=> {
     if(err) return callback(err);
 
     we.db.defaultConnection.close();
 
-    var tempFolders = [
+    const tempFolders = [
       path.resolve(process.cwd(), 'node_modules/we-plugin-post'),
       projectPath + '/files/tmp',
       projectPath + '/files/config',
       projectPath + '/files/sqlite',
-
-      projectPath + '/files/public/min',
-
-      projectPath + '/files/public/tpls.hbs.js',
-      projectPath + '/files/public/admin.tpls.hbs.js',
-      projectPath + '/files/public/project.css',
-      projectPath + '/files/public/project.js',
       projectPath + '/files/uploads',
       projectPath + '/files/templatesCacheBuilds.js'
     ];
 
-    async.each(tempFolders, function(folder, next){
+    async.each(tempFolders, (folder, next)=> {
       deleteDir( folder, next);
-    }, function(err) {
+    }, (err)=> {
       if (err) throw new Error(err);
       callback();
     });
   });
-})
+});

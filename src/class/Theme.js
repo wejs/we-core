@@ -1,12 +1,11 @@
 /**
- * We.js Theme Class
- *
+ * We.js Theme prototype
  */
 
 const _ = require('lodash'),
-  path = require('path')
+  path = require('path');
 
-module.exports = function(we) {
+module.exports = function getThemePrototype(we) {
   /**
    * We.js theme Class constructor
    *
@@ -116,4 +115,4 @@ module.exports = function(we) {
   };
 
   return Theme;
-}
+};

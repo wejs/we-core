@@ -4,7 +4,7 @@
  */
 
 // single model associations
-var singleAssociations = ['belongsTo', 'hasOne'];
+const singleAssociations = ['belongsTo', 'hasOne'];
 
 module.exports = {
   listFilesRecursive: require('./listFilesRecursive'),
@@ -22,7 +22,7 @@ module.exports = {
    *
    * @return {Boolean} True
    */
-  isAuthenticated: function isAuthenticated() {
+  isAuthenticated() {
     if (!this.user || !this.user.id) return false;
     return true;
   },
@@ -32,14 +32,14 @@ module.exports = {
    * @param  {[type]} res express response
    * @return {string|null} url or null
    */
-  getRedirectUrl: function getRedirectUrl(req) {
+  getRedirectUrl(req) {
     if (req.query) {
       if (req.query.service) {
         if (req.we.config.services && req.we.config.services[req.query.service]) {
           req.we.log.verbose(
             'Service redirect found for service: ', req.we.config.services[req.query.service]
           );
-          return req.we.config.services[req.query.service].url
+          return req.we.config.services[req.query.service].url;
         }
       }
 
@@ -64,10 +64,10 @@ module.exports = {
      * @param  {Object} options handlebars helper options
      * @return {String}         [description]
      */
-    parseAttributes: function parseAttributes(options) {
-      var attributes = [];
+    parseAttributes(options) {
+      let attributes = [];
       // pass helper attributes to link element
-      for (var attributeName in options.hash) {
+      for (let attributeName in options.hash) {
         if (typeof options.hash[attributeName] == 'string') {
           attributes.push(attributeName + '="' + options.hash[attributeName] + '"');
         }
@@ -83,11 +83,11 @@ module.exports = {
    * @param  {Object}  association The sequelize association object
    * @return {Boolean}
    */
-  isNNAssoc: function isNNAssoc(association) {
+  isNNAssoc(association) {
     if ( singleAssociations.indexOf( association.associationType ) > -1 ) {
       return true;
     }
 
     return false;
   }
-}
+};

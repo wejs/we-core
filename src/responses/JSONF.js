@@ -1,6 +1,10 @@
-import { isEmpty, isObject } from 'lodash'
+const { isEmpty, isObject } = require('lodash');
 
-let jsonF = {
+/**
+ * JSON response formatter
+ * @type {Object}
+ */
+const jsonF = {
   /**
    * JSON response format
    *
@@ -9,37 +13,37 @@ let jsonF = {
    * @param  {Object} res  Express.js response
    * @return {Object}      JS object to send with res.send
    */
-  jsonFormater: function jsonFormater (req, res) {
+  jsonFormater(req, res) {
     if (!res.locals.model) {
-      if (!res.locals.data) res.locals.data = {}
+      if (!res.locals.data) res.locals.data = {};
       // set messages
-      res.locals.data.messages = res.locals.messages
-      return res.send(res.locals.data)
+      res.locals.data.messages = res.locals.messages;
+      return res.send(res.locals.data);
     }
 
-    let response = {}
+    const response = {};
 
     if (req.we.config.sendNestedModels) {
-      response[res.locals.model] = res.locals.data
+      response[res.locals.model] = res.locals.data;
     } else {
-      response[res.locals.model] = parseRecord(req, res, res.locals.data)
+      response[res.locals.model] = parseRecord(req, res, res.locals.data);
     }
 
     // check field privacity access
     if (res.locals.data) {
-      req.we.db.checkRecordsPrivacity(res.locals.data)
+      req.we.db.checkRecordsPrivacity(res.locals.data);
     }
 
-    response.meta = res.locals.metadata
+    response.meta = res.locals.metadata;
 
     if (!isEmpty( res.locals.messages) ) {
       // set messages
-      response.messages = res.locals.messages
+      response.messages = res.locals.messages;
     }
 
-    res.send(response)
+    res.send(response);
   }
-}
+};
 
 
 /**
@@ -74,4 +78,4 @@ function parseRecord(req, res, record) {
   return record;
 }
 
-module.exports = jsonF
+module.exports = jsonF;

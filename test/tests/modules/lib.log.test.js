@@ -5,7 +5,7 @@ var getLogger, we;
 
 describe('lib/log', function () {
   before(function (done) {
-    getLogger = require('../../../lib/log');
+    getLogger = require('../../../src/log');
     we = helpers.getWe();
     done();
   });

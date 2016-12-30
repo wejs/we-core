@@ -5,7 +5,7 @@
 const _ = require('lodash'),
   path = require('path'),
   fs = require('fs'),
-  async = require('async')
+  async = require('async');
 
 module.exports = function getPluginPrototype (we) {
   /**
@@ -15,12 +15,12 @@ module.exports = function getPluginPrototype (we) {
    * @param {string} projectPath project path where the plugin is instaled
    */
   function Plugin (pluginPath) {
-    this.pluginPath = pluginPath
-    this.we = we
+    this.pluginPath = pluginPath;
+    this.we = we;
 
-    this.events = this.we.events
-    this.hooks = this.we.hooks
-    this.router = this.we.router
+    this.events = this.we.events;
+    this.hooks = this.we.hooks;
+    this.router = this.we.router;
     /**
      * Plugin Assets
      * @type {Object}
@@ -28,34 +28,34 @@ module.exports = function getPluginPrototype (we) {
     this.assets = {
       js: {},
       css: {}
-    }
+    };
 
-    this['package.json'] = require( path.join( pluginPath , 'package.json') )
+    this['package.json'] = require( path.join( pluginPath , 'package.json') );
 
-    this.controllersPath = path.join( this.pluginPath,  this.controllerFolder )
-    this.modelsPath = path.join( this.pluginPath,  this.modelFolder )
-    this.modelHooksPath = path.join( this.pluginPath,  this.modelHookFolder )
-    this.modelInstanceMethodsPath = path.join( this.pluginPath,  this.modelInstanceMethodFolder )
-    this.modelClassMethodsPath = path.join( this.pluginPath,  this.modelClassMethodFolder )
+    this.controllersPath = path.join( this.pluginPath,  this.controllerFolder );
+    this.modelsPath = path.join( this.pluginPath,  this.modelFolder );
+    this.modelHooksPath = path.join( this.pluginPath,  this.modelHookFolder );
+    this.modelInstanceMethodsPath = path.join( this.pluginPath,  this.modelInstanceMethodFolder );
+    this.modelClassMethodsPath = path.join( this.pluginPath,  this.modelClassMethodFolder );
 
-    this.searchParsersPath = path.join( this.pluginPath, this.searchParsersFolder )
-    this.searchTargetsPath = path.join( this.pluginPath, this.searchTargetsFolder )
+    this.searchParsersPath = path.join( this.pluginPath, this.searchParsersFolder );
+    this.searchTargetsPath = path.join( this.pluginPath, this.searchTargetsFolder );
 
-    this.templatesPath = this.pluginPath + '/server/templates'
-    this.helpersPath = this.pluginPath + '/server/helpers'
-    this.resourcesPath = this.pluginPath + '/server/resources'
-    this.routesPath = this.pluginPath + '/server/routes'
+    this.templatesPath = this.pluginPath + '/server/templates';
+    this.helpersPath = this.pluginPath + '/server/helpers';
+    this.resourcesPath = this.pluginPath + '/server/resources';
+    this.routesPath = this.pluginPath + '/server/routes';
 
-    this.helpers = {}
-    this.layouts = {}
-    this.templates = {}
+    this.helpers = {};
+    this.layouts = {};
+    this.templates = {};
 
     /**
      * Default plugin config object
      *
      * @type {Object}
      */
-    this.configs = {}
+    this.configs = {};
 
 
     /**
@@ -63,12 +63,12 @@ module.exports = function getPluginPrototype (we) {
      *
      * @type {Object}
      */
-    this.controllers = {}
-    this.models = {}
-    this.routes = {}
+    this.controllers = {};
+    this.models = {};
+    this.routes = {};
 
-    this.appFiles = []
-    this.appAdminFiles = []
+    this.appFiles = [];
+    this.appAdminFiles = [];
   }
 
   /**
@@ -77,24 +77,24 @@ module.exports = function getPluginPrototype (we) {
    * @param  {Object} we  we.js object
    * @param  {Function} cb callback
    */
-  Plugin.prototype.init = function initPlugin(we, cb) { return cb() }
+  Plugin.prototype.init = function initPlugin(we, cb) { return cb(); };
 
   /**
    * Set plugin config
    * @param {Object} config
    */
   Plugin.prototype.setConfigs = function setConfigs (configs) {
-    this.configs = configs
-  }
+    this.configs = configs;
+  };
 
   // default plugin paths
-  Plugin.prototype.controllerFolder = 'server/controllers'
-  Plugin.prototype.modelFolder = 'server/models'
-  Plugin.prototype.modelHookFolder = 'server/models/hooks'
-  Plugin.prototype.modelInstanceMethodFolder = 'server/models/instanceMethods'
-  Plugin.prototype.modelClassMethodFolder = 'server/models/classMethods'
-  Plugin.prototype.searchParsersFolder = 'server/search/parsers'
-  Plugin.prototype.searchTargetsFolder = 'server/search/targets'
+  Plugin.prototype.controllerFolder = 'server/controllers';
+  Plugin.prototype.modelFolder = 'server/models';
+  Plugin.prototype.modelHookFolder = 'server/models/hooks';
+  Plugin.prototype.modelInstanceMethodFolder = 'server/models/instanceMethods';
+  Plugin.prototype.modelClassMethodFolder = 'server/models/classMethods';
+  Plugin.prototype.searchParsersFolder = 'server/search/parsers';
+  Plugin.prototype.searchTargetsFolder = 'server/search/targets';
 
   /**
    * Set plugin routes
@@ -102,13 +102,13 @@ module.exports = function getPluginPrototype (we) {
    * @param {object} routes
    */
   Plugin.prototype.setRoutes = function setRoutes (routes) {
-    var routePaths = Object.keys(routes)
-    var routePath
+    var routePaths = Object.keys(routes);
+    var routePath;
     for (var i = routePaths.length - 1; i >= 0; i--) {
-      routePath = routePaths[i]
-      this.setRoute(routePath, routes[routePath])
+      routePath = routePaths[i];
+      this.setRoute(routePath, routes[routePath]);
     }
-  }
+  };
 
   /**
    * Set one route in plugin routes
@@ -116,14 +116,14 @@ module.exports = function getPluginPrototype (we) {
    * @param {object} configs route configs how will be avaible as res.locals
    */
   Plugin.prototype.setRoute = function setRoute (routePath, configs) {
-    this.routes[routePath] = configs
-    this.routes[routePath].path = routePath
-    this.routes[routePath].pluginPath = this.pluginPath
-  }
+    this.routes[routePath] = configs;
+    this.routes[routePath].path = routePath;
+    this.routes[routePath].pluginPath = this.pluginPath;
+  };
 
   Plugin.prototype.setResource = function setResource (opts) {
     let router = this.we.router,
-        fullName = (opts.namePrefix || '') + opts.name
+        fullName = (opts.namePrefix || '') + opts.name;
 
     // first save resource in name or merge route options if exists
     if (!router.resourcesByName[fullName]) {
@@ -137,34 +137,34 @@ module.exports = function getPluginPrototype (we) {
       if (!router.resourcesByName[opts.parent]) {
       // parent dont are set
         // temporary create parent resource wit subroutes attr
-        router.resourcesByName[opts.parent] = { subRoutes: {} }
+        router.resourcesByName[opts.parent] = { subRoutes: {} };
         // add reference to route in parent subroutes
-        router.resourcesByName[opts.parent].subRoutes[fullName] = router.resourcesByName[fullName]
+        router.resourcesByName[opts.parent].subRoutes[fullName] = router.resourcesByName[fullName];
       } else {
       // parent resource is set
         if (!router.resourcesByName[opts.parent].subRoutes) {
           // add subRoutes object if dont are set
-          router.resourcesByName[opts.parent].subRoutes = {}
+          router.resourcesByName[opts.parent].subRoutes = {};
         }
         if (!router.resourcesByName[opts.parent].subRoutes[fullName]) {
-          router.resourcesByName[opts.parent].subRoutes[fullName] = {}
+          router.resourcesByName[opts.parent].subRoutes[fullName] = {};
         }
         // add reference to route in parent resource subroutes
-        router.resourcesByName[opts.parent].subRoutes[fullName] = router.resourcesByName[fullName]
+        router.resourcesByName[opts.parent].subRoutes[fullName] = router.resourcesByName[fullName];
       }
     } else {
       // is route route
-      router.resources[fullName] = router.resourcesByName[fullName]
+      router.resources[fullName] = router.resourcesByName[fullName];
     }
-  }
+  };
 
   /**
    * Set plugin layouts
    * @param {object} layouts
    */
   Plugin.prototype.setLayouts = function setLayouts (layouts) {
-    this.layouts = layouts
-  }
+    this.layouts = layouts;
+  };
 
   /**
    * Load all we.js plugin features
@@ -173,7 +173,7 @@ module.exports = function getPluginPrototype (we) {
    *
    */
   Plugin.prototype.loadFeatures = function loadFeatures (we, cb) {
-    var self = this
+    var self = this;
 
     async.parallel([
       next => self.loadSearchParsers(next),
@@ -191,7 +191,7 @@ module.exports = function getPluginPrototype (we) {
         }, done);
       },
     ], cb);
-  }
+  };
 
   /**
    * Get generic featureFiles
@@ -204,19 +204,19 @@ module.exports = function getPluginPrototype (we) {
   Plugin.prototype.getGenericFeatureFiles = function getGenericFeatureFiles (fgPath, done) {
     fs.readdir(fgPath, (e, fileNames) => {
       if (e) {
-        if (e.code !== 'ENOENT') return done(e)
-        return done(null, [])
+        if (e.code !== 'ENOENT') return done(e);
+        return done(null, []);
       }
 
       done(null, fileNames
-      .filter(fileName => { return fileName.endsWith('.js') })
+      .filter(fileName => { return fileName.endsWith('.js'); })
       .map(fileName => {
         return {
           name: fileName.slice(0, -3),
           path: path.join(fgPath, fileName)
-        }
-      }))
-    })
+        };
+      }));
+    });
   };
 
   /**
@@ -224,16 +224,16 @@ module.exports = function getPluginPrototype (we) {
    */
   Plugin.prototype.loadControllers = function loadControllers (done) {
     this.getGenericFeatureFiles(this.controllersPath, (e, modules) => {
-      if (e) return done(e)
+      if (e) return done(e);
 
       modules.forEach(m => {
-        var attrs = require(m.path)
-        attrs._controllersPath = this.controllersPath
-        we.controllers[m.name] = new we.class.Controller(attrs)
-      })
+        var attrs = require(m.path);
+        attrs._controllersPath = this.controllersPath;
+        we.controllers[m.name] = new we.class.Controller(attrs);
+      });
 
-      done()
-    })
+      done();
+    });
   };
 
   /**
@@ -241,14 +241,14 @@ module.exports = function getPluginPrototype (we) {
    */
   Plugin.prototype.loadModelHooks = function loadModelHooks (done) {
      this.getGenericFeatureFiles(this.modelHooksPath, (e, modules) => {
-      if (e) return done(e)
+      if (e) return done(e);
 
       modules.forEach(m => {
-        we.db.modelHooks[m.name] = require(m.path).bind({ we: we })
-      })
+        we.db.modelHooks[m.name] = require(m.path).bind({ we: we });
+      });
 
-      done()
-    })
+      done();
+    });
   };
 
   /**
@@ -256,12 +256,12 @@ module.exports = function getPluginPrototype (we) {
    */
   Plugin.prototype.loadInstanceMethods = function loadInstanceMethods (done) {
     this.getGenericFeatureFiles(this.modelInstanceMethodsPath, (e, modules) => {
-      if (e) return done(e)
+      if (e) return done(e);
 
-      modules.forEach(m => { we.db.modelInstanceMethods[m.name] = require(m.path) })
+      modules.forEach(m => { we.db.modelInstanceMethods[m.name] = require(m.path); });
 
-      done()
-    })
+      done();
+    });
   };
 
   /**
@@ -269,12 +269,12 @@ module.exports = function getPluginPrototype (we) {
    */
   Plugin.prototype.loadClassMethods = function loadClassMethods (done) {
     this.getGenericFeatureFiles(this.modelClassMethodsPath, (e, modules) => {
-      if (e) return done(e)
+      if (e) return done(e);
 
-      modules.forEach(m => { we.db.modelClassMethods[m.name] = require(m.path) })
+      modules.forEach(m => { we.db.modelClassMethods[m.name] = require(m.path); });
 
-      done()
-    })
+      done();
+    });
   };
 
   /**
@@ -282,14 +282,14 @@ module.exports = function getPluginPrototype (we) {
    */
   Plugin.prototype.loadSearchParsers = function loadSearchParsers (done) {
     this.getGenericFeatureFiles(this.searchParsersPath, (e, modules) => {
-      if (e) return done(e)
+      if (e) return done(e);
 
       modules.forEach(m => {
-        we.router.search.parsers[m.name] = require(m.path).bind({ we: we })
-      })
+        we.router.search.parsers[m.name] = require(m.path).bind({ we: we });
+      });
 
-      done()
-    })
+      done();
+    });
   };
 
   /**
@@ -297,14 +297,14 @@ module.exports = function getPluginPrototype (we) {
    */
   Plugin.prototype.loadSearchTargets = function loadSearchTargets (done) {
     this.getGenericFeatureFiles(this.searchTargetsPath, (e, modules) => {
-      if (e) return done(e)
+      if (e) return done(e);
 
       modules.forEach(m => {
-        we.router.search.targets[m.name] = require(m.path).bind({ we: we })
-      })
+        we.router.search.targets[m.name] = require(m.path).bind({ we: we });
+      });
 
-      done()
-    })
+      done();
+    });
   };
 
   /**
@@ -313,8 +313,8 @@ module.exports = function getPluginPrototype (we) {
   Plugin.prototype.loadModels = function loadModels (done) {
     fs.readdir(this.modelsPath, (e, fileNames) => {
       if (e) {
-        if (e.code !== 'ENOENT') return done(e)
-        return done()
+        if (e.code !== 'ENOENT') return done(e);
+        return done();
       }
 
       let name;
@@ -322,18 +322,18 @@ module.exports = function getPluginPrototype (we) {
       fileNames.forEach(fileName => {
         if (fileName.endsWith('.js')) {
           // js model
-          name = fileName.slice(0, -3)
-          we.db.modelsConfigs[name] = require(path.join( this.modelsPath, fileName) )(we)
+          name = fileName.slice(0, -3);
+          we.db.modelsConfigs[name] = require(path.join( this.modelsPath, fileName) )(we);
         } else if (fileName.endsWith('.json')) {
           // json model
-          name = fileName.slice(0, -5)
+          name = fileName.slice(0, -5);
           we.db.modelsConfigs[name] =
-            we.db.defineModelFromJson( require(path.join(this.modelsPath, fileName)), we)
+            we.db.defineModelFromJson( require(path.join(this.modelsPath, fileName)), we);
         }
-      })
+      });
 
-      done()
-    })
+      done();
+    });
   };
 
   /**
@@ -342,17 +342,17 @@ module.exports = function getPluginPrototype (we) {
   Plugin.prototype.loadResources = function loadResources (cb) {
     fs.readdir(this.resourcesPath, (err, list) => {
       if (err) {
-        if (err.code === 'ENOENT') return cb()
-        return cb(err)
+        if (err.code === 'ENOENT') return cb();
+        return cb(err);
       }
 
       list
-      .map(item => { return path.join(this.resourcesPath, item) })
-      .forEach(p => { this.setResource( require(p) ) })
+      .map(item => { return path.join(this.resourcesPath, item); })
+      .forEach(p => { this.setResource( require(p) ); });
 
-      cb()
-    })
-  }
+      cb();
+    });
+  };
 
   /**
    * Load routes from folder server/routes
@@ -360,27 +360,27 @@ module.exports = function getPluginPrototype (we) {
   Plugin.prototype.loadRoutes = function loadRoutes (cb) {
     fs.readdir(this.routesPath, (err, list) => {
       if (err) {
-        if (err.code === 'ENOENT') return cb()
-        return cb(err)
+        if (err.code === 'ENOENT') return cb();
+        return cb(err);
       }
 
       list
-      .map(item => { return path.join(this.routesPath, item) })
-      .forEach(p => { this.setRoutes( require(p) ) })
+      .map(item => { return path.join(this.routesPath, item); })
+      .forEach(p => { this.setRoutes( require(p) ); });
 
-      cb()
-    })
-  }
+      cb();
+    });
+  };
 
   // -- Add css and js to we-plugin-view assets feature
 
   Plugin.prototype.addJs = function addJs (fileName, cfg) {
-    this.assets.js[fileName] = cfg
-  }
+    this.assets.js[fileName] = cfg;
+  };
 
   Plugin.prototype.addCss = function addCss (fileName, cfg) {
-    this.assets.css[fileName] = cfg
-  }
+    this.assets.css[fileName] = cfg;
+  };
 
-  return Plugin
-}
+  return Plugin;
+};

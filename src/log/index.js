@@ -1,5 +1,5 @@
-const winston = require('winston');
-const _ = require('lodash');
+const winston = require('winston'),
+      _ = require('lodash');
 
 module.exports = function getTheLogger (we) {
   if (!we) throw new Error('we instance is required for get logger instance');

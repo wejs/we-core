@@ -1,12 +1,12 @@
-var path = require('path');
+const path = require('path');
 
-var cron = {
-  loadAndRunAllTasks: function(we, cb) {
-    we.cron.loadTasks(we, function (err, tasks) {
+const cron = {
+  loadAndRunAllTasks(we, cb) {
+    we.cron.loadTasks(we, (err, tasks)=> {
       if (err) return cb(err);
       if (!tasks) return cb();
 
-      we.utils.async.eachSeries(tasks, function (t, next) {
+      we.utils.async.eachSeries(tasks, (t, next)=> {
         t(we, next);
       }, cb);
     });
@@ -17,19 +17,19 @@ var cron = {
    * @param  {Object}   we   We.js object
    * @param  {Function} done callback
    */
-  loadTasks: function(we, done) {
-    var tasks = {};
-    we.utils.async.each(we.pluginNames, function (name, next) {
+  loadTasks(we, done) {
+    let tasks = {};
+    we.utils.async.each(we.pluginNames, (name, next)=> {
       // try to load the cron.js files
       try {
-        tasks[name] = require(path.resolve(we.plugins[name].pluginPath, 'cron.js'))
+        tasks[name] = require(path.resolve(we.plugins[name].pluginPath, 'cron.js'));
       } catch(e) {
         if (e.code != 'MODULE_NOT_FOUND') {
           we.log.error(e);
         }
       }
       next();
-    }, function (err){
+    }, (err)=> {
       done(err, tasks);
     });
   }

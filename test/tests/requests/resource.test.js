@@ -1,16 +1,17 @@
-var assert = require('assert');
-var request = require('supertest');
-var helpers = require('we-test-tools').helpers;
-var Chance = require('chance');
-var chance = new Chance();
-var _, http, we;
+const assert = require('assert'),
+      request = require('supertest'),
+      helpers = require('we-test-tools').helpers,
+      Chance = require('chance'),
+      chance = new Chance();
+
+let _, http, we;
 
 function postStub(creatorId) {
   return {
     title: chance.sentence({words: 5}),
     text: chance.paragraph(),
     creatorId: creatorId
-  }
+  };
 }
 
 describe('resourceRequests', function() {
@@ -21,13 +22,33 @@ describe('resourceRequests', function() {
     return done();
   });
 
-  afterEach(function(done){
-    we.db.models.post.truncate()
-    .then(function(){
-      done();
-    }).catch(done);
-  })
 
+  afterEach(function(done){
+    var sequelize = we.db.defaultConnection;
+
+    sequelize.transaction(function(t) {
+      var options = { raw: true, transaction: t };
+
+      return sequelize
+        .query('SET FOREIGN_KEY_CHECKS = 0', options)
+        .then(function() {
+          return sequelize.query('delete from posts_tags', options);
+        })
+        .then(function() {
+          return sequelize.query('delete from tags', options);
+        })
+        .then(function() {
+          return sequelize.query('delete from posts', options);
+        })
+        .then(function() {
+          return sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options);
+        });
+    })
+    .done(function() {
+      done();
+    });
+
+  });
   describe('json', function() {
     describe('GET /post', function(){
       it ('should get posts list', function (done) {

@@ -10,7 +10,13 @@ module.exports = function (we) {
       },
     },
     associations: {
-      creator: { type: 'belongsTo', model: 'user' }
+      creator: { type: 'belongsTo', model: 'user' },
+      tags: {
+        type: 'belongsToMany',
+        model: 'tag',
+        inverse: 'inPosts',
+        through: 'posts_tags'
+      }
     }
   };
 

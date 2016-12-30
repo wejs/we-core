@@ -4,23 +4,25 @@
  * This file load default database logic with sequelize
  */
 
-import Sequelize from 'sequelize'
-import { merge, isArray } from 'lodash'
+const Sequelize = require('sequelize'),
+      lodash = require('lodash'),
+      merge = lodash.merge,
+      isArray = lodash.isArray;
 
 function Database (we) {
-  this.we = we
-  this.env = we.env
-  let db = this
+  this.we = we;
+  this.env = we.env;
+  let db = this;
 
-  this.defaultConnection = null
-  this.models = {}
-  this.modelsConfigs = {}
-  this.modelHooks = {}
-  this.modelClassMethods = {}
-  this.modelInstanceMethods = {}
+  this.defaultConnection = null;
+  this.models = {};
+  this.modelsConfigs = {};
+  this.modelHooks = {};
+  this.modelClassMethods = {};
+  this.modelInstanceMethods = {};
 
-  this.Sequelize = Sequelize
-  this.projectFolder = process.cwd()
+  this.Sequelize = Sequelize;
+  this.projectFolder = process.cwd();
 
   this.defaultModelDefinitionConfigs = {
     define: {
@@ -50,19 +52,19 @@ function Database (we) {
             include: [{ all: true }]
           })
           .then(function afterLoadContextRecord (record) {
-            res.locals.data = record
+            res.locals.data = record;
 
             if (record && record.dataValues.creatorId && req.isAuthenticated()) {
               // ser role owner
               if (record.isOwner(req.user.id)) {
-                if(req.userRoleNames.indexOf('owner') == -1 ) req.userRoleNames.push('owner')
+                if(req.userRoleNames.indexOf('owner') == -1 ) req.userRoleNames.push('owner');
               }
             }
 
-            done()
-            return null
+            done();
+            return null;
           })
-          .catch(done)
+          .catch(done);
         }
       },
       instanceMethods: {
@@ -70,8 +72,8 @@ function Database (we) {
          * Default method to check if user is owner
          */
         isOwner: function isOwner (uid) {
-          if (uid == this.creatorId) return true
-          return false
+          if (uid == this.creatorId) return true;
+          return false;
         },
 
         /**
@@ -81,7 +83,86 @@ function Database (we) {
          * @return {Object}
          */
         toJSON: function toJSON () {
-          return this.get()
+          return this.get();
+        },
+
+        getJSONAPIAttributes: function getJSONAPIAttributes() {
+          const modelName = this.$modelOptions.name.singular,
+                attributeList = we.db.modelsConfigs[modelName].attributeList,
+                attributes = {};
+
+          for (var i = 0; i < attributeList.length; i++) {
+            attributes[ attributeList[i] ] = this.get(attributeList[i]);
+          }
+
+          return attributes;
+        },
+
+        getJSONAPIRelationships: function getJSONAPIRelationships() {
+          const modelName = this.$modelOptions.name.singular,
+                model = we.db.models[modelName],
+                associationList = we.db.modelsConfigs[modelName].associationNames,
+                relationships = {};
+
+          for (var j = 0; j < associationList.length; j++) {
+
+            var values = this.get(associationList[j]);
+
+            if (values) {
+              if (isArray(values)) {
+                // NxN association
+                relationships[ associationList[j] ] = this.getJSONAPINxNRelationship(
+                  associationList[j]
+                );
+              } else {
+
+                // 1xN association
+                relationships[ associationList[j] ] = {
+                  data: {
+                    id: this.getDataValue([associationList[j]]).id,
+                    type: model.associations[ associationList[j] ].target.name
+                  }
+                };
+              }
+            }
+          }
+
+          return relationships;
+        },
+
+        getJSONAPINxNRelationship: function getJSONAPINxNRelationship(assocName) {
+          const assocs = [],
+                modelName = this.$modelOptions.name.singular,
+                model = we.db.models[modelName],
+                type = model.associations[ assocName ].target.name,
+                items = this.get(assocName);
+
+          for (var i = 0; i < items.length; i++) {
+            assocs.push({
+              id: items[i].id,
+              type: type
+            });
+          }
+
+          return { data: assocs };
+        },
+
+        toJSONAPI: function toJSONAPI() {
+          const modelName = this.$modelOptions.name.singular;
+
+          let formated = {
+            id: this.id,
+            type: modelName,
+            attributes: this.getJSONAPIAttributes(),
+            relationships: this.getJSONAPIRelationships()
+          };
+
+          // delete the relationships key if is empty
+          if (!Object.keys(formated.relationships).length) {
+            delete formated.relationships;
+          }
+
+          return formated;
         },
 
         /**
@@ -90,18 +171,18 @@ function Database (we) {
          * @param  {Function} cb callback
          */
         fetchAssociatedIds: function fetchAssociatedIds (cb) {
-          let modelName = this.$modelOptions.name.singular
-          let associations = db.models[modelName].associations
+          let modelName = this.$modelOptions.name.singular;
+          let associations = db.models[modelName].associations;
 
           for (let associationName in associations ) {
             // get bellongs to from values id
             if ( associations[associationName].associationType == 'BelongsTo' ) {
-              this.dataValues[associationName] = this.dataValues[ associations[associationName].identifier ]
+              this.dataValues[associationName] = this.dataValues[ associations[associationName].identifier ];
             } else {
-              we.log.verbose('db.connect:fetchAssociatedIds unknow join: ', associations)
+              we.log.verbose('db.connect:fetchAssociatedIds unknow join: ', associations);
             }
           }
-          cb()
+          cb();
         },
 
         /**
@@ -112,7 +193,7 @@ function Database (we) {
         getUrlPath: function getUrlPath() {
           return we.router.urlTo(
             this.$modelOptions.name.singular + '.findOne', [this.id]
-          )
+          );
         },
         /**
          * Get url path with suport to url alias
@@ -122,11 +203,11 @@ function Database (we) {
         getUrlPathAlias: function getUrlPathAlias() {
           if (we.router.alias) {
             // with url alias
-            let p = this.getUrlPath()
-            return ( we.router.alias.forPath(p) || p )
+            let p = this.getUrlPath();
+            return ( we.router.alias.forPath(p) || p );
           } else {
             // without url alias
-            return this.getUrlPath()
+            return this.getUrlPath();
           }
         },
         /**
@@ -143,12 +224,12 @@ function Database (we) {
           );
         },
         getLink: function getLink (req) {
-          if (!req) throw new Error('Request is required in record.getLink()')
-          return req.we.config.hostname + this.getPath(req)
+          if (!req) throw new Error('Request is required in record.getLink()');
+          return req.we.config.hostname + this.getPath(req);
         }
       }
     }
-  }
+  };
 }
 
 /**
@@ -182,11 +263,11 @@ Database.prototype.connect = function connect() {
   // connect with uri or with username and pass
   // See: http://sequelize.readthedocs.org/en/latest/api/sequelize/
   if (configs.uri) {
-    return new Sequelize( configs.uri, configs )
+    return new Sequelize( configs.uri, configs );
   } else {
-    return new Sequelize( configs.database, configs.username, configs.password, configs )
+    return new Sequelize( configs.database, configs.username, configs.password, configs );
   }
-}
+};
 
 /**
  * we.js db define | is a alias to current sequelize connection define
@@ -209,7 +290,7 @@ Database.prototype.define = function defineModel (name, definition, options) {
   }
 
   return this.defaultConnection.define(name, definition, options);
-}
+};
 
 /**
  * Load we.js core models: system
@@ -217,7 +298,7 @@ Database.prototype.define = function defineModel (name, definition, options) {
  * @return {Object} models db.models var
  */
 Database.prototype.loadCoreModels = function loadCoreModels (done) {
-  let db = this
+  let db = this;
 
   //  system / plugins table
   this.models.plugin = this.define('plugin', {
@@ -257,15 +338,15 @@ Database.prototype.loadCoreModels = function loadCoreModels (done) {
     info: {
       type: Sequelize.TEXT
     }
-  })
+  });
 
   return db.models.plugin.sync()
   .then(function () {
-    done()
-    return null
+    done();
+    return null;
   })
   .catch(done);
-}
+};
 
 /**
  * Sync all db models | create table if now exists
@@ -275,162 +356,162 @@ Database.prototype.loadCoreModels = function loadCoreModels (done) {
  */
 Database.prototype.syncAllModels = function syncAllModels (cd, cb) {
   if (cd && !cb) {
-    cb = cd
-    cd = null
+    cb = cd;
+    cd = null;
   }
   // cd and cb is optional
-  if (!cb) cb = function(){ }
+  if (!cb) cb = function(){ };
 
   if (this.env == 'test' || (this.env != 'prod' && cd && cd.resetAllData)) {
-    this.defaultConnection.sync({force: true}).nodeify(cb)
+    this.defaultConnection.sync({force: true}).nodeify(cb);
   } else {
-    this.defaultConnection.sync().nodeify(cb)
+    this.defaultConnection.sync().nodeify(cb);
   }
-}
+};
 
 /**
  * Set all models associations
  */
 Database.prototype.setModelAllJoins = function setModelAllJoins () {
-  let attrConfig
+  let attrConfig;
 
   for ( let modelName in this.modelsConfigs) {
 
     for (let attributeName in this.modelsConfigs[modelName].associations) {
-      attrConfig = this.modelsConfigs[modelName].associations[attributeName]
+      attrConfig = this.modelsConfigs[modelName].associations[attributeName];
       // skip if are emberOnly
-      if (attrConfig.emberOnly) continue
+      if (attrConfig.emberOnly) continue;
 
       let config = {
         scope: attrConfig.scope
       };
 
-      config.as = attributeName
+      config.as = attributeName;
 
       if (attrConfig.through) {
         if (typeof attrConfig.through == 'object') {
-          config.through = attrConfig.through
-          config.through.model = this.models[attrConfig.through.model]
+          config.through = attrConfig.through;
+          config.through.model = this.models[attrConfig.through.model];
         } else {
-          config.through = attrConfig.through
+          config.through = attrConfig.through;
         }
       }
 
-      if (attrConfig.onDelete) config.onDelete = attrConfig.onDelete
-      if (attrConfig.onUpdate) config.onUpdate = attrConfig.onUpdate
-      if (attrConfig.constraints === false) config.constraints = false
-      if (attrConfig.otherKey) config.otherKey = attrConfig.otherKey
-      if (attrConfig.foreignKey) config.foreignKey = attrConfig.foreignKey
+      if (attrConfig.onDelete) config.onDelete = attrConfig.onDelete;
+      if (attrConfig.onUpdate) config.onUpdate = attrConfig.onUpdate;
+      if (attrConfig.constraints === false) config.constraints = false;
+      if (attrConfig.otherKey) config.otherKey = attrConfig.otherKey;
+      if (attrConfig.foreignKey) config.foreignKey = attrConfig.foreignKey;
 
       try {
-        this.models[modelName][attrConfig.type]( this.models[attrConfig.model], config)
+        this.models[modelName][attrConfig.type]( this.models[attrConfig.model], config);
       } catch(e) {
-        console.log('Error on setModelAllJoins 2: ', attrConfig.model, this.models[attrConfig.model])
+        console.log('Error on setModelAllJoins 2: ', attrConfig.model, this.models[attrConfig.model]);
         throw e;
       }
     }
   }
-}
+};
 
 /**
  * Set model hooks from hook configuration in json model
  */
 Database.prototype.setModelHooks = function setModelHooks() {
-  let db = this
-  let hookFNName
+  let db = this;
+  let hookFNName;
 
-  let modelNames = Object.keys(db.modelsConfigs)
+  let modelNames = Object.keys(db.modelsConfigs);
 
   modelNames
-  .filter(mn => { return db.modelsConfigs[mn].hooks })
+  .filter(mn => { return db.modelsConfigs[mn].hooks; })
   .forEach(function setHook (mn) {
-    let hooks = db.modelsConfigs[mn].hooks, hname, i, fns
+    let hooks = db.modelsConfigs[mn].hooks, hname, i, fns;
 
     for (hname in hooks) {
       // hooks may be defined with arrays or objects
       if (isArray(hooks[hname])) {
-        fns = hooks[hname]
+        fns = hooks[hname];
       } else {
-        fns = Object.keys(hooks[hname])
+        fns = Object.keys(hooks[hname]);
       }
 
       // is array
       for (i = 0; i < fns.length; i++) {
-        hookFNName = fns[i]
+        hookFNName = fns[i];
 
         if (!db.modelHooks[hookFNName]) {
-          db.we.log.warn('db.setModelHooks: model hook function not found', hookFNName)
+          db.we.log.warn('db.setModelHooks: model hook function not found', hookFNName);
         } else {
           db.models[mn]
-          .addHook(hname, hookFNName+'_'+i, db.modelHooks[hookFNName] )
+          .addHook(hname, hookFNName+'_'+i, db.modelHooks[hookFNName] );
         }
 
       }
     }
   });
-}
+};
 
 /**
  * Set model class methods from classMethods configuration in json model
  */
 Database.prototype.setModelClassMethods = function setModelClassMethods () {
-  let db = this
-  let fnName
+  let db = this;
+  let fnName;
 
   let modelNames = Object.keys(db.modelsConfigs);
 
   modelNames
-  .filter((mn) => { return db.modelsConfigs[mn].classMethods })
+  .filter((mn) => { return db.modelsConfigs[mn].classMethods; })
   .forEach(function setHook (mn) {
-    let clName
-    let cms = db.modelsConfigs[mn].classMethods
+    let clName;
+    let cms = db.modelsConfigs[mn].classMethods;
 
     if (!db.modelsConfigs[mn].options)
-      db.modelsConfigs[mn].options = {}
+      db.modelsConfigs[mn].options = {};
     if (!db.modelsConfigs[mn].options.classMethods)
-      db.modelsConfigs[mn].options.classMethods = {}
+      db.modelsConfigs[mn].options.classMethods = {};
 
     for (clName in cms) {
-      fnName = cms[clName]
+      fnName = cms[clName];
 
       if (!db.modelClassMethods[fnName]) {
-        db.we.log.warn('db.setModelClassMethods: model classMethod function not found', fnName)
+        db.we.log.warn('db.setModelClassMethods: model classMethod function not found', fnName);
       } else {
-        db.modelsConfigs[mn].options.classMethods[clName] = db.modelClassMethods[fnName]
+        db.modelsConfigs[mn].options.classMethods[clName] = db.modelClassMethods[fnName];
       }
     }
-  })
-}
+  });
+};
 
 /**
  * Set model instance methods from instanceMethods configuration in json model
  */
 Database.prototype.setModelInstanceMethods = function setModelInstanceMethods() {
-  let db = this
-  let fnName
+  let db = this;
+  let fnName;
 
-  let modelNames = Object.keys(db.modelsConfigs)
+  let modelNames = Object.keys(db.modelsConfigs);
 
   modelNames
-  .filter(mn => { return db.modelsConfigs[mn].instanceMethods })
+  .filter(mn => { return db.modelsConfigs[mn].instanceMethods; })
   .forEach(function setHook (mn) {
-    let clName
-    let ims = db.modelsConfigs[mn].instanceMethods
+    let clName;
+    let ims = db.modelsConfigs[mn].instanceMethods;
 
     if (!db.modelsConfigs[mn].options.instanceMethods)
-      db.modelsConfigs[mn].options.instanceMethods = {}
+      db.modelsConfigs[mn].options.instanceMethods = {};
 
     for (clName in ims) {
-      fnName = ims[clName]
+      fnName = ims[clName];
 
       if (!db.modelInstanceMethods[fnName]) {
-        db.we.log.warn('db.setModelInstanceMethods: model instanceMethod function not found', fnName)
+        db.we.log.warn('db.setModelInstanceMethods: model instanceMethod function not found', fnName);
       } else {
-        db.modelsConfigs[mn].options.instanceMethods[clName] = db.modelInstanceMethods[fnName]
+        db.modelsConfigs[mn].options.instanceMethods[clName] = db.modelInstanceMethods[fnName];
       }
     }
-  })
-}
+  });
+};
 /**
  * Check records privacity
  *
@@ -446,7 +527,7 @@ Database.prototype.checkRecordsPrivacity = function checkRecordsPrivacity (data)
   } else if(data && data.privacity) {
     this.checkPrivacity(data);
   }
-}
+};
 
 /**
  * Check records privacity fields
@@ -467,7 +548,7 @@ Database.prototype.checkPrivacity = function checkPrivacity (obj) {
       }
     }
   }
-}
+};
 
 Database.prototype.defineModelFromJson = require('./defineModelFromJson.js');
 
@@ -489,7 +570,7 @@ Database.prototype.checkDBConnection = function checkDBConnection(we, cb) {
 
     // handle database connection error:
     if (err.name == 'SequelizeAccessDeniedError') {
-      log.warn('Cannot connect to the database')
+      log.warn('Cannot connect to the database');
       log.warn(`This behavior occurs if one of the following conditions is true:
   1. The SQL database is not running or you need to create the database.
   2. The account that is used by the project in config/local.js file does not have the required permissions to the database server.
@@ -510,52 +591,52 @@ Check the database documentation in https://wejs.org site`);
     }
 
     // unknow error
-    cb(err)
-  })
-}
+    cb(err);
+  });
+};
 
 
 Database.prototype.tryToCreateDB = function tryToCreateDB(cb) {
   let db = this,
-      cfg = db.activeConnectionConfig
+      cfg = db.activeConnectionConfig;
 
   switch (cfg.dialect) {
     case 'mysql':
-      return db.createMysqlDatabase(cb)
+      return db.createMysqlDatabase(cb);
     case 'postgres':
-      return db.createPostgreDatabase(cb)
+      return db.createPostgreDatabase(cb);
     default:
-      return cb()
+      return cb();
   }
-}
+};
 
 Database.prototype.createMysqlDatabase = function createMysqlDatabase(cb) {
   let db = this,
-      cfg = db.activeConnectionConfig
+      cfg = db.activeConnectionConfig;
 
-  let mysql = require('mysql')
+  let mysql = require('mysql');
   let connection = mysql.createConnection({
     host     : cfg.host || 'localhost',
     user     : cfg.username,
     password : cfg.password
-  })
-  let dbName = cfg.database
+  });
+  let dbName = cfg.database;
 
-  connection.connect()
+  connection.connect();
 
   connection.query(`CREATE DATABASE ${dbName};`, function(err) {
    if (err) {
-      db.we.log.warn('Unknow error on try to create mysql DB:, err')
-      return cb(err)
+      db.we.log.warn('Unknow error on try to create mysql DB:, err');
+      return cb(err);
     }
 
-    connection.end()
+    connection.end();
 
-    db.we.log.info(`Database "${dbName}" created`)
+    db.we.log.info(`Database "${dbName}" created`);
 
-    cb(null, true)
+    cb(null, true);
   });
-}
+};
 
 /**
  * Create the database in postgre database
@@ -563,34 +644,34 @@ Database.prototype.createMysqlDatabase = function createMysqlDatabase(cb) {
 Database.prototype.createPostgreDatabase = function createPostgreDatabase(callback) {
 
   let db = this,
-      cfg = db.activeConnectionConfig
+      cfg = db.activeConnectionConfig;
 
-  let pg = require('pg')
+  let pg = require('pg');
 
   let dbName = cfg.database,
       username = cfg.username,
       password = cfg.password,
-      host = cfg.host || 'localhost'
+      host = cfg.host || 'localhost';
 
-  let conStringPri = 'postgres://' + username + ':' + password + '@' + host + '/postgres'
+  let conStringPri = 'postgres://' + username + ':' + password + '@' + host + '/postgres';
 
 
   // connect to postgres db
   pg.connect(conStringPri, function afterConnectWithPG(err, client) {
-    if (err) return callback(err)
+    if (err) return callback(err);
     // create the db and ignore any errors, for example if it already exists.
     client.query('CREATE DATABASE ' + dbName, function afterCreateTheDB(err) {
       if (err) {
-        db.we.log.warn('unknow error on try to create postgres DB:, err')
-        return callback(err)
+        db.we.log.warn('unknow error on try to create postgres DB:, err');
+        return callback(err);
       }
 
-      db.we.log.info(`Database "${dbName}" created`)
+      db.we.log.info(`Database "${dbName}" created`);
 
-      callback(null, true)
-      client.end() // close the connection
-    })
-  })
-}
+      callback(null, true);
+      client.end(); // close the connection
+    });
+  });
+};
 
 module.exports = Database;

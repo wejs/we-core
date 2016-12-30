@@ -2,17 +2,16 @@
 * We.js express module
 */
 
-import express from 'express'
-import compress from 'compression'
-import favicon from 'serve-favicon'
-import bodyParser from 'body-parser'
-import responseTypeMD from '../Router/responseType.js'
-import messages from '../messages'
-import cors from 'cors'
-import flash from 'connect-flash'
+const express = require('express'),
+      compress = require('compression'),
+      favicon = require('serve-favicon'),
+      bodyParser = require('body-parser'),
+      responseTypeMD = require('../Router/responseType.js'),
+      messages = require('../messages'),
+      cors = require('cors');
 
 module.exports = function initExpress (we) {
-  let weExpress = express();
+  const weExpress = express();
   // express response compression middleware
   weExpress.use(compress());
   // remove uneed x-powered-by header
@@ -20,8 +19,7 @@ module.exports = function initExpress (we) {
   // set default vars
   weExpress.use(function setDefaultVars (req, res, next) {
     // set default req.getWe for suport with this getter
-    req.getWe = function getWejs() { return we };
-    if (!res.locals) res.locals = {};
+    req.getWe = function getWejs() { return we; };
     // set message functions in response
     messages.setFunctionsInResponse(req, res);
     // save a reference to appName
@@ -41,7 +39,7 @@ module.exports = function initExpress (we) {
     // add default is authenticated check
     if (!req.isAuthenticated) req.isAuthenticated = we.utils.isAuthenticated.bind(req);
     // set response type
-    return responseTypeMD(req, res, function() {
+    return responseTypeMD(req, res, ()=> {
       // alias targets redirect for html request
       if (we.plugins['we-plugin-url-alias'] && req.haveAlias && req.accepts('html')) {
         // is a target how have alias then redirect to it
@@ -67,7 +65,7 @@ module.exports = function initExpress (we) {
   if (we.config.favicon) weExpress.use(favicon(we.config.favicon));
 
   if (we.config.enableRequestLog) {
-    var logger = require('morgan');
+    const logger = require('morgan');
     weExpress.use(logger('dev'));
   }
 
@@ -87,8 +85,11 @@ module.exports = function initExpress (we) {
   weExpress.use(we.utils.cookieParser());
   // set session store
   require('./sessionStore')(we, weExpress);
-
-  weExpress.use(flash());
+  // add flash middleware if session is avaible
+  if (we.config.session) {
+    const flash = require('connect-flash');
+    weExpress.use(flash());
+  }
 
   // set public folders
   if (!we.config.disablePublicFolder) {

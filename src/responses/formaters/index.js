@@ -1,14 +1,11 @@
+const { jsonAPIFormater } = require('../JSONApi'),
+      { jsonFormater } = require('../JSONF');
 
 /**
- * We.js core response formats
+ * We.js core response formatters
  */
-
-
-import { jsonAPIFormater } from '../JSONApi'
-import { jsonFormater } from '../JSONF'
-
 module.exports = {
   json: jsonFormater,
   'application/json': jsonFormater,
   'application/vnd.api+json': jsonAPIFormater
-}
+};

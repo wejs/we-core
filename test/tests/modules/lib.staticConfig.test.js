@@ -6,7 +6,7 @@ var staticConfig, we
 
 describe('lib.staticConfig', function () {
   before(function (done) {
-    staticConfig = require('../../../lib/staticConfig')
+    staticConfig = require('../../../src/staticConfig')
     we = helpers.getWe()
     done()
   });

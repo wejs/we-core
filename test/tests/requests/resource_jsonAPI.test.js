@@ -1,9 +1,10 @@
-var assert = require('assert');
-var request = require('supertest');
-var helpers = require('we-test-tools').helpers;
-var Chance = require('chance');
-var chance = new Chance();
-var _, http, we;
+const assert = require('assert'),
+      request = require('supertest'),
+      helpers = require('we-test-tools').helpers,
+      Chance = require('chance'),
+      chance = new Chance();
+
+let _, http, we;
 
 function postStub (creatorId, jsonAPI) {
   if (jsonAPI) {
@@ -18,13 +19,18 @@ function postStub (creatorId, jsonAPI) {
           creator: [ { id: creatorId, type: 'user '}]
         }
       }
-    }
+    };
   } else {
     return {
       title: chance.sentence({words: 5}),
       text: chance.paragraph(),
-      creatorId: creatorId
-    }
+      creatorId: creatorId,
+      tags: [{
+        text: chance.word(),
+      }, {
+        text: chance.word()
+      }]
+    };
   }
 }
 
@@ -43,36 +49,68 @@ describe('resourceRequests_jsonAPI', function() {
       displayName: 'Testonildo'
     })
     .then(function(u) {
-      su = u
-      return u
+      su = u;
+      return u;
     })
-    .nodeify(done)
-  })
+    .nodeify(done);
+  });
 
   afterEach(function(done){
-    we.db.models.post.truncate()
-    .then(function(){
+    var sequelize = we.db.defaultConnection;
+
+    sequelize.transaction(function(t) {
+      var options = { raw: true, transaction: t };
+
+      return sequelize
+        .query('SET FOREIGN_KEY_CHECKS = 0', options)
+        .then(function() {
+          return sequelize.query('delete from posts_tags', options);
+        })
+        .then(function() {
+          return sequelize.query('delete from tags', options);
+        })
+        .then(function() {
+          return sequelize.query('delete from posts', options);
+        })
+        .then(function() {
+          return sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options);
+        });
+    })
+    .done(function() {
       done();
-    }).catch(done);
-  })
+    });
+
+  });
 
   describe('json', function() {
 
     describe('GET /post', function(){
-      it ('should get posts list', function (done) {
+      it ('should get posts list formated with jsonAPI', function (done) {
         var posts = [
           postStub(su.id),
           postStub(su.id),
           postStub(su.id)
         ];
 
-        var postsByTitle = {}
+        var postsByTitle = {};
         posts.forEach(function(p){
-          postsByTitle[p.title] = p
-        })
+          postsByTitle[p.title] = p;
+        });
 
-        we.db.models.post.bulkCreate(posts)
-        .spread(function(){
+        we.utils.async.eachSeries(posts ,function(p, next) {
+          we.db.models.post.create(p, {
+            include: [{
+              model: we.db.models.tag,
+              as: 'tags'
+            }]
+          })
+          .then(function() {
+            next();
+          })
+          .catch(next);
+        }, function(err) {
+          if (err) return done(err);
+
           request(http)
           .get('/post')
           .set('Content-Type', 'application/vnd.api+json')
@@ -80,33 +118,38 @@ describe('resourceRequests_jsonAPI', function() {
           .expect(200)
           .end(function (err, res) {
             if (err) {
-              console.log('res.body>', res.body)
+              console.log('res.body>', res.body);
               throw err;
             }
 
-            assert(res.body.data)
-            assert(_.isArray(res.body.data) )
+            assert(res.body.data);
+            assert(_.isArray(res.body.data) );
 
             res.body.data.forEach(function (p) {
 
-              assert(p.relationships)
-              assert(p.attributes)
-              assert(p.id)
+              assert(p.relationships);
+              assert(p.attributes);
+              assert(p.id);
 
-              var pn = postsByTitle[p.attributes.title]
-              assert(pn)
+              var pn = postsByTitle[p.attributes.title];
+              assert(pn);
 
-              assert(p.id, pn.id)
+              assert(p.id, pn.id);
 
-              assert.equal(p.attributes.title, pn.title)
-              assert.equal(p.attributes.text, pn.text)
-            })
+              assert.equal(p.attributes.title, pn.title);
+              assert.equal(p.attributes.text, pn.text);
+
+              assert(p.relationships);
+              assert(p.relationships.tags);
+              assert.equal(p.relationships.tags.data.length, 2);
+            });
 
             assert.equal(res.body.meta.count, 3);
 
             done();
           });
-        }).catch(done);
+        });
+
       });
 
       it ('should search for posts by title', function (done) {
