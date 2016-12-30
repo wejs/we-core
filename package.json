@@ -20,7 +20,7 @@
     "wejs-plugin",
     "framework"
   ],
-  "repository": "wejs/we-plugin-core",
+  "repository": "wejs/we-core",
   "files": [
     "files",
     "lib",
