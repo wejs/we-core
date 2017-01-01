@@ -18,7 +18,6 @@ before(function (callback) {
   });
 });
 
-
 // prepare we.js core and load app features:
 before(function (callback) {
   this.slow(100);

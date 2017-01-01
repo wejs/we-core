@@ -261,6 +261,7 @@ We.prototype = {
     if (!cb) cb = function(){}; // cb is optional
 
     let we = this;
+
     we.hooks.trigger('we:server:before:start' ,we ,function afterRunBeforeServerStart (err) {
       if (err) return cb(err);
       /**

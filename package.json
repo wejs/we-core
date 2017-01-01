@@ -46,6 +46,7 @@
     "moment": "2.17.1",
     "morgan": "1.7.0",
     "node-uuid": "1.4.7",
+    "pluralize": "^3.1.0",
     "request": "2.79.0",
     "sanitize-html": "1.13.0",
     "sequelize": "3.27.0",

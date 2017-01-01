@@ -193,7 +193,9 @@ module.exports = function loadPlugin (projectPath, Plugin) {
         }
       }
     },
-    router: {},
+    router: {
+      pluralize: false
+    },
     JSONApi: {
       sendSubRecordAttributes: false
     },

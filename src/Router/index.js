@@ -2,6 +2,7 @@ const _ = require('lodash'),
       cors = require('cors'),
       S = require('string'),
       mime = require('mime'),
+      pluralize = require('pluralize'),
       // absolute url regex tester
       absoluteUrlRegex = new RegExp('^(?:[a-z]+:)?//', 'i');
 /**
@@ -153,6 +154,7 @@ Router.prototype.bindResource = function bindResource (opts) {
 
   let we = this.we,
       paramIdNamePrefix = S(opts.name).camelize().s,
+      pluralizedName = pluralize.plural(opts.name),
       router = this;
 
   // get related Model
@@ -161,12 +163,13 @@ Router.prototype.bindResource = function bindResource (opts) {
   if (!Model) throw new Error('Resource Model '+opts.name+' not found and is required in bind resource');
   // set default options
   _.defaults(opts, {
+    pluralizedName: pluralizedName,
     paramIdName: paramIdNamePrefix+'Id',
     routeId: ':'+ paramIdNamePrefix +(opts.idFormat || 'Id([0-9]+)'),
     namePrefix: '',
     templateFolderPrefix: '',
     itemTitleHandler: 'i18n',
-    rootRoute: '/' + opts.name
+    rootRoute: '/' + ((we.config.router.pluralize)? pluralizedName: opts.name)
   });
 
   if (opts.namespace) opts.rootRoute = opts.namespace + opts.rootRoute;
