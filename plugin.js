@@ -316,7 +316,23 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           opts.delete,
           we.routes['delete '+opts.itemRoute] || {}
         );
-      }
+      },
+      countAPI(we, cfg, opts) {
+        we.routes[`get ${opts.rootRoute}/count`] = we.utils._.merge(
+          {
+            resourceName: opts.namePrefix+opts.name,
+            name: opts.namePrefix + opts.name + '.count',
+            action: 'count',
+            controller: cfg.controller,
+            model: cfg.model,
+            paramIdName: opts.paramIdName,
+            permission: 'find_' + opts.name,
+            routeQuery: opts.routeQuery
+          },
+          opts.count,
+          we.routes[`get ${opts.rootRoute}/count`] || {}
+        );
+      },
     }
   });
 

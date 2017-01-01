@@ -82,6 +82,33 @@ describe('resourceRequests', function() {
         .catch(done);
       });
 
+      it ('/post/count should get posts count', function (done) {
+        var posts = [
+          postStub(),
+          postStub(),
+          postStub()
+        ];
+
+        we.db.models.post.bulkCreate(posts)
+        .spread(function() {
+          request(http)
+          .get('/post/count')
+          .set('Accept', 'application/json')
+          .expect(200)
+          .end(function (err, res) {
+            if (err) {
+              console.error('res.text>',res.text);
+              throw err;
+            }
+
+            assert(res.body.count, `Count should be present in response`);
+            assert.equal(res.body.count, 3, `Count should be 3`);
+
+            done();
+          });
+        })
+        .catch(done);
+      });
       it ('should search for posts by title', function (done) {
         var posts = [
           postStub(),
