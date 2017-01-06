@@ -1,31 +1,39 @@
 const winston = require('winston'),
-      _ = require('lodash');
+  _ = require('lodash');
 
-module.exports = function getTheLogger (we) {
+module.exports = function getTheLogger(we) {
   if (!we) throw new Error('we instance is required for get logger instance');
-  let configs = _.defaults(we.config.log, {
-      level: 'info' ,
-      colorize: false,
-      timestamp: true,
-      json: true,
-      stringify: true,
-      prettyPrint: true,
-      depth: 5,
-      showLevel: false
-    }
-  );
-
+  const env = we.env;
+  const log = we.config.log;
+  const defaultAll = {
+    level: 'info',
+    colorize: false,
+    timestamp: true,
+    json: true,
+    stringify: true,
+    prettyPrint: true,
+    depth: 5,
+    showLevel: false
+  }
+  const config = (env, log, defaultAll) => {
+    if (env === 'prod') return _.defaults(log.prod, defaultAll)
+    else if (env === 'dev') return _.defaults(log.dev, defaultAll)
+    else return _.defaults(log.test, defaultAll)
+  }
+  
+  const configs = config(env, log, defaultAll);
+  
   // allow to set log level with LOG_LV enviroment variable
   if (process.env.LOG_LV) configs.level = process.env.LOG_LV;
 
   // start one logger
-  let logger = new (winston.Logger)(configs);
+  const logger = new(winston.Logger)(configs);
 
   if (!configs.transports || !configs.transports.length) {
     // default console logger
     logger.add(winston.transports.Console, configs);
   }
-  // sabe close method
+  // save close method
   logger.closeAllLoggersAndDisconnect = closeAllLoggersAndDisconnect;
 
   return logger;
@@ -38,7 +46,7 @@ module.exports = function getTheLogger (we) {
  * @param  {Function} cb
  */
 function closeAllLoggersAndDisconnect(we, cb) {
-  setTimeout(()=> {
+  setTimeout(() => {
     cb();
   }, 350);
 }
