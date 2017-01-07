@@ -15,13 +15,16 @@ module.exports = function getTheLogger(we) {
     depth: 5,
     showLevel: false
   }
-  const config = (env, log, defaultAll) => {
+  const oldConfig = (log, defaultAll) => _.defaults(log, defaultAll)
+  const newConfig = (log, defaultAll, env) => {
     if (env === 'prod') return _.defaults(log.prod, defaultAll)
     else if (env === 'dev') return _.defaults(log.dev, defaultAll)
     else return _.defaults(log.test, defaultAll)
   }
   
-  const configs = config(env, log, defaultAll);
+  const configs = log.dev === undefined ? 
+                  oldConfig(log, defaultAll) :
+                  newConfig(log, defaultAll, env)
   
   // allow to set log level with LOG_LV enviroment variable
   if (process.env.LOG_LV) configs.level = process.env.LOG_LV;
