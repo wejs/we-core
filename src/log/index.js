@@ -3,30 +3,31 @@ const winston = require('winston'),
 
 module.exports = function getTheLogger(we) {
   if (!we) throw new Error('we instance is required for get logger instance');
-  const env = we.env;
-  const log = we.config.log;
-  const defaultAll = {
-    level: 'info',
-    colorize: false,
-    timestamp: true,
-    json: true,
-    stringify: true,
-    prettyPrint: true,
-    depth: 5,
-    showLevel: false
+
+  const env = we.env,
+    log = we.config.log,
+    defaultAll = {
+      level: 'info',
+      colorize: true,
+      timestamp: true,
+      json: false,
+      stringify: false,
+      prettyPrint: true,
+      depth: 5,
+      showLevel: true
+    };
+
+  let configs;
+  // if have an specific configuration for this env:
+  if (log !== undefined && log[env]) {
+    // Add support to set multiple log configs for diferente envs in same configuration:
+    configs = _.defaults(log[env], defaultAll);
+  } else {
+    // if configs not is set use the default:
+    configs = defaultAll;
   }
-  const oldConfig = (log, defaultAll) => _.defaults(log, defaultAll)
-  const newConfig = (log, defaultAll, env) => {
-    if (env === 'prod') return _.defaults(log.prod, defaultAll)
-    else if (env === 'dev') return _.defaults(log.dev, defaultAll)
-    else return _.defaults(log.test, defaultAll)
-  }
-  
-  const configs = log.dev === undefined ? 
-                  oldConfig(log, defaultAll) :
-                  newConfig(log, defaultAll, env)
-  
-  // allow to set log level with LOG_LV enviroment variable
+
+  // allows to set log level with LOG_LV enviroment variable
   if (process.env.LOG_LV) configs.level = process.env.LOG_LV;
 
   // start one logger
@@ -43,7 +44,7 @@ module.exports = function getTheLogger(we) {
 };
 
 /**
- * Method for wait all log writes after disconnect
+ * Method for wait all log writes before disconnect
  *
  * @param  {Object}   we
  * @param  {Function} cb
