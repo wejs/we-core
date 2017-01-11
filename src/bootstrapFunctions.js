@@ -55,6 +55,7 @@ module.exports = {
     we.hooks.trigger('we-core:on:load:template:cache', we, next);
   },
   instantiateModels(we, next) {
+
     //  step to define all models with sequelize
     we.log.verbose('instantiateModels step');
     we.hooks.trigger('we:models:before:instance', we, (err) => {

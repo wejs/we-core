@@ -173,24 +173,38 @@ module.exports = function getPluginPrototype (we) {
    *
    */
   Plugin.prototype.loadFeatures = function loadFeatures (we, cb) {
-    var self = this;
+    const self = this;
 
-    async.parallel([
-      next => self.loadSearchParsers(next),
-      next => self.loadSearchTargets(next),
-      next => self.loadControllers(next),
-      next => self.loadModelHooks(next),
-      next => self.loadInstanceMethods(next),
-      next => self.loadClassMethods(next),
-      next => self.loadModels(next),
-      next => self.loadResources(next),
-      next => self.loadRoutes(next),
-      function loaderHookExtensor (done) {
+    if (self.fastLoader) {
+      // fast loader option for load faster plugins:
+      self.fastLoader(we, (err)=> {
+        if (err) return cb(err);
+        // plugin loader hook, for allow hook extensions:
         we.hooks.trigger('plugin:load:features', {
           plugin: self, we: we
-        }, done);
-      },
-    ], cb);
+        }, cb);
+      });
+    } else {
+      // find and load all plugin features ...
+      async.parallel([
+        next => self.loadSearchParsers(next),
+        next => self.loadSearchTargets(next),
+        next => self.loadControllers(next),
+        next => self.loadModelHooks(next),
+        next => self.loadInstanceMethods(next),
+        next => self.loadClassMethods(next),
+        next => self.loadModels(next),
+        next => self.loadResources(next),
+        next => self.loadRoutes(next),
+        function loaderHookExtensor (done) {
+          we.hooks.trigger('plugin:load:features', {
+            plugin: self, we: we
+          }, done);
+        },
+      ], cb);
+    }
+
+    return null;
   };
 
   /**
@@ -258,7 +272,9 @@ module.exports = function getPluginPrototype (we) {
     this.getGenericFeatureFiles(this.modelInstanceMethodsPath, (e, modules) => {
       if (e) return done(e);
 
-      modules.forEach(m => { we.db.modelInstanceMethods[m.name] = require(m.path); });
+      modules.forEach(m => {
+        we.db.modelInstanceMethods[m.name] = require(m.path);
+      });
 
       done();
     });
@@ -271,7 +287,9 @@ module.exports = function getPluginPrototype (we) {
     this.getGenericFeatureFiles(this.modelClassMethodsPath, (e, modules) => {
       if (e) return done(e);
 
-      modules.forEach(m => { we.db.modelClassMethods[m.name] = require(m.path); });
+      modules.forEach(m => {
+        we.db.modelClassMethods[m.name] = require(m.path);
+      });
 
       done();
     });

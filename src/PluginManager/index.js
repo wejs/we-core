@@ -250,8 +250,12 @@ PluginManager.prototype.registerPlugin = function (name, done) {
 PluginManager.prototype.loadPluginsSettingsFromDB = function (we, cb) {
   let pluginManager = this;
 
-  return we.db.models.plugin.findAll({
-    order: [['weight', 'ASC'], ['id', 'ASC']]
+  return we.db.models.plugin
+  .findAll({
+    order: [
+      ['weight', 'ASC'],
+      ['id', 'ASC']
+    ]
   })
   .then(function (plugins) {
     // move we-core to start of array if exists

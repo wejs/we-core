@@ -298,7 +298,7 @@ Database.prototype.define = function defineModel (name, definition, options) {
  * @return {Object} models db.models var
  */
 Database.prototype.loadCoreModels = function loadCoreModels (done) {
-  let db = this;
+  const db = this;
 
   //  system / plugins table
   this.models.plugin = this.define('plugin', {
@@ -341,7 +341,7 @@ Database.prototype.loadCoreModels = function loadCoreModels (done) {
   });
 
   return db.models.plugin.sync()
-  .then(function () {
+  .then( ()=> {
     done();
     return null;
   })
