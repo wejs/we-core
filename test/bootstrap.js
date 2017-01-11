@@ -17,6 +17,15 @@ before(function (callback) {
     ncp(f, d, callback);
   });
 });
+// add an seccond plugin with support to fast load
+before(function (callback) {
+  testTools.copyLocalConfigIfNotExitst(projectPath, function() {
+    const f = path.resolve(__dirname, 'testData/we-plugin-fastload'),
+          d = path.resolve(process.cwd(), 'node_modules/we-plugin-fastload');
+
+    ncp(f, d, callback);
+  });
+});
 
 // prepare we.js core and load app features:
 before(function (callback) {

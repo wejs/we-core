@@ -6,28 +6,36 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     we.router.search.parsers.orWithMinusParser = function orWithMinusParser(searchName, field, value, w) {
       // = [] is same of or in sequelize
       return w[field] = { $or: value.split(',') };
-    }.bind({ we:we});
+    };
 
     // search targets:
     we.router.search.targets.inNameAndDescription =
     function inNameAndDescription(searchName, field, value, query, req) {
       req.we.router.search.parsers[field.parser](searchName, 'title', value, query.where, req);
       req.we.router.search.parsers[field.parser](searchName, 'text', value, query.where, req);
-    }.bind({ we: we });
+    };
 
     // controllers:
     we.controllers.dog = new we.class.Controller({
-      findOne(req, res, next) {
-        // do something in the findOne action...
-      },
-      cutDogTail(req, res, next) {
-        // TODO!
+      bark(req, res) {
+        req.we.db.models.dog
+        .findById(req.params.id)
+        .then( (d)=> {
+          if (!d) return res.notFound('dog.not.found');
+
+          res.send({ result: d.bark() });
+          return null;
+        })
+        .catch(res.queryError);
       }
     });
 
     // model hooks
-    we.db.modelHooks.cutDogTail = function cutDogTail(record, options, done) {
-      record.tail = null;
+    we.db.modelHooks.giveVaccine = function giveVaccine(record, options, done) {
+      if (record.age > 1) {
+        record.vaccine = record.vaccine+1;
+      }
+
       done();
     };
 
@@ -47,13 +55,26 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         name: {
           type: 'STRING'
         },
-        tail: {
-          type: 'STRING',
-          defaultValue: 'default'
+        vaccine: {
+          type: 'INTEGER',
+          dafaultValue: 0
+        },
+        age: {
+          type: 'INTEGER',
+          dafaultValue: 1
         }
       },
       options: {
         tableName: 'hotdog'
+      },
+      hooks: {
+        beforeUpdate: [ 'giveVaccine' ]
+      },
+      instanceMethods: {
+        bark: 'bark'
+      },
+      classMethods: {
+        jump: 'jump'
       }
     }, we);
 
@@ -65,10 +86,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
   plugin.setRoutes({
-    'post /cut-dog-tail': {
+    'post /dog/:id/bark': {
       controller: 'dog',
       model: 'dog',
-      action: 'cutDogTail'
+      action: 'bark'
     }
   });
 

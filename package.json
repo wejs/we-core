@@ -74,7 +74,8 @@
   },
   "wejs": {
     "plugins": {
-      "we-plugin-post": true
+      "we-plugin-post": true,
+      "we-plugin-fastload": true
     }
   }
 }
