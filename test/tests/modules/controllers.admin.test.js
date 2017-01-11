@@ -5,8 +5,8 @@ var controller, we;
 
 describe('controllers.admin', function () {
   before(function (done) {
-    controller = require('../../../server/controllers/admin.js');
     we = helpers.getWe();
+    controller = we.controllers.admin;
     done();
   });
 
