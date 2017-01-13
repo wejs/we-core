@@ -226,6 +226,18 @@ function Database (we) {
         getLink: function getLink (req) {
           if (!req) throw new Error('Request is required in record.getLink()');
           return req.we.config.hostname + this.getPath(req);
+        },
+        /**
+         * Get record model name
+         *
+         * @return {String}
+         */
+        getModelName() {
+          if (this.$Model) {
+            return this.$Model.name;
+          } else {
+            return this.$modelOptions.name.singular;
+          }
         }
       }
     }
