@@ -87,7 +87,7 @@ function Database (we) {
         },
 
         getJSONAPIAttributes: function getJSONAPIAttributes() {
-          const modelName = this.$modelOptions.name.singular,
+          const modelName = this.getModelName(),
                 attributeList = we.db.modelsConfigs[modelName].attributeList,
                 attributes = {};
 
@@ -99,7 +99,7 @@ function Database (we) {
         },
 
         getJSONAPIRelationships: function getJSONAPIRelationships() {
-          const modelName = this.$modelOptions.name.singular,
+          const modelName = this.getModelName(),
                 model = we.db.models[modelName],
                 associationList = we.db.modelsConfigs[modelName].associationNames,
                 relationships = {};
@@ -132,7 +132,7 @@ function Database (we) {
 
         getJSONAPINxNRelationship: function getJSONAPINxNRelationship(assocName) {
           const assocs = [],
-                modelName = this.$modelOptions.name.singular,
+                modelName = this.getModelName(),
                 model = we.db.models[modelName],
                 type = model.associations[ assocName ].target.name,
                 items = this.get(assocName);
@@ -148,7 +148,7 @@ function Database (we) {
         },
 
         toJSONAPI: function toJSONAPI() {
-          const modelName = this.$modelOptions.name.singular;
+          const modelName = this.getModelName();
 
           let formated = {
             id: this.id,
@@ -171,7 +171,7 @@ function Database (we) {
          * @param  {Function} cb callback
          */
         fetchAssociatedIds: function fetchAssociatedIds (cb) {
-          let modelName = this.$modelOptions.name.singular;
+          let modelName = this.getModelName();
           let associations = db.models[modelName].associations;
 
           for (let associationName in associations ) {
@@ -192,7 +192,7 @@ function Database (we) {
          */
         getUrlPath: function getUrlPath() {
           return we.router.urlTo(
-            this.$modelOptions.name.singular + '.findOne', [this.id]
+            this.getModelName() + '.findOne', [this.id]
           );
         },
         /**
@@ -220,7 +220,7 @@ function Database (we) {
         getPath: function getPath (req) {
           if (!req) throw new Error('Request is required in record.getPath()');
           return req.we.router.urlTo(
-            this.$modelOptions.name.singular + '.findOne', req.paramsArray.concat([this.id])
+            this.getModelName() + '.findOne', req.paramsArray.concat([this.id])
           );
         },
         getLink: function getLink (req) {
