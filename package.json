@@ -16,7 +16,11 @@
     "wejs",
     "plugin",
     "wejs-plugin",
-    "framework"
+    "web",
+    "api",
+    "systems",
+    "framework",
+    "web framework"
   ],
   "repository": "wejs/we-core",
   "files": [
