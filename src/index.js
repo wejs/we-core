@@ -247,6 +247,9 @@ We.prototype = {
       we.events.emit('we:bootstrap:done', we);
 
       we.log.debug('We.js bootstrap done');
+      // set pm2 gracefullReload:
+      we.setPM2grShutdownFN(we);
+
       return cb(null, we);
     });
   },
@@ -447,6 +450,20 @@ We.prototype = {
   runCron(cb) {
     this.cron = require('./cron');
     this.cron.loadAndRunAllTasks(this, cb);
+  },
+
+  /**
+   * set pm2 gracefullReload
+   */
+  setPM2grShutdownFN(we) {
+    process.on('message', (msg)=> {
+      if (msg === 'shutdown') {
+        // disconect, and exit
+        we.exit( ()=> {
+          process.exit(0);
+        });
+      }
+    });
   }
 };
 
