@@ -6,17 +6,17 @@ module.exports = {
    *
    * @param  {Object} data opctional data
    */
-  ok: function okResponse (data) {
-    let res = this.res
-    let req = this.req
-    let we = req.we
+  ok(data) {
+    const res = this.res,
+      req = this.req,
+      we = req.we;
 
-    res.status(200)
+    res.status(200);
 
     if (!data) {
-      data = res.locals.data || {}
+      data = res.locals.data || {};
     } else {
-      if (!res.locals.data) res.locals.data = data
+      if (!res.locals.data) res.locals.data = data;
     }
 
     // use this hook in one we.js plugin to change a res.ok response
@@ -24,19 +24,19 @@ module.exports = {
       req: req,
       res: res,
       data: data
-    }, function (err) {
-      if (err) we.log.error(err)
+    }, (err)=> {
+      if (err) we.log.error(err);
 
       if (req.accepts('html')) {
         if (req.method == 'POST' && res.locals.action == 'edit' && res.locals.redirectTo) {
-          return res.redirect(res.locals.redirectTo)
+          return res.redirect(res.locals.redirectTo);
         }
       }
 
-      res.format(we.responses.formaters)
+      res.format(we.responses.formaters);
 
-      we.freeResponseMemory(req, res)
-    })
+      we.freeResponseMemory(req, res);
+    });
   },
   /**
    * Record created response
@@ -45,17 +45,17 @@ module.exports = {
    *
    * @param  {Object} data record data
    */
-  created: function createdResponse (data) {
-    let res = this.res
-    let req = this.req
-    let we = req.we
+  created(data) {
+    const res = this.res,
+      req = this.req,
+      we = req.we;
 
-    res.status(201)
+    res.status(201);
 
     if (!data) {
-      data = res.locals.data || {}
+      data = res.locals.data || {};
     } else {
-      if (!res.locals.data) res.locals.data = data
+      if (!res.locals.data) res.locals.data = data;
     }
 
     // use this hook in one we.js plugin to change a res.ok response
@@ -63,7 +63,7 @@ module.exports = {
       req: req,
       res: res,
       data: data
-    }, function (err) {
+    }, (err)=> {
       if (err) we.log.error(err);
 
       if (req.accepts('html')) {
@@ -74,16 +74,16 @@ module.exports = {
            return res.redirect(res.locals.redirectTo);
         } else {
           // push id to paramsArray for use in urlTo
-          req.paramsArray.push(res.locals.data.id)
+          req.paramsArray.push(res.locals.data.id);
           // redirect to content after create
-          return res.redirect(we.router.urlTo(res.locals.model + '.findOne', req.paramsArray))
+          return res.redirect(we.router.urlTo(res.locals.model + '.findOne', req.paramsArray));
         }
       }
 
-      res.format(we.responses.formaters)
+      res.format(we.responses.formaters);
 
-      we.freeResponseMemory(req, res)
-    })
+      we.freeResponseMemory(req, res);
+    });
   },
   /**
    * Record updated response
@@ -92,17 +92,17 @@ module.exports = {
    *
    * @param  {Object} data optional data
    */
-  updated: function updatedResponse (data) {
-    let res = this.res
-    let req = this.req
-    let we = req.we
+  updated(data) {
+    const res = this.res,
+      req = this.req,
+      we = req.we;
 
-    res.status(200)
+    res.status(200);
 
     if (!data) {
-      data = res.locals.data || {}
+      data = res.locals.data || {};
     } else {
-      if (!res.locals.data) res.locals.data = data
+      if (!res.locals.data) res.locals.data = data;
     }
 
     // use this hook in one we.js plugin to change a res.ok response
@@ -110,7 +110,7 @@ module.exports = {
       req: req,
       res: res,
       data: data
-    }, function (err) {
+    }, (err)=> {
       if (err) we.log.error(err);
 
       if (req.accepts('html')) {
@@ -125,9 +125,9 @@ module.exports = {
         }
       }
 
-      res.format(we.responses.formaters)
+      res.format(we.responses.formaters);
 
-      we.freeResponseMemory(req, res)
+      we.freeResponseMemory(req, res);
     });
   },
   /**
@@ -135,43 +135,49 @@ module.exports = {
    *
    * redirect for html responses
    */
-  deleted: function deletedResponse () {
-    let res = this.res
-    let req = this.req
-    let we = req.we
+  deleted() {
+    const res = this.res,
+      req = this.req,
+      we = req.we;
 
-    res.status(204)
+    res.status(204);
 
     // use this hook in one we.js plugin to change a res.ok response
     we.hooks.trigger('we:before:send:deletedResponse', {
       req: req,
       res: res
-    }, function() {
+    }, ()=> {
       if (req.accepts('html')) {
         if (
           res.locals.redirectTo &&
           (we.router.urlTo(res.locals.model + '.findOne', req.paramsArray) != res.locals.redirectTo)
         ) {
-          return res.redirect(res.locals.redirectTo)
+          return res.redirect(res.locals.redirectTo);
         } else {
           res.locals.deleteRedirectUrl = we.router.urlTo(res.locals.model + '.find', req.paramsArray)
-          return res.redirect((res.locals.deleteRedirectUrl || '/'))
+          return res.redirect((res.locals.deleteRedirectUrl || '/'));
         }
       }
 
-      res.format(req.we.responses.formaters)
+      res.format(req.we.responses.formaters);
 
-      we.freeResponseMemory(req, res)
+      we.freeResponseMemory(req, res);
     });
   },
-  view: function viewResponse (data) {
-    let req = this.req
-    let res = this.res
+
+  /**
+   * View response usefull if we have the we-plugin-view installed to send html pages in response
+   *
+   * @param  {Object} data Data to send that overrides data from res.locals.data
+   */
+  view(data) {
+    const req = this.req,
+      res = this.res;
 
     if (!data) {
-      data = res.locals.data || {}
+      data = res.locals.data || {};
     } else {
-      if (!res.locals.data) res.locals.data = data
+      if (!res.locals.data) res.locals.data = data;
     }
 
     if (req.haveAlias) {
@@ -183,55 +189,68 @@ module.exports = {
         'Expires': new Date(Date.now() + 345600000).toUTCString()
       });
 
-      req.we.freeResponseMemory(req, res)
+      req.we.freeResponseMemory(req, res);
 
-      return res.end()
+      return res.end();
     }
 
-    res.format(req.we.responses.formaters)
+    res.format(req.we.responses.formaters);
 
-    req.we.freeResponseMemory(req, res)
+    req.we.freeResponseMemory(req, res);
   },
-  forbidden: function forbiddenResponse(data) {
-    let res = this.res
-    let req = this.req
-    let __ = ( res.locals.__ || req.we.i18n.__ )
+
+  /**
+   * Forbidden response
+   *
+   * @param  {String} data Optional extra message
+   */
+  forbidden(data) {
+    const res = this.res,
+      req = this.req;
+
+    let __ = ( res.locals.__ || req.we.i18n.__ );
 
     if (typeof data == 'string') {
       res.addMessage('error', {
         text: data
       });
 
-      data = null
+      data = null;
     }
 
-    res.status(403)
+    res.status(403);
 
-    res.locals.title = __('response.forbidden.title')
+    res.locals.title = __('response.forbidden.title');
 
     if (req.accepts('html')) {
-      res.locals.layoutName = 'fullwidth'
-      res.locals.template = '403'
+      res.locals.layoutName = 'fullwidth';
+      res.locals.template = '403';
     }
     // delete the data that user dont have access:
     delete res.locals.data;
     // add one message with forbidden to send in response:
     res.addMessage('warn', { text: 'forbidden' });
 
-    res.format(req.we.responses.formaters)
+    res.format(req.we.responses.formaters);
 
-    req.we.freeResponseMemory(this, res)
+    req.we.freeResponseMemory(this, res);
   },
-  notFound: function notFoundResponse (data) {
-    let res = this.res
-    let req = this.req
+
+  /**
+   * Not found response
+   *
+   * @param  {String} data  optional 404 error message
+   */
+  notFound(data) {
+    const res = this.res,
+      req = this.req;
 
     if (typeof data == 'string') {
       res.addMessage('error', {
         text: data
       });
 
-      data = null
+      data = null;
     }
 
     res.locals.data = null;
@@ -253,54 +272,62 @@ module.exports = {
 
     delete res.locals.data;
 
-    res.format(req.we.responses.formaters)
+    res.format(req.we.responses.formaters);
 
-    req.we.freeResponseMemory(req, res)
+    req.we.freeResponseMemory(req, res);
   },
   /**
    * Server error response
    *
    * @param  {Object} data   the error
    */
-  serverError: function serverErrorResponse (data) {
-    let res = this.res
-    let req = this.req
-    let __ = ( res.locals.__ || req.we.i18n.__ )
+  serverError(data) {
+    const res = this.res,
+      req = this.req;
 
-    res.status(500)
+    let __ = ( res.locals.__ || req.we.i18n.__ );
 
-    req.we.log.error('ServerError:', data)
+    res.status(500);
 
-    res.locals.title = __('response.serveError.title')
+    req.we.log.error('ServerError:', data);
 
-    if (data && typeof data == 'string') res.addMessage('error', String(data))
+    res.locals.title = __('response.serveError.title');
+
+    if (data && typeof data == 'string') {
+      res.addMessage('error', String(data));
+    }
 
     if (req.accepts('html')) {
-      res.locals.template = '500'
-      res.locals.layoutName = 'fullwidth'
+      res.locals.template = '500';
+      res.locals.layoutName = 'fullwidth';
     }
 
     delete res.locals.data;
 
     // send the response
-    res.format(req.we.responses.formaters)
+    res.format(req.we.responses.formaters);
     // helper for unset variables
-    this.req.we.freeResponseMemory(this, res)
+    this.req.we.freeResponseMemory(this, res);
   },
+
   /**
    * bad request response
    *
    * @param  {Obejct|String} data message
    */
-  badRequest: function badResponse (data) {
-    let res = this.res,
+  badRequest(data) {
+    const res = this.res,
         req = this.req;
 
     res.status(400);
 
-    if (req.we.env == 'dev') console.trace('400', req.path);
+    if (req.we.env == 'dev') {
+      console.trace('400', req.path);
+    }
 
-    if (data && typeof data == 'string') res.addMessage('warning', String(data));
+    if (data && typeof data == 'string') {
+      res.addMessage('warning', String(data));
+    }
 
     if (req.accepts('html')) {
       // if is html
@@ -314,12 +341,13 @@ module.exports = {
 
     req.we.freeResponseMemory(req, res);
   },
+
   /**
    * Sequelize query error parser
    *
    * @param  {Object} err The database error
    */
-  queryError: function queryError (err) {
+  queryError(err) {
     const res = this.res,
           req = this.req;
 
@@ -334,7 +362,7 @@ module.exports = {
 
         err.errors.forEach( (err)=> {
           if (!res.locals.validationError[err.path])
-            res.locals.validationError[err.path] = []
+            res.locals.validationError[err.path] = [];
 
           res.locals.validationError[err.path].push({
             field: err.path,
@@ -346,12 +374,12 @@ module.exports = {
       } else if (err.name === 'SequelizeDatabaseError') {
       // parse sequelize database errors
         if (err.message) {
-          res.addMessage('error', err.message)
+          res.addMessage('error', err.message);
         }
       } else if (typeof err == 'string') {
-        res.addMessage('error', err)
+        res.addMessage('error', err);
       } else if (err.name != 'SequelizeValidationError') {
-        console.error('responses.queryError:unknowError: ', req.path, err, err.name)
+        console.error('responses.queryError:unknowError: ', req.path, err, err.name);
       }
 
       // default error handler, push erros to messages and let response formaters resolve how to format this messages
@@ -365,15 +393,15 @@ module.exports = {
             value: e.value,
             level: 'error',
             code: ( e.code || err.code ) // code if avaible
-          })
-        })
+          });
+        });
       }
     }
 
     if (err.name == 'SequelizeValidationError') {
-      res.status(400)
+      res.status(400);
     } else {
-      res.status(500)
+      res.status(500);
     }
 
     delete res.locals.data;
@@ -384,18 +412,19 @@ module.exports = {
   },
 
   /**
-   * we.js core redirect
+   * We.js core redirect
+   *
    * @param  {String} s response status
    * @param  {String} p path
    */
-  goTo: function goTo (s ,p) {
+  goTo(s ,p) {
     // save locals messages to flash
-    this.res.moveLocalsMessagesToFlash()
+    this.res.moveLocalsMessagesToFlash();
     // use default redirect
     if (p) {
-      this.res.redirect(s, p)
+      this.res.redirect(s, p);
     } else {
-      this.res.redirect(s)
+      this.res.redirect(s);
     }
   }
-}
+};
