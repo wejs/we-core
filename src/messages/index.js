@@ -5,7 +5,7 @@
  */
 
 const messenger = {
-  setFunctionsInResponse: function setFeaturesInResponse(req, res, next) {
+  setFunctionsInResponse(req, res, next) {
     if (!next) next = function(){};
     if (!res.locals.messages ) res.locals.messages = [];
 
@@ -50,15 +50,17 @@ const messenger = {
      * @return {Array} messages array
      */
     res.getMessages = function getMessages() {
-      var messages = [];
+      let messages = [];
 
-      if (this.locals && this.locals.messages) messages = this.locals.messages;
+      if (this.locals && this.locals.messages) {
+        messages = this.locals.messages;
+      }
 
       // suport to flash messages
       if (req.flash && req.we.config.session) {
-        var flashMessages = this.locals.req.flash('messages');
+        let flashMessages = this.locals.req.flash('messages');
         if (flashMessages) {
-          for (var i = 0; i < flashMessages.length; i++) {
+          for (let i = 0; i < flashMessages.length; i++) {
             messages.push(flashMessages[i]);
           }
         }
@@ -73,7 +75,7 @@ const messenger = {
      * This function is used in http redirects to store messages between page changes
      */
     res.moveLocalsMessagesToFlash = function moveLocalsMessagesToFlash() {
-      var msgs = res.getMessages();
+      const msgs = res.getMessages();
       if (msgs && msgs.length) req.flash('messages', msgs);
     };
 
