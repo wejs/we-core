@@ -1,12 +1,12 @@
 const multer = require('multer'),
-      uuid = require('node-uuid');
+      uuid = require('uuid');
 
 function defaultFilename (req, file, cb) {
   file.name = Date.now() + '_' + uuid.v1() +'.'+ file.originalname.split('.').pop();
   cb(null, file.name);
 }
 
-var uploader = function getUploader(uploadConfigs) {
+const uploader = function getUploader(uploadConfigs) {
   return multer({
     storage:  multer.diskStorage({
       destination: uploadConfigs.dest || uploadConfigs.destination,
