@@ -213,8 +213,10 @@ module.exports = {
       res.locals.layoutName = 'fullwidth'
       res.locals.template = '403'
     }
-
+    // delete the data that user dont have access:
     delete res.locals.data;
+    // add one message with forbidden to send in response:
+    res.addMessage('warn', { text: 'forbidden' });
 
     res.format(req.we.responses.formaters)
 
