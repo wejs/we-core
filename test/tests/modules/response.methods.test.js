@@ -389,7 +389,8 @@ describe('we.responses.methods', function () {
         status: function() {},
         format: function() {},
         view: function() {},
-        redirect: function() {}
+        redirect: function() {},
+        addMessage: function() {}
       };
       sinon.spy(res, 'format');
       sinon.spy(res, 'status');
@@ -436,7 +437,8 @@ describe('we.responses.methods', function () {
         status: function() {},
         format: function() {},
         view: function() {},
-        redirect: function() {}
+        redirect: function() {},
+        addMessage: function() {}
       };
       sinon.spy(res, 'format');
       sinon.spy(res, 'status');
