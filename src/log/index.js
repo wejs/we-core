@@ -36,7 +36,7 @@ module.exports = function getTheLogger(we) {
   // start one logger
   const logger = new(winston.Logger)(configs);
 
-  if (!configs.transports || !configs.transports.length) {
+  if (configs.keepConsoleTransport || !configs.transports || !configs.transports.length) {
     // default console logger
     logger.add(winston.transports.Console, configs);
   }
