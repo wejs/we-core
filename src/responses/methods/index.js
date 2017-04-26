@@ -398,7 +398,7 @@ module.exports = {
       }
     }
 
-    if (err.name == 'SequelizeValidationError') {
+    if (err && err.name == 'SequelizeValidationError') {
       res.status(400);
     } else {
       res.status(500);
