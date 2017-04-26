@@ -22,6 +22,9 @@ module.exports = function getTheLogger(we) {
   if (log !== undefined && log[env]) {
     // Add support to set multiple log configs for diferente envs in same configuration:
     configs = _.defaults(log[env], defaultAll);
+  } else if (log) {
+    // log config without env log:
+    configs = _.defaults(log, defaultAll);
   } else {
     // if configs not is set use the default:
     configs = defaultAll;
