@@ -58,7 +58,11 @@ describe('we.responses.methods', function () {
     });
 
     it('we.responses.methods.ok should call res.redirect with /', function (done) {
-      var req = { method: 'POST', we: we,accepts: function(){ return true }  };
+      var req = {
+        method: 'POST', we: we,
+        accepts: function(){ return true; }
+      };
+
       var res = {
         locals: {
           Model: we.db.models.post,

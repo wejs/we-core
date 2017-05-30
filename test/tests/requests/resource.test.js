@@ -22,7 +22,6 @@ describe('resourceRequests', function() {
     return done();
   });
 
-
   afterEach(function(done){
     var sequelize = we.db.defaultConnection;
 
@@ -66,8 +65,8 @@ describe('resourceRequests', function() {
           .expect(200)
           .end(function (err, res) {
             if (err) {
-              console.error('res.text>',res.text)
-              throw err
+              console.error('res.text>',res.text);
+              throw err;
             }
 
             for (var i = 0; i < posts.length; i++) {
@@ -335,6 +334,27 @@ describe('resourceRequests', function() {
           done();
         });
       });
+
+      it ('should not redirect if html plugin not is installed and Accept have the html format', function (done) {
+        var p = postStub();
+        request(http)
+        .post('/post')
+        .send(p)
+        .set('Accept', 'application/json, text/plain, */*')
+        .expect(201)
+        .end(function (err, res) {
+          if (err) {
+            throw err;
+          }
+
+          assert(res.body.post.id);
+          assert.equal(res.body.post.title, p.title);
+          assert.equal(res.body.post.text, p.text);
+
+          done();
+        });
+      });
+
     });
   });
 });

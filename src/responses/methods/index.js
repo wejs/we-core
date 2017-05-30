@@ -1,3 +1,5 @@
+const haveAndAcceptsHtmlResponse = require('../../Router/haveAndAcceptsHtmlResponse.js');
+
 module.exports = {
   /**
    * res.ok default success response
@@ -27,7 +29,8 @@ module.exports = {
     }, (err)=> {
       if (err) we.log.error(err);
 
-      if (req.accepts('html')) {
+      // if accepts html and have the html response format:
+      if (haveAndAcceptsHtmlResponse(req, res)) {
         if (req.method == 'POST' && res.locals.action == 'edit' && res.locals.redirectTo) {
           return res.redirect(res.locals.redirectTo);
         }
@@ -66,7 +69,7 @@ module.exports = {
     }, (err)=> {
       if (err) we.log.error(err);
 
-      if (req.accepts('html')) {
+      if (haveAndAcceptsHtmlResponse(req, res)) {
         // redirect if are one html response
         if (res.locals.skipRedirect) {
           return res.view(data);
@@ -113,7 +116,7 @@ module.exports = {
     }, (err)=> {
       if (err) we.log.error(err);
 
-      if (req.accepts('html')) {
+      if (haveAndAcceptsHtmlResponse(req, res)) {
         // if is edit record use the redirectTo feature
         if (res.locals.redirectTo) {
           return res.redirect(res.locals.redirectTo);
@@ -147,14 +150,15 @@ module.exports = {
       req: req,
       res: res
     }, ()=> {
-      if (req.accepts('html')) {
+
+      if (haveAndAcceptsHtmlResponse(req, res)) {
         if (
           res.locals.redirectTo &&
           (we.router.urlTo(res.locals.model + '.findOne', req.paramsArray) != res.locals.redirectTo)
         ) {
           return res.redirect(res.locals.redirectTo);
         } else {
-          res.locals.deleteRedirectUrl = we.router.urlTo(res.locals.model + '.find', req.paramsArray)
+          res.locals.deleteRedirectUrl = we.router.urlTo(res.locals.model + '.find', req.paramsArray);
           return res.redirect((res.locals.deleteRedirectUrl || '/'));
         }
       }
@@ -222,7 +226,7 @@ module.exports = {
 
     res.locals.title = __('response.forbidden.title');
 
-    if (req.accepts('html')) {
+    if (haveAndAcceptsHtmlResponse(req, res)) {
       res.locals.layoutName = 'fullwidth';
       res.locals.template = '403';
     }
@@ -265,7 +269,7 @@ module.exports = {
 
     res.status(404);
 
-    if (req.accepts('html')) {
+    if (haveAndAcceptsHtmlResponse(req, res)) {
       res.locals.layoutName = 'fullwidth';
       res.locals.template = '404';
     }
@@ -297,7 +301,7 @@ module.exports = {
       res.addMessage('error', String(data));
     }
 
-    if (req.accepts('html')) {
+    if (haveAndAcceptsHtmlResponse(req, res)) {
       res.locals.template = '500';
       res.locals.layoutName = 'fullwidth';
     }
@@ -329,7 +333,7 @@ module.exports = {
       res.addMessage('warning', String(data));
     }
 
-    if (req.accepts('html')) {
+    if (haveAndAcceptsHtmlResponse(req, res)) {
       // if is html
       if (!res.locals.template) res.locals.template = '400';
     }
@@ -354,7 +358,7 @@ module.exports = {
     if (err) {
       // parse all sequelize validation erros for html (we-plugin-view)
       if (
-        req.accepts('html') &&
+        haveAndAcceptsHtmlResponse(req, res) &&
         err.name === 'SequelizeValidationError'
       ) {
       // query validation error ...
