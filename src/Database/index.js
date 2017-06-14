@@ -305,12 +305,20 @@ Database.prototype = {
 
     const m = this.defaultConnection.define(name, definition, options);
 
-    for(let CMName in options.classMethods) {
-      m[CMName] = options.classMethods[CMName];
-    }
+    if (options) {
+      if (options.classMethods) {
+        // add class methods
+        for(let CMName in options.classMethods) {
+          m[CMName] = options.classMethods[CMName];
+        }
+      }
 
-    for(let IMName in options.instanceMethods) {
-      m.prototype[IMName] = options.instanceMethods[IMName];
+      if (options.instanceMethods) {
+        // add instance methods:
+        for(let IMName in options.instanceMethods) {
+          m.prototype[IMName] = options.instanceMethods[IMName];
+        }
+      }
     }
 
     return m;
