@@ -1,12 +1,15 @@
 var assert = require('assert');
 var helpers = require('we-test-tools').helpers;
-var path = require('path');
+// var path = require('path');
 var getLogger, we;
 
 describe('lib/log', function () {
   before(function (done) {
     getLogger = require('../../../src/log');
     we = helpers.getWe();
+
+    we.config.log.level = 'info';
+
     done();
   });
 
