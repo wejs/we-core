@@ -1,4 +1,5 @@
-const path = require('path');
+const path = require('path'),
+  fs = require('fs');
 let projectPath = process.cwd();
 
 /**
@@ -384,17 +385,18 @@ PluginManager.prototype.runPluginUpdates = function (name, done) {
  * Check is project have a plugin.js file and if yes load it as plugin
  */
 PluginManager.prototype.loadProjectAsPlugin = function () {
-  let file = null;
-  // load project plugin.js file if exists
-  try {
-    file = path.join( projectPath, 'plugin.js' );
-    this.loadPlugin(file, 'project', projectPath);
-  } catch (e) {
-    if (e.code != 'MODULE_NOT_FOUND') {
-      throw e;
-    }
+  let file = path.join( projectPath, 'plugin.js' );
+
+  if (!fs.existsSync(file)) {
+    // current project dont have plugin features if dont have the plugin.js file
+    this.plugins.project = new this.we.class.Plugin(projectPath);
+    return null;
   }
-  return file;
+
+  // load project plugin.js file if exists
+  this.loadPlugin(file, 'project', projectPath);
+
+  return null;
 };
 
 // exports pluginManager
