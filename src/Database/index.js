@@ -661,7 +661,8 @@ Database.prototype = {
     let connection = mysql.createConnection({
       host     : cfg.host || 'localhost',
       user     : cfg.username,
-      password : cfg.password
+      password : cfg.password,
+      port     : cfg.port || 3306
     });
     let dbName = cfg.database;
 
