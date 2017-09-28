@@ -38,7 +38,8 @@ module.exports = {
       we.responses.formaters[extension] = formater;
     };
 
-    we.hooks.trigger('we:before:load:plugin:features', we, ()=> {
+    we.hooks.trigger('we:before:load:plugin:features', we, (err)=> {
+      if (err) return next(err);
 
       we.utils.async.eachSeries(we.pluginNames, (pluginName, next)=> {
         we.plugins[pluginName].loadFeatures(we, next);
@@ -158,9 +159,7 @@ module.exports = {
   },
   createDefaultFolders(we, next) {
     we.log.verbose('createDefaultFolders step');
-    we.hooks.trigger('we:create:default:folders', we, ()=> {
-      next();
-    });
+    we.hooks.trigger('we:create:default:folders', we, next);
   },
   registerAllViewTemplates(we, next) {
     // hook to plugin we-plugin-view template register
@@ -196,12 +195,16 @@ module.exports = {
   },
   bindRoutes(we, next) {
     we.log.verbose('bindRoutes step');
-    we.hooks.trigger('we:before:routes:bind', we, function beforeRouteBind() {
+    we.hooks.trigger('we:before:routes:bind', we, function beforeRouteBind(err) {
+      if (err) return next(err);
+
       for (let route in we.routes) {
         we.router.bindRoute(we, route, we.routes[route] );
       }
 
-      we.hooks.trigger('we:after:routes:bind', we, function afterRouteBind() {
+      we.hooks.trigger('we:after:routes:bind', we, function afterRouteBind(err) {
+        if (err) return next(err);
+
         // bind after router handler for run responseMethod
         we.express.use( (req, res, done)=> {
           if (res.responseMethod) return res[res.responseMethod]();
