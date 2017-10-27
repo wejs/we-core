@@ -245,16 +245,35 @@ function Database (we) {
   };
 }
 
-/**
- * Connect in database
- *
- * @param  {object} we
- * @return {object} sequelize database connection
- */
 Database.prototype = {
+  /**
+   * Connect in database
+   *
+   * @return {object} sequelize database connection
+   */
   connect() {
+    const configs = this.getDBConnectionConfigs();
+
+    this.activeConnectionConfig = configs;
+
+    // connect with uri or with username and pass
+    // See: http://sequelize.readthedocs.org/en/latest/api/sequelize/
+    if (configs.uri) {
+      return new Sequelize( configs.uri, configs );
+    } else {
+      return new Sequelize( configs.database, configs.username, configs.password, configs );
+    }
+  },
+
+  /**
+   * Get database connection configuration
+   * @return {Object} database configs
+   */
+  getDBConnectionConfigs() {
     const dbC = this.we.config.database;
+
     let configs = dbC[this.env];
+
 
     if (!configs) {
       this.we.log.error(`Database configuration not found for enviroment: ${this.env}`);
@@ -267,20 +286,12 @@ Database.prototype = {
     // set we.js core model definition configs
     merge(configs, this.defaultModelDefinitionConfigs);
 
-    this.activeConnectionConfig = configs;
-
     // disable database logging by deffault
     if (!configs || !configs.logging) {
       configs.logging = false;
     }
 
-    // connect with uri or with username and pass
-    // See: http://sequelize.readthedocs.org/en/latest/api/sequelize/
-    if (configs.uri) {
-      return new Sequelize( configs.uri, configs );
-    } else {
-      return new Sequelize( configs.database, configs.username, configs.password, configs );
-    }
+    return configs;
   },
 
   /**
@@ -648,6 +659,21 @@ Database.prototype = {
   },
 
   /**
+   * Get mysqli or mysql lib
+   *
+   * @return {Object} npm mysqli or mysql lib
+   */
+  getMysqlLib() {
+    try {
+      // new improved mysql module:
+      return require('mysqli');
+    } catch(e) {
+      // fallback do old mysql module:
+      return require('mysql');
+    }
+  },
+
+  /**
    * Create one database on mysql dbs
    *
    * @param  {Function} cb callback
@@ -656,21 +682,29 @@ Database.prototype = {
     const db = this,
           cfg = db.activeConnectionConfig;
 
-    const mysql = require('mysql');
+    const mysql = this.getMysqlLib();
+    let connection, dbName;
 
-    let connection = mysql.createConnection({
-      host     : cfg.host || 'localhost',
-      user     : cfg.username,
-      password : cfg.password,
-      port     : cfg.port || 3306
-    });
-    let dbName = cfg.database;
+    if (cfg.uri) {
+      let uriParts = cfg.uri.split('/');
+      dbName = uriParts.pop();
+      let uriWithoutDB = uriParts.join('/')+ '/';
+      connection = mysql.createConnection( uriWithoutDB );
+    } else {
+      dbName = cfg.database;
+      connection = mysql.createConnection({
+        host     : cfg.host || 'localhost',
+        user     : cfg.username,
+        password : cfg.password,
+        port     : cfg.port || 3306
+      });
+    }
 
     connection.connect();
 
     connection.query(`CREATE DATABASE ${dbName};`, function(err) {
      if (err) {
-        db.we.log.warn('Unknow error on try to create mysql DB:, err');
+        db.we.log.warn('Unknow error on try to create mysql DB: ', err);
         return cb(err);
       }
 
@@ -705,7 +739,7 @@ Database.prototype = {
       // create the db and ignore any errors, for example if it already exists.
       client.query('CREATE DATABASE ' + dbName, function afterCreateTheDB(err) {
         if (err) {
-          db.we.log.warn('unknow error on try to create postgres DB:, err');
+          db.we.log.warn('unknow error on try to create postgres DB:', err);
           return callback(err);
         }
 
