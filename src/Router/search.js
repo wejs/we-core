@@ -9,11 +9,15 @@ const moment = require('moment');
  * @return {string}   dateTime
  */
 function dateToDateTime(d) {
-  var date = moment(d);
-  // return null if not is valid
-  if (!date.isValid()) return null;
-  // return data in datetime format
-  return date.format('YYYY-MM-DD HH:mm:ss');
+  if (d) {
+    var date = moment(d);
+    // return null if not is valid
+    if (!date.isValid()) return null;
+    // return data in datetime format
+    return date.format('YYYY-MM-DD HH:mm:ss');
+  } else {
+    return null;
+  }
 }
 
 module.exports = {
