@@ -329,7 +329,16 @@ module.exports = function loadPlugin (projectPath, Plugin) {
             model: cfg.model,
             paramIdName: opts.paramIdName,
             permission: 'find_' + opts.name,
-            routeQuery: opts.routeQuery
+            routeQuery: opts.routeQuery,
+            search: {
+              since: {
+                parser: 'since',
+                target: {
+                  type: 'field',
+                  field: 'createdAt'
+                }
+              }
+            }
           },
           opts.count,
           we.routes[`get ${opts.rootRoute}/count`] || {}
