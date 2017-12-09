@@ -170,27 +170,65 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           'mention',
           'iframe',
           'div',
+          // table:
+          'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre',
           // text format
           'b', 'i', 'em', 'strong',  'u',
           'h1', 'h2', 'h3',
           'h4', 'h5','h6',
           // list
-          'ul', 'ol', 'nl', 'li'
+          'ul', 'ol', 'nl', 'li',
+          // form:
+          'form',
+          'button', 'datalist', 'legend', 'label',
+          'select', 'optgroup', 'option',
+          'textarea', 'keygen', 'fieldset', 'output', 'progress', 'meter',
+          'input'
         ],
         selfClosing: [
           'br',
           'img',
-          'hr'
+          'hr',
+          'input'
         ],
         allowedAttributes: {
-          'span': [ 'style' ],
-          'div': [ 'style' ],
-          'i': ['class'],
-          'a': ['href', 'alt', 'target', 'type'],
-          'img': ['src', 'alt', 'style', 'class', 'data-filename', 'style', 'width', 'height'],
-          'iframe': ['src', 'width', 'height', 'frameborder'],
-          'mention': ['data-user-id']
-        }
+          '*': [
+            'id',
+            'style',
+            'align',
+            'alt',
+            'center',
+            'bgcolor',
+            'data-*',
+            'we-*',
+            'width',
+            'height',
+            'class',
+            'type',
+            'name',
+            'autocomplete',
+            'autofocus',
+            'required',
+            'value',
+            'disabled',
+            'src',
+            'tabindex',
+            'placeholder',
+            'type',
+            'multiple',
+            'rows',
+            'cols'
+          ],
+          'a': ['href', 'target', 'type'],
+          'img': ['src'],
+          'iframe': ['src', 'frameborder'],
+          'form': ['action', 'method', 'accept', 'accept-charset', 'autocomplete', 'enctype', 'target' ],
+          'input': [
+            'accept', 'checked', 'maxlength', 'size', 'minlength'
+          ]
+        },
+        allowedSchemes: [ 'http', 'https', 'ftp', 'mailto' ],
+        allowProtocolRelative: true
       }
     },
     router: {
