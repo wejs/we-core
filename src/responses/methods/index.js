@@ -40,6 +40,8 @@ module.exports = {
 
       we.freeResponseMemory(req, res);
     });
+
+    return null;
   },
   /**
    * Record created response
@@ -87,6 +89,8 @@ module.exports = {
 
       we.freeResponseMemory(req, res);
     });
+
+    return null;
   },
   /**
    * Record updated response
@@ -132,6 +136,8 @@ module.exports = {
 
       we.freeResponseMemory(req, res);
     });
+
+    return null;
   },
   /**
    * Deleted response
@@ -167,6 +173,8 @@ module.exports = {
 
       we.freeResponseMemory(req, res);
     });
+
+    return null;
   },
 
   /**
@@ -201,6 +209,8 @@ module.exports = {
     res.format(req.we.responses.formaters);
 
     req.we.freeResponseMemory(req, res);
+
+    return null;
   },
 
   /**
@@ -238,6 +248,8 @@ module.exports = {
     res.format(req.we.responses.formaters);
 
     req.we.freeResponseMemory(this, res);
+
+    return null;
   },
 
   /**
@@ -279,6 +291,8 @@ module.exports = {
     res.format(req.we.responses.formaters);
 
     req.we.freeResponseMemory(req, res);
+
+    return null;
   },
   /**
    * Server error response
@@ -312,6 +326,8 @@ module.exports = {
     res.format(req.we.responses.formaters);
     // helper for unset variables
     this.req.we.freeResponseMemory(this, res);
+
+    return null;
   },
 
   /**
@@ -344,6 +360,8 @@ module.exports = {
     res.format(req.we.responses.formaters);
 
     req.we.freeResponseMemory(req, res);
+
+    return null;
   },
 
   /**
@@ -413,6 +431,8 @@ module.exports = {
     res.format(req.we.responses.formaters);
 
     req.we.freeResponseMemory(req, res);
+
+    return null;
   },
 
   /**
@@ -430,5 +450,7 @@ module.exports = {
     } else {
       this.res.redirect(s);
     }
+
+    return null;
   }
 };
