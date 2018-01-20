@@ -270,13 +270,13 @@ We.prototype = {
       /**
        * Get port from environment and store in Express.
        */
-      var port = normalizePort(we.config.port);
+      let port = normalizePort(we.config.port);
       we.express.set('port', port);
 
       /**
        * Create HTTP server with suport to url alias rewrite
        */
-      var server = http.createServer(function onCreateServer (req, res){
+      const server = http.createServer(function onCreateServer (req, res){
         req.we = we;
 
         // suport for we.js widget API
@@ -354,7 +354,7 @@ We.prototype = {
           throw error;
         }
 
-        var bind = typeof port === 'string'
+        let bind = typeof port === 'string'
           ? 'Pipe ' + port
           : 'Port ' + port;
 
@@ -381,6 +381,10 @@ We.prototype = {
           ? 'pipe ' + addr
           : 'port ' + addr.port;
         we.log.info('Run in '+we.env+' enviroment and listening on ' + bind);
+
+        if (process.send) {
+          process.send('ready');
+        }
       }
       // save the current http server
       we.http = server;
@@ -456,13 +460,16 @@ We.prototype = {
    * set pm2 gracefullReload
    */
   setPM2grShutdownFN(we) {
+    // old/windows version:
     process.on('message', (msg)=> {
       if (msg === 'shutdown') {
         // disconect, and exit
-        we.exit( ()=> {
-          process.exit(0);
-        });
+        we.exit( (err)=> { process.exit(err ? 1 : 0); });
       }
+    });
+    // new version:
+    process.on('SIGINT', ()=> {
+      we.exit( (err)=> { process.exit(err ? 1 : 0); });
     });
   }
 };
