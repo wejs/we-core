@@ -1,6 +1,6 @@
 {
   "name": "we-core",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "We.js is a node.js framework for build real time applications, sites or blogs!",
   "homepage": "https://wejs.org",
   "main": "./src/index.js",
@@ -8,7 +8,6 @@
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
     "verbose-test": "NODE_ENV=test LOG_LV=verbose ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
     "coverage": "NODE_ENV=test LOG_LV=info node_modules/.bin/istanbul cover -x src node_modules/.bin/_mocha -- -u exports -R spec test/bootstrap.js test/**/*.test.js",
-    "preversion": "npm test",
     "postversion": "git push"
   },
   "keywords": [
