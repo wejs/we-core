@@ -22,7 +22,7 @@ module.exports = function getThemePrototype(we) {
     this.hooks = this.we.hooks;
     this.events = this.we.events;
 
-    var self = this;
+    const self = this;
 
     this.config = {};
 
@@ -34,7 +34,7 @@ module.exports = function getThemePrototype(we) {
     this.config.shortThemeFolder = options.themeFolder || 'node_modules' + '/' + name;
 
     // load theme module
-    var npmModule = require(this.config.themeFolder);
+    const npmModule = require(this.config.themeFolder);
 
     // always initialize all instance properties
     this.name = name;
@@ -50,18 +50,25 @@ module.exports = function getThemePrototype(we) {
     this.tplsFolder = path.resolve(self.config.themeFolder, 'templates/server');
 
     _.merge(this, npmModule);
+  }
+
+  Theme.prototype.init = function init(cb) {
+    const self = this;
 
     // if autoLoadAllTemplates not is set or is true load all template names
     if (!we.view.loadFromCache() &&
-       (npmModule.autoLoadAllTemplates !== false)
+       (this.autoLoadAllTemplates !== false)
     ){
-      we.utils.listFilesRecursive(self.tplsFolder ,function(err, files){
+      we.utils.listFilesRecursive(self.tplsFolder, (err, files)=> {
+        if (err) return cb(err);
+
         files.filter(function filterTPL(f) {
           if (f.endsWith('.hbs')) return true;
           return false;
-        }).forEach(function loadTPL(f) {
+        })
+        .forEach(function loadTPL(f) {
           // remove the base url and the file extension
-          var name = f.replace(self.tplsFolder + path.sep, '')
+          let name = f.replace(self.tplsFolder + path.sep, '')
                       .replace('.hbs', '');
 
           // ensures that template names always have / slashes
@@ -69,10 +76,11 @@ module.exports = function getThemePrototype(we) {
 
           self.templates[name] = f;
         });
+
+        cb();
       });
     }
-  }
-
+  };
   /**
    * Theme config object
    *
@@ -88,16 +96,13 @@ module.exports = function getThemePrototype(we) {
    * @param  {string} template the template name
    * @param  {object} data     data passed to template
    */
-  Theme.prototype.render = function(req, res, template, data) {
+  Theme.prototype.render = function render(req, res, template, data) {
 
     if (!res.locals.layout ) {
       res.locals.layout = this.config.layoutPath;
     }
 
-    res.view(
-      path.resolve(this.config.templatesFolder, template),
-      data
-    );
+    res.view( path.resolve(this.config.templatesFolder, template), data );
   };
 
   /**
