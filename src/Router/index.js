@@ -14,6 +14,8 @@ function Router (we) {
   this.we = we;
   let router = this;
 
+  this.publicRouter = null;
+
   this.routeMap = {};
   // resources tree
   this.resources = {};

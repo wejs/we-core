@@ -56,9 +56,7 @@ module.exports = function getThemePrototype(we) {
     const self = this;
 
     // if autoLoadAllTemplates not is set or is true load all template names
-    if (!we.view.loadFromCache() &&
-       (this.autoLoadAllTemplates !== false)
-    ){
+    if (!we.config.cacheThemeTemplates) {
       we.utils.listFilesRecursive(self.tplsFolder, (err, files)=> {
         if (err) return cb(err);
 
@@ -79,6 +77,8 @@ module.exports = function getThemePrototype(we) {
 
         cb();
       });
+    } else {
+      cb();
     }
   };
   /**

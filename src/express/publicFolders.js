@@ -33,5 +33,7 @@ module.exports = function setPublicFolderMiddlewares (we, weExpress) {
     path.join(we.projectPath, 'files/public'), cfg
   ));
 
+  we.router.publicRouter = publicRouter;
+
   weExpress.use('/public', publicRouter);
 };
