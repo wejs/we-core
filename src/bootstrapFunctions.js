@@ -47,7 +47,7 @@ module.exports = {
         if (err) return next(err);
 
         we.events.emit('we:after:load:plugins', we);
-        next();
+        we.hooks.trigger('we:after:load:plugins', we, next);
       });
     });
   },
@@ -108,7 +108,8 @@ module.exports = {
 
       we.hooks.trigger('we:models:set:joins', we, function afterSetJoins (err) {
         if (err) return next(err);
-        next();
+
+        we.hooks.trigger('we:models:ready', we, next);
       });
     });
   },
