@@ -106,16 +106,16 @@ module.exports = {
       we.db.setModelAllJoins();
       we.db.setModelHooks();
 
-      we.hooks.trigger('we:models:set:joins', we, function afterSetJoins (err) {
-        if (err) return next(err);
-
-        we.hooks.trigger('we:models:ready', we, next);
-      });
+      we.hooks.trigger('we:models:set:joins', we, next);
     });
   },
-  syncModels(we, done) {
-    we.db.defaultConnection.sync().nodeify(done);
+  syncModels(we, next) {
+    we.db.defaultConnection.sync().nodeify( (err)=> {
+      if (err) return next(err);
+      we.hooks.trigger('we:models:ready', we, next);
+    });
   },
+
   loadControllers(we, next) {
     we.log.verbose('loadControllers step');
     we.events.emit('we:after:load:controllers', we);
