@@ -35,7 +35,7 @@ function postStub (creatorId, jsonAPI) {
 }
 
 describe('resourceRequests_jsonAPI', function() {
-  var su;
+  let su;
 
   before(function (done) {
     http = helpers.getHttp();
@@ -56,10 +56,10 @@ describe('resourceRequests_jsonAPI', function() {
   });
 
   afterEach(function(done){
-    var sequelize = we.db.defaultConnection;
+    let sequelize = we.db.defaultConnection;
 
     sequelize.transaction(function(t) {
-      var options = { raw: true, transaction: t };
+      let options = { raw: true, transaction: t };
 
       return sequelize
         .query('SET FOREIGN_KEY_CHECKS = 0', options)
@@ -78,27 +78,28 @@ describe('resourceRequests_jsonAPI', function() {
     })
     .done(function() {
       done();
+      return null;
     });
 
   });
 
   describe('json', function() {
-
-    describe('GET /post', function(){
+    describe('GET /post', function() {
       it ('should get posts list formated with jsonAPI', function (done) {
-        var posts = [
+        let posts = [
           postStub(su.id),
           postStub(su.id),
           postStub(su.id)
         ];
 
-        var postsByTitle = {};
+        let postsByTitle = {};
         posts.forEach(function(p){
           postsByTitle[p.title] = p;
         });
 
-        we.utils.async.eachSeries(posts ,function(p, next) {
-          we.db.models.post.create(p, {
+        we.utils.async.eachSeries(posts, function(p, next) {
+          we.db.models.post
+          .create(p, {
             include: [{
               model: we.db.models.tag,
               as: 'tags'
@@ -106,6 +107,7 @@ describe('resourceRequests_jsonAPI', function() {
           })
           .then(function() {
             next();
+            return null;
           })
           .catch(next);
         }, function(err) {
@@ -131,7 +133,7 @@ describe('resourceRequests_jsonAPI', function() {
               assert(p.attributes);
               assert(p.id);
 
-              var pn = postsByTitle[p.attributes.title];
+              let pn = postsByTitle[p.attributes.title];
               assert(pn);
 
               assert(p.id, pn.id);
@@ -153,7 +155,7 @@ describe('resourceRequests_jsonAPI', function() {
       });
 
       it ('should search for posts by title', function (done) {
-        var posts = [
+        let posts = [
           postStub(),
           postStub(),
           postStub()
@@ -184,14 +186,14 @@ describe('resourceRequests_jsonAPI', function() {
 
 
       it ('should search for posts by text', function (done) {
-        var posts = [
+        let posts = [
           postStub(),
           postStub(),
           postStub(),
           postStub()
         ];
 
-        var searchText = ' mussum ipsum';
+        let searchText = ' mussum ipsum';
 
         posts[1].text += searchText;
         posts[2].text += searchText;
@@ -222,15 +224,15 @@ describe('resourceRequests_jsonAPI', function() {
       });
 
       it ('should search for posts by text with and and inTitleAndText, orWithComaParser search in q param', function (done) {
-        var posts = [
+        let posts = [
           postStub(),
           postStub(),
           postStub(),
           postStub()
         ];
 
-        var searchText = ' mussum ipsum';
-        var searchText2 = '2222m ipsum';
+        let searchText = ' mussum ipsum';
+        let searchText2 = '2222m ipsum';
 
         posts[1].title = searchText;
         posts[1].text = searchText;
@@ -281,12 +283,13 @@ describe('resourceRequests_jsonAPI', function() {
 
             done();
           });
+          return null;
         })
         .catch(done);
       });
 
       it ('should return 404 to not found', function (done) {
-        var info = we.log.info;
+        let info = we.log.info;
         we.log.info = function() {};
         request(http)
         .get('/post/1232131')
@@ -306,7 +309,7 @@ describe('resourceRequests_jsonAPI', function() {
         we.db.models.post.create(postStub())
         .then(function (p) {
 
-          var updateData = {
+          let updateData = {
             data: {
               attributes: {
                 title: 'iIIeeei'
@@ -328,7 +331,9 @@ describe('resourceRequests_jsonAPI', function() {
 
             done();
           });
-        }).catch(done);
+          return null;
+        })
+        .catch(done);
       });
     });
 
@@ -350,15 +355,19 @@ describe('resourceRequests_jsonAPI', function() {
             .then(function(ps){
               assert(!ps);
               done();
-            }).catch(done);
+              return null;
+            })
+            .catch(done);
           });
-        }).catch(done);
+          return null;
+        })
+        .catch(done);
       });
     });
 
     describe('POST /post', function(){
       it ('should create one resource with valid data', function (done) {
-        var p = postStub(null, true);
+        let p = postStub(null, true);
         request(http)
         .post('/post')
         .send(p)
@@ -378,7 +387,7 @@ describe('resourceRequests_jsonAPI', function() {
       });
 
       it ('should create one resource with valid data and JSONApi post data', function (done) {
-        var p = postStub(null, true);
+        let p = postStub(null, true);
         request(http)
         .post('/post')
         .send(p)
@@ -401,7 +410,7 @@ describe('resourceRequests_jsonAPI', function() {
       });
 
       it ('should return error if not set an not null attr', function (done) {
-        var p = postStub(null, true);
+        let p = postStub(null, true);
         p.data.attributes.title = null;
 
         request(http)
@@ -415,7 +424,7 @@ describe('resourceRequests_jsonAPI', function() {
 
           assert(!res.body.data.id);
           assert.equal(res.body.errors[0].status, 400);
-          assert.equal(res.body.errors[0].title, 'title cannot be null');
+          assert.equal(res.body.errors[0].title, 'post.title cannot be null');
 
           // assert.equal(res.body.data.attributes.title, p.data.attributes.title);
           // assert.equal(res.body.data.attributes.text, p.data.attributes.text);

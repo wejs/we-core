@@ -163,7 +163,7 @@ describe('resourceRequests', function() {
 
             res.body.post.forEach(function(p){
               assert(p.text.indexOf(searchText) >-1);
-            })
+            });
 
             assert.equal(res.body.meta.count, 2);
 
@@ -326,7 +326,7 @@ describe('resourceRequests', function() {
           // assert(!res.body.post.id);
 
           assert.equal(res.body.messages[0].status, 'danger');
-          assert.equal(res.body.messages[0].message, 'title cannot be null');
+          assert.equal(res.body.messages[0].message, 'post.title cannot be null');
 
           // assert.equal(res.body.post.title, p.title);
           // assert.equal(res.body.post.text, p.text);

@@ -1,17 +1,19 @@
 module.exports = {
-  find: function findAll (req, res) {
+  find(req, res) {
 
     res.locals.query.include.push({
       model: req.we.db.models.tag,
       as: 'tags'
     });
 
-    return res.locals.Model.findAll(res.locals.query)
+    return res.locals.Model
+    .findAll(res.locals.query)
     .then(function count(rows) {
 
       delete res.locals.query.include;
 
-      return res.locals.Model.count(res.locals.query)
+      return res.locals.Model
+      .count(res.locals.query)
       .then(function afterCount(count) {
         return {
           count: count,

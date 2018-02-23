@@ -2,10 +2,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   const plugin = new Plugin(__dirname);
 
   plugin.fastLoader = function fastLoader(we, done) {
+  const Op = we.db.Sequelize.Op;
+
     // search parsers:
     we.router.search.parsers.orWithMinusParser = function orWithMinusParser(searchName, field, value, w) {
       // = [] is same of or in sequelize
-      return w[field] = { $or: value.split(',') };
+      return w[field] = { [Op.or]: value.split(',') };
     };
 
     // search targets:
@@ -31,12 +33,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     });
 
     // model hooks
-    we.db.modelHooks.giveVaccine = function giveVaccine(record, options, done) {
+    we.db.modelHooks.giveVaccine = function giveVaccine(record) {
       if (record.age > 1) {
         record.vaccine = record.vaccine+1;
       }
-
-      done();
     };
 
     // model instance methods

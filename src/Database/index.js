@@ -26,6 +26,9 @@ function Database (we) {
   this.projectFolder = process.cwd();
 
   this.defaultModelDefinitionConfigs = {
+    dialect: 'mysql', // default mysql dialect
+    operatorsAliases: false,
+
     define: {
       // table configs
       timestamps: true,
@@ -35,212 +38,209 @@ function Database (we) {
       paranoid:   false,
       // enable we.js url alias for all models by default
       // change this config in your model to false to disable
-      enableAlias: true,
+      enableAlias: true
+    }
+  };
 
-      classMethods: {
-        /**
-         * Context loader, preload current request record and related data
-         *
-         * @param  {Object}   req  express.js request
-         * @param  {Object}   res  express.js response
-         * @param  {Function} done callback
-         */
-        contextLoader(req, res, done) {
-          if (!res.locals.id || !res.locals.loadCurrentRecord) return done();
+  this.defaultClassMethods = {
+    /**
+     * Context loader, preload current request record and related data
+     *
+     * @param  {Object}   req  express.js request
+     * @param  {Object}   res  express.js response
+     * @param  {Function} done callback
+     */
+    contextLoader(req, res, done) {
+      if (!res.locals.id || !res.locals.loadCurrentRecord) return done();
 
-          return this.findOne({
-            where: { id: res.locals.id },
-            include: [{ all: true }]
-          })
-          .then(function afterLoadContextRecord (record) {
-            res.locals.data = record;
+      return this.findOne({
+        where: { id: res.locals.id },
+        include: [{ all: true }]
+      })
+      .then(function afterLoadContextRecord (record) {
+        res.locals.data = record;
 
-            if (record && record.dataValues.creatorId && req.isAuthenticated()) {
-              // ser role owner
-              if (record.isOwner(req.user.id)) {
-                if(req.userRoleNames.indexOf('owner') == -1 ) req.userRoleNames.push('owner');
-              }
-            }
-
-            done();
-            return null;
-          })
-          .catch(done);
+        if (record && record.dataValues.creatorId && req.isAuthenticated()) {
+          // ser role owner
+          if (record.isOwner(req.user.id)) {
+            if(req.userRoleNames.indexOf('owner') == -1 ) req.userRoleNames.push('owner');
+          }
         }
-      },
-      instanceMethods: {
-        /**
-         * Default method to check if user is owner
-         */
-        isOwner(uid) {
-          if (uid == this.creatorId) return true;
-          return false;
-        },
 
-        /**
-         * Function to run after send records in response
-         * Overryde this function to remove private data
-         *
-         * @return {Object}
-         */
-        toJSON() {
-          return this.get();
-        },
+        done();
+        return null;
+      })
+      .catch(done);
+    }
+  };
 
-        getJSONAPIAttributes() {
-          const modelName = this.getModelName(),
-                attributeList = we.db.modelsConfigs[modelName].attributeList,
-                attributes = {};
+  this.defaultInstanceMethods = {
+    /**
+     * Default method to check if user is owner
+     */
+    isOwner(uid) {
+      if (uid == this.creatorId) return true;
+      return false;
+    },
 
-          for (let i = 0; i < attributeList.length; i++) {
-            attributes[ attributeList[i] ] = this.get(attributeList[i]);
-          }
+    /**
+     * Function to run after send records in response
+     * Overryde this function to remove private data
+     *
+     * @return {Object}
+     */
+    toJSON() {
+      return this.get();
+    },
 
-          return attributes;
-        },
+    getJSONAPIAttributes() {
+      const modelName = this.getModelName(),
+            attributeList = we.db.modelsConfigs[modelName].attributeList,
+            attributes = {};
 
-        getJSONAPIRelationships() {
-          const modelName = this.getModelName(),
-                model = we.db.models[modelName],
-                associationList = we.db.modelsConfigs[modelName].associationNames,
-                relationships = {};
+      for (let i = 0; i < attributeList.length; i++) {
+        attributes[ attributeList[i] ] = this.get(attributeList[i]);
+      }
 
-          for (let j = 0; j < associationList.length; j++) {
+      return attributes;
+    },
 
-            let values = this.get(associationList[j]);
+    getJSONAPIRelationships() {
+      const modelName = this.getModelName(),
+            model = we.db.models[modelName],
+            associationList = we.db.modelsConfigs[modelName].associationNames,
+            relationships = {};
 
-            if (values) {
-              if (isArray(values)) {
-                // NxN association
-                relationships[ associationList[j] ] = this.getJSONAPINxNRelationship(
-                  associationList[j]
-                );
-              } else {
+      for (let j = 0; j < associationList.length; j++) {
 
-                // 1xN association
-                relationships[ associationList[j] ] = {
-                  data: {
-                    id: this.getDataValue([associationList[j]]).id,
-                    type: model.associations[ associationList[j] ].target.name
-                  }
-                };
+        let values = this.get(associationList[j]);
+
+        if (values) {
+          if (isArray(values)) {
+            // NxN association
+            relationships[ associationList[j] ] = this.getJSONAPINxNRelationship(
+              associationList[j]
+            );
+          } else {
+
+            // 1xN association
+            relationships[ associationList[j] ] = {
+              data: {
+                id: this.getDataValue([associationList[j]]).id,
+                type: model.associations[ associationList[j] ].target.name
               }
-            }
-          }
-
-          return relationships;
-        },
-
-        getJSONAPINxNRelationship(assocName) {
-          const assocs = [],
-                modelName = this.getModelName(),
-                model = we.db.models[modelName],
-                type = model.associations[ assocName ].target.name,
-                items = this.get(assocName);
-
-          for (let i = 0; i < items.length; i++) {
-            assocs.push({
-              id: items[i].id,
-              type: type
-            });
-          }
-
-          return { data: assocs };
-        },
-
-        toJSONAPI() {
-          const modelName = this.getModelName();
-
-          let formated = {
-            id: this.id,
-            type: modelName,
-            attributes: this.getJSONAPIAttributes(),
-            relationships: this.getJSONAPIRelationships()
-          };
-
-          // delete the relationships key if is empty
-          if (!Object.keys(formated.relationships).length) {
-            delete formated.relationships;
-          }
-
-          return formated;
-        },
-
-        /**
-         * Default function to set all associated model ids changing associations from objects array to ids array
-         *
-         * @param  {Function} cb callback
-         */
-        fetchAssociatedIds(cb) {
-          const modelName = this.getModelName(),
-                associations = db.models[modelName].associations;
-
-          for (let associationName in associations ) {
-            // get bellongs to from values id
-            if ( associations[associationName].associationType == 'BelongsTo' ) {
-              this.dataValues[associationName] = this.dataValues[ associations[associationName].identifier ];
-            } else {
-              we.log.verbose('db.connect:fetchAssociatedIds unknow join: ', associations);
-            }
-          }
-          cb();
-        },
-
-        /**
-         * Default get url path instance method
-         *
-         * @return {String} url path
-         */
-        getUrlPath() {
-          return we.router.urlTo(
-            this.getModelName() + '.findOne', [this.id]
-          );
-        },
-        /**
-         * Get url path with suport to url alias
-         *
-         * @return {String} url path
-         */
-        getUrlPathAlias() {
-          if (we.router.alias) {
-            // with url alias
-            let p = this.getUrlPath();
-            return ( we.router.alias.forPath(p) || p );
-          } else {
-            // without url alias
-            return this.getUrlPath();
-          }
-        },
-        /**
-         * return model path with request
-         * Try to use the getUrlPath if possible
-         *
-         * @param  {Object} req express request
-         * @return {String}     url path
-         */
-        getPath(req) {
-          if (!req) throw new Error('Request is required in record.getPath()');
-          return req.we.router.urlTo(
-            this.getModelName() + '.findOne', req.paramsArray.concat([this.id])
-          );
-        },
-        getLink(req) {
-          if (!req) throw new Error('Request is required in record.getLink()');
-          return req.we.config.hostname + this.getPath(req);
-        },
-        /**
-         * Get record model name
-         *
-         * @return {String}
-         */
-        getModelName() {
-          if (this.$Model) {
-            return this.$Model.name;
-          } else {
-            return this.$modelOptions.name.singular;
+            };
           }
         }
       }
+
+      return relationships;
+    },
+
+    getJSONAPINxNRelationship(assocName) {
+      const assocs = [],
+            modelName = this.getModelName(),
+            model = we.db.models[modelName],
+            type = model.associations[ assocName ].target.name,
+            items = this.get(assocName);
+
+      for (let i = 0; i < items.length; i++) {
+        assocs.push({
+          id: items[i].id,
+          type: type
+        });
+      }
+
+      return { data: assocs };
+    },
+
+    toJSONAPI() {
+      const modelName = this.getModelName();
+
+      let formated = {
+        id: this.id,
+        type: modelName,
+        attributes: this.getJSONAPIAttributes(),
+        relationships: this.getJSONAPIRelationships()
+      };
+
+      // delete the relationships key if is empty
+      if (!Object.keys(formated.relationships).length) {
+        delete formated.relationships;
+      }
+
+      return formated;
+    },
+
+    /**
+     * Default function to set all associated model ids changing associations from objects array to ids array
+     *
+     * @param  {Function} cb callback
+     */
+    fetchAssociatedIds(cb) {
+      const modelName = this.getModelName(),
+            associations = db.models[modelName].associations;
+
+      for (let associationName in associations ) {
+        // get bellongs to from values id
+        if ( associations[associationName].associationType == 'BelongsTo' ) {
+          this.dataValues[associationName] = this.dataValues[ associations[associationName].identifier ];
+        } else {
+          we.log.verbose('db.connect:fetchAssociatedIds unknow join: ', associations);
+        }
+      }
+      cb();
+    },
+
+    /**
+     * Default get url path instance method
+     *
+     * @return {String} url path
+     */
+    getUrlPath() {
+      return we.router.urlTo(
+        this.getModelName() + '.findOne', [this.id]
+      );
+    },
+    /**
+     * Get url path with suport to url alias
+     *
+     * @return {String} url path
+     */
+    getUrlPathAlias() {
+      if (we.router.alias) {
+        // with url alias
+        let p = this.getUrlPath();
+        return ( we.router.alias.forPath(p) || p );
+      } else {
+        // without url alias
+        return this.getUrlPath();
+      }
+    },
+    /**
+     * return model path with request
+     * Try to use the getUrlPath if possible
+     *
+     * @param  {Object} req express request
+     * @return {String}     url path
+     */
+    getPath(req) {
+      if (!req) throw new Error('Request is required in record.getPath()');
+      return req.we.router.urlTo(
+        this.getModelName() + '.findOne', req.paramsArray.concat([this.id])
+      );
+    },
+    getLink(req) {
+      if (!req) throw new Error('Request is required in record.getLink()');
+      return req.we.config.hostname + this.getPath(req);
+    },
+    /**
+     * Get record model name
+     *
+     * @return {String}
+     */
+    getModelName() {
+      return this.constructor.name;
     }
   };
 }
@@ -314,7 +314,41 @@ Database.prototype = {
       };
     }
 
-    return this.defaultConnection.define(name, definition, options);
+    const Model = this.defaultConnection.define(name, definition, options);
+
+    this.setDefinedModelClassMethods(Model, options);
+    this.setDefinedModelInstanceMethods(Model, options);
+
+    return Model;
+  },
+
+  setDefinedModelClassMethods(Model, options) {
+    // first set default class methods:
+    for (let name in this.defaultClassMethods) {
+      Model[name] = this.defaultClassMethods[name];
+    }
+
+    if (!options || !options.classMethods) return;
+
+    // this model only class methods:
+    for (let name in options.classMethods) {
+      Model[name] = options.classMethods[name];
+    }
+  },
+
+  setDefinedModelInstanceMethods(Model, options) {
+    if (!Model.prototype) Model.prototype = {};
+    // first set default instance methods:
+    for (let name in this.defaultInstanceMethods) {
+      Model.prototype[name] = this.defaultInstanceMethods[name];
+    }
+
+    if (!options || !options.instanceMethods) return;
+
+    // this model instance methods:
+    for (let name in options.instanceMethods) {
+      Model.prototype[name] = options.instanceMethods[name];
+    }
   },
 
   /**

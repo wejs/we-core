@@ -1,7 +1,9 @@
 /**
  * Route search parsers and targets
  */
-const moment = require('moment');
+const moment = require('moment'),
+  Sequelize = require('sequelize'),
+  Op = Sequelize.Op;
 
 /**
  * Converts one date string to dateTime
@@ -34,24 +36,24 @@ module.exports = {
     },
     contains: function(searchName, field, value, w) {
       return w[field.target.field] = {
-        $like : '%'+value+'%'
+        [Op.like]: '%'+value+'%'
       };
     },
     startsWith: function(searchName, field, value, w) {
       return w[field.target.field] = {
-        $like : value+'%'
+        [Op.like]: value+'%'
       };
     },
     userSearchQuery: function(searchName, field, value, w) {
-      return w.$or = {
+      return w[Op.or] = {
         email: {
-          $eq: value
+          [Op.eq]: value
         },
         displayName: {
-          $like: value+'%'
+          [Op.like]: value+'%'
         },
         username: {
-          $eq: value
+          [Op.eq]: value
         }
       };
     },
@@ -59,7 +61,7 @@ module.exports = {
       if (!value) return w;
 
       return w[field.target.field] = {
-        $gt: dateToDateTime(value)
+        [Op.gt]: dateToDateTime(value)
       };
     },
 

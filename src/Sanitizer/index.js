@@ -18,9 +18,8 @@ function Sanitizer (we) {
    * @param {options}   opts
    * @param {FuncDBBeforeUpdateAndCreateHooktion}  done
    */
-  this.DBBeforeUpdateAndCreateHook = function DBBeforeUpdateAndCreateHook(r, opts, done) {
+  this.DBBeforeUpdateAndCreateHook = function DBBeforeUpdateAndCreateHook(r) {
     sanitizer.sanitizeModelAttrs(r, this.name);
-    done(null, r);
   };
 }
 

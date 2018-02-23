@@ -7,8 +7,8 @@ describe('database.defaultModelDefinitionConfigs', function () {
   before(function (done) {
     we = helpers.getWe();
     dmdc = we.db.defaultModelDefinitionConfigs;
-    contextLoader = dmdc.define.classMethods.contextLoader;
-    instanceMethods = dmdc.define.instanceMethods;
+    contextLoader = we.db.defaultClassMethods.contextLoader;
+    instanceMethods = we.db.defaultInstanceMethods;
     done();
   });
 
@@ -25,7 +25,7 @@ describe('database.defaultModelDefinitionConfigs', function () {
 
       var callback = function callback() {
         done();
-      }
+      };
 
       contextLoader(req, res, callback);
     });
@@ -34,7 +34,7 @@ describe('database.defaultModelDefinitionConfigs', function () {
       var creatorId = 2016;
       var recordId = 10;
       var req = {
-        isAuthenticated: function() { return true },
+        isAuthenticated: function() { return true; },
         user: { id: creatorId },
         userRoleNames: [],
         locals: {}
@@ -49,7 +49,7 @@ describe('database.defaultModelDefinitionConfigs', function () {
       var callback = function callback() {
         assert(req.userRoleNames.indexOf('owner') > -1);
         done();
-      }
+      };
 
       contextLoader.bind({
         findOne: function(opts) {

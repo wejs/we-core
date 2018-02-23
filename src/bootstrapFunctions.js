@@ -69,7 +69,7 @@ module.exports = {
         mc.definition.linkPermanent = {
           type: we.db.Sequelize.VIRTUAL,
           formFieldType: null,
-          get(){
+          get() {
             if (this.cachedLinkPermanent) return this.cachedLinkPermanent;
             this.cachedLinkPermanent = this.getUrlPath();
             return this.cachedLinkPermanent;

@@ -240,7 +240,8 @@ describe('resourceRequests', function() {
 
     describe('GET /posts/:id', function(){
       it ('should get one post', function (done) {
-        we.db.models.post.create(postStub())
+        we.db.models.post
+        .create(postStub())
         .then(function (p) {
           request(http)
           .get('/posts/'+p.id)
@@ -358,7 +359,7 @@ describe('resourceRequests', function() {
           // assert(!res.body.post.id);
 
           assert.equal(res.body.messages[0].status, 'danger');
-          assert.equal(res.body.messages[0].message, 'title cannot be null');
+          assert.equal(res.body.messages[0].message, 'post.title cannot be null');
 
           done();
         });
