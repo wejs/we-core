@@ -34,12 +34,15 @@ module.exports = function getThemePrototype(we) {
     this.config.shortThemeFolder = options.themeFolder || 'node_modules' + '/' + name;
 
     // load theme module
+    delete require.cache[require.resolve(this.config.themeFolder)];
     const npmModule = require(this.config.themeFolder);
 
     // always initialize all instance properties
     this.name = name;
 
-    this['package.json'] = require(this.config.themeFolder+'/package.json');
+    const packageJSONPath = this.config.themeFolder+'/package.json';
+    delete require.cache[require.resolve(packageJSONPath)];
+    this['package.json'] = require(packageJSONPath);
     // shortcut for get installed theme version
     this.version = this['package.json'].version;
 
