@@ -96,7 +96,7 @@ describe('database.defaultModelDefinitionConfigs', function () {
 
         assert(error);
       });
-      it ('getPath should get url  from req.we.router.urlTo'
+      it ('getPath should get url from req.we.router.urlTo'
         // ,function () {
         //   var req = {
         //     we: we,

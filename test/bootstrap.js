@@ -73,7 +73,7 @@ after(function (callback) {
       deleteDir( folder, next);
     }, (err)=> {
       if (err) throw new Error(err);
-      callback();
+      process.exit();
     });
   });
 });
