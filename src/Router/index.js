@@ -323,7 +323,7 @@ Router.prototype = {
     // save all params values as array for router.urlTo
     req.paramsArray = _.toArray(req.params);
     // set accept headers based in config.responseType, this overrides req.query.responseType
-    if (config.responseType) req.headers.accept = mime.lookup(config.responseType);
+    if (config.responseType) req.headers.accept = mime.getType(config.responseType);
 
     hooks.trigger('we:router:request:before:load:context', {
       req: req, res: res
@@ -499,7 +499,12 @@ Router.prototype = {
     }
 
     if (req.query.order) {
-      query.order = req.query.order;
+      if (typeof req.query.order == 'string') {
+        query.order = [req.query.order.split(' ')];
+      } else {
+        query.order = req.query.order;
+      }
+
     } else if (req.query.sortDirection && req.query.sort) {
       query.order = [[req.query.sort, req.query.sortDirection]];
     } else if (req.query.sort) {

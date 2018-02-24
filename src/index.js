@@ -292,7 +292,7 @@ We.prototype = {
           req.extension = we.router.splitExtensionFromURL(req.url);
 
           if (req.extension) {
-            let format = we.utils.mime.lookup(req.extension);
+            let format = we.utils.mime.getType(req.extension);
 
             if (req.we.config.responseTypes.includes(format)) {
               // update the header response format with extension format

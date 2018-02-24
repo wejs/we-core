@@ -2,7 +2,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   const plugin = new Plugin(__dirname);
 
   plugin.fastLoader = function fastLoader(we, done) {
-  const Op = we.db.Sequelize.Op;
+    const Op = we.db.Sequelize.Op;
 
     // search parsers:
     we.router.search.parsers.orWithMinusParser = function orWithMinusParser(searchName, field, value, w) {

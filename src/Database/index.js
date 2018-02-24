@@ -23,6 +23,8 @@ function Database (we) {
   this.modelInstanceMethods = {};
 
   this.Sequelize = Sequelize;
+  we.Op = Sequelize.Op;
+
   this.projectFolder = process.cwd();
 
   this.defaultModelDefinitionConfigs = {
@@ -314,7 +316,16 @@ Database.prototype = {
       };
     }
 
-    const Model = this.defaultConnection.define(name, definition, options);
+    let Model;
+
+    try {
+      Model = this.defaultConnection.define(name, definition, options);
+    } catch(e) {
+      console.log(e);
+      console.log('name>', name);
+
+      process.exit();
+    }
 
     this.setDefinedModelClassMethods(Model, options);
     this.setDefinedModelInstanceMethods(Model, options);

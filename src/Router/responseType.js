@@ -32,7 +32,7 @@ function parseResponseType (req) {
       req.query.contentOnly = true;
     }
 
-    req.headers.accept = mime.lookup(req.query.responseType.toLowerCase());
+    req.headers.accept = mime.getType(req.query.responseType.toLowerCase());
   }
 
   if (req.accepts(req.we.config.responseTypes))
