@@ -51,6 +51,14 @@ we test -g 'resourceRequests'
 npm run coverage
 ```
 
+## V2 migration
+
+- Breaking changes in ORM: http://docs.sequelizejs.com/manual/tutorial/upgrade-to-v4.html
+
 ## License
 
 [the MIT license](LICENSE.md).
+
+## Sponsored by
+
+- Linky Systems: https://linkysystems.com
