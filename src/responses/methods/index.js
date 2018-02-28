@@ -424,9 +424,8 @@ module.exports = {
       res.status(400);
     } else {
       res.status(500);
+      delete res.locals.data;
     }
-
-    delete res.locals.data;
 
     res.format(req.we.responses.formaters);
 
