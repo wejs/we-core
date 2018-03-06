@@ -387,21 +387,6 @@ module.exports = function loadPlugin (projectPath, Plugin) {
 
   plugin.fastLoader = function fastLoader(we, done) {
     /**
-     * AdminController
-     *
-     * @module Controller
-     */
-    we.controllers.admin = new we.class.Controller({
-      /**
-       * Index admin route /admin
-       */
-      index(req, res) {
-        res.locals.template = 'home/index';
-        res.ok();
-      },
-    });
-
-    /**
      * MainController
      *
      * @module Controller
@@ -425,11 +410,6 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       'action': 'index',
       'template'   : 'home/index',
       'layoutName' : 'home'
-    },
-    'get /admin': {
-      'controller'    : 'admin',
-      'action'        : 'index',
-      'permission'    : 'access_admin'
     }
   });
 
