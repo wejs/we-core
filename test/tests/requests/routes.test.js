@@ -30,24 +30,6 @@ describe('routes', function() {
 
       });
     });
-
-    describe('GET /admin', function(){
-      it ('should return 200', function (done) {
-
-        request(http)
-        .get('/admin')
-        .set('Accept', 'application/json')
-        .expect(200)
-        .end(function (err, res) {
-          if (err) throw err;
-
-          assert(res.body.messages);
-
-          done();
-        });
-
-      });
-    });
   });
 
   describe('public folders', function(){
