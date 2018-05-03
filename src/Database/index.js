@@ -713,8 +713,8 @@ Database.prototype = {
       // new improved mysql module:
       return require('mysqli');
     } catch(e) {
-      // fallback do old mysql module:
-      return require('mysql');
+      // fallback to default mysql module:
+      return require('mysql2');
     }
   },
 
