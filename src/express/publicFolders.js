@@ -5,6 +5,12 @@ module.exports = function setPublicFolderMiddlewares (we, weExpress) {
   const cfg = { maxAge: we.config.cache.maxage },
     publicRouter = express.Router();
 
+  publicRouter.use((req, res, next)=> {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
+
   let plugin;
 
   if (we.view && we.view.themes) {
