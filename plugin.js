@@ -183,7 +183,13 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           'button', 'datalist', 'legend', 'label',
           'select', 'optgroup', 'option',
           'textarea', 'keygen', 'fieldset', 'output', 'progress', 'meter',
-          'input'
+          'input',
+          // figure tags:
+          'figure', 'figcaption',
+          // video tags:
+          'object', 'param', 'embed', 'video', 'source',
+          // audio
+          'audio', 'track'
         ],
         selfClosing: [
           'br',
@@ -225,7 +231,11 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           'form': ['action', 'method', 'accept', 'accept-charset', 'autocomplete', 'enctype', 'target' ],
           'input': [
             'accept', 'checked', 'maxlength', 'size', 'minlength'
-          ]
+          ],
+          'video': ['controls'],
+          'audio': ['controls'],
+          'embed': ['allowscriptaccess', 'allowfullscreen'],
+          'track': ['kind', 'srclang', 'label']
         },
         allowedSchemes: [ 'http', 'https', 'ftp', 'mailto' ],
         allowProtocolRelative: true
