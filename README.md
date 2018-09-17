@@ -1,6 +1,6 @@
 # We.js core module :green_heart:
 
-[![Join the chat at https://gitter.im/wejs/we](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/wejs/we?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/wejs/we-core.svg?branch=master)](https://travis-ci.org/wejs/we-core) [![Dependency Status](https://david-dm.org/wejs/we-core.png)](https://david-dm.org/wejs/we-core)
+[![Join the chat at https://gitter.im/wejs/we](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/wejs/we?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/wejs/we-core.svg?branch=master)](https://travis-ci.org/wejs/we-core)
 
 **Main repository: https://github.com/wejs/we **
 
