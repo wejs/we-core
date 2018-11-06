@@ -74,6 +74,14 @@ function We (options) {
   // plugin manager and plugins vars
   we.pluginManager = new PluginManager(this);
 
+  // promise settings (Bluebird):
+  if (Promise.config) {
+    Promise.config({
+      // Enables all warnings except forgotten return statements.
+      warnings: { wForgottenReturn: false }
+    });
+  }
+
   switch (we.config.bootstrapMode) {
     case 'install':
     case 'installation':
