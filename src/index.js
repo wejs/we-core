@@ -3,6 +3,10 @@
  */
 
 // Module dependencies.
+
+// Disable uneed bluebird warnings:
+process.env.BLUEBIRD_W_FORGOTTEN_RETURN = '0';
+
 const http = require('http'),
       _ = require('lodash'),
       path = require('path'),
@@ -73,14 +77,6 @@ function We (options) {
   we.db.sequelize = we.db.defaultConnection;
   // plugin manager and plugins vars
   we.pluginManager = new PluginManager(this);
-
-  // promise settings (Bluebird):
-  if (Promise.config) {
-    Promise.config({
-      // Enables all warnings except forgotten return statements.
-      warnings: { wForgottenReturn: false }
-    });
-  }
 
   switch (we.config.bootstrapMode) {
     case 'install':
