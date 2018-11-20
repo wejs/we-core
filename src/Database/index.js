@@ -6,7 +6,7 @@
 
 const Sequelize = require('sequelize'),
       lodash = require('lodash'),
-      merge = lodash.merge,
+      defaultsDeep = lodash.defaultsDeep,
       isArray = lodash.isArray,
       clone = lodash.clone;
 
@@ -286,7 +286,7 @@ Database.prototype = {
     }
 
     // set we.js core model definition configs
-    merge(configs, this.defaultModelDefinitionConfigs);
+    defaultsDeep(configs, this.defaultModelDefinitionConfigs);
 
     // disable database logging by deffault
     if (!configs || !configs.logging) {
