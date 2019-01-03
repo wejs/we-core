@@ -471,7 +471,10 @@ Database.prototype = {
         if (attrConfig.onUpdate) config.onUpdate = attrConfig.onUpdate;
         if (attrConfig.constraints === false) config.constraints = false;
         if (attrConfig.otherKey) config.otherKey = attrConfig.otherKey;
+        if (attrConfig.targetKey) config.targetKey = attrConfig.targetKey;
         if (attrConfig.foreignKey) config.foreignKey = attrConfig.foreignKey;
+        if (attrConfig.sourceKey) config.sourceKey = attrConfig.sourceKey;
+
 
         try {
           this.models[modelName][attrConfig.type]( this.models[attrConfig.model], config);
