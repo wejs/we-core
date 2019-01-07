@@ -274,7 +274,11 @@ module.exports = {
     if (req.we.env == 'dev') {
       console.trace('404', req.path);
     } else {
-      req.we.log.info('Not found:', req.url);
+      req.we.log.info('Not found:404:', {
+        url: req.url,
+        method: req.method,
+        query: req.query
+      });
     }
 
     res.locals.title = res.locals.__('response.notFound.title');
