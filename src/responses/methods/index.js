@@ -277,7 +277,9 @@ module.exports = {
       req.we.log.info('Not found:404:', {
         url: req.url,
         method: req.method,
-        query: req.query
+        query: req.query,
+        controller: res.locals.controller,
+        action: res.locals.action
       });
     }
 
