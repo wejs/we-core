@@ -270,7 +270,10 @@ Router.prototype = {
     let url = '',
       route = {};
 
-    if (we.router.routeMap.get[name]) {
+    if (
+      we.router.routeMap.get &&
+      we.router.routeMap.get[name]
+    ) {
       route = we.router.routeMap.get[name];
       let mapI = 0;
       for (let i = 0; i < route.map.length; i++) {
@@ -286,7 +289,9 @@ Router.prototype = {
         }
       }
     } else {
-      we.log.verbose('Route map not found for urlTo: ' + name);
+      we.log.verbose('Route map not found for urlTo: ', {
+        name: name
+      });
     }
 
     if (route.map && route.map.length && !url) url = '/';
