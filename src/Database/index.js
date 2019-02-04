@@ -21,6 +21,7 @@ function Database (we) {
   this.modelHooks = {};
   this.modelClassMethods = {};
   this.modelInstanceMethods = {};
+  this.modelHaveAliasCache = {};
 
   this.Sequelize = Sequelize;
   we.Op = Sequelize.Op;
@@ -200,9 +201,13 @@ function Database (we) {
      * @return {String} url path
      */
     getUrlPath() {
-      return we.router.urlTo(
-        this.getModelName() + '.findOne', [this.id]
-      );
+      if (db.modelHaveAlias( this.getModelName() )) {
+        return we.router.urlTo(
+          this.getModelName() + '.findOne', [this.id]
+        );
+      } else {
+        return this.getModelName() + '/' + this.id;
+      }
     },
     /**
      * Get url path with suport to url alias
@@ -797,6 +802,33 @@ Database.prototype = {
         client.end(); // close the connection
       });
     });
+  },
+
+  /**
+   * modelHanveAlias
+   * Check if model have alias
+   *
+   * @param  {String} modelName
+   * @return {Boolean}           true if have alias
+   */
+  modelHaveAlias(modelName) {
+    if (typeof this.modelHaveAliasCache[modelName] != 'undefined') {
+      return this.modelHaveAliasCache[modelName];
+    }
+
+    if (
+      this.models[modelName] &&
+      this.models[modelName].options &&
+      this.models[modelName].options.enableAlias
+    ) {
+
+      this.modelHaveAliasCache[modelName] = true;
+      return true;
+    }
+
+    this.modelHaveAliasCache[modelName] = false;
+
+    return false;
   }
 };
 
