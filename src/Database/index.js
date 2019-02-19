@@ -8,7 +8,8 @@ const Sequelize = require('sequelize'),
       lodash = require('lodash'),
       defaultsDeep = lodash.defaultsDeep,
       isArray = lodash.isArray,
-      clone = lodash.clone;
+      clone = lodash.clone,
+      i18n = require('../localization/i18n.js');
 
 function Database (we) {
   this.we = we;
@@ -22,6 +23,10 @@ function Database (we) {
   this.modelClassMethods = {};
   this.modelInstanceMethods = {};
   this.modelHaveAliasCache = {};
+
+  this.modelsConfigs = {
+    t: getTranslationsModelConfigs(we)
+  };
 
   this.Sequelize = Sequelize;
   we.Op = Sequelize.Op;
@@ -374,53 +379,58 @@ Database.prototype = {
    */
   loadCoreModels(done) {
     const db = this;
+    const we = this.we;
 
-    //  system / plugins table
-    this.models.plugin = this.define('plugin', {
-      filename: {
-        comment: 'plugin.js file',
-        type: Sequelize.STRING(1000),
-        allowNull: false
-      },
-      name: {
-        comment: 'plugin name',
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      type: {
-        type: Sequelize.STRING(12),
-        defaultValue: 'plugin',
-        allowNull: false
-      },
-      status: {
-        comment: 'status, 1 for enabled',
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-        allowNull: false
-      },
-      version: {
-        comment: 'last version of plugin models in database',
-        type: Sequelize.STRING(10),
-        defaultValue: '0.0.0',
-        allowNull: false
-      },
-      weight: {
-        comment: 'plugin weight how controll plugin load order',
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-        allowNull: false
-      },
-      info: {
-        type: Sequelize.TEXT
+    we.utils.async.parallel([
+      (done)=> {
+        //  system / plugins table
+        db.models.plugin = db.define('plugin', {
+          filename: {
+            comment: 'plugin.js file',
+            type: Sequelize.STRING(1000),
+            allowNull: false
+          },
+          name: {
+            comment: 'plugin name',
+            type: Sequelize.STRING,
+            allowNull: false
+          },
+          type: {
+            type: Sequelize.STRING(12),
+            defaultValue: 'plugin',
+            allowNull: false
+          },
+          status: {
+            comment: 'status, 1 for enabled',
+            type: Sequelize.INTEGER,
+            defaultValue: 0,
+            allowNull: false
+          },
+          version: {
+            comment: 'last version of plugin models in database',
+            type: Sequelize.STRING(10),
+            defaultValue: '0.0.0',
+            allowNull: false
+          },
+          weight: {
+            comment: 'plugin weight how controll plugin load order',
+            type: Sequelize.INTEGER,
+            defaultValue: 0,
+            allowNull: false
+          },
+          info: {
+            type: Sequelize.TEXT
+          }
+        });
+
+        return db.models.plugin.sync()
+        .then( ()=> {
+          done();
+          return null;
+        })
+        .catch(done);
       }
-    });
-
-    return db.models.plugin.sync()
-    .then( ()=> {
-      done();
-      return null;
-    })
-    .catch(done);
+    ], done);
   },
 
   /**
@@ -861,6 +871,66 @@ function getModelTypeFromDefinition (attr, we) {
   } else {
     return we.db.Sequelize[attr.type.toUpperCase()];
   }
+}
+
+function getTranslationsModelConfigs(we) {
+  const moment = we.utils.moment;
+
+  return {
+    definition: {
+      s: {
+        comment: 'String to translate',
+        type: Sequelize.STRING(2200),
+      },
+
+      t: {
+        comment: 'Translated string',
+        type: Sequelize.TEXT,
+        skipSanitizer: true
+      },
+
+      l: {
+        comment: 'Related language',
+        type: Sequelize.STRING(10),
+      },
+      isChanged: {
+        comment: 'Is localy changed?',
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
+      }
+    },
+    associations: {},
+    options: {
+      tableName: 't',
+      comments: 'Translations table',
+
+      classMethods: {
+        publishLocationChanges(r) {
+          if (r && r.l) {
+            if (we.systemSettings) {
+              let d = moment(r.updatedAt).unix();
+              we.plugins['we-plugin-db-system-settings']
+              .setConfigs({
+                LLUT: d
+              }, function(){} );
+
+            } else {
+              i18n.parseAndImportTraslation(r, r.l);
+            }
+          }
+        }
+      },
+
+      hooks: {
+        afterCreate(r) {
+          we.db.models.t.publishLocationChanges(r);
+        },
+        afterUpdate(r) {
+          we.db.models.t.publishLocationChanges(r);
+        }
+      }
+    }
+  };
 }
 
 module.exports = Database;

@@ -42,7 +42,6 @@
     "express": "4.16.4",
     "express-session": "1.15.6",
     "handlebars": "4.0.12",
-    "i18n": "0.8.3",
     "lodash": "4.17.11",
     "mime": "2.4.0",
     "mkdirp": "0.5.1",

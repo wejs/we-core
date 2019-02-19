@@ -411,8 +411,17 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       }
     });
 
+    /**
+     * t controller
+     * Controller for core translations API
+     * @type {Controller}
+     */
+    we.controllers.t = new we.class.Controller({});
+
     done();
   };
+
+  plugin.setResource({ name: 't' });
 
   plugin.setRoutes({
     'get /': {
