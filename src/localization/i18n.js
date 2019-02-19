@@ -128,13 +128,22 @@ const i18n = {
 
   __(s, params, req) {
     if (
-      !i18n.fns[req.locale] ||
-      !i18n.fns[req.locale][s]
+      req &&
+      i18n.fns[req.locale] &&
+      i18n.fns[req.locale][s]
     ) {
-      return s;
+      return i18n.fns[req.locale][s](params);
     }
 
-    return i18n.fns[req.locale][s](params);
+    if (
+      i18n.defaultLocale &&
+      i18n.fns[i18n.defaultLocale] &&
+      i18n.fns[i18n.defaultLocale][s]
+    ) {
+      return i18n.fns[i18n.defaultLocale][s](params);
+    }
+
+    return s;
   },
 
   loadFilesIFExists() {
