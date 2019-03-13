@@ -123,7 +123,7 @@ Controller.prototype = {
         return res.notFound();
       }
 
-      record.updateAttributes(req.body)
+      record.update(req.body)
       .then(function reloadAssocs(n) {
         return n.reload()
         .then(function() {
