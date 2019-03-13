@@ -285,7 +285,11 @@ Router.prototype = {
           url += '/' + params[mapI];
           mapI++;
         } else {
-          we.log.warn('Invalid or undefined argument: ' + params +' ', route.map[i],'>', params[mapI], mapI, name);
+          we.log.warn('Invalid or undefined argument: ' + params +' ', route.map[i],'>', {
+            paramsMapI: params[mapI],
+            mapI: mapI,
+            name: name
+          });
         }
       }
     } else {
