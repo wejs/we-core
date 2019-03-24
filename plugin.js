@@ -391,7 +391,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
           opts.count,
           we.routes[`get ${opts.rootRoute}/count`] || {}
         );
-      },
+      }
     }
   });
 

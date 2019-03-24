@@ -322,7 +322,10 @@ We.prototype = {
 
       // catch 404 and forward to error handler
       we.express.use(function routeNotFound (req, res) {
-        we.log.debug('Route not found:', req.path);
+        we.log.debug('Route not found:', {
+          method: req.method,
+          path: req.path
+        });
         // var err = new Error('Not Found');
         // err.status = 404;
         return res.notFound();

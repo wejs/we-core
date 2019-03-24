@@ -203,7 +203,12 @@ module.exports = {
 
       req.we.freeResponseMemory(req, res);
 
-      return res.end();
+      return res.send();
+    }
+
+    if (req.method && req.method == 'HEAD') {
+      // HEAD requests dont have body data then ignore format.
+      return res.send();
     }
 
     res.format(req.we.responses.formaters);
@@ -272,7 +277,10 @@ module.exports = {
     res.locals.data = null;
 
     if (req.we.env == 'dev') {
-      console.trace('404', req.path);
+      console.trace('404', {
+        method: req.method,
+        path: req.path
+      });
     } else {
       req.we.log.info('Not found:404:', {
         url: req.url,

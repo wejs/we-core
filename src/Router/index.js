@@ -204,7 +204,7 @@ Router.prototype = {
       we: we
     });
 
-    // run all route resources bindders in router.resrouce
+    // run all route resources bindders in router.resource
     // this allows plugins to extend with extra resource paths
     for (let r in we.config.resourceRoutes) {
       we.config.resourceRoutes[r](we, cfg, opts, Model);
