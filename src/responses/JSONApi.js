@@ -82,15 +82,28 @@ let JSONApi = {
     for(let assocName in associations) {
       if (
         req.body.data.relationships[assocName] &&
-        req.body.data.relationships[assocName].data
+        (
+          req.body.data.relationships[assocName].data ||
+          req.body.data.relationships[assocName].data == null
+        )
       ) {
+
         switch(associations[assocName].associationType) {
           case 'BelongsTo':
-            req.body[ assocName+'Id' ] = req.body.data.relationships[assocName].data.id;
+            if (req.body.data.relationships[assocName].data) {
+              req.body[ assocName+'Id' ] = req.body.data.relationships[assocName].data.id;
+            } else {
+              // is null
+              req.body[ assocName+'Id' ] = null;
+            }
+
             break;
           case 'HasMany':
           case 'BelongsToMany':
-            if (req.body.data.relationships[assocName].data.map) {
+            if (
+              req.body.data.relationships[assocName].data &&
+              req.body.data.relationships[assocName].data.map
+            ) {
               req.body[ assocName ] = req.body.data.relationships[assocName].data.map(function(d) {
                 return d.id;
               });
