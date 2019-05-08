@@ -33,6 +33,7 @@ bower_components
 npm-debug.log
 
 *.sql
+*.sqlite
 *.tmp
 
 config

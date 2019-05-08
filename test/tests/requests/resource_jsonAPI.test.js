@@ -55,32 +55,17 @@ describe('resourceRequests_jsonAPI', function() {
     .nodeify(done);
   });
 
-  afterEach(function(done){
-    let sequelize = we.db.defaultConnection;
+  afterEach(function(done) {
+    const models = we.db.models;
 
-    sequelize.transaction(function(t) {
-      let options = { raw: true, transaction: t };
-
-      return sequelize
-        .query('SET FOREIGN_KEY_CHECKS = 0', options)
-        .then(function() {
-          return sequelize.query('delete from posts_tags', options);
-        })
-        .then(function() {
-          return sequelize.query('delete from tags', options);
-        })
-        .then(function() {
-          return sequelize.query('delete from posts', options);
-        })
-        .then(function() {
-          return sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options);
-        });
-    })
-    .done(function() {
+    Promise.all([
+      models.tag.destroy({truncate: true}),
+      models.post.destroy({truncate: true})
+    ])
+    .then(function() {
       done();
-      return null;
-    });
-
+    })
+    .catch(done);
   });
 
   describe('json', function() {

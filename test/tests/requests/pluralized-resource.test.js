@@ -54,30 +54,16 @@ function postStub(creatorId) {
 
 describe('resourceRequests', function() {
   afterEach(function(done){
-    var sequelize = we.db.defaultConnection;
+    const models = we.db.models;
 
-    sequelize.transaction(function(t) {
-      var options = { raw: true, transaction: t };
-
-      return sequelize
-        .query('SET FOREIGN_KEY_CHECKS = 0', options)
-        .then(function() {
-          return sequelize.query('delete from posts_tags', options);
-        })
-        .then(function() {
-          return sequelize.query('delete from tags', options);
-        })
-        .then(function() {
-          return sequelize.query('delete from posts', options);
-        })
-        .then(function() {
-          return sequelize.query('SET FOREIGN_KEY_CHECKS = 1', options);
-        });
-    })
-    .done(function() {
+    Promise.all([
+      models.tag.destroy({truncate: true}),
+      models.post.destroy({truncate: true})
+    ])
+    .then(function() {
       done();
-    });
-
+    })
+    .catch(done);
   });
   describe('json', function() {
     describe('GET /posts', function(){

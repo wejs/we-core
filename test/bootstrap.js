@@ -8,23 +8,23 @@ const projectPath = process.cwd(),
 
 let we;
 
+before(function (callback) {
+  testTools.copyLocalSQLiteConfigIfNotExitst(projectPath, callback);
+});
+
 // Add the stub plugin in node_modules folder:
 before(function (callback) {
-  testTools.copyLocalConfigIfNotExitst(projectPath, function() {
-    const f = path.resolve(__dirname, 'testData/we-plugin-post'),
-          d = path.resolve(process.cwd(), 'node_modules/we-plugin-post');
+  const f = path.resolve(__dirname, 'testData/we-plugin-post'),
+        d = path.resolve(process.cwd(), 'node_modules/we-plugin-post');
 
-    ncp(f, d, callback);
-  });
+  ncp(f, d, callback);
 });
+
 // add an seccond plugin with support to fast load
 before(function (callback) {
-  testTools.copyLocalConfigIfNotExitst(projectPath, function() {
-    const f = path.resolve(__dirname, 'testData/we-plugin-fastload'),
-          d = path.resolve(process.cwd(), 'node_modules/we-plugin-fastload');
-
-    ncp(f, d, callback);
-  });
+  const f = path.resolve(__dirname, 'testData/we-plugin-fastload'),
+        d = path.resolve(process.cwd(), 'node_modules/we-plugin-fastload');
+  ncp(f, d, callback);
 });
 
 // prepare we.js core and load app features:
@@ -58,8 +58,6 @@ after(function (callback) {
   testTools.helpers.resetDatabase(we, (err)=> {
     if(err) return callback(err);
 
-    we.db.defaultConnection.close();
-
     const tempFolders = [
       path.resolve(process.cwd(), 'node_modules/we-plugin-post'),
       projectPath + '/files/tmp',
@@ -73,7 +71,7 @@ after(function (callback) {
       deleteDir( folder, next);
     }, (err)=> {
       if (err) throw new Error(err);
-      process.exit();
+      we.exit(callback);
     });
   });
 });

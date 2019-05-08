@@ -59,15 +59,13 @@
   },
   "devDependencies": {
     "chance": "^1.0.18",
-    "express-mysql-session": "2.1.0",
+    "connect-sqlite3": "^0.9.11",
     "istanbul": "0.4.5",
     "mocha": "6.1.4",
-    "mysql2": "^1.6.5",
     "ncp": "^2.0.0",
-    "pg": "^7.10.0",
-    "pg-hstore": "^2.3.2",
     "rimraf": "2.6.3",
     "sinon": "7.3.2",
+    "sqlite3": "^4.0.7",
     "supertest": "4.0.2",
     "we-test-tools": "wejs/we-test-tools"
   },
