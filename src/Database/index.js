@@ -79,6 +79,10 @@ function Database (we) {
         return null;
       })
       .catch(done);
+    },
+
+    findById(id) {
+      return this.findByPk(id);
     }
   };
 
