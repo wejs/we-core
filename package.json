@@ -62,6 +62,7 @@
     "connect-sqlite3": "^0.9.11",
     "istanbul": "0.4.5",
     "mocha": "6.1.4",
+    "mysql2": "^1.6.5",
     "ncp": "^2.0.0",
     "rimraf": "2.6.3",
     "sinon": "7.3.2",
