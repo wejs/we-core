@@ -75,8 +75,10 @@ const messenger = {
      * This function is used in http redirects to store messages between page changes
      */
     res.moveLocalsMessagesToFlash = function moveLocalsMessagesToFlash() {
-      const msgs = res.getMessages();
-      if (msgs && msgs.length) req.flash('messages', msgs);
+      if (req.flash) {
+        const msgs = res.getMessages();
+        if (msgs && msgs.length) req.flash('messages', msgs);
+      }
     };
 
     next();
