@@ -399,20 +399,19 @@ We.prototype = {
       // express error handlers
       // will print stacktrace
       we.express.use(function onExpressError (err, req, res, next) {
-        we.log.error('onExpressError:Error on:', req.path, err);
-
         // invalid url error handling
         if (err instanceof URIError) {
-          err.message = 'Failed to decode param: ' + req.url;
-          err.status = err.statusCode = 400;
+          we.log.warn('onExpressError:Error on:', req.path, err);
 
-          res.addMessage('error', {
+          res.addMessage('warning', {
             text: 'router.invalid.url'
           });
 
           // go to home page on invalid url request
           return res.goTo('/');
         }
+
+        we.log.error('onExpressError:Error on:', req.path, err);
 
         res.serverError(err);
       });
