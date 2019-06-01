@@ -83,6 +83,9 @@ function Database (we) {
 
     findById(id) {
       return this.findByPk(id);
+    },
+    find() {
+      return this.findOne(...arguments);
     }
   };
 
