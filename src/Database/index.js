@@ -260,6 +260,10 @@ function Database (we) {
      */
     getModelName() {
       return this.constructor.name;
+    },
+
+    updateAttributes() {
+      this.update(...arguments);
     }
   };
 }
