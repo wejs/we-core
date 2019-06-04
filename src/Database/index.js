@@ -263,7 +263,7 @@ function Database (we) {
     },
 
     updateAttributes() {
-      this.update(...arguments);
+      return this.update(...arguments);
     }
   };
 }
