@@ -10,13 +10,15 @@ module.exports = function sessionStoreLoader(we, weExpress) {
     // To change the  session store change the we.config.session.store
     // To disable session set we.config.session to null
     if (we.config.session && !we.config.session.store && we.db.activeConnectionConfig.dialect == 'mysql') {
+      const c = we.db.defaultConnection.connectionManager.config;
+
       let SessionStore = require('express-mysql-session');
       we.config.session.store = new SessionStore({
-        host: we.db.activeConnectionConfig.host || 'localhost',
-        port: we.db.activeConnectionConfig.port || 3306,
-        user: we.db.activeConnectionConfig.username,
-        password: we.db.activeConnectionConfig.password,
-        database: we.db.activeConnectionConfig.database
+        host: c.host || 'localhost',
+        port: c.port || 3306,
+        user: c.username,
+        password: c.password,
+        database: c.database
       });
       we.config.session.resave = true;
       we.config.session.saveUninitialized = true;
