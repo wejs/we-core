@@ -682,7 +682,7 @@ Router.prototype = {
    * @return {Boolean}
    */
   isPublicFolder(url) {
-    return url.startsWith('/public') ||
+    return url.startsWith('/public/') ||
            url == '/robots.txt' ||
            url == '/favicon.ico';
   }
