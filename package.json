@@ -7,7 +7,8 @@
   "scripts": {
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
     "verbose-test": "NODE_ENV=test LOG_LV=verbose ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
-    "coverage": "NODE_ENV=test LOG_LV=info node_modules/.bin/istanbul cover -x src node_modules/.bin/_mocha -- -u exports -R spec test/bootstrap.js test/**/*.test.js",
+    "coverage": "NODE_ENV=test LOG_LV=info nyc mocha test/bootstrap.js test/**/*.test.js -b",
+    "coverage-tests": "",
     "postversion": "git push"
   },
   "keywords": [
@@ -58,13 +59,13 @@
     "winston": "^2.4.3"
   },
   "devDependencies": {
-    "express-mysql-session": "^2.1.0",
-    "mysql2": "^1.6.5",
     "chance": "^1.0.18",
     "connect-sqlite3": "^0.9.11",
-    "istanbul": "0.4.5",
+    "express-mysql-session": "^2.1.0",
     "mocha": "6.2.0",
+    "mysql2": "^1.6.5",
     "ncp": "^2.0.0",
+    "nyc": "^14.1.1",
     "rimraf": "2.7.1",
     "sinon": "7.4.2",
     "sqlite3": "^4.0.9",

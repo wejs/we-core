@@ -4,6 +4,8 @@ test
 .jshintrc
 .travis.yml
 .gitignore
+.nycrc
+.nyc_output
 config
 coverage
 *.log
