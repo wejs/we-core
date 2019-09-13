@@ -72,7 +72,7 @@
     "we-test-tools": "wejs/we-test-tools"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "wejs": {
     "plugins": {
