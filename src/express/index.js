@@ -44,7 +44,7 @@ module.exports = function initExpress (we) {
       if (we.plugins['we-plugin-url-alias'] && req.haveAlias && req.accepts('html')) {
         // is a target how have alias then redirect to it
         res.writeHead(307, {
-          'Location': req.haveAlias.alias + req.aliasQuery,
+          'Location': req.haveAlias.alias + (req.aliasQuery || ''),
           'Content-Type': 'text/plain',
           'Cache-Control':'public, max-age=345600',
           'Expires': new Date(Date.now() + 345600000).toUTCString()

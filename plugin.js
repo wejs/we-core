@@ -30,17 +30,17 @@ module.exports = function loadPlugin (projectPath, Plugin) {
     // send nested models in response
     sendNestedModels: true,
     port: process.env.PORT || '4000',
-    hostname: 'http://localhost:' + ( process.env.PORT || '4000' ),
+    hostname: process.env.APP_HOSTNAME || 'http://localhost:' + ( process.env.PORT || '4000' ),
     // default favicon, change in your project config/local.js
     favicon: __dirname + '/files/public/core-favicon.ico',
 
-    appName: 'We.js app',
+    appName: process.env.APP_NAME || 'We.js app',
     appLogo: '/public/plugin/we-core/files/images/logo-small.png',
 
     robotsTXT: __dirname + '/files/robots.txt',
     log: { level: 'debug' },
     // set false to disable request log in dev env
-    enableRequestLog: true,
+    enableRequestLog: process.env.APP_ENABLE_REQUEST_LOG || true,
 
     session: {
       secret: 'setASecreteKeyInYourAppConfig',
@@ -66,7 +66,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       // setup some locales - other locales default to en silently
       locales:[],
       // you may alter a site wide default locale
-      defaultLocale: 'en-us',
+      defaultLocale: process.env.APP_DEFAULT_LOCALE || 'en-us',
       // sets a custom cookie name to parse locale settings from  - defaults to NULL
       cookie: 'weLocale',
       // where to store json files - defaults to './locales' relative to modules directory
@@ -138,7 +138,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
     // { url: '', oauthCallback: '', name: ''}
     services: {},
 
-    date: { defaultFormat: 'L HH:mm' },
+    date: { defaultFormat:  process.env.APP_DATE_FORMAT || 'L HH:mm' },
     // cache configs
     cache: {
       // resource cache, Last-Modified cache
@@ -245,7 +245,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       pluralize: false
     },
     JSONApi: {
-      sendSubRecordAttributes: false
+      sendSubRecordAttributes:  process.env.APP_SUB_RECORD_ATTRIBUTES || false
     },
     /**
      * Resource routes, add or remove routes generated to your resource
@@ -428,7 +428,11 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       'controller': 'main',
       'action': 'index',
       'template'   : 'home/index',
-      'layoutName' : 'home'
+      'layoutName' : 'home',
+      titleHandler(req, res, next) {
+        res.locals.title = ''; /// remove default duplicated title:
+        return next();
+      }
     }
   });
 
