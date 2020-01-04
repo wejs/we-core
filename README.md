@@ -50,6 +50,11 @@ we test -g 'resourceRequests'
 ```sh
 npm run coverage
 ```
+## V3 migration
+
+- Breaking changes in sequelize ORM: Updated to v5.x 
+- Breaking changes in winston logger: Updated to v3.x
+- string npm module removed from we.utils.string and dependencies.
 
 ## V2 migration
 
@@ -61,4 +66,5 @@ npm run coverage
 
 ## Sponsored by
 
-- Linky Systems: https://linkysystems.com
+- Linky: https://linkysystems.com
+
