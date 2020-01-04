@@ -35,7 +35,6 @@ function Database (we) {
 
   this.defaultModelDefinitionConfigs = {
     dialect: 'mysql', // default mysql dialect
-    operatorsAliases: false,
 
     define: {
       // table configs

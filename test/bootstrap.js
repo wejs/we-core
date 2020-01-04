@@ -55,23 +55,18 @@ before(function (callback) {
 
 // after all tests remove test folders and delete the database:
 after(function (callback) {
-  testTools.helpers.resetDatabase(we, (err)=> {
-    if(err) return callback(err);
+  const tempFolders = [
+    path.resolve(process.cwd(), 'node_modules/we-plugin-post'),
+    projectPath + '/files/config',
+    projectPath + '/files/uploads',
+    projectPath + '/database.sqlite',
+    projectPath + '/files/templatesCacheBuilds.js'
+  ];
 
-    const tempFolders = [
-      path.resolve(process.cwd(), 'node_modules/we-plugin-post'),
-      projectPath + '/files/tmp',
-      projectPath + '/files/config',
-      projectPath + '/files/sqlite',
-      projectPath + '/files/uploads',
-      projectPath + '/files/templatesCacheBuilds.js'
-    ];
-
-    async.each(tempFolders, (folder, next)=> {
-      deleteDir( folder, next);
-    }, (err)=> {
-      if (err) throw new Error(err);
-      we.exit(callback);
-    });
+  async.each(tempFolders, (folder, next)=> {
+    deleteDir( folder, next);
+  }, (err)=> {
+    if (err) throw new Error(err);
+    we.exit(callback);
   });
 });
