@@ -1,6 +1,12 @@
 const winston = require('winston'),
   _ = require('lodash');
 
+const { createLogger, transports, format } = require('winston');
+const Transport = require('winston-transport');
+const logform = require('logform');
+const { combine, timestamp, json, label, printf } = logform.format;
+
+
 module.exports = function getTheLogger(we) {
   if (!we) throw new Error('we instance is required for get logger instance');
 
@@ -20,7 +26,7 @@ module.exports = function getTheLogger(we) {
   let configs;
   // if have an specific configuration for this env:
   if (log !== undefined && log[env]) {
-    // Add support to set multiple log configs for diferente envs in same configuration:
+    // Add support to set multiple log configs for diferent envs in same configuration:
     configs = _.defaults(log[env], defaultAll);
   } else if (log) {
     // log config without env log:
@@ -33,12 +39,28 @@ module.exports = function getTheLogger(we) {
   // allows to set log level with LOG_LV enviroment variable
   if (process.env.LOG_LV) configs.level = process.env.LOG_LV;
 
+  let format;
+
+  if (configs.format) {
+    format = configs.format;
+  } else {
+    format = combine(
+      label({label: 'wejs-app'}),
+      json(),
+      timestamp()
+    );
+  }
+
   // start one logger
-  const logger = new(winston.Logger)(configs);
+  const logger = createLogger({
+    level: configs.level,
+    format: format,
+    transports: configs.transports
+  });
 
   if (configs.keepConsoleTransport || !configs.transports || !configs.transports.length) {
     // default console logger
-    logger.add(winston.transports.Console, configs);
+    logger.add(new transports.Console(configs));
   }
   // save close method
   logger.closeAllLoggersAndDisconnect = closeAllLoggersAndDisconnect;
