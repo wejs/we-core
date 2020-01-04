@@ -14,7 +14,6 @@ module.exports = {
   async: require('async'),
   _: require('lodash'),
   mkdirp: require('mkdirp'),
-  string: require('string'),
   cookieParser: require('cookie-parser'),
   mime: require('mime'),
   express: require('express'),

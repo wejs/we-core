@@ -1,6 +1,5 @@
 const _ = require('lodash'),
       cors = require('cors'),
-      S = require('string'),
       mime = require('mime'),
       pluralize = require('pluralize'),
       // absolute url regex tester
@@ -156,7 +155,7 @@ Router.prototype = {
     if (!opts.name) throw new Error('Resource name is required in bind resource');
 
     let we = this.we,
-        paramIdNamePrefix = S(opts.name).camelize().s,
+        paramIdNamePrefix = _.camelCase(opts.name),
         pluralizedName = pluralize.plural(opts.name),
         router = this;
 
