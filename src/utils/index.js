@@ -5,6 +5,7 @@
 
 const fs = require('fs'),
   path = require('path'),
+  _ = require('lodash'),
   // single model associations
   singleAssociations = ['belongsTo', 'hasOne'];
 
@@ -12,11 +13,35 @@ module.exports = {
   listFilesRecursive: walk,
   moment: require('moment'),
   async: require('async'),
-  _: require('lodash'),
+  _: _,
   mkdirp: require('mkdirp'),
   cookieParser: require('cookie-parser'),
   mime: require('mime'),
   express: require('express'),
+
+  /**
+   * Strip tags from string
+   * @param  {String} string String to cleanup
+   * @return {String}        String without tags
+   */
+  stripTags(string) {
+    return string.replace(/<\/?[^>]+(>|$)/g, '');
+  },
+
+  /**
+   * Strip tags and truncate
+   *
+   * @param  {String} string   String to cleanup and truncate
+   * @param  {Number} length   Length to truncate if it is too big
+   * @param  {String} omission default: ...
+   * @return {String}          Clean and truncated string
+   */
+  stripTagsAndTruncate(string, length = 200, omission = '...') {
+    return _.truncate(this.stripTags(string), {
+      length: length,
+      omission: omission
+    });
+  },
 
   /**
    * Is authenticated method usable if we-plugin-auth not is installed
