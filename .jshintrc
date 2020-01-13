@@ -1,40 +1,40 @@
-{ "asi": false
-, "boss": true
-, "browser": true
-, "camelcase": false
-, "curly": false
-, "devel": true
-, "eqeqeq": false
-, "eqnull": true
-, "esversion": 6
-, "evil": false
-, "immed": false
-, "indent": 2
-, "jquery": true
-, "latedef": false
-, "laxbreak": true
-, "laxcomma": true
-, "maxcomplexity": 20
-, "maxdepth": 4
-, "maxstatements": 30
-, "maxlen": 120
-, "newcap": true
-, "node": true
-, "noempty": false
-, "nonew": true
-, "quotmark": "single"
-, "nonew": true
-, "predef":
-  [ "describe"
-  , "it"
-  , "before"
-  , "beforeEach"
-  , "after"
-  , "afterEach"
-  ]
-, "smarttabs": true
-, "strict": false
-, "trailing": false
-, "undef": true
-, "unused": true
+{
+  "asi": false,
+  "boss": true,
+  "browser": true,
+  "camelcase": false,
+  "curly": false,
+  "devel": true,
+  "eqeqeq": false,
+  "eqnull": true,
+  "esversion": 6,
+  "evil": false,
+  "immed": false,
+  "indent": 2,
+  "jquery": true,
+  "latedef": false,
+  "laxbreak": true,
+  "laxcomma": true,
+  "maxcomplexity": 20,
+  "maxdepth": 4,
+  "maxlen": 120,
+  "maxstatements": 30,
+  "newcap": true,
+  "node": true,
+  "noempty": false,
+  "nonew": true,
+  "predef": [
+    "describe",
+    "it",
+    "before",
+    "beforeEach",
+    "after",
+    "afterEach"
+  ],
+  "quotmark": "single",
+  "smarttabs": true,
+  "strict": false,
+  "trailing": false,
+  "undef": true,
+  "unused": true
 }

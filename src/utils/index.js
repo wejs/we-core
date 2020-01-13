@@ -31,6 +31,8 @@ module.exports = {
   /**
    * Strip tags and truncate
    *
+   * Usage: stripTagsAndTruncate('something big', 5, '......')
+   *
    * @param  {String} string   String to cleanup and truncate
    * @param  {Number} length   Length to truncate if it is too big
    * @param  {String} omission default: ...
