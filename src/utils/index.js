@@ -9,7 +9,7 @@ const fs = require('fs'),
   // single model associations
   singleAssociations = ['belongsTo', 'hasOne'];
 
-module.exports = {
+const utils = {
   listFilesRecursive: walk,
   moment: require('moment'),
   async: require('async'),
@@ -21,10 +21,11 @@ module.exports = {
 
   /**
    * Strip tags from string
+   *
    * @param  {String} string String to cleanup
    * @return {String}        String without tags
    */
-  stripTags(string) {
+  stripTags(string = '') {
     return string.replace(/<\/?[^>]+(>|$)/g, '');
   },
 
@@ -39,7 +40,7 @@ module.exports = {
    * @return {String}          Clean and truncated string
    */
   stripTagsAndTruncate(string, length = 200, omission = '...') {
-    return _.truncate(this.stripTags(string), {
+    return _.truncate(utils.stripTags(string), {
       length: length,
       omission: omission
     });
@@ -157,4 +158,6 @@ function walk(dir, done) {
       });
     });
   });
-};
+}
+
+module.exports = utils;
