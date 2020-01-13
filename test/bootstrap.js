@@ -9,7 +9,7 @@ const projectPath = process.cwd(),
 let we;
 
 before(function (callback) {
-  testTools.copyLocalSQLiteConfigIfNotExitst(projectPath, callback);
+  testTools.copyLocalSQLiteConfigIfNotExists(projectPath, callback);
 });
 
 // Add the stub plugin in node_modules folder:
