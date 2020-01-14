@@ -110,12 +110,27 @@ Router.prototype = {
     middlewares.push(app.router.parseBody.bind({ config: config }));
       // bind context loader
     middlewares.push(app.router.contextLoader.bind({ config: config }));
+    /**
+     * Use this event to add middlewares before acl middlewares
+     * @type {Event}
+     */
+    app.events.emit('router:add:acl:middleware:before', {
+      we: app, middlewares: middlewares, config: config
+    });
 
     /**
      * Use this event to add acl related middlewares
      * @type {Event}
      */
     app.events.emit('router:add:acl:middleware', {
+      we: app, middlewares: middlewares, config: config
+    });
+
+    /**
+     * Use this event to add middlewares after acl middlewares
+     * @type {Event}
+     */
+    app.events.emit('router:add:acl:middleware:after', {
       we: app, middlewares: middlewares, config: config
     });
 
