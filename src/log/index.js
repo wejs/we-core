@@ -1,11 +1,6 @@
-const winston = require('winston'),
-  _ = require('lodash');
-
+const _ = require('lodash');
 const { createLogger, transports, format } = require('winston');
-const Transport = require('winston-transport');
-const logform = require('logform');
-const { combine, timestamp, json, label, printf } = logform.format;
-
+const { combine, timestamp, json, label, errors } = format;
 
 module.exports = function getTheLogger(we) {
   if (!we) throw new Error('we instance is required for get logger instance');
@@ -45,9 +40,10 @@ module.exports = function getTheLogger(we) {
     format = configs.format;
   } else {
     format = combine(
+      errors({ stack: true }),
       label({label: 'wejs-app'}),
-      json(),
-      timestamp()
+      timestamp(),
+      json()
     );
   }
 
