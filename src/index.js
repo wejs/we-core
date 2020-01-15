@@ -269,7 +269,7 @@ We.prototype = {
 
     let we = this;
 
-    we.hooks.trigger('we:server:before:start' ,we ,function afterRunBeforeServerStart (err) {
+    we.hooks.trigger('we:server:before:start', we, function afterRunBeforeServerStart (err) {
       if (err) return cb(err);
       /**
        * Get port from environment and store in Express.
@@ -281,7 +281,20 @@ We.prototype = {
        * Create HTTP server with suport to url alias rewrite
        */
       const server = http.createServer(function onCreateServer (req, res){
-        req.we = we;
+        Object.defineProperty(req, 'we', {
+          get: function getWe() { return we; }
+        });
+
+        // Clean memory on finish events:
+        res.on('finish', function() {
+          we.freeResponseMemory(req, res);
+        });
+        res.on('close', function() {
+          we.freeResponseMemory(req, res);
+        });
+        res.on('end', function() {
+          we.freeResponseMemory(req, res);
+        });
 
         // suport for we.js widget API
         // install we-plugin-widget to enable this feature

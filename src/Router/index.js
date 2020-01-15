@@ -37,7 +37,7 @@ Router.prototype = {
    *
    * This function bind context loader, acl, upload and controller middlewares
    *
-   * @param  {Object} we     we.js object
+   * @param  {Object} app    we.js object instance
    * @param  {String} route  route like "get /route"
    * @param  {Object} config route configs
    */
