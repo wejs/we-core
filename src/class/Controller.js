@@ -50,7 +50,6 @@ Controller.prototype = {
     .count(res.locals.query)
     .then( (count)=> {
       res.status(200).send({ count: count });
-      return null;
     })
     .catch(res.queryError);
   },

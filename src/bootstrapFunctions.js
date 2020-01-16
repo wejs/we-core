@@ -149,10 +149,7 @@ module.exports = {
   },
   setExpressApp(we, next) {
     // load express
-    Object.defineProperty(we, 'express', {
-      get: function getExpress() { return weExpress(we); }
-    });
-
+    we.express = weExpress(we);
     we.events.emit('we:after:load:express', we);
     next();
   },
