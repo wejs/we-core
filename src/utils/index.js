@@ -7,7 +7,8 @@ const fs = require('fs'),
   path = require('path'),
   _ = require('lodash'),
   // single model associations
-  singleAssociations = ['belongsTo', 'hasOne'];
+  singleAssociations = ['belongsTo', 'hasOne'],
+  slugify = require('slugify');
 
 const utils = {
   listFilesRecursive: walk,
@@ -18,6 +19,7 @@ const utils = {
   cookieParser: require('cookie-parser'),
   mime: require('mime'),
   express: require('express'),
+  slugify: slugify,
 
   /**
    * Strip tags from string
@@ -41,6 +43,24 @@ const utils = {
    */
   stripTagsAndTruncate(string, length = 200, omission = '...') {
     return _.truncate(utils.stripTags(string), {
+      length: length,
+      omission: omission
+    });
+  },
+
+  /**
+   * Slugfy and truncate
+   *
+   * Usage: slugifyAndTruncate('something big', 5, '......')
+   *
+   * @param  {String} string   String to cleanup and truncate
+   * @param  {Number} length   Length to truncate if it is too big
+   * @param  {String} omission default: ...
+   * @param  {Object} opts     slugfy options
+   * @return {String}          Clean and truncated string
+   */
+  slugifyAndTruncate(string, length = 200, omission = '...', opts = {}) {
+    return _.truncate(slugify(string, opts), {
       length: length,
       omission: omission
     });
