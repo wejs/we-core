@@ -14,7 +14,7 @@ Status:  **maintained**
 
 After install npm and node.js
 
-```js
+```sh
 // clone this project
 git clone https://github.com/wejs/we-core.git
 // enter in cloned folder
