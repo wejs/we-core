@@ -430,8 +430,13 @@ describe('we.responses.methods', function () {
 
     it('we.responses.methods.notFound should run res.format if responseType=html', function (done) {
 
-      var req = { method: 'POST', we: we, accepts: function(){ return true }  };
-      var res = {
+      const req = {
+        method: 'POST',
+        we: we,
+        __: function() {},
+        accepts: function(){ return true; }
+      };
+      const res = {
         locals: {
           Model: we.db.models.post,
           model: 'post',
