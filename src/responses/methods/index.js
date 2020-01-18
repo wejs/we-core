@@ -37,11 +37,7 @@ module.exports = {
       }
 
       res.format(we.responses.formaters);
-
-      we.freeResponseMemory(req, res);
     });
-
-    return null;
   },
   /**
    * Record created response
@@ -86,11 +82,7 @@ module.exports = {
       }
 
       res.format(we.responses.formaters);
-
-      we.freeResponseMemory(req, res);
     });
-
-    return null;
   },
   /**
    * Record updated response
@@ -133,11 +125,7 @@ module.exports = {
       }
 
       res.format(we.responses.formaters);
-
-      we.freeResponseMemory(req, res);
     });
-
-    return null;
   },
   /**
    * Deleted response
@@ -170,11 +158,7 @@ module.exports = {
       }
 
       res.format(req.we.responses.formaters);
-
-      we.freeResponseMemory(req, res);
     });
-
-    return null;
   },
 
   /**
@@ -201,8 +185,6 @@ module.exports = {
         'Expires': new Date(Date.now() + 345600000).toUTCString()
       });
 
-      req.we.freeResponseMemory(req, res);
-
       return res.send();
     }
 
@@ -212,10 +194,6 @@ module.exports = {
     }
 
     res.format(req.we.responses.formaters);
-
-    req.we.freeResponseMemory(req, res);
-
-    return null;
   },
 
   /**
@@ -251,10 +229,6 @@ module.exports = {
     res.addMessage('warn', { text: 'forbidden' });
 
     res.format(req.we.responses.formaters);
-
-    req.we.freeResponseMemory(this, res);
-
-    return null;
   },
 
   /**
@@ -303,10 +277,6 @@ module.exports = {
     delete res.locals.data;
 
     res.format(req.we.responses.formaters);
-
-    req.we.freeResponseMemory(req, res);
-
-    return null;
   },
   /**
    * Server error response
@@ -338,10 +308,6 @@ module.exports = {
 
     // send the response
     res.format(req.we.responses.formaters);
-    // helper for unset variables
-    this.req.we.freeResponseMemory(this, res);
-
-    return null;
   },
 
   /**
@@ -372,10 +338,6 @@ module.exports = {
 
     // send the response
     res.format(req.we.responses.formaters);
-
-    req.we.freeResponseMemory(req, res);
-
-    return null;
   },
 
   /**
@@ -385,7 +347,8 @@ module.exports = {
    */
   queryError(err) {
     const res = this.res,
-          req = this.req;
+          req = this.req,
+          log = req.we.log;
 
     if (err) {
       // parse all sequelize validation erros for html (we-plugin-view)
@@ -415,7 +378,14 @@ module.exports = {
       } else if (typeof err == 'string') {
         res.addMessage('error', err);
       } else if (err.name != 'SequelizeValidationError') {
-        console.error('responses.queryError:unknowError: ', req.path, err, err.name);
+        log.error('responses.queryError:unknowError ', {
+          path: req.path,
+          error: {
+            message: err.message,
+            name: err.name,
+            stack: err.stack
+          }
+        });
       }
 
       // default error handler, push erros to messages and let response formaters resolve how to format this messages
@@ -442,10 +412,6 @@ module.exports = {
     }
 
     res.format(req.we.responses.formaters);
-
-    req.we.freeResponseMemory(req, res);
-
-    return null;
   },
 
   /**
@@ -463,7 +429,5 @@ module.exports = {
     } else {
       this.res.redirect(s);
     }
-
-    return null;
   }
 };

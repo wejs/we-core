@@ -40,7 +40,7 @@ module.exports = {
 
     let name;
 
-    for (var i = 0; i < we.config.responseTypes.length; i++) {
+    for (let i = 0; i < we.config.responseTypes.length; i++) {
       name = we.config.responseTypes[i];
       we.responses.formaters[name] = we.responses.formatersUnsorted[name];
     }

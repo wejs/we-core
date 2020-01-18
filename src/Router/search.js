@@ -12,7 +12,7 @@ const moment = require('moment'),
  */
 function dateToDateTime(d) {
   if (d) {
-    var date = moment(d);
+    let date = moment(d);
     // return null if not is valid
     if (!date.isValid()) return null;
     // return data in datetime format

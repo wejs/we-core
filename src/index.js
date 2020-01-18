@@ -414,7 +414,10 @@ We.prototype = {
       we.express.use(function onExpressError (err, req, res, next) {
         // invalid url error handling
         if (err instanceof URIError) {
-          we.log.warn('onExpressError:Error on:', req.path, err);
+          we.log.warn('onExpressError:URIError on:', {
+            path: req.path,
+            error: err
+          });
 
           res.addMessage('warning', {
             text: 'router.invalid.url'
@@ -424,7 +427,10 @@ We.prototype = {
           return res.goTo('/');
         }
 
-        we.log.error('onExpressError:Error on:', req.path, err);
+        we.log.error('onExpressError:Error on:', {
+          path: req.path,
+          error: err
+        });
 
         res.serverError(err);
       });
@@ -472,11 +478,13 @@ We.prototype = {
    * Helper function to delete (unpoint) pointers from response for help GC
    */
   freeResponseMemory(req, res) {
-    delete res.locals.req;
-    delete res.locals.regions;
-    delete res.locals.Model;
-    delete res.locals.body;
-    delete res.locals.layoutHtml;
+    for(let name in res.locals) {
+      if(res.locals.hasOwnProperty(res.locals[name])) {
+          delete res.locals[name];
+      }
+    }
+
+    delete req.user;
   },
 
   /**
