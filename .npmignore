@@ -11,3 +11,4 @@ coverage
 *.log
 *.sqlite
 coverage
+files/public/images
