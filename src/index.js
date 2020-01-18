@@ -285,7 +285,7 @@ We.prototype = {
           get: function getWe() { return we; }
         });
 
-        // Clean memory on finish events:
+        // Clean memory on end events:
         res.on('finish', function() {
           we.freeResponseMemory(req, res);
         });
@@ -475,14 +475,11 @@ We.prototype = {
   },
 
   /**
-   * Helper function to delete (unpoint) pointers from response for help GC
+   * Helper function to delete objects from response for help GC
    */
   freeResponseMemory(req, res) {
-    for(let name in res.locals) {
-      delete res.locals[name];
-    }
-
-    delete req.user;
+    res.locals.regions = {};
+    res.locals.currentUser = {};
   },
 
   /**

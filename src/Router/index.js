@@ -333,16 +333,19 @@ Router.prototype = {
    */
   contextLoader(req, res, next) {
     const router = req.we.router,
-      hooks = req.we.hooks;
+      we = req.we,
+      models = req.we.db.models,
+      hooks = we.hooks,
+      locals = res.locals;
 
     // only load context one time per request even if context loader is recalled
     if (req.weContextLoaded) return next();
     // save current user reference for use in template
-    res.locals.currentUser = req.user;
+    locals.currentUser = req.user;
     // get route configs
     const config = this.config;
     // merge context var with route configs
-    _.merge(res.locals, config);
+    _.merge(locals, config);
     // save all params values as array for router.urlTo
     req.paramsArray = _.toArray(req.params);
     // set accept headers based in config.responseType, this overrides req.query.responseType
@@ -353,41 +356,48 @@ Router.prototype = {
     }, function runTheContextLoader(err) {
       if (err) return res.serverError(err);
       // set redirectTo if not is set
-      if (!res.locals.redirectTo) {
-        res.locals.redirectTo = req.we.utils.getRedirectUrl(req, res);
+      if (!locals.redirectTo) {
+        locals.redirectTo = we.utils.getRedirectUrl(req, res);
       }
 
       router.parseQuery(req, res, (err, query)=> {
-        res.locals.query = query;
+        locals.query = query;
         // skip record load if dont find model config
-        if (!res.locals.model ) {
+        if (!locals.model ) {
           return router.contextLoaded.bind({
             req: req, res: res, next: next, hooks: hooks
           })();
         }
         // set model class
-        res.locals.Model = req.we.db.models[res.locals.model];
+        locals.Model = models[locals.model];
+
+        Object.defineProperty(locals, 'Model', {
+          get: function getModel() {
+            return models[locals.model];
+          }
+        });
+
         // set id if exists and not is set
-        if (!res.locals.id) {
-          if (req.params[res.locals.paramIdName]) {
-            res.locals.id = req.params[res.locals.paramIdName];
+        if (!locals.id) {
+          if (req.params[locals.paramIdName]) {
+            locals.id = req.params[locals.paramIdName];
           } else if (req.params.id) {
-            res.locals.id = req.params.id;
+            locals.id = req.params.id;
           }
         }
         // set teaserTemplateName
-        res.locals.teaserTemplateName = res.locals.model + '/teaser';
+        locals.teaserTemplateName = locals.model + '/teaser';
         // set load current record flag for single records requests
-        res.locals.loadCurrentRecord = router.needLoadCurrentModel(req, res);
+        locals.loadCurrentRecord = router.needLoadCurrentModel(req, res);
         // default template
-        if (!res.locals.template)
-          res.locals.template = res.locals.model + '/' + res.locals.action;
+        if (!locals.template)
+          locals.template = locals.model + '/' + locals.action;
         // run model context loader if exists
         if (
-          req.we.db.models[res.locals.model] &&
-          typeof req.we.db.models[res.locals.model].contextLoader == 'function'
+          models[locals.model] &&
+          typeof models[locals.model].contextLoader == 'function'
         ) {
-          req.we.db.models[res.locals.model].contextLoader(req, res, function afterRunModelContextLoader(err) {
+          models[locals.model].contextLoader(req, res, function afterRunModelContextLoader(err) {
             return router.contextLoaded.bind({
               req: req, res: res, next: next, hooks: hooks
             })(err);

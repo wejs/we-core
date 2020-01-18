@@ -12,6 +12,7 @@ describe('lib/index.js', function () {
     const res = {
       locals: {
         req: true,
+        currentUser: true,
         regions: true,
         Model: true,
         body: true,
@@ -21,11 +22,8 @@ describe('lib/index.js', function () {
 
     We.prototype.freeResponseMemory(req, res);
 
-    assert(!res.locals.req);
-    assert(!res.locals.regions);
-    assert(!res.locals.Model);
-    assert(!res.locals.body);
-    assert(!res.locals.layoutHtml);
+    assert(res.locals.regions !== true);
+    assert(res.locals.currentUser!== true);
 
     done();
   });

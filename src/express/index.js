@@ -25,9 +25,11 @@ module.exports = function initExpress (we) {
     // save a reference to appName
     res.locals.appName = we.config.appName || '';
     // set default app title
-    res.locals.title= we.config.appName || '';
+    res.locals.title = we.config.appName || '';
     // set req to be avaible in template vars
-    res.locals.req = req;
+    Object.defineProperty(res.locals, 'req', {
+      get: function getReq() { return req; }
+    });
     // set metadata var
     res.locals.metadata = {};
     // metadata tags to print in html response
