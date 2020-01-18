@@ -75,7 +75,6 @@ function Database (we) {
         }
 
         done();
-        return null;
       })
       .catch(done);
     },

@@ -237,7 +237,6 @@ PluginManager.prototype.registerPlugin = function (name, done) {
     // push to plugin record array
     pluginManager.records.push(r);
     done();
-    return null;
   })
   .catch(done);
 };
@@ -270,8 +269,6 @@ PluginManager.prototype.loadPluginsSettingsFromDB = function (we, cb) {
     pluginManager.records = plugins;
 
     cb(null, plugins);
-
-    return null;
   })
   .catch(cb);
 };
@@ -373,8 +370,6 @@ PluginManager.prototype.runPluginUpdates = function (name, done) {
       .then(function () {
         we.log.info('Plugin '+name+ ' updated to: ' + up.version);
         next();
-
-        return null;
       })
       .catch(next);
     });
@@ -395,8 +390,6 @@ PluginManager.prototype.loadProjectAsPlugin = function () {
 
   // load project plugin.js file if exists
   this.loadPlugin(file, 'project', projectPath);
-
-  return null;
 };
 
 // exports pluginManager

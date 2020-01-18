@@ -479,9 +479,7 @@ We.prototype = {
    */
   freeResponseMemory(req, res) {
     for(let name in res.locals) {
-      if(res.locals.hasOwnProperty(res.locals[name])) {
-          delete res.locals[name];
-      }
+      delete res.locals[name];
     }
 
     delete req.user;

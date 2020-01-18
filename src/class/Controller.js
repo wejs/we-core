@@ -32,7 +32,6 @@ Controller.prototype = {
       res.locals.metadata.count = record.count;
       res.locals.data = record.rows;
       res.ok();
-      return null;
     })
     .catch(res.queryError);
   },
@@ -95,7 +94,6 @@ Controller.prototype = {
       .then(function afterCreate (record) {
         res.locals.data = record;
         res.created();
-        return null;
       })
       .catch(res.queryError);
     } else {
@@ -132,7 +130,6 @@ Controller.prototype = {
       .then(function afterUpdate (newRecord) {
         res.locals.data = newRecord;
         res.updated();
-        return null;
       })
       .catch(res.queryError);
     } else {
@@ -164,7 +161,6 @@ Controller.prototype = {
       .then(function afterDestroy () {
         res.locals.deleted = true;
         res.deleted();
-        return null;
       })
       .catch(res.queryError);
     } else {

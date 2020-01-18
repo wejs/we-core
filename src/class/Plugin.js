@@ -102,9 +102,9 @@ module.exports = function getPluginPrototype (we) {
    * @param {object} routes
    */
   Plugin.prototype.setRoutes = function setRoutes (routes) {
-    var routePaths = Object.keys(routes);
-    var routePath;
-    for (var i = routePaths.length - 1; i >= 0; i--) {
+    const routePaths = Object.keys(routes);
+    let routePath;
+    for (let i = routePaths.length - 1; i >= 0; i--) {
       routePath = routePaths[i];
       this.setRoute(routePath, routes[routePath]);
     }
@@ -203,8 +203,6 @@ module.exports = function getPluginPrototype (we) {
         },
       ], cb);
     }
-
-    return null;
   };
 
   /**
@@ -241,7 +239,7 @@ module.exports = function getPluginPrototype (we) {
       if (e) return done(e);
 
       modules.forEach(m => {
-        var attrs = require(m.path);
+        let attrs = require(m.path);
         attrs._controllersPath = this.controllersPath;
         we.controllers[m.name] = new we.class.Controller(attrs);
       });

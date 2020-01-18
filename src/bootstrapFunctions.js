@@ -134,7 +134,7 @@ module.exports = {
     // dont have plugins to install
     if (!we.pluginManager.pluginsToInstall) return next();
     // get plugins to install names
-    var names = Object.keys(we.pluginManager.pluginsToInstall);
+    const names = Object.keys(we.pluginManager.pluginsToInstall);
     we.utils.async.eachSeries(names, function onEachPlugin (name, nextPlugin) {
       // run install scripts
       we.pluginManager.installPlugin(name, function afterInstallOnePlugin (err){

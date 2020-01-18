@@ -24,27 +24,27 @@ function dateToDateTime(d) {
 
 module.exports = {
   parsers: {
-    equalBoolean: function(searchName, field, value, w) {
+    equalBoolean(searchName, field, value, w) {
       if (!value || value.toLowerCase() === 'false') {
         return w[field.target.field] =  false;
       } else {
         return w[field.target.field] =  true;
       }
     },
-    equal: function(searchName, field, value, w) {
+    equal(searchName, field, value, w) {
       return w[field.target.field] = value;
     },
-    contains: function(searchName, field, value, w) {
+    contains(searchName, field, value, w) {
       return w[field.target.field] = {
         [Op.like]: '%'+value+'%'
       };
     },
-    startsWith: function(searchName, field, value, w) {
+    startsWith(searchName, field, value, w) {
       return w[field.target.field] = {
         [Op.like]: value+'%'
       };
     },
-    userSearchQuery: function(searchName, field, value, w) {
+    userSearchQuery(searchName, field, value, w) {
       return w[Op.or] = {
         email: {
           [Op.eq]: value
@@ -57,7 +57,7 @@ module.exports = {
         }
       };
     },
-    since: function(searchName, field, value, w) {
+    since(searchName, field, value, w) {
       if (!value) return w;
 
       return w[field.target.field] = {
@@ -66,16 +66,16 @@ module.exports = {
     },
 
     // if user from :userId is
-    paramIs: function(searchName, field, value, w, req) {
+    paramIs(searchName, field, value, w, req) {
       return w[field.target.field] = req.params[field.param];
     }
   },
   targets: {
-    field: function(searchName, field, value, query, req) {
+    field(searchName, field, value, query, req) {
       req.we.router.search.parsers[field.parser](searchName, field, value, query.where, req);
     },
-    association: function(searchName, field, value, query, req) {
-      for (var i = 0; i < query.include.length; i++) {
+    association(searchName, field, value, query, req) {
+      for (let i = 0; i < query.include.length; i++) {
         if (query.include[i]) {
           if (!query.include[i].where) query.include[i].where = {};
           req.we.router.search.parsers[field.parser](searchName, field, value, query.include[i].where, req);

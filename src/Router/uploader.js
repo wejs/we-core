@@ -6,7 +6,7 @@ function defaultFilename (req, file, cb) {
   cb(null, file.name);
 }
 
-const uploader = function getUploader(uploadConfigs) {
+function getUploader(uploadConfigs) {
   return multer({
     storage:  multer.diskStorage({
       destination: uploadConfigs.dest || uploadConfigs.destination,
@@ -14,7 +14,8 @@ const uploader = function getUploader(uploadConfigs) {
     }),
     limits: uploadConfigs.limits,
     fileFilter: uploadConfigs.fileFilter
-  }).fields(uploadConfigs.fields);
-};
+  })
+  .fields(uploadConfigs.fields);
+}
 
-module.exports = uploader;
+module.exports = getUploader;

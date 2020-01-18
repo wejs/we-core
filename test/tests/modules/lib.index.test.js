@@ -8,8 +8,8 @@ describe('lib/index.js', function () {
   });
 
   it ('should delete some attrs from request and response in freeResponseMemory', function (done) {
-    var req = {}
-    var res = {
+    const req = {};
+    const res = {
       locals: {
         req: true,
         regions: true,
@@ -17,7 +17,7 @@ describe('lib/index.js', function () {
         body: true,
         layoutHtml: true
       }
-    }
+    };
 
     We.prototype.freeResponseMemory(req, res);
 
@@ -31,7 +31,7 @@ describe('lib/index.js', function () {
   });
 
   describe('We instance', function(){
-    var we;
+    let we;
 
     before(function(done){
       we = new We();

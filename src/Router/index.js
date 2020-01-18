@@ -262,7 +262,7 @@ Router.prototype = {
    * @return {Array}
    */
   parseRouteToMap(route) {
-    return route.split('/').map(function(r, i){
+    return route.split('/').map(function(r, i) {
       if(r[0] === ':'){
         return { name: r, i: i };
       } else {
