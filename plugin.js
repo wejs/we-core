@@ -35,7 +35,7 @@ module.exports = function loadPlugin (projectPath, Plugin) {
     favicon: __dirname + '/files/public/core-favicon.ico',
 
     appName: process.env.APP_NAME || 'We.js app',
-    appLogo: '/public/plugin/we-core/files/images/logo-small.png',
+    appLogo: null,
 
     robotsTXT: __dirname + '/files/robots.txt',
     log: { level: 'debug' },
