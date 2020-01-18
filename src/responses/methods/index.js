@@ -265,7 +265,7 @@ module.exports = {
       });
     }
 
-    res.locals.title = res.locals.__('response.notFound.title');
+    res.locals.title = req.__('response.notFound.title');
 
     res.status(404);
 
@@ -287,7 +287,7 @@ module.exports = {
     const res = this.res,
       req = this.req;
 
-    let __ = ( res.locals.__ || req.we.i18n.__ );
+    let __ = ( req.__ || res.locals.__ || req.we.i18n.__ );
 
     res.status(500);
 
@@ -350,6 +350,8 @@ module.exports = {
           req = this.req,
           log = req.we.log;
 
+    let __ = ( req.__ || res.locals.__ || req.we.i18n.__ );
+
     if (err) {
       // parse all sequelize validation erros for html (we-plugin-view)
       if (
@@ -366,7 +368,7 @@ module.exports = {
           res.locals.validationError[err.path].push({
             field: err.path,
             rule: err.type,
-            message: req.__(err.message)
+            message: __(err.message)
           });
         });
 
