@@ -510,4 +510,21 @@ We.prototype = {
   }
 };
 
+// Add default toJSON method in errors to get better erros:
+if (!('toJSON' in Error.prototype)) {
+  Object.defineProperty(Error.prototype, 'toJSON', {
+    value: function () {
+      const alt = {};
+
+      Object.getOwnPropertyNames(this).forEach(function (key) {
+          alt[key] = this[key];
+      }, this);
+
+      return alt;
+    },
+    configurable: true,
+    writable: true
+  });
+}
+
 module.exports = We;
