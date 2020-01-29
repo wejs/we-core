@@ -68,7 +68,7 @@ function Database (we) {
         res.locals.data = record;
 
         if (record && record.dataValues.creatorId && req.isAuthenticated()) {
-          // ser role owner
+          // Set role owner
           if (record.isOwner(req.user.id)) {
             if(req.userRoleNames.indexOf('owner') == -1 ) req.userRoleNames.push('owner');
           }

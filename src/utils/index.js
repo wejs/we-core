@@ -15,7 +15,7 @@ const utils = {
   moment: require('moment'),
   async: require('async'),
   _: _,
-  mkdirp: require('mkdirp'),
+  mkdirp: require('./mkdirp.js'),
   cookieParser: require('cookie-parser'),
   mime: require('mime'),
   express: require('express'),
