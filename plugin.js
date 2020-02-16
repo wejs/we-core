@@ -408,6 +408,28 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       index(req, res) {
         res.locals.title = null; // dont show duplicated titles
         res.ok();
+      },
+      /**
+       * Health check router
+       *
+       * @param  {Object} req Express request
+       * @param  {Object} res Express request
+       * @api [get] /health
+       * description: "Get app health"
+       * responses:
+       *   "200":
+       *     description: "Return a simple online: true json data."
+       *     schema:
+       *       type: object
+       *       properties:
+       *         online:
+       *           type: boolean
+       *           example: true
+       */
+      health(req, res) {
+        res.send({
+          online: true
+        });
       }
     });
 
@@ -433,7 +455,13 @@ module.exports = function loadPlugin (projectPath, Plugin) {
         res.locals.title = ''; /// remove default duplicated title:
         return next();
       }
-    }
+    },
+    'get /health': {
+      controller: 'main',
+      action: 'health',
+      responseType: 'json',
+      permission: true
+    },
   });
 
   return plugin;
