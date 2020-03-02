@@ -17,6 +17,7 @@ const http = require('http'),
       Router = require('./Router'),
       Sanitizer = require('./Sanitizer'),
       EventEmiter = require('events'),
+      unhandledErrorCatcher = require('./unhandledErrorCatcher'),
       { readFileSync, writeFileSync, writeFile } = require('fs');
 
 /**
@@ -77,6 +78,10 @@ function We (options) {
   we.db.sequelize = we.db.defaultConnection;
   // plugin manager and plugins vars
   we.pluginManager = new PluginManager(this);
+  // Error catcher to get unhandled erros, use this options to disable on multiple we.js instances
+  if (!we.config.disableGlobalErrorCatcher) {
+    unhandledErrorCatcher(we);
+  }
 
   switch (we.config.bootstrapMode) {
     case 'install':
