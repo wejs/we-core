@@ -46,7 +46,9 @@ Router.prototype = {
 
     if (!config) {
       // is route configuration is false or null, this route will be disabled
-      app.log.verbose('route disabled:', route);
+      app.log.verbose('route disabled:', {
+        route
+      });
       return;
     }
 
@@ -83,7 +85,9 @@ Router.prototype = {
     ) {
       actionFunction = app.controllers[config.controller][config.action];
     } else {
-      return app.log.warn('app.router.bindRoute: Unknow controller or action:', path, config);
+      return app.log.warn('app.router.bindRoute: Unknow controller or action:', {
+        path, config
+      });
     }
 
     if (!groupRouter) groupRouter = app.express;
@@ -156,7 +160,9 @@ Router.prototype = {
       config: config
     };
 
-    app.log.silly('Route bind:', method, path);
+    app.log.verbose('Route bind:', {
+      method, path
+    });
   },
 
   /**
@@ -570,7 +576,9 @@ Router.prototype = {
     try {
       if (req.query.where) query.where = JSON.parse( req.query.where );
     } catch(e) {
-      req.we.log.warn('req.query.where have a invalid format', req.query.where);
+      req.we.log.warn('req.query.where have a invalid format', {
+        where: req.query.where
+      });
       return res.badRequest();
     }
     // override url query with router query
