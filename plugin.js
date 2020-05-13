@@ -68,7 +68,8 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       // you may alter a site wide default locale
       defaultLocale: process.env.APP_DEFAULT_LOCALE || 'en-us',
       // sets a custom cookie name to parse locale settings from  - defaults to NULL
-      cookie: 'weLocale',
+      cookie: 'i18n',
+      queryParameter: 'lang',
       // where to store json files - defaults to './locales' relative to modules directory
       directory: projectPath + '/config/locales',
       // whether to write new locale information to disk - defaults to true

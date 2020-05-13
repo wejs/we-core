@@ -12,16 +12,6 @@ var localization = function init (we) {
   we.events.on('we:after:load:express', function afterLoadExpress(we) {
     // set i18n middleware
     we.express.use(i18n.init);
-
-    we.express.use(function setCurrentUserLocale(req, res, next) {
-
-      // set default, if user will be load in passport it will change the request locale
-      req.setLocale(we.config.i18n.defaultLocale);
-      // set locale for views
-      res.locals.locale = req.getLocale();
-
-      next();
-    });
   });
 };
 

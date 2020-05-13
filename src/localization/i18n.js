@@ -6,10 +6,8 @@ const i18n = {
   we: null,
   fileI18nConfig: null,
   systemSettingsEnabled: false,
-  cookie: 'i18n',
   // file locale directory:
   directory: null,
-
   locales: [],
   defaultLocale: null,
 
@@ -24,11 +22,10 @@ const i18n = {
 
   configure(c, we) {
     this.we = we;
-    this.fileI18nConfig = c;
+    this.fileI18nConfig = c || {};
 
     if (c.locales) i18n.setLocales(c.locales);
     if (c.defaultLocale) i18n.setLocale(c.defaultLocale);
-    if (c.cookie) i18n.cookie = c.cookie;
     if (c.directory) i18n.directory = c.directory;
 
     // system settings is avaible:
@@ -56,7 +53,7 @@ const i18n = {
     };
 
     req.getLocale = ()=> {
-      return req.locale || i18n.getDefaultLocale(req);
+      return req.locale;
     };
 
     req.setLocale(i18n.getDefaultLocale(req));
@@ -114,8 +111,46 @@ const i18n = {
     this.defaultLocale = locale;
   },
 
-  getDefaultLocale() {
-    return 'pt-br';
+  getDefaultLocale(req) {
+    const cookieLocale = i18n.getLocaleFromCookie(req);
+    if (cookieLocale) return cookieLocale;
+
+    const queryLocale = i18n.getLocaleFromQuery(req);
+    if (queryLocale) return queryLocale;
+
+    return i18n.defaultLocale;
+  },
+
+  getLocaleFromCookie(req) {
+    const c = i18n.fileI18nConfig.cookie;
+
+    if (
+      c &&
+      req &&
+      req.cookies &&
+      req.cookies[c] &&
+      i18n.locales.indexOf(req.cookies[c]) > -1
+    ) {
+      return req.cookies[c];
+    }
+
+    return null;
+  },
+
+  getLocaleFromQuery(req) {
+    const q = i18n.fileI18nConfig.queryParameter;
+
+    if (
+      q &&
+      req &&
+      req.query &&
+      req.query[q] &&
+      i18n.locales.indexOf(req.query[q]) > -1
+    ) {
+      return req.query[q];
+    }
+
+    return null;
   },
 
   /**
