@@ -410,6 +410,16 @@ module.exports = function loadPlugin (projectPath, Plugin) {
         res.locals.title = null; // dont show duplicated titles
         res.ok();
       },
+    });
+
+    /**
+     * t controller
+     * Controller for core translations API
+     * @type {Controller}
+     */
+    we.controllers.t = new we.class.Controller({});
+
+    we.controllers.syshealth = new we.class.Controller({
       /**
        * Health check router
        *
@@ -427,19 +437,12 @@ module.exports = function loadPlugin (projectPath, Plugin) {
        *           type: boolean
        *           example: true
        */
-      health(req, res) {
+      status(req, res) {
         res.send({
           online: true
         });
       }
     });
-
-    /**
-     * t controller
-     * Controller for core translations API
-     * @type {Controller}
-     */
-    we.controllers.t = new we.class.Controller({});
 
     done();
   };
@@ -458,8 +461,8 @@ module.exports = function loadPlugin (projectPath, Plugin) {
       }
     },
     'get /health': {
-      controller: 'main',
-      action: 'health',
+      controller: 'syshealth',
+      action: 'status',
       responseType: 'json',
       permission: true
     },
