@@ -46,7 +46,7 @@ Router.prototype = {
 
     if (!config) {
       // is route configuration is false or null, this route will be disabled
-      app.log.verbose('route disabled:', {
+      app.log.debug('route disabled:', {
         route
       });
       return;
@@ -160,7 +160,7 @@ Router.prototype = {
       config: config
     };
 
-    app.log.verbose('Route bind:', {
+    app.log.debug('Route bind:', {
       method, path
     });
   },
