@@ -42,6 +42,8 @@ module.exports = function loadPlugin (projectPath, Plugin) {
     // set false to disable request log in dev env
     enableRequestLog: process.env.APP_ENABLE_REQUEST_LOG || true,
 
+    enable404Log: true,
+
     session: {
       secret: 'setASecreteKeyInYourAppConfig',
       resave: false,

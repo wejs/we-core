@@ -238,7 +238,8 @@ module.exports = {
    */
   notFound(data) {
     const res = this.res,
-      req = this.req;
+      req = this.req,
+      we = req.we;
 
     if (typeof data == 'string') {
       res.addMessage('error', {
@@ -250,19 +251,21 @@ module.exports = {
 
     res.locals.data = null;
 
-    if (req.we.env == 'dev') {
-      console.trace('404', {
-        method: req.method,
-        path: req.path
-      });
-    } else {
-      req.we.log.info('Not found:404:', {
-        url: req.url,
-        method: req.method,
-        query: req.query,
-        controller: res.locals.controller,
-        action: res.locals.action
-      });
+    if (we.config.enable404Log)  {
+      if (we.env == 'dev') {
+        console.trace('404', {
+          method: req.method,
+          path: req.path
+        });
+      } else {
+        we.log.info('Not found 404 ', {
+          url: req.url,
+          method: req.method,
+          query: req.query,
+          controller: res.locals.controller,
+          action: res.locals.action
+        });
+      }
     }
 
     res.locals.title = req.__('response.notFound.title');
@@ -276,7 +279,7 @@ module.exports = {
 
     delete res.locals.data;
 
-    res.format(req.we.responses.formaters);
+    res.format(we.responses.formaters);
   },
   /**
    * Server error response
