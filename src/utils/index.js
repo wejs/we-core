@@ -44,7 +44,7 @@ const utils = {
   stripTagsAndTruncate(string, length = 200, omission = '...') {
     return _.truncate(utils.stripTags(string), {
       length: length,
-      omission: omission
+      omission: omission,
     });
   },
 
@@ -62,7 +62,9 @@ const utils = {
   slugifyAndTruncate(string, length = 200, omission = '...', opts = {}) {
     return _.truncate(slugify(string, opts), {
       length: length,
-      omission: omission
+      omission: omission,
+      lower: true,
+      strict: true,
     });
   },
 
