@@ -60,11 +60,9 @@ const utils = {
    * @return {String}          Clean and truncated string
    */
   slugifyAndTruncate(string, length = 200, omission = '...', opts = {}) {
-    return _.truncate(slugify(string, opts), {
+    return _.truncate(slugify(string, { ...opts, lower: true, strict: true, }), {
       length: length,
       omission: omission,
-      lower: true,
-      strict: true,
     });
   },
 
