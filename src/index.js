@@ -290,6 +290,17 @@ We.prototype = {
           get: function getWe() { return we; }
         });
 
+        // Clean memory on end events:
+        res.on('finish', function() {
+          we.freeResponseMemory(req, res);
+        });
+        res.on('close', function() {
+          we.freeResponseMemory(req, res);
+        });
+        res.on('end', function() {
+          we.freeResponseMemory(req, res);
+        });
+
         // suport for we.js widget API
         // install we-plugin-widget to enable this feature
         if (req.headers && req.headers['we-widget-action'] && req.method == 'POST') {
@@ -476,6 +487,12 @@ We.prototype = {
       res.locals.regions = {};
       res.locals.currentUser = {};
     }
+
+    for(let name in res.locals) {
+      delete res.locals[name];
+    }
+    
+    delete req.user;
   },
 
   /**
