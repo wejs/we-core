@@ -48,7 +48,7 @@
     "morgan": "1.10.0",
     "pluralize": "^8.0.0",
     "request": "2.88.2",
-    "sanitize-html": "1.27.5",
+    "sanitize-html": "2.3.2",
     "sequelize": "5.22.3",
     "serve-favicon": "~2.5.0",
     "simple-hooks-callback": "1.0.0",
