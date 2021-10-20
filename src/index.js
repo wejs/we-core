@@ -488,10 +488,6 @@ We.prototype = {
       res.locals.currentUser = {};
     }
 
-    for(let name in res.locals) {
-      delete res.locals[name];
-    }
-    
     delete req.user;
   },
 
